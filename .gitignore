@@ -1,0 +1,8 @@
+build/*
+nbproject/*
+/src/main/antlr/output
+/lib/dev/pmd
+/lib/dev/checkstyle
+/lib/dev/classycle
+/lib/dev/findbugs
+
