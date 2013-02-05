@@ -16,6 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker.test.utils;
 
+import ch.tutteli.tsphp.typechecker.TSPHPTypeCheckerDefinition;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -80,67 +81,27 @@ public class TypeHelper
                 };
     }
 
-    public static List<Object[]> getAllTypesInclModifier(String prefix, String appendix,
-            String prefixExpect, String appendixExpect, boolean isDefinitionPhase) {
-        List<Object[]> collection = new ArrayList<>();
+    public static void getAllTypesInclModifier(IAdder adder) {
         String[] types = getScalarTypes();
-        int cast = TestTSPHPTypeCheckerDefinition.Cast;
-        int questionMark = TestTSPHPTypeCheckerDefinition.QuestionMark;
-        String typeExpected;
+        int cast = TSPHPTypeCheckerDefinition.Cast;
+        int questionMark = TSPHPTypeCheckerDefinition.QuestionMark;
+
         for (String type : types) {
-            typeExpected = isDefinitionPhase ? "" : type;
-            collection.add(new String[]{
-                        prefix + type + appendix, prefixExpect + typeExpected + appendixExpect
-                    });
-            collection.add(new String[]{
-                        prefix + "cast " + type + appendix,
-                        prefixExpect + typeExpected + "|" + cast + appendixExpect
-                    });
-            collection.add(new String[]{
-                        prefix + type + "?" + appendix,
-                        prefixExpect + typeExpected + "|" + questionMark + appendixExpect
-                    });
-            collection.add(new String[]{
-                        prefix + "cast " + type + "?" + appendix,
-                        prefixExpect + typeExpected + "|" + cast + "," + questionMark + appendixExpect
-                    });
+            adder.add(type, type, "");
+            adder.add("cast " + type, type, "|" + cast);
+            adder.add(type + "?", type, "|" + questionMark);
+            adder.add("cast " + type + "?", type, "|" + cast + "," + questionMark);
         }
 
-        typeExpected = isDefinitionPhase ? "" : "array";
-        collection.add(new String[]{
-                    prefix + "array" + appendix,
-                    prefixExpect + typeExpected + appendixExpect
-                });
-        collection.add(new String[]{
-                    prefix + "cast array" + appendix,
-                    prefixExpect + typeExpected + "|" + cast + appendixExpect
-                });
+        adder.add("array", "array", "");
+        adder.add("cast array", "array", "|" + cast);
 
         types = getClassInterfaceTypes();
         for (String type : types) {
-            typeExpected = isDefinitionPhase ? "" : type;
-            collection.add(new String[]{
-                        prefix + type + appendix,
-                        prefixExpect + typeExpected + appendixExpect
-                    });
-            collection.add(new String[]{
-                        prefix + "cast " + type + appendix,
-                        prefixExpect + typeExpected + "|" + cast + appendixExpect
-                    });
+            adder.add(type, type, "");
+            adder.add("cast " + type, type, "|" + cast);
         }
-
-        typeExpected = isDefinitionPhase ? "" : "resource";
-        collection.add(new String[]{
-                    prefix + "resource" + appendix,
-                    prefixExpect + typeExpected + appendixExpect
-                });
-
-        typeExpected = isDefinitionPhase ? "" : "object";
-        collection.add(new String[]{
-                    prefix + "object" + appendix,
-                    prefixExpect + typeExpected + appendixExpect
-                });
-
-        return collection;
+        adder.add("resource", "resource", "");
+        adder.add("object", "object", "");
     }
 }

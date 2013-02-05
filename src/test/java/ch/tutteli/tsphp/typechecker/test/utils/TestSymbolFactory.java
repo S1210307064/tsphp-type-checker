@@ -18,7 +18,6 @@ package ch.tutteli.tsphp.typechecker.test.utils;
 
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.TSPHPAst;
-import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.SymbolFactory;
 import java.util.ArrayList;
@@ -28,22 +27,25 @@ import java.util.List;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-class TestSymbolFactory extends SymbolFactory implements ISymbolFactory
+public class TestSymbolFactory extends SymbolFactory
 {
 
-    private List<ISymbol> symbols = new ArrayList<>();
-
-    public TestSymbolFactory() {
-    }
+    List<ICreateSymbolListener> listeners = new ArrayList<>();
 
     @Override
     public IVariableSymbol createVariableSymbol(TSPHPAst typeModifierAst, TSPHPAst variableId) {
-        IVariableSymbol variableSymbol = super.createVariableSymbol(typeModifierAst, variableId);
-        symbols.add(variableSymbol);
-        return variableSymbol;
+        IVariableSymbol symbol = super.createVariableSymbol(typeModifierAst, variableId);
+        notify(symbol);
+        return symbol;
     }
 
-    public List<ISymbol> getSymbols() {
-        return symbols;
+    public void registerListener(ICreateSymbolListener listener) {
+        listeners.add(listener);
+    }
+
+    private void notify(ISymbol symbol) {
+        for (ICreateSymbolListener listener : listeners) {
+            listener.setNewlyCreatedSymbol(symbol);
+        }
     }
 }

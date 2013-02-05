@@ -1,4 +1,4 @@
-// $ANTLR 3.5 D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g 2013-02-04 01:08:36
+// $ANTLR 3.5 D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g 2013-02-05 14:29:06
 
 /*
  * Copyright 2012 Robert Stoll <rstoll@tutteli.ch>
@@ -21,8 +21,8 @@ package ch.tutteli.tsphp.typechecker;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.TSPHPAst;
 import ch.tutteli.tsphp.typechecker.scopes.NamespaceScope;
-import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
-import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
+import ch.tutteli.tsphp.typechecker.IDefinitionHelper;
+import ch.tutteli.tsphp.typechecker.scopes.IScopeFactory;
 
 
 
@@ -260,23 +260,30 @@ public class TSPHPTypeCheckerDefinition extends TreeFilter {
 	@Override public String getGrammarFileName() { return "D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g"; }
 
 
-		protected SymbolTable symbolTable;
-		protected ISymbolFactory symbolFactory;
-		private IScope currentScope;
-	    	public TSPHPTypeCheckerDefinition(TreeNodeStream input, SymbolTable theSymbolTable, ISymbolFactory theSymbolFactory) {
-	        	this(input);
-		        symbolTable = theSymbolTable;
-	        	currentScope = theSymbolTable.globalScope;
-	    		symbolFactory = theSymbolFactory;
-		}
+
+	protected SymbolTable symbolTable;
+	protected IDefinitionHelper definitionHelper;
+	protected IScope currentScope;
+	protected IScopeFactory scopeFactory;
+
+
+	public TSPHPTypeCheckerDefinition(TreeNodeStream input, SymbolTable theSymbolTable, IScopeFactory theScopeFactory, IDefinitionHelper theDefinitionHelper) {
+	    this(input);
+	    symbolTable = theSymbolTable;
+	    currentScope = theSymbolTable.globalScope;
+	    scopeFactory = theScopeFactory;
+	    definitionHelper = theDefinitionHelper;
+	    
+	}
+
 
 
 
 	// $ANTLR start "topdown"
-	// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:62:1: topdown : ( enterNamespace | varDeclarationList );
+	// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:70:1: topdown : ( enterNamespace | varDeclarationList );
 	public final void topdown() throws RecognitionException {
 		try {
-			// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:63:5: ( enterNamespace | varDeclarationList )
+			// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:71:5: ( enterNamespace | varDeclarationList )
 			int alt1=2;
 			int LA1_0 = input.LA(1);
 			if ( (LA1_0==Namespace) ) {
@@ -295,18 +302,18 @@ public class TSPHPTypeCheckerDefinition extends TreeFilter {
 
 			switch (alt1) {
 				case 1 :
-					// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:63:7: enterNamespace
+					// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:71:7: enterNamespace
 					{
-					pushFollow(FOLLOW_enterNamespace_in_topdown64);
+					pushFollow(FOLLOW_enterNamespace_in_topdown65);
 					enterNamespace();
 					state._fsp--;
 					if (state.failed) return;
 					}
 					break;
 				case 2 :
-					// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:64:7: varDeclarationList
+					// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:72:7: varDeclarationList
 					{
-					pushFollow(FOLLOW_varDeclarationList_in_topdown72);
+					pushFollow(FOLLOW_varDeclarationList_in_topdown73);
 					varDeclarationList();
 					state._fsp--;
 					if (state.failed) return;
@@ -328,13 +335,13 @@ public class TSPHPTypeCheckerDefinition extends TreeFilter {
 
 
 	// $ANTLR start "bottomup"
-	// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:67:1: bottomup : exitNamespace ;
+	// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:75:1: bottomup : exitNamespace ;
 	public final void bottomup() throws RecognitionException {
 		try {
-			// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:68:5: ( exitNamespace )
-			// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:68:9: exitNamespace
+			// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:76:5: ( exitNamespace )
+			// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:76:9: exitNamespace
 			{
-			pushFollow(FOLLOW_exitNamespace_in_bottomup91);
+			pushFollow(FOLLOW_exitNamespace_in_bottomup92);
 			exitNamespace();
 			state._fsp--;
 			if (state.failed) return;
@@ -354,15 +361,15 @@ public class TSPHPTypeCheckerDefinition extends TreeFilter {
 
 
 	// $ANTLR start "enterNamespace"
-	// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:71:1: enterNamespace : ^( Namespace t= ( TYPE_NAME | DEFAULT_NAMESPACE ) . ) ;
+	// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:79:1: enterNamespace : ^( Namespace t= ( TYPE_NAME | DEFAULT_NAMESPACE ) . ) ;
 	public final void enterNamespace() throws RecognitionException {
 		TSPHPAst t=null;
 
 		try {
-			// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:72:2: ( ^( Namespace t= ( TYPE_NAME | DEFAULT_NAMESPACE ) . ) )
-			// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:72:4: ^( Namespace t= ( TYPE_NAME | DEFAULT_NAMESPACE ) . )
+			// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:80:2: ( ^( Namespace t= ( TYPE_NAME | DEFAULT_NAMESPACE ) . ) )
+			// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:80:4: ^( Namespace t= ( TYPE_NAME | DEFAULT_NAMESPACE ) . )
 			{
-			match(input,Namespace,FOLLOW_Namespace_in_enterNamespace110); if (state.failed) return;
+			match(input,Namespace,FOLLOW_Namespace_in_enterNamespace111); if (state.failed) return;
 			match(input, Token.DOWN, null); if (state.failed) return;
 			t=(TSPHPAst)input.LT(1);
 			if ( input.LA(1)==DEFAULT_NAMESPACE||input.LA(1)==TYPE_NAME ) {
@@ -378,7 +385,7 @@ public class TSPHPTypeCheckerDefinition extends TreeFilter {
 			matchAny(input); if (state.failed) return;
 			match(input, Token.UP, null); if (state.failed) return;
 
-			if ( state.backtracking==1 ) {currentScope = new NamespaceScope((t!=null?t.getText():null),currentScope);}
+			if ( state.backtracking==1 ) {currentScope = scopeFactory.createNamespace((t!=null?t.getText():null), currentScope);}
 			}
 
 		}
@@ -395,13 +402,13 @@ public class TSPHPTypeCheckerDefinition extends TreeFilter {
 
 
 	// $ANTLR start "exitNamespace"
-	// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:74:1: exitNamespace : Namespace ;
+	// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:82:1: exitNamespace : Namespace ;
 	public final void exitNamespace() throws RecognitionException {
 		try {
-			// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:75:2: ( Namespace )
-			// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:75:4: Namespace
+			// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:83:2: ( Namespace )
+			// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:83:4: Namespace
 			{
-			match(input,Namespace,FOLLOW_Namespace_in_exitNamespace133); if (state.failed) return;
+			match(input,Namespace,FOLLOW_Namespace_in_exitNamespace134); if (state.failed) return;
 			if ( state.backtracking==1 ) {currentScope = currentScope.getEnclosingScope();}
 			}
 
@@ -419,20 +426,20 @@ public class TSPHPTypeCheckerDefinition extends TreeFilter {
 
 
 	// $ANTLR start "varDeclarationList"
-	// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:78:1: varDeclarationList : ^( VARIABLE_DECLARATION_LIST ^( TYPE tMod= typeModifier type= . ) ( varDeclaration[$tMod.start,$type] )* ) ;
+	// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:86:1: varDeclarationList : ^( VARIABLE_DECLARATION_LIST ^( TYPE tMod= typeModifier type= . ) ( varDeclaration[$tMod.start,$type] )* ) ;
 	public final void varDeclarationList() throws RecognitionException {
 		TSPHPAst type=null;
 		TreeRuleReturnScope tMod =null;
 
 		try {
-			// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:79:5: ( ^( VARIABLE_DECLARATION_LIST ^( TYPE tMod= typeModifier type= . ) ( varDeclaration[$tMod.start,$type] )* ) )
-			// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:79:9: ^( VARIABLE_DECLARATION_LIST ^( TYPE tMod= typeModifier type= . ) ( varDeclaration[$tMod.start,$type] )* )
+			// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:87:5: ( ^( VARIABLE_DECLARATION_LIST ^( TYPE tMod= typeModifier type= . ) ( varDeclaration[$tMod.start,$type] )* ) )
+			// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:87:9: ^( VARIABLE_DECLARATION_LIST ^( TYPE tMod= typeModifier type= . ) ( varDeclaration[$tMod.start,$type] )* )
 			{
-			match(input,VARIABLE_DECLARATION_LIST,FOLLOW_VARIABLE_DECLARATION_LIST_in_varDeclarationList156); if (state.failed) return;
+			match(input,VARIABLE_DECLARATION_LIST,FOLLOW_VARIABLE_DECLARATION_LIST_in_varDeclarationList157); if (state.failed) return;
 			match(input, Token.DOWN, null); if (state.failed) return;
-			match(input,TYPE,FOLLOW_TYPE_in_varDeclarationList166); if (state.failed) return;
+			match(input,TYPE,FOLLOW_TYPE_in_varDeclarationList167); if (state.failed) return;
 			match(input, Token.DOWN, null); if (state.failed) return;
-			pushFollow(FOLLOW_typeModifier_in_varDeclarationList170);
+			pushFollow(FOLLOW_typeModifier_in_varDeclarationList171);
 			tMod=typeModifier();
 			state._fsp--;
 			if (state.failed) return;
@@ -440,7 +447,7 @@ public class TSPHPTypeCheckerDefinition extends TreeFilter {
 			matchAny(input); if (state.failed) return;
 			match(input, Token.UP, null); if (state.failed) return;
 
-			// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:81:7: ( varDeclaration[$tMod.start,$type] )*
+			// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:89:7: ( varDeclaration[$tMod.start,$type] )*
 			loop2:
 			while (true) {
 				int alt2=2;
@@ -451,9 +458,9 @@ public class TSPHPTypeCheckerDefinition extends TreeFilter {
 
 				switch (alt2) {
 				case 1 :
-					// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:81:7: varDeclaration[$tMod.start,$type]
+					// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:89:7: varDeclaration[$tMod.start,$type]
 					{
-					pushFollow(FOLLOW_varDeclaration_in_varDeclarationList183);
+					pushFollow(FOLLOW_varDeclaration_in_varDeclarationList184);
 					varDeclaration((tMod!=null?((TSPHPAst)tMod.start):null), type);
 					state._fsp--;
 					if (state.failed) return;
@@ -486,13 +493,13 @@ public class TSPHPTypeCheckerDefinition extends TreeFilter {
 
 
 	// $ANTLR start "typeModifier"
-	// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:86:1: typeModifier : ( TYPE_MODIFIER | ^( TYPE_MODIFIER ( Cast )? ( QuestionMark )? ) );
+	// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:94:1: typeModifier : ( TYPE_MODIFIER | ^( TYPE_MODIFIER ( Cast )? ( QuestionMark )? ) );
 	public final TSPHPTypeCheckerDefinition.typeModifier_return typeModifier() throws RecognitionException {
 		TSPHPTypeCheckerDefinition.typeModifier_return retval = new TSPHPTypeCheckerDefinition.typeModifier_return();
 		retval.start = input.LT(1);
 
 		try {
-			// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:87:2: ( TYPE_MODIFIER | ^( TYPE_MODIFIER ( Cast )? ( QuestionMark )? ) )
+			// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:95:2: ( TYPE_MODIFIER | ^( TYPE_MODIFIER ( Cast )? ( QuestionMark )? ) )
 			int alt5=2;
 			int LA5_0 = input.LA(1);
 			if ( (LA5_0==TYPE_MODIFIER) ) {
@@ -528,18 +535,18 @@ public class TSPHPTypeCheckerDefinition extends TreeFilter {
 
 			switch (alt5) {
 				case 1 :
-					// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:87:4: TYPE_MODIFIER
+					// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:95:4: TYPE_MODIFIER
 					{
-					match(input,TYPE_MODIFIER,FOLLOW_TYPE_MODIFIER_in_typeModifier219); if (state.failed) return retval;
+					match(input,TYPE_MODIFIER,FOLLOW_TYPE_MODIFIER_in_typeModifier220); if (state.failed) return retval;
 					}
 					break;
 				case 2 :
-					// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:88:8: ^( TYPE_MODIFIER ( Cast )? ( QuestionMark )? )
+					// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:96:8: ^( TYPE_MODIFIER ( Cast )? ( QuestionMark )? )
 					{
-					match(input,TYPE_MODIFIER,FOLLOW_TYPE_MODIFIER_in_typeModifier229); if (state.failed) return retval;
+					match(input,TYPE_MODIFIER,FOLLOW_TYPE_MODIFIER_in_typeModifier230); if (state.failed) return retval;
 					if ( input.LA(1)==Token.DOWN ) {
 						match(input, Token.DOWN, null); if (state.failed) return retval;
-						// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:88:24: ( Cast )?
+						// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:96:24: ( Cast )?
 						int alt3=2;
 						int LA3_0 = input.LA(1);
 						if ( (LA3_0==Cast) ) {
@@ -547,15 +554,15 @@ public class TSPHPTypeCheckerDefinition extends TreeFilter {
 						}
 						switch (alt3) {
 							case 1 :
-								// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:88:24: Cast
+								// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:96:24: Cast
 								{
-								match(input,Cast,FOLLOW_Cast_in_typeModifier231); if (state.failed) return retval;
+								match(input,Cast,FOLLOW_Cast_in_typeModifier232); if (state.failed) return retval;
 								}
 								break;
 
 						}
 
-						// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:88:30: ( QuestionMark )?
+						// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:96:30: ( QuestionMark )?
 						int alt4=2;
 						int LA4_0 = input.LA(1);
 						if ( (LA4_0==QuestionMark) ) {
@@ -563,9 +570,9 @@ public class TSPHPTypeCheckerDefinition extends TreeFilter {
 						}
 						switch (alt4) {
 							case 1 :
-								// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:88:30: QuestionMark
+								// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:96:30: QuestionMark
 								{
-								match(input,QuestionMark,FOLLOW_QuestionMark_in_typeModifier234); if (state.failed) return retval;
+								match(input,QuestionMark,FOLLOW_QuestionMark_in_typeModifier235); if (state.failed) return retval;
 								}
 								break;
 
@@ -593,15 +600,15 @@ public class TSPHPTypeCheckerDefinition extends TreeFilter {
 
 
 	// $ANTLR start "varDeclaration"
-	// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:91:1: varDeclaration[TSPHPAst tMod, TSPHPAst type] : ( ^(variableId= VariableId (~ CASTING ) ) |variableId= VariableId | ^(variableId= VariableId cast ) ) ;
+	// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:99:1: varDeclaration[TSPHPAst tMod, TSPHPAst type] : ( ^(variableId= VariableId (~ CASTING ) ) |variableId= VariableId | ^(variableId= VariableId cast ) ) ;
 	public final void varDeclaration(TSPHPAst tMod, TSPHPAst type) throws RecognitionException {
 		TSPHPAst variableId=null;
 
 		try {
-			// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:92:2: ( ( ^(variableId= VariableId (~ CASTING ) ) |variableId= VariableId | ^(variableId= VariableId cast ) ) )
-			// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:93:2: ( ^(variableId= VariableId (~ CASTING ) ) |variableId= VariableId | ^(variableId= VariableId cast ) )
+			// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:100:2: ( ( ^(variableId= VariableId (~ CASTING ) ) |variableId= VariableId | ^(variableId= VariableId cast ) ) )
+			// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:101:2: ( ^(variableId= VariableId (~ CASTING ) ) |variableId= VariableId | ^(variableId= VariableId cast ) )
 			{
-			// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:93:2: ( ^(variableId= VariableId (~ CASTING ) ) |variableId= VariableId | ^(variableId= VariableId cast ) )
+			// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:101:2: ( ^(variableId= VariableId (~ CASTING ) ) |variableId= VariableId | ^(variableId= VariableId cast ) )
 			int alt6=3;
 			int LA6_0 = input.LA(1);
 			if ( (LA6_0==VariableId) ) {
@@ -659,9 +666,9 @@ public class TSPHPTypeCheckerDefinition extends TreeFilter {
 
 			switch (alt6) {
 				case 1 :
-					// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:93:4: ^(variableId= VariableId (~ CASTING ) )
+					// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:101:4: ^(variableId= VariableId (~ CASTING ) )
 					{
-					variableId=(TSPHPAst)match(input,VariableId,FOLLOW_VariableId_in_varDeclaration255); if (state.failed) return;
+					variableId=(TSPHPAst)match(input,VariableId,FOLLOW_VariableId_in_varDeclaration256); if (state.failed) return;
 					match(input, Token.DOWN, null); if (state.failed) return;
 					if ( (input.LA(1) >= ACTUAL_PARAMETERS && input.LA(1) <= Break)||(input.LA(1) >= CASTING_ASSIGN && input.LA(1) <= Whitespace) ) {
 						input.consume();
@@ -678,17 +685,17 @@ public class TSPHPTypeCheckerDefinition extends TreeFilter {
 					}
 					break;
 				case 2 :
-					// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:94:4: variableId= VariableId
+					// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:102:4: variableId= VariableId
 					{
-					variableId=(TSPHPAst)match(input,VariableId,FOLLOW_VariableId_in_varDeclaration268); if (state.failed) return;
+					variableId=(TSPHPAst)match(input,VariableId,FOLLOW_VariableId_in_varDeclaration269); if (state.failed) return;
 					}
 					break;
 				case 3 :
-					// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:95:4: ^(variableId= VariableId cast )
+					// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:103:4: ^(variableId= VariableId cast )
 					{
-					variableId=(TSPHPAst)match(input,VariableId,FOLLOW_VariableId_in_varDeclaration277); if (state.failed) return;
+					variableId=(TSPHPAst)match(input,VariableId,FOLLOW_VariableId_in_varDeclaration278); if (state.failed) return;
 					match(input, Token.DOWN, null); if (state.failed) return;
-					pushFollow(FOLLOW_cast_in_varDeclaration279);
+					pushFollow(FOLLOW_cast_in_varDeclaration280);
 					cast();
 					state._fsp--;
 					if (state.failed) return;
@@ -700,9 +707,7 @@ public class TSPHPTypeCheckerDefinition extends TreeFilter {
 			}
 
 			if ( state.backtracking==1 ) {
-				        type.scope = currentScope;
-				        IVariableSymbol variableSymbol = symbolFactory.createVariableSymbol(tMod,variableId);
-				        currentScope.define(variableSymbol);
+					definitionHelper.defineVariable(currentScope,type, tMod, variableId);
 			        }
 			}
 
@@ -720,17 +725,17 @@ public class TSPHPTypeCheckerDefinition extends TreeFilter {
 
 
 	// $ANTLR start "cast"
-	// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:104:1: cast : ^( CASTING ^( TYPE typeModifier . ) . ) ;
+	// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:110:1: cast : ^( CASTING ^( TYPE typeModifier . ) . ) ;
 	public final void cast() throws RecognitionException {
 		try {
-			// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:104:6: ( ^( CASTING ^( TYPE typeModifier . ) . ) )
-			// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:104:8: ^( CASTING ^( TYPE typeModifier . ) . )
+			// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:110:6: ( ^( CASTING ^( TYPE typeModifier . ) . ) )
+			// D:\\TSPHP-typechecker\\src\\main\\antlr\\TSPHPTypeCheckerDefinition.g:110:8: ^( CASTING ^( TYPE typeModifier . ) . )
 			{
-			match(input,CASTING,FOLLOW_CASTING_in_cast297); if (state.failed) return;
+			match(input,CASTING,FOLLOW_CASTING_in_cast298); if (state.failed) return;
 			match(input, Token.DOWN, null); if (state.failed) return;
-			match(input,TYPE,FOLLOW_TYPE_in_cast300); if (state.failed) return;
+			match(input,TYPE,FOLLOW_TYPE_in_cast301); if (state.failed) return;
 			match(input, Token.DOWN, null); if (state.failed) return;
-			pushFollow(FOLLOW_typeModifier_in_cast302);
+			pushFollow(FOLLOW_typeModifier_in_cast303);
 			typeModifier();
 			state._fsp--;
 			if (state.failed) return;
@@ -757,26 +762,26 @@ public class TSPHPTypeCheckerDefinition extends TreeFilter {
 
 
 
-	public static final BitSet FOLLOW_enterNamespace_in_topdown64 = new BitSet(new long[]{0x0000000000000002L});
-	public static final BitSet FOLLOW_varDeclarationList_in_topdown72 = new BitSet(new long[]{0x0000000000000002L});
-	public static final BitSet FOLLOW_exitNamespace_in_bottomup91 = new BitSet(new long[]{0x0000000000000002L});
-	public static final BitSet FOLLOW_Namespace_in_enterNamespace110 = new BitSet(new long[]{0x0000000000000004L});
-	public static final BitSet FOLLOW_set_in_enterNamespace114 = new BitSet(new long[]{0xFFFFFFFFFFFFFFF0L,0xFFFFFFFFFFFFFFFFL,0x00001FFFFFFFFFFFL});
-	public static final BitSet FOLLOW_Namespace_in_exitNamespace133 = new BitSet(new long[]{0x0000000000000002L});
-	public static final BitSet FOLLOW_VARIABLE_DECLARATION_LIST_in_varDeclarationList156 = new BitSet(new long[]{0x0000000000000004L});
-	public static final BitSet FOLLOW_TYPE_in_varDeclarationList166 = new BitSet(new long[]{0x0000000000000004L});
-	public static final BitSet FOLLOW_typeModifier_in_varDeclarationList170 = new BitSet(new long[]{0xFFFFFFFFFFFFFFF0L,0xFFFFFFFFFFFFFFFFL,0x00001FFFFFFFFFFFL});
-	public static final BitSet FOLLOW_varDeclaration_in_varDeclarationList183 = new BitSet(new long[]{0x0000000000000008L,0x0000000000000000L,0x0000020000000000L});
-	public static final BitSet FOLLOW_TYPE_MODIFIER_in_typeModifier219 = new BitSet(new long[]{0x0000000000000002L});
-	public static final BitSet FOLLOW_TYPE_MODIFIER_in_typeModifier229 = new BitSet(new long[]{0x0000000000000004L});
-	public static final BitSet FOLLOW_Cast_in_typeModifier231 = new BitSet(new long[]{0x0000000000000008L,0x0000000000000000L,0x0000000000000004L});
-	public static final BitSet FOLLOW_QuestionMark_in_typeModifier234 = new BitSet(new long[]{0x0000000000000008L});
-	public static final BitSet FOLLOW_VariableId_in_varDeclaration255 = new BitSet(new long[]{0x0000000000000004L});
-	public static final BitSet FOLLOW_set_in_varDeclaration257 = new BitSet(new long[]{0x0000000000000008L});
-	public static final BitSet FOLLOW_VariableId_in_varDeclaration268 = new BitSet(new long[]{0x0000000000000002L});
-	public static final BitSet FOLLOW_VariableId_in_varDeclaration277 = new BitSet(new long[]{0x0000000000000004L});
-	public static final BitSet FOLLOW_cast_in_varDeclaration279 = new BitSet(new long[]{0x0000000000000008L});
-	public static final BitSet FOLLOW_CASTING_in_cast297 = new BitSet(new long[]{0x0000000000000004L});
-	public static final BitSet FOLLOW_TYPE_in_cast300 = new BitSet(new long[]{0x0000000000000004L});
-	public static final BitSet FOLLOW_typeModifier_in_cast302 = new BitSet(new long[]{0xFFFFFFFFFFFFFFF0L,0xFFFFFFFFFFFFFFFFL,0x00001FFFFFFFFFFFL});
+	public static final BitSet FOLLOW_enterNamespace_in_topdown65 = new BitSet(new long[]{0x0000000000000002L});
+	public static final BitSet FOLLOW_varDeclarationList_in_topdown73 = new BitSet(new long[]{0x0000000000000002L});
+	public static final BitSet FOLLOW_exitNamespace_in_bottomup92 = new BitSet(new long[]{0x0000000000000002L});
+	public static final BitSet FOLLOW_Namespace_in_enterNamespace111 = new BitSet(new long[]{0x0000000000000004L});
+	public static final BitSet FOLLOW_set_in_enterNamespace115 = new BitSet(new long[]{0xFFFFFFFFFFFFFFF0L,0xFFFFFFFFFFFFFFFFL,0x00001FFFFFFFFFFFL});
+	public static final BitSet FOLLOW_Namespace_in_exitNamespace134 = new BitSet(new long[]{0x0000000000000002L});
+	public static final BitSet FOLLOW_VARIABLE_DECLARATION_LIST_in_varDeclarationList157 = new BitSet(new long[]{0x0000000000000004L});
+	public static final BitSet FOLLOW_TYPE_in_varDeclarationList167 = new BitSet(new long[]{0x0000000000000004L});
+	public static final BitSet FOLLOW_typeModifier_in_varDeclarationList171 = new BitSet(new long[]{0xFFFFFFFFFFFFFFF0L,0xFFFFFFFFFFFFFFFFL,0x00001FFFFFFFFFFFL});
+	public static final BitSet FOLLOW_varDeclaration_in_varDeclarationList184 = new BitSet(new long[]{0x0000000000000008L,0x0000000000000000L,0x0000020000000000L});
+	public static final BitSet FOLLOW_TYPE_MODIFIER_in_typeModifier220 = new BitSet(new long[]{0x0000000000000002L});
+	public static final BitSet FOLLOW_TYPE_MODIFIER_in_typeModifier230 = new BitSet(new long[]{0x0000000000000004L});
+	public static final BitSet FOLLOW_Cast_in_typeModifier232 = new BitSet(new long[]{0x0000000000000008L,0x0000000000000000L,0x0000000000000004L});
+	public static final BitSet FOLLOW_QuestionMark_in_typeModifier235 = new BitSet(new long[]{0x0000000000000008L});
+	public static final BitSet FOLLOW_VariableId_in_varDeclaration256 = new BitSet(new long[]{0x0000000000000004L});
+	public static final BitSet FOLLOW_set_in_varDeclaration258 = new BitSet(new long[]{0x0000000000000008L});
+	public static final BitSet FOLLOW_VariableId_in_varDeclaration269 = new BitSet(new long[]{0x0000000000000002L});
+	public static final BitSet FOLLOW_VariableId_in_varDeclaration278 = new BitSet(new long[]{0x0000000000000004L});
+	public static final BitSet FOLLOW_cast_in_varDeclaration280 = new BitSet(new long[]{0x0000000000000008L});
+	public static final BitSet FOLLOW_CASTING_in_cast298 = new BitSet(new long[]{0x0000000000000004L});
+	public static final BitSet FOLLOW_TYPE_in_cast301 = new BitSet(new long[]{0x0000000000000004L});
+	public static final BitSet FOLLOW_typeModifier_in_cast303 = new BitSet(new long[]{0xFFFFFFFFFFFFFFF0L,0xFFFFFFFFFFFFFFFFL,0x00001FFFFFFFFFFFL});
 }

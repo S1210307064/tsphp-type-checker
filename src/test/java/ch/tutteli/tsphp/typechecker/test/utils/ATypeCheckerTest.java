@@ -17,13 +17,27 @@
 package ch.tutteli.tsphp.typechecker.test.utils;
 
 import ch.tutteli.tsphp.common.IParser;
+import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.TSPHPAst;
 import ch.tutteli.tsphp.common.TSPHPAstAdaptorRegistry;
 import ch.tutteli.tsphp.parser.ParserFacade;
+import ch.tutteli.tsphp.typechecker.DefinitionHelper;
+import ch.tutteli.tsphp.typechecker.IDefinitionHelper;
+import ch.tutteli.tsphp.typechecker.SymbolTable;
+import ch.tutteli.tsphp.typechecker.TSPHPTypeCheckerDefinition;
+import ch.tutteli.tsphp.typechecker.scopes.ScopeFactory;
+import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
+import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.SymbolFactory;
+import java.util.List;
+import java.util.Map;
 import junit.framework.Assert;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.CommonTreeNodeStream;
 import org.junit.Ignore;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 /**
  *
@@ -35,6 +49,7 @@ public abstract class ATypeCheckerTest
 
     private String testString;
     private String expectedResult;
+    private TestDefinitionHelper testDefinitionHelper;
 
     public ATypeCheckerTest(String theTestString, String theExpectedResult) {
         testString = theTestString;
@@ -49,8 +64,32 @@ public abstract class ATypeCheckerTest
 
         CommonTreeNodeStream commonTreeNodeStream = new CommonTreeNodeStream(TSPHPAstAdaptorRegistry.get(), ast);
         commonTreeNodeStream.setTokenStream(parser.getTokenStream());
-        TestTSPHPTypeCheckerDefinition definition = new TestTSPHPTypeCheckerDefinition(commonTreeNodeStream);
+
+
+
+        testDefinitionHelper = new TestDefinitionHelper();
+        TSPHPTypeCheckerDefinition definition = new TSPHPTypeCheckerDefinition(
+                commonTreeNodeStream, new SymbolTable(), new ScopeFactory(), testDefinitionHelper);
         definition.downup(ast);
-        Assert.assertEquals(testString + " failed.", expectedResult, definition.getSymbolsAsString());
+        Assert.assertEquals(testString + " failed.", expectedResult, getSymbolsAsString());
+    }
+
+    public String getSymbolsAsString() {
+        List<Map.Entry<ISymbol, TSPHPAst>> symbols = testDefinitionHelper.getSymbols();
+        StringBuilder stringBuilder = new StringBuilder();
+        boolean isFirstSymbol = true;
+        for (Map.Entry<ISymbol, TSPHPAst> entry : symbols) {
+            if (!isFirstSymbol) {
+                stringBuilder.append(" ");
+            }
+            isFirstSymbol = false;
+            TSPHPAst type = entry.getValue();
+            String scope = type.scope != null ? type.scope.getScopeName() + "." : "";
+            stringBuilder.append(scope);
+            stringBuilder.append(type);
+            stringBuilder.append(" ");
+            stringBuilder.append(entry.getKey());
+        }
+        return stringBuilder.toString();
     }
 }

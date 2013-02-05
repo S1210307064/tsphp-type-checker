@@ -20,17 +20,7 @@ options {
 	ASTLabelType = TSPHPAst;
 	filter = true;        
 }
-@members {
-	protected SymbolTable symbolTable;
-	protected ISymbolFactory symbolFactory;
-	private IScope currentScope;
-    	public TSPHPTypeCheckerDefinition(TreeNodeStream input, SymbolTable theSymbolTable, ISymbolFactory theSymbolFactory) {
-        	this(input);
-	        symbolTable = theSymbolTable;
-        	currentScope = theSymbolTable.globalScope;
-    		symbolFactory = theSymbolFactory;
-	}
-}
+
 @header{
 /*
  * Copyright 2012 Robert Stoll <rstoll@tutteli.ch>
@@ -53,11 +43,29 @@ package ch.tutteli.tsphp.typechecker;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.TSPHPAst;
 import ch.tutteli.tsphp.typechecker.scopes.NamespaceScope;
-import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
-import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
+import ch.tutteli.tsphp.typechecker.IDefinitionHelper;
+import ch.tutteli.tsphp.typechecker.scopes.IScopeFactory;
 
 }
 
+@members {
+
+protected SymbolTable symbolTable;
+protected IDefinitionHelper definitionHelper;
+protected IScope currentScope;
+protected IScopeFactory scopeFactory;
+
+
+public TSPHPTypeCheckerDefinition(TreeNodeStream input, SymbolTable theSymbolTable, IScopeFactory theScopeFactory, IDefinitionHelper theDefinitionHelper) {
+    this(input);
+    symbolTable = theSymbolTable;
+    currentScope = theSymbolTable.globalScope;
+    scopeFactory = theScopeFactory;
+    definitionHelper = theDefinitionHelper;
+    
+}
+
+}
 
 topdown
     :	enterNamespace
@@ -69,7 +77,7 @@ bottomup
     ;
     
 enterNamespace
-	:	^(Namespace t=(TYPE_NAME|DEFAULT_NAMESPACE) .) {currentScope = new NamespaceScope($t.text,currentScope);}
+	:	^(Namespace t=(TYPE_NAME|DEFAULT_NAMESPACE) .) {currentScope = scopeFactory.createNamespace($t.text, currentScope);}
 	;
 exitNamespace
 	:	Namespace {currentScope = currentScope.getEnclosingScope();}
@@ -95,9 +103,7 @@ varDeclaration[TSPHPAst tMod, TSPHPAst type]
 	|	^(variableId=VariableId cast)
 	)
 	{
-	        $type.scope = currentScope;
-	        IVariableSymbol variableSymbol = symbolFactory.createVariableSymbol(tMod,$variableId);
-	        currentScope.define(variableSymbol);
+		definitionHelper.defineVariable(currentScope,$type, $tMod, $variableId);
         }
 	;
 

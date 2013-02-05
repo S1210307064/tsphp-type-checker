@@ -51,8 +51,11 @@ public class VariableDefinitionTest extends ATypeCheckerTest
         collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase("namespace a{", ";}", "a"));
         collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase("namespace a\\a{", ";}", "a\\a"));
         collection.addAll(Arrays.asList(new Object[][]{
-                    {"namespace a{int $a=1;} namespace b{int $b=1;}", "a.$a b.$b"},
-                    {"namespace{int $d=1;} namespace a{int $a=1;} namespace b{int $b=1;}", "default.$d a.$a b.$b"}
+                    {"namespace a{int $a=1;} namespace b{float $b=1;}", "a.int a.$a b.float b.$b"},
+                    {
+                        "namespace{int $d=1;} namespace a{float $a=1;} namespace b{int $b=1;}",
+                        "default.int default.$d a.float a.$a b.int b.$b"
+                    }
                 }));
         return collection;
     }
