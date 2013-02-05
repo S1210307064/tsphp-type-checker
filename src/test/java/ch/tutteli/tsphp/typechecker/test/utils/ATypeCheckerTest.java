@@ -30,6 +30,7 @@ import junit.framework.Assert;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.CommonTreeNodeStream;
 import org.junit.Ignore;
+
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
@@ -74,12 +75,36 @@ public abstract class ATypeCheckerTest
                 stringBuilder.append(" ");
             }
             isFirstSymbol = false;
-            TSPHPAst type = entry.getValue();
-            String scope = type.scope != null ? type.scope.getScopeName() + "." : "";
-            stringBuilder.append(scope);
-            stringBuilder.append(type);
-            stringBuilder.append(" ");
+            stringBuilder.append(getTypesAsString(entry.getValue()));
             stringBuilder.append(entry.getKey());
+        }
+        return stringBuilder.toString();
+    }
+
+    private String getTypesAsString(TSPHPAst types) {
+        String typesAsString;
+
+        if (types == null) {
+            typesAsString = "";
+        } else if (types.getChildCount() == 0) {
+            typesAsString = getSingleTypeAsString(types);
+        } else {
+            typesAsString = getMultipleTypesAsString(types);
+        }
+
+        return typesAsString;
+    }
+
+    private String getSingleTypeAsString(TSPHPAst type) {
+        return (type.scope != null ? type.scope.getScopeName() + "." : "") + type.getText() + " ";
+    }
+
+    private String getMultipleTypesAsString(TSPHPAst types) {
+
+        StringBuilder stringBuilder = new StringBuilder();
+        int lenght = types.getChildCount();
+        for (int i = 0; i < lenght; ++i) {
+            stringBuilder.append(getSingleTypeAsString((TSPHPAst) types.getChild(i)));
         }
         return stringBuilder.toString();
     }

@@ -55,7 +55,22 @@ public class VariableDefinitionTest extends ATypeCheckerTest
                     {
                         "namespace{int $d=1;} namespace a{float $a=1;} namespace b{int $b=1;}",
                         "default.int default.$d a.float a.$a b.int b.$b"
-                    }
+                    },
+                    {
+                        "int $a; bool $b; float $c=1, $d;",
+                        "default.int default.$a default.bool default.$b "
+                        + "default.float default.$c default.float default.$d"
+                    },
+                    {
+                        "namespace a\\c; int $a; bool $b; float $c=1, $d;",
+                        "a\\c.int a\\c.$a a\\c.bool a\\c.$b "
+                        + "a\\c.float a\\c.$c a\\c.float a\\c.$d"
+                    },
+                    {
+                        "namespace b{int $a; bool $b;} namespace c\\e{ float $c=1, $d;}",
+                        "b.int b.$a b.bool b.$b "
+                        + "c\\e.float c\\e.$c c\\e.float c\\e.$d"
+                    },
                 }));
         return collection;
     }

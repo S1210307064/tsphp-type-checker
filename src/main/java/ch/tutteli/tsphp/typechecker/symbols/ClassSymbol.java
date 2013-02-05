@@ -18,14 +18,19 @@ package ch.tutteli.tsphp.typechecker.symbols;
 
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.TSPHPAst;
+import java.util.Set;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
+ *
+ * Adopted from the book Language Implementation Patterns by Terence Parr
  */
-public interface ISymbolFactory
+public class ClassSymbol extends AScopedSymbol implements IClassSymbol
 {
-    IVariableSymbol createVariableSymbol(TSPHPAst typeModifier, TSPHPAst variableId);
 
-    IClassSymbol createClassSymbol(TSPHPAst classModifier, TSPHPAst identifier, IScope currentScope);
+    public ClassSymbol(String name, TSPHPAst definitionAst, Set<Integer> modifiers, IScope enclosingScope) {
+        super(name, definitionAst, modifiers, enclosingScope);
+    }
+
 }

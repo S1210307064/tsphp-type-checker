@@ -42,8 +42,6 @@ package ch.tutteli.tsphp.typechecker;
 
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.TSPHPAst;
-import ch.tutteli.tsphp.typechecker.scopes.NamespaceScope;
-import ch.tutteli.tsphp.typechecker.IDefinitionHelper;
 import ch.tutteli.tsphp.typechecker.scopes.IScopeFactory;
 
 }
@@ -62,6 +60,7 @@ public TSPHPTypeCheckerDefinition(TreeNodeStream input, SymbolTable theSymbolTab
     currentScope = theSymbolTable.globalScope;
     scopeFactory = theScopeFactory;
     definitionHelper = theDefinitionHelper;
+
     
 }
 
@@ -69,43 +68,46 @@ public TSPHPTypeCheckerDefinition(TreeNodeStream input, SymbolTable theSymbolTab
 
 topdown
     :	enterNamespace
+    |	enterClass
     |	varDeclarationList
     ;
 
 bottomup
-    :   exitNamespace
+    :   exitScope
     ;
     
 enterNamespace
 	:	^(Namespace t=(TYPE_NAME|DEFAULT_NAMESPACE) .) {currentScope = scopeFactory.createNamespace($t.text, currentScope);}
 	;
-exitNamespace
-	:	Namespace {currentScope = currentScope.getEnclosingScope();}
-	;   
+	
+enterClass
+	:	^('class' cMod=. identifier=Identifier extIds=. implIds=. .) 
+		{
+			currentScope = definitionHelper.defineClass(currentScope,$cMod,$identifier,extIds,implIds);
+		}	
+	;
+
 
 varDeclarationList 
     :   ^(VARIABLE_DECLARATION_LIST 
-    		^(TYPE tMod=typeModifier type=.)
-    		varDeclaration[$tMod.start,$type]*
+    		^(TYPE tMod=. type=.)
+    		varDeclaration[$tMod,$type]*
     	)
         
     ;
-    
-typeModifier
-	:	TYPE_MODIFIER
-    	|	^(TYPE_MODIFIER Cast? QuestionMark?)
-	;
 	
 varDeclaration[TSPHPAst tMod, TSPHPAst type]
 	:
-	(	^(variableId=VariableId (~CASTING))
+	(	^(variableId=VariableId .)
 	|	variableId=VariableId	
-	|	^(variableId=VariableId cast)
 	)
 	{
 		definitionHelper.defineVariable(currentScope,$type, $tMod, $variableId);
         }
 	;
 
-cast	:	^(CASTING ^(TYPE typeModifier .) .)
-	;
+	
+exitScope
+	:	(Namespace|'class') {currentScope = currentScope.getEnclosingScope();}
+	;   
+

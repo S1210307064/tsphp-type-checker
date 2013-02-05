@@ -16,8 +16,11 @@
  */
 package ch.tutteli.tsphp.typechecker.test.utils;
 
+import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.TSPHPAst;
+import ch.tutteli.tsphp.typechecker.symbols.ClassSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IClassSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.SymbolFactory;
 import java.util.ArrayList;
@@ -35,7 +38,14 @@ public class TestSymbolFactory extends SymbolFactory
     @Override
     public IVariableSymbol createVariableSymbol(TSPHPAst typeModifierAst, TSPHPAst variableId) {
         IVariableSymbol symbol = super.createVariableSymbol(typeModifierAst, variableId);
-        notify(symbol);
+        updateListener(symbol);
+        return symbol;
+    }
+
+    @Override
+    public IClassSymbol createClassSymbol(TSPHPAst classModifierAst, TSPHPAst identifier, IScope currentScope) {
+        IClassSymbol symbol = super.createClassSymbol(classModifierAst, identifier, currentScope);
+        updateListener(symbol);
         return symbol;
     }
 
@@ -43,7 +53,7 @@ public class TestSymbolFactory extends SymbolFactory
         listeners.add(listener);
     }
 
-    private void notify(ISymbol symbol) {
+    private void updateListener(ISymbol symbol) {
         for (ICreateSymbolListener listener : listeners) {
             listener.setNewlyCreatedSymbol(symbol);
         }

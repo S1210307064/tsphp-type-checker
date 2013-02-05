@@ -16,6 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker.symbols;
 
+import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.TSPHPAst;
 import java.util.HashSet;
 import java.util.List;
@@ -29,21 +30,24 @@ public class SymbolFactory implements ISymbolFactory
 {
 
     @Override
-    public IVariableSymbol createVariableSymbol(TSPHPAst typeModifierAst, TSPHPAst variableId) {
+    public IVariableSymbol createVariableSymbol(TSPHPAst typeModifier, TSPHPAst variableId) {
+        return new VariableSymbol(variableId.getText(), variableId, getModifiers(typeModifier));
+    }
+
+    @Override
+    public IClassSymbol createClassSymbol(TSPHPAst classModifierAst, TSPHPAst identifier, IScope currentScope) {
+        return new ClassSymbol(identifier.getText(), identifier, getModifiers(classModifierAst), currentScope);
+    }
+
+    private Set<Integer> getModifiers(TSPHPAst modifierAst) {
         Set<Integer> modifiers = new HashSet<>();
 
-        if (typeModifierAst != null) {
-            List<TSPHPAst> children = (List<TSPHPAst>) typeModifierAst.getChildren();
-            if (children != null && !children.isEmpty()) {
-                for (TSPHPAst child : children) {
-                    modifiers.add(child.getType());
-                }
+        List<TSPHPAst> children = (List<TSPHPAst>) modifierAst.getChildren();
+        if (children != null && !children.isEmpty()) {
+            for (TSPHPAst child : children) {
+                modifiers.add(child.getType());
             }
         }
-
-        String variableName = variableId != null ? variableId.getText() : null;
-        VariableSymbol variableSymbol = new VariableSymbol(variableName, variableId, modifiers);
-        variableId.symbol = variableSymbol;         // track in AST
-        return variableSymbol;
+        return modifiers;
     }
 }

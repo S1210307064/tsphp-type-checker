@@ -18,6 +18,7 @@ package ch.tutteli.tsphp.typechecker;
 
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.TSPHPAst;
+import ch.tutteli.tsphp.typechecker.symbols.IClassSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 
@@ -35,9 +36,28 @@ public class DefinitionHelper implements IDefinitionHelper
     }
 
     @Override
+    public IScope defineClass(IScope currentScope, TSPHPAst modifier, TSPHPAst identifier, TSPHPAst extendsIds, TSPHPAst implementsIds) {
+        assignScopeToIdentifiers(currentScope, extendsIds);
+        assignScopeToIdentifiers(currentScope, implementsIds);
+        IClassSymbol classSymbol = symbolFactory.createClassSymbol(modifier, identifier, currentScope);
+        identifier.symbol = classSymbol;
+        currentScope.define(classSymbol);
+        return classSymbol;
+    }
+
+    @Override
     public void defineVariable(IScope currentScope, TSPHPAst type, TSPHPAst modifier, TSPHPAst variableId) {
         type.scope = currentScope;
         IVariableSymbol variableSymbol = symbolFactory.createVariableSymbol(modifier, variableId);
+        variableId.symbol = variableSymbol;
         currentScope.define(variableSymbol);
-    }  
+    }
+
+    private void assignScopeToIdentifiers(IScope currentScope, TSPHPAst identifierList) {
+        int lenght = identifierList.getChildCount();
+        for (int i = 0; i < lenght; ++i) {
+            TSPHPAst ast = (TSPHPAst) identifierList.getChild(i);
+            ast.scope = currentScope;
+        }
+    }
 }

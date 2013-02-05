@@ -32,9 +32,9 @@ import java.util.Map.Entry;
  */
 public class TestDefinitionHelper extends DefinitionHelper implements IDefinitionHelper, ICreateSymbolListener
 {
+
     private static TestSymbolFactory symbolFactory = new TestSymbolFactory();
     private List<Entry<ISymbol, TSPHPAst>> symbols = new ArrayList<>();
-    
     private ISymbol newlyCreatedSymbol;
 
     public TestDefinitionHelper() {
@@ -42,18 +42,41 @@ public class TestDefinitionHelper extends DefinitionHelper implements IDefinitio
         symbolFactory.registerListener(this);
     }
 
-    public List<Entry<ISymbol, TSPHPAst>>  getSymbols() {
+    public List<Entry<ISymbol, TSPHPAst>> getSymbols() {
         return symbols;
+    }
+
+    @Override
+    public IScope defineClass(IScope currentScope, TSPHPAst modifier, TSPHPAst identifier,
+            TSPHPAst extendsIds, TSPHPAst implementsIds) {
+        IScope scope = super.defineClass(currentScope, modifier, identifier, extendsIds, implementsIds);
+
+        TSPHPAst identifiers = null;
+        if (extendsIds.getChildCount() > 0 || implementsIds.getChildCount() > 0) {
+            identifiers = new TSPHPAst();
+            appendChildrenFromTo(extendsIds, identifiers);
+            appendChildrenFromTo(implementsIds, identifiers);
+        }
+
+        symbols.add(new HashMap.SimpleEntry<>(newlyCreatedSymbol, identifiers));
+        return scope;
     }
 
     @Override
     public void defineVariable(IScope currentScope, TSPHPAst type, TSPHPAst modifier, TSPHPAst variableId) {
         super.defineVariable(currentScope, type, modifier, variableId);
-        symbols.add(new HashMap.SimpleEntry<>(newlyCreatedSymbol,type));
+        symbols.add(new HashMap.SimpleEntry<>(newlyCreatedSymbol, type));
     }
 
     @Override
     public void setNewlyCreatedSymbol(ISymbol symbol) {
-         newlyCreatedSymbol = symbol;
+        newlyCreatedSymbol = symbol;
+    }
+
+    private void appendChildrenFromTo(TSPHPAst source, TSPHPAst target) {
+        int lenght = source.getChildCount();
+        for (int i = 0; i < lenght; ++i) {
+            target.addChild(source.getChild(i));
+        }
     }
 }

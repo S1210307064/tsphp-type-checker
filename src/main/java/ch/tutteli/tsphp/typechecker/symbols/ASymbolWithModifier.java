@@ -30,13 +30,13 @@ public class ASymbolWithModifier extends ASymbol
 
     protected Set<Integer> modifiers;
 
-    public ASymbolWithModifier(String name,TSPHPAst definitionAst, Set<Integer> theModifiers) {
-        super(name,definitionAst);
+    public ASymbolWithModifier(String name, TSPHPAst definitionAst, Set<Integer> theModifiers) {
+        super(name, definitionAst);
         modifiers = theModifiers;
     }
 
-    public ASymbolWithModifier(String name,TSPHPAst definitionAst, Set<Integer> theModifiers, IType type) {
-        super(name,definitionAst, type);
+    public ASymbolWithModifier(String name, TSPHPAst definitionAst, Set<Integer> theModifiers, IType type) {
+        super(name, definitionAst, type);
         modifiers = theModifiers;
     }
 

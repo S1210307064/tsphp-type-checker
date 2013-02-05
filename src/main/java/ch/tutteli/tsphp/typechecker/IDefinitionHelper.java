@@ -25,5 +25,8 @@ import ch.tutteli.tsphp.common.TSPHPAst;
  */
 public interface IDefinitionHelper
 {
-    void defineVariable(IScope currentScope,TSPHPAst type, TSPHPAst modifier, TSPHPAst variableId);
+    IScope defineClass(IScope currentScope, TSPHPAst modifier, TSPHPAst identifier,
+            TSPHPAst extendsIds, TSPHPAst implementsIds);
+
+    void defineVariable(IScope currentScope, TSPHPAst type, TSPHPAst modifier, TSPHPAst variableId);
 }

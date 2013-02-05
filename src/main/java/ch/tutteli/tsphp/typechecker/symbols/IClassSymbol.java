@@ -17,15 +17,13 @@
 package ch.tutteli.tsphp.typechecker.symbols;
 
 import ch.tutteli.tsphp.common.IScope;
-import ch.tutteli.tsphp.common.TSPHPAst;
+import ch.tutteli.tsphp.common.ISymbol;
+import ch.tutteli.tsphp.common.IType;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public interface ISymbolFactory
+public interface IClassSymbol extends ISymbol, IType, IScope
 {
-    IVariableSymbol createVariableSymbol(TSPHPAst typeModifier, TSPHPAst variableId);
-
-    IClassSymbol createClassSymbol(TSPHPAst classModifier, TSPHPAst identifier, IScope currentScope);
 }

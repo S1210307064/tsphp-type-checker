@@ -14,13 +14,17 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.scopes;
+package ch.tutteli.tsphp.typechecker.symbols;
 
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
+import ch.tutteli.tsphp.common.IType;
+import ch.tutteli.tsphp.common.TSPHPAst;
+import ch.tutteli.tsphp.typechecker.symbols.ASymbolWithModifier;
 import ch.tutteli.tsphp.typechecker.utils.ScopeHelper;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -28,16 +32,25 @@ import java.util.Map;
  *
  * Adopted from the book Language Implementation Patterns by Terence Parr
  */
-public abstract class AScope implements IScope
+public abstract class AScopedSymbol extends ASymbolWithModifier implements IScope
 {
 
-    protected String scopeName;
-    private IScope enclosingScope; // null if global (outermost) scope
-    private Map<String, ISymbol> symbols = new LinkedHashMap<>();
+    protected IScope enclosingScope;
+    public Map<String, ISymbol> members = new LinkedHashMap<>();
 
-    public AScope(String theScopeName, IScope theEnclosingScope) {
-        scopeName = theScopeName;
+    public AScopedSymbol(String name, TSPHPAst definitionAst, Set<Integer> modifiers, IScope theEnclosingScope) {
+        super(name, definitionAst, modifiers);
         enclosingScope = theEnclosingScope;
+    }
+
+    public AScopedSymbol(String name, TSPHPAst definitionAst, Set<Integer> modifiers, IScope theEnclosingScope, IType type) {
+        super(name, definitionAst, modifiers, type);
+        enclosingScope = theEnclosingScope;
+    }
+
+    @Override
+    public Map<String, ISymbol> getSymbols() {
+        return members;
     }
 
     @Override
@@ -62,16 +75,6 @@ public abstract class AScope implements IScope
 
     @Override
     public String getScopeName() {
-        return scopeName;
-    }
-
-    @Override
-    public Map<String, ISymbol> getSymbols() {
-        return symbols;
-    }
-
-    @Override
-    public String toString() {
-        return symbols.keySet().toString();
+        return name;
     }
 }
