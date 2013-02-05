@@ -21,24 +21,15 @@ import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.TSPHPAst;
 import ch.tutteli.tsphp.common.TSPHPAstAdaptorRegistry;
 import ch.tutteli.tsphp.parser.ParserFacade;
-import ch.tutteli.tsphp.typechecker.DefinitionHelper;
-import ch.tutteli.tsphp.typechecker.IDefinitionHelper;
 import ch.tutteli.tsphp.typechecker.SymbolTable;
 import ch.tutteli.tsphp.typechecker.TSPHPTypeCheckerDefinition;
 import ch.tutteli.tsphp.typechecker.scopes.ScopeFactory;
-import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
-import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
-import ch.tutteli.tsphp.typechecker.symbols.SymbolFactory;
 import java.util.List;
 import java.util.Map;
 import junit.framework.Assert;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.CommonTreeNodeStream;
 import org.junit.Ignore;
-import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
