@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.TreeSet;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,29 +52,31 @@ public class VariableDefinitionTest extends ATypeCheckerTest
 
         String global = "global";
 
-        collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase("", ";", "", ""));
-        collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase("namespace a{", ";}", "", "a"));
-        collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase("namespace a\\a{", ";}", "", "a\\a"));
+        collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase("", ";", "", "", null));
+        collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
+                "namespace a{", ";}", "", "a", null));
+        collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
+                "namespace a\\a{", ";}", "", "a\\a", null));
 
         //variable declaration in methods
         collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
                 "class a{ function void foo(){", ";}}",
                 global + ".a " + global + ".a.void " + global + ".a.foo()|" + TSPHPTypeCheckerDefinition.Public + " ",
-                "a.foo.local"));
+                "a.foo.local",null));
 
         collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
                 "namespace t; class a{ function void foo(){", ";}}",
                 global + ".t.a " + global + ".t.a.void " + global + ".t.a.foo()|" + TSPHPTypeCheckerDefinition.Public + " ",
-                "t.a.foo.local"));
+                "t.a.foo.local",null));
 
         //variable declaration in functions
         collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
                 "function void foo(){", ";}",
-                global + ".void " + global + ".foo() ", "foo.local"));
+                global + ".void " + global + ".foo() ", "foo.local",null));
 
         collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
                 "namespace t; function void foo(){", ";}",
-                global + ".t.void " + global + ".t.foo() ", "t.foo.local"));
+                global + ".t.void " + global + ".t.foo() ", "t.foo.local",null));
 
         //Different namespaces
         collection.addAll(Arrays.asList(new Object[][]{

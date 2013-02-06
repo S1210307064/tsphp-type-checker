@@ -33,6 +33,6 @@ public interface IDefinitionHelper
             TSPHPAst returnTypeModifier, TSPHPAst returnType, TSPHPAst identifier);
 
     void defineConstant(IScope currentScope, TSPHPAst type, TSPHPAst identifier);
-    
-    void defineVariable(IScope currentScope, TSPHPAst type, TSPHPAst modifier, TSPHPAst variableId);
+
+    void defineVariable(IScope currentScope, TSPHPAst modifier, TSPHPAst type, TSPHPAst variableId);
 }

@@ -31,7 +31,7 @@ public class ModifierHelper
 
     public static String getModifiers(SortedSet modifiers) {
         String typeModifiers;
-        if (modifiers.size() == 0) {
+        if (modifiers==null || modifiers.size() == 0) {
             typeModifiers = "";
         } else {
             typeModifiers = Arrays.toString(modifiers.toArray());

@@ -63,10 +63,13 @@ public TSPHPTypeCheckerDefinition(TreeNodeStream input, IScopeFactory theScopeFa
 }
 
 topdown
+	//scoped symbols
     :	enterNamespace
     |	enterClass
     |	enterMethodFunction
     |	enterBlock
+    
+    	//symbols
     |	constantDeclarationList
     |	variableDeclarationList
     ;
