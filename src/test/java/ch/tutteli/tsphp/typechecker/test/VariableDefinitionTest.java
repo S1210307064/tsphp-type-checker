@@ -16,6 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker.test;
 
+import ch.tutteli.tsphp.typechecker.TSPHPTypeCheckerDefinition;
 import ch.tutteli.tsphp.typechecker.test.utils.ATypeCheckerTest;
 import ch.tutteli.tsphp.typechecker.test.utils.VariableDeclarationListHelper;
 import java.util.ArrayList;
@@ -47,12 +48,34 @@ public class VariableDefinitionTest extends ATypeCheckerTest
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
         List<Object[]> collection = new ArrayList<>();
-        
+
         String global = "global";
-        
-        collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase("", ";", ""));
-        collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase("namespace a{", ";}", "a"));
-        collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase("namespace a\\a{", ";}", "a\\a"));
+
+        collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase("", ";", "", "global"));
+        collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase("namespace a{", ";}", "", global + ".a"));
+        collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase("namespace a\\a{", ";}", "", global + ".a\\a"));
+
+        //variable declaration in methods
+        collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
+                "class a{ function void foo(){", ";}}",
+                global + ".a " + global + ".a.void " + global + ".a.foo()|" + TSPHPTypeCheckerDefinition.Public + " ",
+                global + ".a.foo.local"));
+
+        collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
+                "namespace t; class a{ function void foo(){", ";}}",
+                global + ".t.a " + global + ".t.a.void " + global + ".t.a.foo()|" + TSPHPTypeCheckerDefinition.Public + " ",
+                global + ".t.a.foo.local"));
+
+        //variable declaration in functions
+        collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
+                "function void foo(){", ";}",
+                global + ".void " + global + ".foo() ", global + ".foo.local"));
+
+        collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
+                "namespace t; function void foo(){", ";}",
+                global + ".t.void " + global + ".t.foo() ", global + ".t.foo.local"));
+
+        //Different namespaces
         collection.addAll(Arrays.asList(new Object[][]{
                     {
                         "namespace a{int $a=1;} namespace b{float $b=1;}",
@@ -80,12 +103,31 @@ public class VariableDefinitionTest extends ATypeCheckerTest
                         + global + ".a\\c.float " + global + ".a\\c.$d"
                     },
                     {
-                        "namespace b{int $a; bool $b;} namespace c\\e{ float $c=1, $d;}",
+                        "namespace b{int $a; bool $b; float $e=1.2;} namespace c\\e{ float $c=1, $d;}",
                         global + ".b.int " + global + ".b.$a "
                         + global + ".b.bool " + global + ".b.$b "
+                        + global + ".b.float " + global + ".b.$e "
                         + global + ".c\\e.float " + global + ".c\\e.$c "
                         + global + ".c\\e.float " + global + ".c\\e.$d"
-                    },}));
+                    },
+                    {
+                        "namespace t\\r; class a{ function void foo(){ int $a=1; bool $b=true,$c=false;}}",
+                        global + ".t\\r.a " + global + ".t\\r.a.void " + global + ".t\\r.a.foo()|" + TSPHPTypeCheckerDefinition.Public + " "
+                        + global + ".t\\r.a.foo.local.int " + global + ".t\\r.a.foo.local.$a "
+                        + global + ".t\\r.a.foo.local.bool " + global + ".t\\r.a.foo.local.$b "
+                        + global + ".t\\r.a.foo.local.bool " + global + ".t\\r.a.foo.local.$c"
+                    },
+                    {
+                        "namespace{ function void foo(){ int $a=1; bool $b=true, $c=false;}}"
+                        + "namespace b{ function void bar(){float $d;}}",
+                        global + ".void " + global + ".foo() "
+                        + global + ".foo.local.int " + global + ".foo.local.$a "
+                        + global + ".foo.local.bool " + global + ".foo.local.$b "
+                        + global + ".foo.local.bool " + global + ".foo.local.$c "
+                        + global + ".b.void " + global + ".b.bar() "
+                        + global + ".b.bar.local.float " + global + ".b.bar.local.$d"
+                    }
+                }));
         return collection;
     }
 }

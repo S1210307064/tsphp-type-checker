@@ -18,7 +18,6 @@ package ch.tutteli.tsphp.typechecker.scopes;
 
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
-import ch.tutteli.tsphp.typechecker.utils.ScopeHelper;
 
 /**
  *

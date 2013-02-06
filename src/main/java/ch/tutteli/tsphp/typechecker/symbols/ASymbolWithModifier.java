@@ -19,7 +19,6 @@ package ch.tutteli.tsphp.typechecker.symbols;
 import ch.tutteli.tsphp.common.ASymbol;
 import ch.tutteli.tsphp.common.TSPHPAst;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeSet;
 
 /**

@@ -33,14 +33,14 @@ public class VariableDeclarationListHelper
     private VariableDeclarationListHelper() {
     }
 
-    public static Collection<Object[]> testStringsDefinitionPhase(String prefix, String appendix, String scopeName) {
-        return testStrings(prefix, appendix, scopeName, true);
+    public static Collection<Object[]> testStringsDefinitionPhase(String prefix, String appendix, String prefixExpected, String scopeName) {
+        return testStrings(prefix, appendix, prefixExpected, scopeName, true);
     }
 
     private static Collection<Object[]> testStrings(final String prefix, final String appendix,
-            String scope, final boolean isDefinitionPhase) {
+            final String prefixExpected, String scope, final boolean isDefinitionPhase) {
 
-        final String scopeName = "global." + (!scope.isEmpty() ? scope + "." : scope);
+        final String scopeName = !scope.isEmpty() ? scope + "." : scope;
 
         final List<Object[]> collection = new ArrayList<>();
         TypeHelper.getAllTypesInclModifier(new IAdder()
@@ -51,116 +51,116 @@ public class VariableDeclarationListHelper
                 String typeModifiers = ModifierHelper.getModifiers(modifiers);
                 collection.add(new Object[]{
                             prefix + type + "$a" + appendix,
-                            scopeName + typeExpected + " " + scopeName + "$a" + typeExpected2 + typeModifiers
+                            prefixExpected + scopeName + typeExpected + " " + scopeName + "$a" + typeExpected2 + typeModifiers
                         });
                 collection.add(new Object[]{
                             prefix + type + "$a=1" + appendix,
-                            scopeName + typeExpected + " " + scopeName + "$a" + typeExpected2 + typeModifiers
+                            prefixExpected + scopeName + typeExpected + " " + scopeName + "$a" + typeExpected2 + typeModifiers
                         });
             }
         });
 
         String typeExpected = isDefinitionPhase ? "" : "int";
-        collection.addAll(getVariations(prefix + "int", "=", appendix, scopeName, "int", typeExpected));
+        collection.addAll(getVariations(prefix + "int", "=", appendix, prefixExpected, scopeName, "int", typeExpected));
         typeExpected = isDefinitionPhase ? "" : "object";
-        collection.addAll(getVariations(prefix + "object", "=", appendix, scopeName, "object", typeExpected));
+        collection.addAll(getVariations(prefix + "object", "=", appendix, prefixExpected, scopeName, "object", typeExpected));
         typeExpected = isDefinitionPhase ? "" : "float";
-        collection.addAll(getVariations(prefix + "float", "=()", appendix, scopeName, "float", typeExpected));
+        collection.addAll(getVariations(prefix + "float", "=()", appendix, prefixExpected, scopeName, "float", typeExpected));
 
         typeExpected = isDefinitionPhase ? "" : "int";
         collection.addAll(Arrays.asList(new Object[][]{
                     {
                         prefix + "int $a                    " + appendix,
-                        scopeName + "int " + scopeName + "$a" + typeExpected
+                        prefixExpected + scopeName + "int " + scopeName + "$a" + typeExpected
                     },
                     {
                         prefix + "int $a,     $b            " + appendix,
-                        scopeName + "int " + scopeName + "$a" + typeExpected + " "
+                        prefixExpected + scopeName + "int " + scopeName + "$a" + typeExpected + " "
                         + scopeName + "int " + scopeName + "$b" + typeExpected
                     },
                     {
                         prefix + "int $a,     $b,     $c    " + appendix,
-                        scopeName + "int " + scopeName + "$a" + typeExpected + " "
+                        prefixExpected + scopeName + "int " + scopeName + "$a" + typeExpected + " "
                         + scopeName + "int " + scopeName + "$b" + typeExpected + " "
                         + scopeName + "int " + scopeName + "$c" + typeExpected},
                     {
                         prefix + "int $a=()1, $b=1,   $c    " + appendix,
-                        scopeName + "int " + scopeName + "$a" + typeExpected + " "
+                        prefixExpected + scopeName + "int " + scopeName + "$a" + typeExpected + " "
                         + scopeName + "int " + scopeName + "$b" + typeExpected + " "
                         + scopeName + "int " + scopeName + "$c" + typeExpected},
                     {
                         prefix + "int $a=()1, $b,     $c=1  " + appendix,
-                        scopeName + "int " + scopeName + "$a" + typeExpected + " "
+                        prefixExpected + scopeName + "int " + scopeName + "$a" + typeExpected + " "
                         + scopeName + "int " + scopeName + "$b" + typeExpected + " "
                         + scopeName + "int " + scopeName + "$c" + typeExpected},
                     {
                         prefix + "int $a=()1, $b=1,   $c=1  " + appendix,
-                        scopeName + "int " + scopeName + "$a" + typeExpected + " "
+                        prefixExpected + scopeName + "int " + scopeName + "$a" + typeExpected + " "
                         + scopeName + "int " + scopeName + "$b" + typeExpected + " "
                         + scopeName + "int " + scopeName + "$c" + typeExpected},
                     {
                         prefix + "int $a=()1, $b=()1, $c    " + appendix,
-                        scopeName + "int " + scopeName + "$a" + typeExpected + " "
+                        prefixExpected + scopeName + "int " + scopeName + "$a" + typeExpected + " "
                         + scopeName + "int " + scopeName + "$b" + typeExpected + " "
                         + scopeName + "int " + scopeName + "$c" + typeExpected},
                     {
                         prefix + "int $a=()1, $b=()1, $c=1  " + appendix,
-                        scopeName + "int " + scopeName + "$a" + typeExpected + " "
+                        prefixExpected + scopeName + "int " + scopeName + "$a" + typeExpected + " "
                         + scopeName + "int " + scopeName + "$b" + typeExpected + " "
                         + scopeName + "int " + scopeName + "$c" + typeExpected},
                     {
                         prefix + "int $a=()1, $b,     $c=()1" + appendix,
-                        scopeName + "int " + scopeName + "$a" + typeExpected + " "
+                        prefixExpected + scopeName + "int " + scopeName + "$a" + typeExpected + " "
                         + scopeName + "int " + scopeName + "$b" + typeExpected + " "
                         + scopeName + "int " + scopeName + "$c" + typeExpected},
                     {
                         prefix + "int $a=()1, $b=1,   $c=()1" + appendix,
-                        scopeName + "int " + scopeName + "$a" + typeExpected + " "
+                        prefixExpected + scopeName + "int " + scopeName + "$a" + typeExpected + " "
                         + scopeName + "int " + scopeName + "$b" + typeExpected + " "
                         + scopeName + "int " + scopeName + "$c" + typeExpected},
                     {
                         prefix + "int $a=()1, $b=()1, $c=()1" + appendix,
-                        scopeName + "int " + scopeName + "$a" + typeExpected + " "
+                        prefixExpected + scopeName + "int " + scopeName + "$a" + typeExpected + " "
                         + scopeName + "int " + scopeName + "$b" + typeExpected + " "
                         + scopeName + "int " + scopeName + "$c" + typeExpected},
                     {
                         prefix + "int $a,     $b=()1, $c    " + appendix,
-                        scopeName + "int " + scopeName + "$a" + typeExpected + " "
+                        prefixExpected + scopeName + "int " + scopeName + "$a" + typeExpected + " "
                         + scopeName + "int " + scopeName + "$b" + typeExpected + " "
                         + scopeName + "int " + scopeName + "$c" + typeExpected},
                     {
                         prefix + "int $a,     $b=()1, $c=1  " + appendix,
-                        scopeName + "int " + scopeName + "$a" + typeExpected + " "
+                        prefixExpected + scopeName + "int " + scopeName + "$a" + typeExpected + " "
                         + scopeName + "int " + scopeName + "$b" + typeExpected + " "
                         + scopeName + "int " + scopeName + "$c" + typeExpected},
                     {
                         prefix + "int $a,     $b=()1, $c=()1" + appendix,
-                        scopeName + "int " + scopeName + "$a" + typeExpected + " "
+                        prefixExpected + scopeName + "int " + scopeName + "$a" + typeExpected + " "
                         + scopeName + "int " + scopeName + "$b" + typeExpected + " "
                         + scopeName + "int " + scopeName + "$c" + typeExpected},
                     {
                         prefix + "int $a,     $b=1,   $c=()1" + appendix,
-                        scopeName + "int " + scopeName + "$a" + typeExpected + " "
+                        prefixExpected + scopeName + "int " + scopeName + "$a" + typeExpected + " "
                         + scopeName + "int " + scopeName + "$b" + typeExpected + " "
                         + scopeName + "int " + scopeName + "$c" + typeExpected},
                     {
                         prefix + "int $a=1,   $b=()1, $c    " + appendix,
-                        scopeName + "int " + scopeName + "$a" + typeExpected + " "
+                        prefixExpected + scopeName + "int " + scopeName + "$a" + typeExpected + " "
                         + scopeName + "int " + scopeName + "$b" + typeExpected + " "
                         + scopeName + "int " + scopeName + "$c" + typeExpected},
                     {
                         prefix + "int $a=1,   $b=()1, $c=1  " + appendix,
-                        scopeName + "int " + scopeName + "$a" + typeExpected + " "
+                        prefixExpected + scopeName + "int " + scopeName + "$a" + typeExpected + " "
                         + scopeName + "int " + scopeName + "$b" + typeExpected + " "
                         + scopeName + "int " + scopeName + "$c" + typeExpected},
                     {
                         prefix + "int $a=1,   $b=()1, $c=()1" + appendix,
-                        scopeName + "int " + scopeName + "$a" + typeExpected + " "
+                        prefixExpected + scopeName + "int " + scopeName + "$a" + typeExpected + " "
                         + scopeName + "int " + scopeName + "$b" + typeExpected + " "
                         + scopeName + "int " + scopeName + "$c" + typeExpected},
                     {
                         prefix + "int $a=1,   $b=1,   $c=()1" + appendix,
-                        scopeName + "int " + scopeName + "$a" + typeExpected + " "
+                        prefixExpected + scopeName + "int " + scopeName + "$a" + typeExpected + " "
                         + scopeName + "int " + scopeName + "$b" + typeExpected + " "
                         + scopeName + "int " + scopeName + "$c" + typeExpected}
                 }));
@@ -168,39 +168,39 @@ public class VariableDeclarationListHelper
     }
 
     private static Collection<Object[]> getVariations(String prefix, String operator, String appendix,
-            String scopeName, String type, String typeExpected) {
+            String prefixExpected, String scopeName, String type, String typeExpected) {
         return Arrays.asList(new Object[][]{
                     {
                         prefix + " $a, $b, $c" + appendix,
-                        scopeName + type + " " + scopeName + "$a" + typeExpected + " " + scopeName + type + " " + scopeName + "$b" + typeExpected + " " + scopeName + type + " " + scopeName + "$c" + typeExpected
+                        prefixExpected + scopeName + type + " " + scopeName + "$a" + typeExpected + " " + scopeName + type + " " + scopeName + "$b" + typeExpected + " " + scopeName + type + " " + scopeName + "$c" + typeExpected
                     },
                     {
                         prefix + " $a" + operator + "1, $b, $c" + appendix,
-                        scopeName + type + " " + scopeName + "$a" + typeExpected + " " + scopeName + type + " " + scopeName + "$b" + typeExpected + " " + scopeName + type + " " + scopeName + "$c" + typeExpected
+                        prefixExpected + scopeName + type + " " + scopeName + "$a" + typeExpected + " " + scopeName + type + " " + scopeName + "$b" + typeExpected + " " + scopeName + type + " " + scopeName + "$c" + typeExpected
                     },
                     {
                         prefix + " $a" + operator + "1, $b" + operator + "1, $c" + appendix,
-                        scopeName + type + " " + scopeName + "$a" + typeExpected + " " + scopeName + type + " " + scopeName + "$b" + typeExpected + " " + scopeName + type + " " + scopeName + "$c" + typeExpected
+                        prefixExpected + scopeName + type + " " + scopeName + "$a" + typeExpected + " " + scopeName + type + " " + scopeName + "$b" + typeExpected + " " + scopeName + type + " " + scopeName + "$c" + typeExpected
                     },
                     {
                         prefix + " $a" + operator + "1, $b, $c" + operator + "1" + appendix,
-                        scopeName + type + " " + scopeName + "$a" + typeExpected + " " + scopeName + type + " " + scopeName + "$b" + typeExpected + " " + scopeName + type + " " + scopeName + "$c" + typeExpected
+                        prefixExpected + scopeName + type + " " + scopeName + "$a" + typeExpected + " " + scopeName + type + " " + scopeName + "$b" + typeExpected + " " + scopeName + type + " " + scopeName + "$c" + typeExpected
                     },
                     {
                         prefix + " $a" + operator + "1, $b" + operator + "1, $c" + operator + "1" + appendix,
-                        scopeName + type + " " + scopeName + "$a" + typeExpected + " " + scopeName + type + " " + scopeName + "$b" + typeExpected + " " + scopeName + type + " " + scopeName + "$c" + typeExpected
+                        prefixExpected + scopeName + type + " " + scopeName + "$a" + typeExpected + " " + scopeName + type + " " + scopeName + "$b" + typeExpected + " " + scopeName + type + " " + scopeName + "$c" + typeExpected
                     },
                     {
                         prefix + " $a, $b" + operator + "1, $c" + appendix,
-                        scopeName + type + " " + scopeName + "$a" + typeExpected + " " + scopeName + type + " " + scopeName + "$b" + typeExpected + " " + scopeName + type + " " + scopeName + "$c" + typeExpected
+                        prefixExpected + scopeName + type + " " + scopeName + "$a" + typeExpected + " " + scopeName + type + " " + scopeName + "$b" + typeExpected + " " + scopeName + type + " " + scopeName + "$c" + typeExpected
                     },
                     {
                         prefix + " $a, $b" + operator + "1, $c" + operator + "1" + appendix,
-                        scopeName + type + " " + scopeName + "$a" + typeExpected + " " + scopeName + type + " " + scopeName + "$b" + typeExpected + " " + scopeName + type + " " + scopeName + "$c" + typeExpected
+                        prefixExpected + scopeName + type + " " + scopeName + "$a" + typeExpected + " " + scopeName + type + " " + scopeName + "$b" + typeExpected + " " + scopeName + type + " " + scopeName + "$c" + typeExpected
                     },
                     {
                         prefix + " $a, $b, $c" + operator + "1" + appendix,
-                        scopeName + type + " " + scopeName + "$a" + typeExpected + " " + scopeName + type + " " + scopeName + "$b" + typeExpected + " " + scopeName + type + " " + scopeName + "$c" + typeExpected
+                        prefixExpected + scopeName + type + " " + scopeName + "$a" + typeExpected + " " + scopeName + type + " " + scopeName + "$b" + typeExpected + " " + scopeName + type + " " + scopeName + "$c" + typeExpected
                     }
                 });
     }

@@ -19,7 +19,7 @@ package ch.tutteli.tsphp.typechecker.symbols;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.TSPHPAst;
-import ch.tutteli.tsphp.typechecker.utils.ScopeHelper;
+import ch.tutteli.tsphp.typechecker.scopes.ScopeHelper;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;

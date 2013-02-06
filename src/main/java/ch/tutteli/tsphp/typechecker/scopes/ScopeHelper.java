@@ -17,33 +17,24 @@
 package ch.tutteli.tsphp.typechecker.scopes;
 
 import ch.tutteli.tsphp.common.IScope;
+import ch.tutteli.tsphp.common.ISymbol;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class ScopeFactory implements IScopeFactory
+public class ScopeHelper
 {
 
-    private IScope globalScope = new GlobalScope();
-
-    public ScopeFactory() {
+    private ScopeHelper() {
     }
 
-    @Override
-    public IScope getGlobalScope() {
-        return globalScope;
+    public static void define(IScope scope, ISymbol symbol) {
+        scope.getSymbols().put(symbol.getName(), symbol);
+        symbol.setScope(scope);
     }
 
-    @Override
-    public INamespaceScope createNamespace(String name, IScope currentScope) {
-        return !name.equals(IScope.DEFAULT_NAMESPACE)
-                ? new NamespaceScope(name, currentScope)
-                : new DefaultNamespaceScope(currentScope);
-    }
-
-    @Override
-    public ILocalScope createLocalScope(IScope currentScope) {
-        return new LocalScope(currentScope);
+    public static ISymbol resolve(IScope aThis, String name) {
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 }

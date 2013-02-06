@@ -115,6 +115,10 @@ public abstract class ATypeCheckerTest
         return stringBuilder.toString();
     }
 
+    private boolean isNotDefaultNamespace(IScope scope) {
+        return !scope.getScopeName().equals(IScope.DEFAULT_NAMESPACE);
+    }
+
     private String getMultipleTypesAsString(TSPHPAst types) {
 
         StringBuilder stringBuilder = new StringBuilder();
@@ -123,9 +127,5 @@ public abstract class ATypeCheckerTest
             stringBuilder.append(getSingleTypeAsString((TSPHPAst) types.getChild(i)));
         }
         return stringBuilder.toString();
-    }
-
-    private boolean isNotDefaultNamespace(IScope scope) {
-        return !scope.getScopeName().equals(IScope.DEFAULT_NAMESPACE);
     }
 }

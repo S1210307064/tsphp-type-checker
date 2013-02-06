@@ -14,27 +14,15 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.utils;
+package ch.tutteli.tsphp.typechecker.scopes;
 
 import ch.tutteli.tsphp.common.IScope;
-import ch.tutteli.tsphp.common.ISymbol;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class ScopeHelper
+public interface ILocalScope extends IScope
 {
-
-    private ScopeHelper() {
-    }
-
-    public static void define(IScope scope, ISymbol symbol) {
-        scope.getSymbols().put(symbol.getName(), symbol);
-        symbol.setScope(scope);
-    }
-
-    public static ISymbol resolve(IScope aThis, String name) {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
+    
 }

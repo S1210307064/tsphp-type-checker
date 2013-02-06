@@ -22,28 +22,10 @@ import ch.tutteli.tsphp.common.IScope;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class ScopeFactory implements IScopeFactory
+public class LocalScope extends AScope implements ILocalScope
 {
 
-    private IScope globalScope = new GlobalScope();
-
-    public ScopeFactory() {
-    }
-
-    @Override
-    public IScope getGlobalScope() {
-        return globalScope;
-    }
-
-    @Override
-    public INamespaceScope createNamespace(String name, IScope currentScope) {
-        return !name.equals(IScope.DEFAULT_NAMESPACE)
-                ? new NamespaceScope(name, currentScope)
-                : new DefaultNamespaceScope(currentScope);
-    }
-
-    @Override
-    public ILocalScope createLocalScope(IScope currentScope) {
-        return new LocalScope(currentScope);
+    public LocalScope(IScope enclosingScope) {
+        super("local",enclosingScope);
     }
 }

@@ -30,4 +30,6 @@ public interface IScopeFactory
     IScope getGlobalScope();
 
     INamespaceScope createNamespace(String name, IScope currentScope);
+    
+    ILocalScope createLocalScope(IScope currentScope);
 }

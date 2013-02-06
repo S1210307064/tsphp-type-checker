@@ -65,7 +65,8 @@ public TSPHPTypeCheckerDefinition(TreeNodeStream input, IScopeFactory theScopeFa
 topdown
     :	enterNamespace
     |	enterClass
-    |	enterMethod
+    |	enterMethodFunction
+    |	enterBlock
     |	varDeclarationList
     ;
 
@@ -83,7 +84,7 @@ enterClass
 		{currentScope = definitionHelper.defineClass(currentScope,$cMod,$identifier,$extIds,$implIds); }	
 	;
 
-enterMethod
+enterMethodFunction
 	:	^( 	(	METHOD_DECLARATION
 			|	Function
 			) 
@@ -91,27 +92,33 @@ enterMethod
 		)
 		{currentScope = definitionHelper.defineMethod(currentScope,$mMod, $rtMod, $returnType, $identifier); }
 	;
-
+enterBlock
+	:	^(BLOCK .*) 
+		{currentScope = scopeFactory.createLocalScope(currentScope); }	
+	;
 varDeclarationList 
-    :   ^(VARIABLE_DECLARATION_LIST 
-    		^(TYPE tMod=. type=.)
-    		varDeclaration[$tMod,$type]*
-    	)
-        
-    ;
+	:	^(VARIABLE_DECLARATION_LIST 
+    			^(TYPE tMod=. type=.)
+    			varDeclaration[$tMod,$type]*
+    		)
+        ;
 	
 varDeclaration[TSPHPAst tMod, TSPHPAst type]
 	:
-	(	^(variableId=VariableId .)
-	|	variableId=VariableId	
-	)
-	{
-		definitionHelper.defineVariable(currentScope, $tMod, $type, $variableId);
-        }
+		(	^(variableId=VariableId .)
+		|	variableId=VariableId	
+		)
+		{ definitionHelper.defineVariable(currentScope, $tMod, $type, $variableId); }
 	;
 
 	
 exitScope
-	:	(Namespace|'class'|METHOD_DECLARATION) {currentScope = currentScope.getEnclosingScope();}
+	:	(	Namespace
+		|	'class'
+		|	METHOD_DECLARATION
+		|	Function
+		|	BLOCK
+		) 
+		{currentScope = currentScope.getEnclosingScope();}
 	;   
 
