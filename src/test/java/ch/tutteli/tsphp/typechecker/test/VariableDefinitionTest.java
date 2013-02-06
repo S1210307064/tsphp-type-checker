@@ -47,31 +47,45 @@ public class VariableDefinitionTest extends ATypeCheckerTest
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
         List<Object[]> collection = new ArrayList<>();
-        collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase("", ";", "default"));
+        
+        String global = "global";
+        
+        collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase("", ";", ""));
         collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase("namespace a{", ";}", "a"));
         collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase("namespace a\\a{", ";}", "a\\a"));
         collection.addAll(Arrays.asList(new Object[][]{
-                    {"namespace a{int $a=1;} namespace b{float $b=1;}", "a.int a.$a b.float b.$b"},
+                    {
+                        "namespace a{int $a=1;} namespace b{float $b=1;}",
+                        global + ".a.int " + global + ".a.$a "
+                        + global + ".b.float " + global + ".b.$b"
+                    },
                     {
                         "namespace{int $d=1;} namespace a{float $a=1;} namespace b{int $b=1;}",
-                        "default.int default.$d a.float a.$a b.int b.$b"
+                        global + ".int " + global + ".$d "
+                        + global + ".a.float " + global + ".a.$a "
+                        + global + ".b.int " + global + ".b.$b"
                     },
                     {
                         "int $a; bool $b; float $c=1, $d;",
-                        "default.int default.$a default.bool default.$b "
-                        + "default.float default.$c default.float default.$d"
+                        global + ".int " + global + ".$a "
+                        + global + ".bool " + global + ".$b "
+                        + global + ".float " + global + ".$c "
+                        + global + ".float " + global + ".$d"
                     },
                     {
                         "namespace a\\c; int $a; bool $b; float $c=1, $d;",
-                        "a\\c.int a\\c.$a a\\c.bool a\\c.$b "
-                        + "a\\c.float a\\c.$c a\\c.float a\\c.$d"
+                        global + ".a\\c.int " + global + ".a\\c.$a "
+                        + global + ".a\\c.bool " + global + ".a\\c.$b "
+                        + global + ".a\\c.float " + global + ".a\\c.$c "
+                        + global + ".a\\c.float " + global + ".a\\c.$d"
                     },
                     {
                         "namespace b{int $a; bool $b;} namespace c\\e{ float $c=1, $d;}",
-                        "b.int b.$a b.bool b.$b "
-                        + "c\\e.float c\\e.$c c\\e.float c\\e.$d"
-                    },
-                }));
+                        global + ".b.int " + global + ".b.$a "
+                        + global + ".b.bool " + global + ".b.$b "
+                        + global + ".c\\e.float " + global + ".c\\e.$c "
+                        + global + ".c\\e.float " + global + ".c\\e.$d"
+                    },}));
         return collection;
     }
 }

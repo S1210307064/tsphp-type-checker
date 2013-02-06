@@ -17,27 +17,36 @@
 package ch.tutteli.tsphp.typechecker.symbols;
 
 import ch.tutteli.tsphp.common.ASymbol;
+import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.TSPHPAst;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeSet;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class ASymbolWithModifier extends ASymbol
+public class MethodSymbol extends AScopedSymbol implements IMethodSymbol
 {
 
-    protected Set<Integer> modifiers;
+    private Map<String, ASymbol> orderedArgs = new LinkedHashMap<>();
+    private Set<Integer> returnTypeModifier;
 
-    public ASymbolWithModifier(TSPHPAst definitionAst, Set<Integer> theModifiers, String name) {
-        super(definitionAst, name);
-        modifiers = theModifiers;
+    public MethodSymbol(TSPHPAst definitionAst, Set<Integer> methodModifiers, Set<Integer> theReturnTypeModifier,
+            String name, IScope enclosingScope) {
+        super(definitionAst, methodModifiers, name, enclosingScope);
+        returnTypeModifier = theReturnTypeModifier;
+    }
+
+    @Override
+    public String getName() {
+        return name + "(" + stripBrackets(orderedArgs.keySet().toString()) + ")";
     }
 
     @Override
     public String toString() {
-        return super.toString() + ModifierHelper.getModifiers(new TreeSet<>(modifiers));
+        return super.toString() + ModifierHelper.getModifiers(new TreeSet(returnTypeModifier));
     }
 }

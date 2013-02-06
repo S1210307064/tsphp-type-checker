@@ -19,6 +19,7 @@ package ch.tutteli.tsphp.typechecker;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.TSPHPAst;
 import ch.tutteli.tsphp.typechecker.symbols.IClassSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 
@@ -46,7 +47,17 @@ public class DefinitionHelper implements IDefinitionHelper
     }
 
     @Override
-    public void defineVariable(IScope currentScope, TSPHPAst type, TSPHPAst modifier, TSPHPAst variableId) {
+    public IScope defineMethod(IScope currentScope, TSPHPAst methodModifier,
+            TSPHPAst returnTypeModifier, TSPHPAst returnType, TSPHPAst identifier) {
+        returnType.scope = currentScope;
+        IMethodSymbol methodSymbol = symbolFactory.createMethodSymbol(methodModifier, returnTypeModifier, identifier, currentScope);
+        identifier.symbol = methodSymbol;
+        currentScope.define(methodSymbol);
+        return methodSymbol;
+    }
+
+    @Override
+    public void defineVariable(IScope currentScope, TSPHPAst modifier, TSPHPAst type, TSPHPAst variableId) {
         type.scope = currentScope;
         IVariableSymbol variableSymbol = symbolFactory.createVariableSymbol(modifier, variableId);
         variableId.symbol = variableSymbol;

@@ -22,10 +22,10 @@ import ch.tutteli.tsphp.common.IScope;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class NamespaceScope extends AScope implements IScope
+public class NamespaceScope extends AScope implements INamespaceScope
 {
 
-    public NamespaceScope(String scopeName,IScope enclosingScope) {
-        super(scopeName,enclosingScope);
+    public NamespaceScope(String scopeName, IScope enclosingScope) {
+        super(scopeName, enclosingScope);
     }
 }

@@ -18,9 +18,7 @@ package ch.tutteli.tsphp.typechecker.symbols;
 
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
-import ch.tutteli.tsphp.common.IType;
 import ch.tutteli.tsphp.common.TSPHPAst;
-import ch.tutteli.tsphp.typechecker.symbols.ASymbolWithModifier;
 import ch.tutteli.tsphp.typechecker.utils.ScopeHelper;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -38,13 +36,8 @@ public abstract class AScopedSymbol extends ASymbolWithModifier implements IScop
     protected IScope enclosingScope;
     public Map<String, ISymbol> members = new LinkedHashMap<>();
 
-    public AScopedSymbol(String name, TSPHPAst definitionAst, Set<Integer> modifiers, IScope theEnclosingScope) {
-        super(name, definitionAst, modifiers);
-        enclosingScope = theEnclosingScope;
-    }
-
-    public AScopedSymbol(String name, TSPHPAst definitionAst, Set<Integer> modifiers, IScope theEnclosingScope, IType type) {
-        super(name, definitionAst, modifiers, type);
+    public AScopedSymbol(TSPHPAst definitionAst, Set<Integer> modifiers, String name, IScope theEnclosingScope) {
+        super(definitionAst, modifiers, name);
         enclosingScope = theEnclosingScope;
     }
 

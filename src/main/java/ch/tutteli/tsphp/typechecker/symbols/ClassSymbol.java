@@ -29,8 +29,7 @@ import java.util.Set;
 public class ClassSymbol extends AScopedSymbol implements IClassSymbol
 {
 
-    public ClassSymbol(String name, TSPHPAst definitionAst, Set<Integer> modifiers, IScope enclosingScope) {
-        super(name, definitionAst, modifiers, enclosingScope);
+    public ClassSymbol(TSPHPAst definitionAst, Set<Integer> modifiers, String name, IScope enclosingScope) {
+        super(definitionAst, modifiers, name, enclosingScope);
     }
-
 }

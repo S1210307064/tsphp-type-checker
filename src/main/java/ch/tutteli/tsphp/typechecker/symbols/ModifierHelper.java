@@ -14,31 +14,29 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.scopes;
+package ch.tutteli.tsphp.typechecker.symbols;
 
-import ch.tutteli.tsphp.common.IScope;
+import java.util.Arrays;
+import java.util.SortedSet;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class ScopeFactory implements IScopeFactory
+public class ModifierHelper
 {
 
-    private IScope globalScope = new GlobalScope();
-
-    public ScopeFactory() {
+    private ModifierHelper() {
     }
 
-    @Override
-    public IScope getGlobalScope() {
-        return globalScope;
-    }
-
-    @Override
-    public INamespaceScope createNamespace(String name, IScope currentScope) {
-        return !name.equals(IScope.DEFAULT_NAMESPACE)
-                ? new NamespaceScope(name, currentScope)
-                : new DefaultNamespaceScope(currentScope);
+    public static String getModifiers(SortedSet modifiers) {
+        String typeModifiers;
+        if (modifiers.size() == 0) {
+            typeModifiers = "";
+        } else {
+            typeModifiers = Arrays.toString(modifiers.toArray());
+            typeModifiers = "|" + typeModifiers.substring(1, typeModifiers.length() - 1);
+        }
+        return typeModifiers;
     }
 }

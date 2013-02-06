@@ -33,12 +33,13 @@ import java.util.Map.Entry;
 public class TestDefinitionHelper extends DefinitionHelper implements IDefinitionHelper, ICreateSymbolListener
 {
 
-    private static TestSymbolFactory symbolFactory = new TestSymbolFactory();
+    private TestSymbolFactory symbolFactory;
     private List<Entry<ISymbol, TSPHPAst>> symbols = new ArrayList<>();
     private ISymbol newlyCreatedSymbol;
 
-    public TestDefinitionHelper() {
-        super(symbolFactory);
+    public TestDefinitionHelper(TestSymbolFactory theSymbolFactory) {
+        super(theSymbolFactory);
+        symbolFactory = theSymbolFactory;
         symbolFactory.registerListener(this);
     }
 
@@ -62,9 +63,17 @@ public class TestDefinitionHelper extends DefinitionHelper implements IDefinitio
         return scope;
     }
 
+     @Override
+    public IScope defineMethod(IScope currentScope, TSPHPAst methodModifier,
+            TSPHPAst returnTypeModifier, TSPHPAst returnType, TSPHPAst identifier) {
+        IScope scope = super.defineMethod(currentScope, methodModifier, returnTypeModifier, returnType, identifier);
+        symbols.add(new HashMap.SimpleEntry<>(newlyCreatedSymbol, returnType));
+        return scope;
+    }
+
     @Override
-    public void defineVariable(IScope currentScope, TSPHPAst type, TSPHPAst modifier, TSPHPAst variableId) {
-        super.defineVariable(currentScope, type, modifier, variableId);
+    public void defineVariable(IScope currentScope, TSPHPAst modifier, TSPHPAst type, TSPHPAst variableId) {
+        super.defineVariable(currentScope, modifier,type, variableId);
         symbols.add(new HashMap.SimpleEntry<>(newlyCreatedSymbol, type));
     }
 

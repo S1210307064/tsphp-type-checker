@@ -16,6 +16,8 @@
  */
 package ch.tutteli.tsphp.typechecker.test.utils;
 
+import java.util.SortedSet;
+
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
@@ -23,5 +25,5 @@ package ch.tutteli.tsphp.typechecker.test.utils;
 public interface IAdder
 {
 
-    void add(String type, String typeExpected, String typeModifier);
+    void add(String type, String typeExpected, SortedSet<Integer> modifiers);
 }

@@ -14,20 +14,16 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker;
+package ch.tutteli.tsphp.typechecker.symbols;
 
 import ch.tutteli.tsphp.common.IScope;
-import ch.tutteli.tsphp.typechecker.scopes.GlobalScope;
+import ch.tutteli.tsphp.common.ISymbol;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public final class SymbolTable
+public interface IMethodSymbol extends ISymbol, IScope
 {
-
-    IScope globalScope = new GlobalScope();
-
-    public SymbolTable() {
-    }
+    
 }

@@ -16,9 +16,11 @@
  */
 package ch.tutteli.tsphp.typechecker.test;
 
+import ch.tutteli.tsphp.typechecker.TSPHPTypeCheckerDefinition;
 import ch.tutteli.tsphp.typechecker.test.utils.ATypeCheckerTest;
 import ch.tutteli.tsphp.typechecker.test.utils.TypeHelper;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import org.antlr.runtime.RecognitionException;
@@ -47,41 +49,62 @@ public class ClassTest extends ATypeCheckerTest
     public static Collection<Object[]> testStrings() {
         List<Object[]> collection = new ArrayList<>();
 
-        collection.add(new Object[]{"class a{}", "default.a"});
-        collection.add(new Object[]{
-            "class a{} class b{} class c extends a\\b{}",
-            "default.a default.b default.a\\b default.c"
-        });
-        collection.add(new Object[]{
-            "namespace x{class a{}} namespace y{class b{}} namespace z{class c extends a\\b{}} namespace{class d{}}",
-            "x.a y.b z.a\\b z.c default.d"
-        });
+        int fin = TSPHPTypeCheckerDefinition.Final;
+        int abstr = TSPHPTypeCheckerDefinition.Abstract;
+        String global = "global";
+
+        collection.addAll(Arrays.asList(new Object[][]{
+                    {"class a{}", global + ".a"},
+                    {"final class a{}", global + ".a|" + fin},
+                    {"abstract class a{}", global + ".a|" + abstr},
+                    {
+                        "class a{} class b{} class c extends a\\b{}",
+                        global + ".a " + global + ".b " + global + ".a\\b " + global + ".c"
+                    },
+                    {
+                        "namespace x{class a{}} namespace y{class b{}} "
+                        + "namespace z{class c extends a\\b{}} namespace{class d{}}",
+                        global + ".x.a " + global + ".y.b " + global + ".z.a\\b " + global + ".z.c " + global + ".d"
+                    }
+                }));
+
 
         String[] types = TypeHelper.getClassInterfaceTypes();
         for (String type : types) {
-            collection.add(new Object[]{"class a extends " + type + "{}", "default." + type + " default.a"});
             collection.add(new Object[]{
-                        "class a extends " + type + "," + type + "{}",
-                        "default." + type + " default." + type + " default.a"
+                        "namespace b; class a extends " + type + "{}",
+                        global + ".b." + type + " " + global + ".b.a"
                     });
             collection.add(new Object[]{
-                        "class a extends " + type + "," + type + "," + type + "{}",
-                        "default." + type + " default." + type + " default." + type + " default.a"
+                        "final class a extends " + type + "," + type + "{}",
+                        global + "." + type + " " + global + "." + type + " "
+                        + global + ".a|" + fin
+                    });
+            collection.add(new Object[]{
+                        "abstract class a extends " + type + "," + type + "," + type + "{}",
+                        global + "." + type + " " + global + "." + type + " " + global + "." + type + " "
+                        + global + ".a|" + abstr
                     });
 
-            collection.add(new Object[]{"class a implements " + type + "{}", "default." + type + " default.a"});
             collection.add(new Object[]{
-                        "class a implements " + type + "," + type + "{}",
-                        "default." + type + " default." + type + " default.a"
+                        "abstract class a implements " + type + "{}",
+                        global + "." + type + " " + global + ".a|" + abstr
+                    });
+            collection.add(new Object[]{
+                        "namespace c; final class a implements " + type + "," + type + "{}",
+                        global + ".c." + type + " " + global + ".c." + type + " "
+                        + global + ".c.a|" + fin
                     });
             collection.add(new Object[]{
                         "class a implements " + type + "," + type + "," + type + "{}",
-                        "default." + type + " default." + type + " default." + type + " default.a"
+                        global + "." + type + " " + global + "." + type + " " + global + "." + type + " "
+                        + global + ".a"
                     });
 
             collection.add(new Object[]{
                         "class a extends " + type + " implements " + type + "{}",
-                        "default." + type + " default." + type + " default.a"
+                        global + "." + type + " " + global + "." + type + " "
+                        + global + ".a"
                     });
         }
 

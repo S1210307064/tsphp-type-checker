@@ -17,12 +17,13 @@
 package ch.tutteli.tsphp.typechecker.test.utils;
 
 import ch.tutteli.tsphp.common.IParser;
+import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.TSPHPAst;
 import ch.tutteli.tsphp.common.TSPHPAstAdaptorRegistry;
 import ch.tutteli.tsphp.parser.ParserFacade;
-import ch.tutteli.tsphp.typechecker.SymbolTable;
 import ch.tutteli.tsphp.typechecker.TSPHPTypeCheckerDefinition;
+import ch.tutteli.tsphp.typechecker.scopes.IScopeFactory;
 import ch.tutteli.tsphp.typechecker.scopes.ScopeFactory;
 import java.util.List;
 import java.util.Map;
@@ -57,11 +58,13 @@ public abstract class ATypeCheckerTest
         CommonTreeNodeStream commonTreeNodeStream = new CommonTreeNodeStream(TSPHPAstAdaptorRegistry.get(), ast);
         commonTreeNodeStream.setTokenStream(parser.getTokenStream());
 
+        IScopeFactory scopeFactory = new ScopeFactory();
 
+        TestSymbolFactory symbolFactory = new TestSymbolFactory();
+        testDefinitionHelper = new TestDefinitionHelper(symbolFactory);
 
-        testDefinitionHelper = new TestDefinitionHelper();
-        TSPHPTypeCheckerDefinition definition = new TSPHPTypeCheckerDefinition(
-                commonTreeNodeStream, new SymbolTable(), new ScopeFactory(), testDefinitionHelper);
+        TSPHPTypeCheckerDefinition definition = new TSPHPTypeCheckerDefinition(commonTreeNodeStream, scopeFactory, testDefinitionHelper);
+
         definition.downup(ast);
         Assert.assertEquals(testString + " failed.", expectedResult, getSymbolsAsString());
     }
@@ -96,7 +99,20 @@ public abstract class ATypeCheckerTest
     }
 
     private String getSingleTypeAsString(TSPHPAst type) {
-        return (type.scope != null ? type.scope.getScopeName() + "." : "") + type.getText() + " ";
+        return getEnclosingScopeNames(type.scope) + type.getText() + " ";
+    }
+
+    private String getEnclosingScopeNames(IScope scope) {
+        StringBuilder stringBuilder = new StringBuilder();
+        while (scope != null) {
+            if (isNotDefaultNamespace(scope)) {
+                stringBuilder.insert(0, ".");
+                stringBuilder.insert(0, scope.getScopeName());
+
+            }
+            scope = scope.getEnclosingScope();
+        }
+        return stringBuilder.toString();
     }
 
     private String getMultipleTypesAsString(TSPHPAst types) {
@@ -107,5 +123,9 @@ public abstract class ATypeCheckerTest
             stringBuilder.append(getSingleTypeAsString((TSPHPAst) types.getChild(i)));
         }
         return stringBuilder.toString();
+    }
+
+    private boolean isNotDefaultNamespace(IScope scope) {
+        return !scope.getScopeName().equals(IScope.DEFAULT_NAMESPACE);
     }
 }

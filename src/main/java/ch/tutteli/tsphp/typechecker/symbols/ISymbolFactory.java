@@ -25,7 +25,11 @@ import ch.tutteli.tsphp.common.TSPHPAst;
  */
 public interface ISymbolFactory
 {
-    IVariableSymbol createVariableSymbol(TSPHPAst typeModifier, TSPHPAst variableId);
 
     IClassSymbol createClassSymbol(TSPHPAst classModifier, TSPHPAst identifier, IScope currentScope);
+
+    IMethodSymbol createMethodSymbol(TSPHPAst methodModifier, TSPHPAst returnTypeModifier, TSPHPAst identifier,
+            IScope currentScope);
+
+    IVariableSymbol createVariableSymbol(TSPHPAst typeModifier, TSPHPAst variableId);
 }

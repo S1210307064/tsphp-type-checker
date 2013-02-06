@@ -48,20 +48,16 @@ import ch.tutteli.tsphp.typechecker.scopes.IScopeFactory;
 
 @members {
 
-protected SymbolTable symbolTable;
 protected IDefinitionHelper definitionHelper;
 protected IScope currentScope;
 protected IScopeFactory scopeFactory;
 
 
-public TSPHPTypeCheckerDefinition(TreeNodeStream input, SymbolTable theSymbolTable, IScopeFactory theScopeFactory, IDefinitionHelper theDefinitionHelper) {
+public TSPHPTypeCheckerDefinition(TreeNodeStream input, IScopeFactory theScopeFactory, IDefinitionHelper theDefinitionHelper) {
     this(input);
-    symbolTable = theSymbolTable;
-    currentScope = theSymbolTable.globalScope;
     scopeFactory = theScopeFactory;
-    definitionHelper = theDefinitionHelper;
-
-    
+    currentScope = theScopeFactory.getGlobalScope();
+    definitionHelper = theDefinitionHelper;    
 }
 
 }
@@ -69,6 +65,7 @@ public TSPHPTypeCheckerDefinition(TreeNodeStream input, SymbolTable theSymbolTab
 topdown
     :	enterNamespace
     |	enterClass
+    |	enterMethod
     |	varDeclarationList
     ;
 
@@ -77,16 +74,19 @@ bottomup
     ;
     
 enterNamespace
-	:	^(Namespace t=(TYPE_NAME|DEFAULT_NAMESPACE) .) {currentScope = scopeFactory.createNamespace($t.text, currentScope);}
+	:	^(Namespace t=(TYPE_NAME|DEFAULT_NAMESPACE) .) 
+		{currentScope = scopeFactory.createNamespace($t.text, currentScope); }
 	;
 	
 enterClass
 	:	^('class' cMod=. identifier=Identifier extIds=. implIds=. .) 
-		{
-			currentScope = definitionHelper.defineClass(currentScope,$cMod,$identifier,extIds,implIds);
-		}	
+		{currentScope = definitionHelper.defineClass(currentScope,$cMod,$identifier,$extIds,$implIds); }	
 	;
 
+enterMethod
+	:	^(METHOD_DECLARATION mMod=. ^(TYPE rtMod=. returnType=.) identifier=. . .)
+		{currentScope = definitionHelper.defineMethod(currentScope,$mMod, $rtMod, $returnType, $identifier); }
+	;
 
 varDeclarationList 
     :   ^(VARIABLE_DECLARATION_LIST 
@@ -102,12 +102,12 @@ varDeclaration[TSPHPAst tMod, TSPHPAst type]
 	|	variableId=VariableId	
 	)
 	{
-		definitionHelper.defineVariable(currentScope,$type, $tMod, $variableId);
+		definitionHelper.defineVariable(currentScope, $tMod, $type, $variableId);
         }
 	;
 
 	
 exitScope
-	:	(Namespace|'class') {currentScope = currentScope.getEnclosingScope();}
+	:	(Namespace|'class'|METHOD_DECLARATION) {currentScope = currentScope.getEnclosingScope();}
 	;   
 

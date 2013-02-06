@@ -22,23 +22,6 @@ import ch.tutteli.tsphp.common.IScope;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class ScopeFactory implements IScopeFactory
+public interface INamespaceScope extends IScope
 {
-
-    private IScope globalScope = new GlobalScope();
-
-    public ScopeFactory() {
-    }
-
-    @Override
-    public IScope getGlobalScope() {
-        return globalScope;
-    }
-
-    @Override
-    public INamespaceScope createNamespace(String name, IScope currentScope) {
-        return !name.equals(IScope.DEFAULT_NAMESPACE)
-                ? new NamespaceScope(name, currentScope)
-                : new DefaultNamespaceScope(currentScope);
-    }
 }

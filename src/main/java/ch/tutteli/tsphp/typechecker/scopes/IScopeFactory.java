@@ -24,5 +24,10 @@ import ch.tutteli.tsphp.common.IScope;
  */
 public interface IScopeFactory
 {
-    NamespaceScope createNamespace(String name, IScope currentScope);    
+
+    static final String DEFAULT_NAMESPACE = "default";
+
+    IScope getGlobalScope();
+
+    INamespaceScope createNamespace(String name, IScope currentScope);
 }

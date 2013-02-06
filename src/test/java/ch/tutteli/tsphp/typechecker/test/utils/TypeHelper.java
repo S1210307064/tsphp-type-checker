@@ -20,6 +20,7 @@ import ch.tutteli.tsphp.typechecker.TSPHPTypeCheckerDefinition;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.TreeSet;
 
 /**
  *
@@ -87,21 +88,21 @@ public class TypeHelper
         int questionMark = TSPHPTypeCheckerDefinition.QuestionMark;
 
         for (String type : types) {
-            adder.add(type, type, "");
-            adder.add("cast " + type, type, "|" + cast);
-            adder.add(type + "?", type, "|" + questionMark);
-            adder.add("cast " + type + "?", type, "|" + cast + "," + questionMark);
+            adder.add(type, type, new TreeSet());
+            adder.add("cast " + type, type, new TreeSet(Arrays.asList(new Integer[]{cast})));
+            adder.add(type + "?", type, new TreeSet(Arrays.asList(new Integer[]{questionMark})));
+            adder.add("cast " + type + "?", type, new TreeSet(Arrays.asList(new Integer[]{cast, questionMark})));
         }
 
-        adder.add("array", "array", "");
-        adder.add("cast array", "array", "|" + cast);
+        adder.add("array", "array", new TreeSet());
+        adder.add("cast array", "array", new TreeSet(Arrays.asList(new Integer[]{cast})));
 
         types = getClassInterfaceTypes();
         for (String type : types) {
-            adder.add(type, type, "");
-            adder.add("cast " + type, type, "|" + cast);
+            adder.add(type, type, new TreeSet());
+            adder.add("cast " + type, type, new TreeSet(Arrays.asList(new Integer[]{cast})));
         }
-        adder.add("resource", "resource", "");
-        adder.add("object", "object", "");
+        adder.add("resource", "resource", new TreeSet());
+        adder.add("object", "object", new TreeSet());
     }
 }

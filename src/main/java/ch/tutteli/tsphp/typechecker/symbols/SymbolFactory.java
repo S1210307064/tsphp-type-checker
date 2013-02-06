@@ -30,13 +30,20 @@ public class SymbolFactory implements ISymbolFactory
 {
 
     @Override
-    public IVariableSymbol createVariableSymbol(TSPHPAst typeModifier, TSPHPAst variableId) {
-        return new VariableSymbol(variableId.getText(), variableId, getModifiers(typeModifier));
+    public IClassSymbol createClassSymbol(TSPHPAst classModifierAst, TSPHPAst identifier, IScope currentScope) {
+        return new ClassSymbol(identifier, getModifiers(classModifierAst), identifier.getText(), currentScope);
     }
 
     @Override
-    public IClassSymbol createClassSymbol(TSPHPAst classModifierAst, TSPHPAst identifier, IScope currentScope) {
-        return new ClassSymbol(identifier.getText(), identifier, getModifiers(classModifierAst), currentScope);
+    public IMethodSymbol createMethodSymbol(TSPHPAst methodModifier, TSPHPAst returnTypeModifier, TSPHPAst identifier,
+            IScope currentScope) {
+        return new MethodSymbol(identifier, getModifiers(methodModifier), getModifiers(returnTypeModifier),
+                identifier.getText(), currentScope);
+    }
+
+    @Override
+    public IVariableSymbol createVariableSymbol(TSPHPAst typeModifier, TSPHPAst variableId) {
+        return new VariableSymbol(variableId, getModifiers(typeModifier), variableId.getText());
     }
 
     private Set<Integer> getModifiers(TSPHPAst modifierAst) {

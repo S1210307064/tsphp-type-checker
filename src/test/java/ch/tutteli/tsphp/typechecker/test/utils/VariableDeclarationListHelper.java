@@ -16,10 +16,12 @@
  */
 package ch.tutteli.tsphp.typechecker.test.utils;
 
+import ch.tutteli.tsphp.typechecker.symbols.ModifierHelper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.SortedSet;
 
 /**
  *
@@ -38,32 +40,32 @@ public class VariableDeclarationListHelper
     private static Collection<Object[]> testStrings(final String prefix, final String appendix,
             String scope, final boolean isDefinitionPhase) {
 
-        final String scopeName = !scope.isEmpty() ? scope + "." : scope;
+        final String scopeName = "global." + (!scope.isEmpty() ? scope + "." : scope);
 
         final List<Object[]> collection = new ArrayList<>();
         TypeHelper.getAllTypesInclModifier(new IAdder()
         {
             @Override
-            public void add(String type, String typeExpected, String typeModifier) {
+            public void add(String type, String typeExpected, SortedSet modifiers) {
                 String typeExpected2 = isDefinitionPhase ? "" : typeExpected;
-
+                String typeModifiers = ModifierHelper.getModifiers(modifiers);
                 collection.add(new Object[]{
                             prefix + type + "$a" + appendix,
-                            scopeName + typeExpected + " " + scopeName + "$a" + typeExpected2 + typeModifier
+                            scopeName + typeExpected + " " + scopeName + "$a" + typeExpected2 + typeModifiers
                         });
                 collection.add(new Object[]{
                             prefix + type + "$a=1" + appendix,
-                            scopeName + typeExpected + " " + scopeName + "$a" + typeExpected2 + typeModifier
+                            scopeName + typeExpected + " " + scopeName + "$a" + typeExpected2 + typeModifiers
                         });
             }
         });
 
         String typeExpected = isDefinitionPhase ? "" : "int";
-        collection.addAll(getVariations(prefix + "int", "=", appendix, scopeName,"int", typeExpected));
+        collection.addAll(getVariations(prefix + "int", "=", appendix, scopeName, "int", typeExpected));
         typeExpected = isDefinitionPhase ? "" : "object";
-        collection.addAll(getVariations(prefix + "object", "=", appendix, scopeName,"object", typeExpected));
+        collection.addAll(getVariations(prefix + "object", "=", appendix, scopeName, "object", typeExpected));
         typeExpected = isDefinitionPhase ? "" : "float";
-        collection.addAll(getVariations(prefix + "float", "=()", appendix, scopeName,"float", typeExpected));
+        collection.addAll(getVariations(prefix + "float", "=()", appendix, scopeName, "float", typeExpected));
 
         typeExpected = isDefinitionPhase ? "" : "int";
         collection.addAll(Arrays.asList(new Object[][]{
@@ -170,35 +172,35 @@ public class VariableDeclarationListHelper
         return Arrays.asList(new Object[][]{
                     {
                         prefix + " $a, $b, $c" + appendix,
-                        scopeName + type + " " + scopeName + "$a" + typeExpected + " " + scopeName + type + " "  + scopeName + "$b" + typeExpected + " " + scopeName + type + " "  + scopeName + "$c" + typeExpected
+                        scopeName + type + " " + scopeName + "$a" + typeExpected + " " + scopeName + type + " " + scopeName + "$b" + typeExpected + " " + scopeName + type + " " + scopeName + "$c" + typeExpected
                     },
                     {
                         prefix + " $a" + operator + "1, $b, $c" + appendix,
-                        scopeName + type + " "  + scopeName + "$a" + typeExpected + " " + scopeName + type + " "  + scopeName + "$b" + typeExpected + " " + scopeName + type + " "  + scopeName + "$c" + typeExpected
+                        scopeName + type + " " + scopeName + "$a" + typeExpected + " " + scopeName + type + " " + scopeName + "$b" + typeExpected + " " + scopeName + type + " " + scopeName + "$c" + typeExpected
                     },
                     {
                         prefix + " $a" + operator + "1, $b" + operator + "1, $c" + appendix,
-                        scopeName + type + " "  + scopeName + "$a" + typeExpected + " " + scopeName + type + " "  + scopeName + "$b" + typeExpected + " " + scopeName + type + " "  + scopeName + "$c" + typeExpected
+                        scopeName + type + " " + scopeName + "$a" + typeExpected + " " + scopeName + type + " " + scopeName + "$b" + typeExpected + " " + scopeName + type + " " + scopeName + "$c" + typeExpected
                     },
                     {
                         prefix + " $a" + operator + "1, $b, $c" + operator + "1" + appendix,
-                        scopeName + type + " "  + scopeName + "$a" + typeExpected + " " + scopeName + type + " "  + scopeName + "$b" + typeExpected + " " + scopeName + type + " "  + scopeName + "$c" + typeExpected
+                        scopeName + type + " " + scopeName + "$a" + typeExpected + " " + scopeName + type + " " + scopeName + "$b" + typeExpected + " " + scopeName + type + " " + scopeName + "$c" + typeExpected
                     },
                     {
                         prefix + " $a" + operator + "1, $b" + operator + "1, $c" + operator + "1" + appendix,
-                        scopeName + type + " "  + scopeName + "$a" + typeExpected + " " + scopeName + type + " "  + scopeName + "$b" + typeExpected + " " + scopeName + type + " "  + scopeName + "$c" + typeExpected
+                        scopeName + type + " " + scopeName + "$a" + typeExpected + " " + scopeName + type + " " + scopeName + "$b" + typeExpected + " " + scopeName + type + " " + scopeName + "$c" + typeExpected
                     },
                     {
                         prefix + " $a, $b" + operator + "1, $c" + appendix,
-                        scopeName + type + " "  + scopeName + "$a" + typeExpected + " " + scopeName + type + " "  + scopeName + "$b" + typeExpected + " " + scopeName + type + " "  + scopeName + "$c" + typeExpected
+                        scopeName + type + " " + scopeName + "$a" + typeExpected + " " + scopeName + type + " " + scopeName + "$b" + typeExpected + " " + scopeName + type + " " + scopeName + "$c" + typeExpected
                     },
                     {
                         prefix + " $a, $b" + operator + "1, $c" + operator + "1" + appendix,
-                        scopeName + type + " "  + scopeName + "$a" + typeExpected + " " + scopeName + type + " "  + scopeName + "$b" + typeExpected + " " + scopeName + type + " "  + scopeName + "$c" + typeExpected
+                        scopeName + type + " " + scopeName + "$a" + typeExpected + " " + scopeName + type + " " + scopeName + "$b" + typeExpected + " " + scopeName + type + " " + scopeName + "$c" + typeExpected
                     },
                     {
                         prefix + " $a, $b, $c" + operator + "1" + appendix,
-                        scopeName + type + " "  + scopeName + "$a" + typeExpected + " " + scopeName + type + " "  + scopeName + "$b" + typeExpected + " " + scopeName + type + " "  + scopeName + "$c" + typeExpected
+                        scopeName + type + " " + scopeName + "$a" + typeExpected + " " + scopeName + type + " " + scopeName + "$b" + typeExpected + " " + scopeName + type + " " + scopeName + "$c" + typeExpected
                     }
                 });
     }

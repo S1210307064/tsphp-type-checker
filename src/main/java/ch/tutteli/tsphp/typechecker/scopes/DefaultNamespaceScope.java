@@ -17,28 +17,31 @@
 package ch.tutteli.tsphp.typechecker.scopes;
 
 import ch.tutteli.tsphp.common.IScope;
+import ch.tutteli.tsphp.common.ISymbol;
+import ch.tutteli.tsphp.typechecker.utils.ScopeHelper;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class ScopeFactory implements IScopeFactory
+public class DefaultNamespaceScope extends NamespaceScope
 {
 
-    private IScope globalScope = new GlobalScope();
-
-    public ScopeFactory() {
+    public DefaultNamespaceScope(IScope enclosingScope) {
+        super(IScope.DEFAULT_NAMESPACE, enclosingScope);
     }
 
     @Override
-    public IScope getGlobalScope() {
-        return globalScope;
+    public ISymbol resolve(String name) {
+        //default namespace == global namespace, therefore we look straight away in enclosingScope
+        return ScopeHelper.resolve(enclosingScope, name);
     }
 
     @Override
-    public INamespaceScope createNamespace(String name, IScope currentScope) {
-        return !name.equals(IScope.DEFAULT_NAMESPACE)
-                ? new NamespaceScope(name, currentScope)
-                : new DefaultNamespaceScope(currentScope);
+    public void define(ISymbol symbol) {
+        //default namespace == global namespace, therefore we delegate the definition to the enclosingScope
+        ScopeHelper.define(enclosingScope, symbol);
     }
+    
+    
 }
