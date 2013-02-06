@@ -67,7 +67,8 @@ topdown
     |	enterClass
     |	enterMethodFunction
     |	enterBlock
-    |	varDeclarationList
+    |	constantDeclarationList
+    |	variableDeclarationList
     ;
 
 bottomup
@@ -92,18 +93,29 @@ enterMethodFunction
 		)
 		{currentScope = definitionHelper.defineMethod(currentScope,$mMod, $rtMod, $returnType, $identifier); }
 	;
+	
 enterBlock
 	:	^(BLOCK .*) 
 		{currentScope = scopeFactory.createLocalScope(currentScope); }	
 	;
-varDeclarationList 
+	
+constantDeclarationList
+	:	^(CONSTANT_DECLARATION_LIST type=. constantDeclaration[$type]+)
+	;
+
+constantDeclaration[TSPHPAst type]
+	:	^(identifier=Identifier .)
+		{ definitionHelper.defineConstant(currentScope, $type,$identifier); }
+	;
+
+variableDeclarationList 
 	:	^(VARIABLE_DECLARATION_LIST 
     			^(TYPE tMod=. type=.)
-    			varDeclaration[$tMod,$type]*
+    			variableDeclaration[$tMod,$type]+
     		)
         ;
 	
-varDeclaration[TSPHPAst tMod, TSPHPAst type]
+variableDeclaration[TSPHPAst tMod, TSPHPAst type]
 	:
 		(	^(variableId=VariableId .)
 		|	variableId=VariableId	

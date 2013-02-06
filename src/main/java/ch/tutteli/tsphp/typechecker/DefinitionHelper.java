@@ -22,6 +22,7 @@ import ch.tutteli.tsphp.typechecker.symbols.IClassSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
+import org.antlr.runtime.CommonToken;
 
 /**
  *
@@ -54,6 +55,13 @@ public class DefinitionHelper implements IDefinitionHelper
         identifier.symbol = methodSymbol;
         currentScope.define(methodSymbol);
         return methodSymbol;
+    }
+
+    @Override
+    public void defineConstant(IScope currentScope, TSPHPAst type, TSPHPAst identifier) {
+        TSPHPAst modifier = new TSPHPAst();
+        modifier.addChild(new TSPHPAst(new CommonToken(TSPHPTypeCheckerDefinition.Final)));
+        defineVariable(currentScope, modifier, type, identifier);
     }
 
     @Override

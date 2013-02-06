@@ -40,7 +40,7 @@ public class VariableDeclarationListHelper
     private static Collection<Object[]> testStrings(final String prefix, final String appendix,
             final String prefixExpected, String scope, final boolean isDefinitionPhase) {
 
-        final String scopeName = !scope.isEmpty() ? scope + "." : scope;
+        final String scopeName = "global." + (scope.isEmpty() ? "" : scope + ".");
 
         final List<Object[]> collection = new ArrayList<>();
         TypeHelper.getAllTypesInclModifier(new IAdder()

@@ -51,29 +51,29 @@ public class VariableDefinitionTest extends ATypeCheckerTest
 
         String global = "global";
 
-        collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase("", ";", "", "global"));
-        collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase("namespace a{", ";}", "", global + ".a"));
-        collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase("namespace a\\a{", ";}", "", global + ".a\\a"));
+        collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase("", ";", "", ""));
+        collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase("namespace a{", ";}", "", "a"));
+        collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase("namespace a\\a{", ";}", "", "a\\a"));
 
         //variable declaration in methods
         collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
                 "class a{ function void foo(){", ";}}",
                 global + ".a " + global + ".a.void " + global + ".a.foo()|" + TSPHPTypeCheckerDefinition.Public + " ",
-                global + ".a.foo.local"));
+                "a.foo.local"));
 
         collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
                 "namespace t; class a{ function void foo(){", ";}}",
                 global + ".t.a " + global + ".t.a.void " + global + ".t.a.foo()|" + TSPHPTypeCheckerDefinition.Public + " ",
-                global + ".t.a.foo.local"));
+                "t.a.foo.local"));
 
         //variable declaration in functions
         collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
                 "function void foo(){", ";}",
-                global + ".void " + global + ".foo() ", global + ".foo.local"));
+                global + ".void " + global + ".foo() ", "foo.local"));
 
         collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
                 "namespace t; function void foo(){", ";}",
-                global + ".t.void " + global + ".t.foo() ", global + ".t.foo.local"));
+                global + ".t.void " + global + ".t.foo() ", "t.foo.local"));
 
         //Different namespaces
         collection.addAll(Arrays.asList(new Object[][]{

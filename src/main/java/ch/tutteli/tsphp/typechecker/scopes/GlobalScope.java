@@ -24,7 +24,6 @@ import ch.tutteli.tsphp.common.IScope;
  */
 public class GlobalScope extends AScope implements IScope
 {
-
     public GlobalScope() {
         super("global", null);
     }
