@@ -17,9 +17,9 @@
 package ch.tutteli.tsphp.typechecker.test;
 
 import ch.tutteli.tsphp.typechecker.TSPHPTypeCheckerDefinition;
+import ch.tutteli.tsphp.typechecker.symbols.ModifierHelper;
 import ch.tutteli.tsphp.typechecker.test.utils.ATypeCheckerTest;
 import ch.tutteli.tsphp.typechecker.test.utils.IAdder;
-import ch.tutteli.tsphp.typechecker.symbols.ModifierHelper;
 import ch.tutteli.tsphp.typechecker.test.utils.TypeHelper;
 import java.util.ArrayList;
 import java.util.Arrays;

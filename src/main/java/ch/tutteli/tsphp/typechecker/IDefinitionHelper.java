@@ -29,8 +29,8 @@ public interface IDefinitionHelper
     IScope defineClass(IScope currentScope, TSPHPAst modifier, TSPHPAst identifier,
             TSPHPAst extendsIds, TSPHPAst implementsIds);
 
-    void defineVariable(IScope currentScope, TSPHPAst type, TSPHPAst modifier, TSPHPAst variableId);
-
     IScope defineMethod(IScope currentScope, TSPHPAst methodModifier,
             TSPHPAst returnTypeModifier, TSPHPAst returnType, TSPHPAst identifier);
+
+    void defineVariable(IScope currentScope, TSPHPAst type, TSPHPAst modifier, TSPHPAst variableId);
 }

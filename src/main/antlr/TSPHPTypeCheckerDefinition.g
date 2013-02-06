@@ -84,7 +84,11 @@ enterClass
 	;
 
 enterMethod
-	:	^(METHOD_DECLARATION mMod=. ^(TYPE rtMod=. returnType=.) identifier=. . .)
+	:	^( 	(	METHOD_DECLARATION
+			|	Function
+			) 
+			mMod=. ^(TYPE rtMod=. returnType=.) identifier=. . .
+		)
 		{currentScope = definitionHelper.defineMethod(currentScope,$mMod, $rtMod, $returnType, $identifier); }
 	;
 
