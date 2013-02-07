@@ -20,6 +20,7 @@ import ch.tutteli.tsphp.typechecker.TSPHPTypeCheckerDefinition;
 import ch.tutteli.tsphp.typechecker.symbols.ModifierHelper;
 import ch.tutteli.tsphp.typechecker.test.utils.ATypeCheckerTest;
 import ch.tutteli.tsphp.typechecker.test.utils.IAdder;
+import ch.tutteli.tsphp.typechecker.test.utils.ParameterListHelper;
 import ch.tutteli.tsphp.typechecker.test.utils.TypeHelper;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,8 +56,16 @@ public class MethodTest extends ATypeCheckerTest
 
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
-        final List<Object[]> collection = new ArrayList<>();
+        List<Object[]> collection = new ArrayList<>();
 
+        addReturnTypes(collection);
+        addModifiers(collection);
+        addParameters(collection);
+
+        return collection;
+    }
+
+    private static void addReturnTypes(final List<Object[]> collection) {
         TypeHelper.getAllTypesInclModifier(new IAdder()
         {
             @Override
@@ -69,48 +78,91 @@ public class MethodTest extends ATypeCheckerTest
                         });
             }
         });
-
-        int fin = TSPHPTypeCheckerDefinition.Final;
-        int stat = TSPHPTypeCheckerDefinition.Static;
-        collection.addAll(getVariations("", new TreeSet()));
-        collection.addAll(getVariations("static", new TreeSet(Arrays.asList(new Integer[]{stat}))));
-        collection.addAll(getVariations("final", new TreeSet(Arrays.asList(new Integer[]{fin}))));
-        collection.addAll(getVariations("static final", new TreeSet(Arrays.asList(new Integer[]{fin, stat}))));
-        collection.addAll(getVariations("final static", new TreeSet(Arrays.asList(new Integer[]{fin, stat}))));
-
-        return collection;
     }
 
-    public static Collection<Object[]> getVariations(String modifier, SortedSet<Integer> modifiers) {
-        final List<Object[]> collection = new ArrayList<>();
-        modifiers.add(TSPHPTypeCheckerDefinition.Public);
-        collection.add(new Object[]{
-                    prefix + modifier + " function void foo(){}" + appendix,
-                    prefixExpected + "global.a.b.void "
-                    + "global.a.b.foo()" + ModifierHelper.getModifiers(modifiers)
-                });
-        collection.add(new Object[]{
-                    prefix + modifier + " public function void foo(){}" + appendix,
-                    prefixExpected + "global.a.b.void "
-                    + "global.a.b.foo()" + ModifierHelper.getModifiers(modifiers)
-                });
+    private static void addModifiers(List<Object[]> collection) {
 
-        modifiers.remove(TSPHPTypeCheckerDefinition.Public);
-        modifiers.add(TSPHPTypeCheckerDefinition.Private);
-        collection.add(new Object[]{
-                    prefix + modifier + " private function void foo(){}" + appendix,
-                    prefixExpected + "global.a.b.void "
-                    + "global.a.b.foo()" + ModifierHelper.getModifiers(modifiers)
-                });
+        int priv = TSPHPTypeCheckerDefinition.Private;
+        int prot = TSPHPTypeCheckerDefinition.Protected;
+        int pub = TSPHPTypeCheckerDefinition.Public;
+        int fin = TSPHPTypeCheckerDefinition.Final;
+        int stat = TSPHPTypeCheckerDefinition.Static;
 
-        modifiers.remove(TSPHPTypeCheckerDefinition.Private);
-        modifiers.add(TSPHPTypeCheckerDefinition.Protected);
-        collection.add(new Object[]{
-                    prefix + modifier + " protected function void foo(){}" + appendix,
-                    prefixExpected + "global.a.b.void "
-                    + "global.a.b.foo()" + ModifierHelper.getModifiers(modifiers)
-                });
+        Object[][] variations = new Object[][]{
+            {"", new TreeSet<>(Arrays.asList(new Integer[]{pub}))},
+            //
+            {"private", new TreeSet<>(Arrays.asList(new Integer[]{priv}))},
+            {"private static", new TreeSet<>(Arrays.asList(new Integer[]{priv, stat}))},
+            {"private final", new TreeSet<>(Arrays.asList(new Integer[]{priv, fin}))},
+            {"private final static", new TreeSet<>(Arrays.asList(new Integer[]{priv, stat, fin}))},
+            {"private static final", new TreeSet<>(Arrays.asList(new Integer[]{priv, fin, stat}))},
+            //
+            {"protected", new TreeSet<>(Arrays.asList(new Integer[]{prot}))},
+            {"protected static", new TreeSet<>(Arrays.asList(new Integer[]{prot, stat}))},
+            {"protected final", new TreeSet<>(Arrays.asList(new Integer[]{prot, fin}))},
+            {"protected static final", new TreeSet<>(Arrays.asList(new Integer[]{prot, stat, fin}))},
+            {"protected final static", new TreeSet<>(Arrays.asList(new Integer[]{prot, fin, stat}))},
+            //
+            {"public", new TreeSet<>(Arrays.asList(new Integer[]{pub}))},
+            {"public static", new TreeSet<>(Arrays.asList(new Integer[]{pub, stat}))},
+            {"public final", new TreeSet<>(Arrays.asList(new Integer[]{pub, fin}))},
+            {"public static final", new TreeSet<>(Arrays.asList(new Integer[]{pub, stat, fin}))},
+            {"public final static", new TreeSet<>(Arrays.asList(new Integer[]{pub, fin, stat}))},
+            //
+            {"static", new TreeSet<>(Arrays.asList(new Integer[]{pub, stat}))},
+            {"static private", new TreeSet<>(Arrays.asList(new Integer[]{priv, stat}))},
+            {"static private final", new TreeSet<>(Arrays.asList(new Integer[]{priv, stat, fin}))},
+            {"static protected", new TreeSet<>(Arrays.asList(new Integer[]{prot, stat}))},
+            {"static protected final", new TreeSet<>(Arrays.asList(new Integer[]{prot, stat, fin}))},
+            {"static public", new TreeSet<>(Arrays.asList(new Integer[]{pub, stat}))},
+            {"static public final", new TreeSet<>(Arrays.asList(new Integer[]{pub, stat, fin}))},
+            {"static final", new TreeSet<>(Arrays.asList(new Integer[]{pub, stat, fin}))},
+            {"static final private", new TreeSet<>(Arrays.asList(new Integer[]{priv, stat, fin}))},
+            {"static final protected", new TreeSet<>(Arrays.asList(new Integer[]{prot, stat, fin}))},
+            {"static final public", new TreeSet<>(Arrays.asList(new Integer[]{pub, stat, fin}))},
+            //
+            {"final", new TreeSet<>(Arrays.asList(new Integer[]{pub, fin}))},
+            {"final private", new TreeSet<>(Arrays.asList(new Integer[]{priv, fin}))},
+            {"final private static", new TreeSet<>(Arrays.asList(new Integer[]{priv, fin, stat}))},
+            {"final protected", new TreeSet<>(Arrays.asList(new Integer[]{prot, fin}))},
+            {"final protected static", new TreeSet<>(Arrays.asList(new Integer[]{prot, fin, stat}))},
+            {"final public", new TreeSet<>(Arrays.asList(new Integer[]{pub, fin}))},
+            {"final public static", new TreeSet<>(Arrays.asList(new Integer[]{pub, fin, stat}))},
+            {"final static", new TreeSet<>(Arrays.asList(new Integer[]{pub, fin, stat}))},
+            {"final static private", new TreeSet<>(Arrays.asList(new Integer[]{priv, fin, stat}))},
+            {"final static protected", new TreeSet<>(Arrays.asList(new Integer[]{prot, fin, stat}))},
+            {"final static public", new TreeSet<>(Arrays.asList(new Integer[]{pub, fin, stat}))}
+        };
 
-        return collection;
+        for (Object[] variation : variations) {
+            collection.add(new Object[]{
+                        prefix + variation[0] + " function void foo(){}" + appendix,
+                        prefixExpected + "global.a.b.void "
+                        + "global.a.b.foo()" + ModifierHelper.getModifiers((SortedSet<Integer>) variation[1])
+                    });
+        }
+
+        int abstr = TSPHPTypeCheckerDefinition.Abstract;
+        variations = new Object[][]{
+            {"abstract", new TreeSet<>(Arrays.asList(new Integer[]{pub, abstr}))},
+            {"abstract protected", new TreeSet<>(Arrays.asList(new Integer[]{prot, abstr}))},
+            {"abstract public", new TreeSet<>(Arrays.asList(new Integer[]{pub, abstr}))},
+            {"protected abstract ", new TreeSet<>(Arrays.asList(new Integer[]{prot, abstr}))},
+            {"public abstract", new TreeSet<>(Arrays.asList(new Integer[]{pub, abstr}))}
+        };
+        for (Object[] variation : variations) {
+            collection.add(new Object[]{
+                        prefix + variation[0] + " function void foo();" + appendix,
+                        prefixExpected + "global.a.b.void "
+                        + "global.a.b.foo()" + ModifierHelper.getModifiers((SortedSet<Integer>) variation[1])
+                    });
+        }
+    }
+
+    private static void addParameters(List<Object[]> collection) {
+        collection.addAll(ParameterListHelper.getTestStrings(
+                prefix + "function void foo(", "){}" + appendix,
+                prefixExpected + "global.a.b.void global.a.b.foo()|" + TSPHPTypeCheckerDefinition.Public+" ",
+                "global.a.b.foo.", true));
     }
 }

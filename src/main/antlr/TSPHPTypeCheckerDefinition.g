@@ -64,19 +64,30 @@ public TSPHPTypeCheckerDefinition(TreeNodeStream input, IScopeFactory theScopeFa
 
 topdown
 	//scoped symbols
-    :	enterNamespace
-    |	enterClass
-    |	enterMethodFunction
-    |	enterBlock
+    	:	enterNamespace
+    	|	enterClass
+    	|	enterMethodFunction
+    	|	enterBlock
     
-    	//symbols
-    |	constantDeclarationList
-    |	variableDeclarationList
-    ;
+    		//symbols
+	|	constantDeclarationList
+	|	parameterDeclarationList
+	|	variableDeclarationList
+    	;
 
 bottomup
-    :   exitScope
-    ;
+    	:   exitScope
+   	;
+   
+exitScope
+	:	(	Namespace
+		|	'class'
+		|	METHOD_DECLARATION
+		|	Function
+		|	BLOCK
+		) 
+		{currentScope = currentScope.getEnclosingScope();}
+	;   
     
 enterNamespace
 	:	^(Namespace t=(TYPE_NAME|DEFAULT_NAMESPACE) .) 
@@ -111,6 +122,16 @@ constantDeclaration[TSPHPAst type]
 		{ definitionHelper.defineConstant(currentScope, $type,$identifier); }
 	;
 
+parameterDeclarationList
+	:	^(PARAM_LIST parameterDeclaration+)
+	;
+
+parameterDeclaration
+	:	^(PARAM_DECLARATION 
+			^(TYPE tMod=. type=.) variableDeclaration[$tMod,$type]
+		)
+	;
+
 variableDeclarationList 
 	:	^(VARIABLE_DECLARATION_LIST 
     			^(TYPE tMod=. type=.)
@@ -125,15 +146,4 @@ variableDeclaration[TSPHPAst tMod, TSPHPAst type]
 		)
 		{ definitionHelper.defineVariable(currentScope, $tMod, $type, $variableId); }
 	;
-
-	
-exitScope
-	:	(	Namespace
-		|	'class'
-		|	METHOD_DECLARATION
-		|	Function
-		|	BLOCK
-		) 
-		{currentScope = currentScope.getEnclosingScope();}
-	;   
 

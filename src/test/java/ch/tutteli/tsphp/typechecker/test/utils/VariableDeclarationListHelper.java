@@ -56,11 +56,13 @@ public class VariableDeclarationListHelper
                 String typeModifiers = ModifierHelper.getModifiers(modifiers);
                 collection.add(new Object[]{
                             prefix + type + "$a" + appendix,
-                            prefixExpected + scopeName + typeExpected + " " + scopeName + "$a" + typeExpected2 + typeModifiers
+                            prefixExpected + scopeName + typeExpected + " "
+                            + scopeName + "$a" + typeExpected2 + typeModifiers
                         });
                 collection.add(new Object[]{
                             prefix + type + "$a=1" + appendix,
-                            prefixExpected + scopeName + typeExpected + " " + scopeName + "$a" + typeExpected2 + typeModifiers
+                            prefixExpected + scopeName + typeExpected + " "
+                            + scopeName + "$a" + typeExpected2 + typeModifiers
                         });
             }
         });
@@ -68,13 +70,16 @@ public class VariableDeclarationListHelper
         String typeModifiers = ModifierHelper.getModifiers(modifier);
 
         String typeExpected = (isDefinitionPhase ? "" : "int") + typeModifiers;
-        collection.addAll(getVariations(prefix + "int", "=", appendix, prefixExpected, scopeName, "int", typeExpected));
+        collection.addAll(getVariations(prefix + "int", "=", appendix,
+                prefixExpected, scopeName, "int", typeExpected));
 
         typeExpected = (isDefinitionPhase ? "" : "object") + typeModifiers;
-        collection.addAll(getVariations(prefix + "object", "=", appendix, prefixExpected, scopeName, "object", typeExpected));
+        collection.addAll(getVariations(prefix + "object", "=", appendix,
+                prefixExpected, scopeName, "object", typeExpected));
 
         typeExpected = (isDefinitionPhase ? "" : "float") + typeModifiers;
-        collection.addAll(getVariations(prefix + "float", "=()", appendix, prefixExpected, scopeName, "float", typeExpected));
+        collection.addAll(getVariations(prefix + "float", "=()", appendix,
+                prefixExpected, scopeName, "float", typeExpected));
 
         typeExpected = (isDefinitionPhase ? "" : "int") + typeModifiers;
         collection.addAll(Arrays.asList(new Object[][]{

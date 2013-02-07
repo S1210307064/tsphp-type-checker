@@ -20,13 +20,12 @@ import ch.tutteli.tsphp.typechecker.TSPHPTypeCheckerDefinition;
 import ch.tutteli.tsphp.typechecker.symbols.ModifierHelper;
 import ch.tutteli.tsphp.typechecker.test.utils.ATypeCheckerTest;
 import ch.tutteli.tsphp.typechecker.test.utils.IAdder;
+import ch.tutteli.tsphp.typechecker.test.utils.ParameterListHelper;
 import ch.tutteli.tsphp.typechecker.test.utils.TypeHelper;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.SortedSet;
-import java.util.TreeSet;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -65,6 +64,10 @@ public class FunctionTest extends ATypeCheckerTest
             }
         });
 
+
+        collection.addAll(ParameterListHelper.getTestStrings(
+                "function void foo(", "){}", "global.void global.foo() ", "global.foo.", true));
+        
         return collection;
     }
 }

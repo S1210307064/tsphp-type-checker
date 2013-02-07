@@ -31,7 +31,7 @@ import java.util.TreeSet;
 public class MethodSymbol extends AScopedSymbol implements IMethodSymbol
 {
 
-    private Map<String, ASymbol> orderedArgs = new LinkedHashMap<>();
+    
     private Set<Integer> returnTypeModifier;
 
     public MethodSymbol(TSPHPAst definitionAst, Set<Integer> methodModifiers, Set<Integer> theReturnTypeModifier,
@@ -42,7 +42,7 @@ public class MethodSymbol extends AScopedSymbol implements IMethodSymbol
 
     @Override
     public String getName() {
-        return name + "(" + stripBrackets(orderedArgs.keySet().toString()) + ")";
+        return name + "()";
     }
 
     @Override
