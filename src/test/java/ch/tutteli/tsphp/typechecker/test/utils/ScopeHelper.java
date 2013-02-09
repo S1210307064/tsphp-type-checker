@@ -56,49 +56,56 @@ public class ScopeHelper
             String fullScopeName, Integer[] accessToScope) {
 
         fullScopeName += ".";
+        List<Object[]> collection = new ArrayList<>();
+        collection.addAll(getVariations(prefix, appendix, "$b", fullScopeName, accessToScope));
+        collection.addAll(getVariations(prefix, appendix, "$this", fullScopeName, accessToScope));
+        return collection;
+    }
+
+    private static Collection<Object[]> getVariations(String prefix, String appendix, String variableId,
+            String fullScopeName, Integer[] accessToScope) {
 
         return Arrays.asList(new Object[][]{ // nBody.vars.$a.$b
-                    {prefix + "int $a = $b;" + appendix, new ScopeTestStruct[]{
-                            new ScopeTestStruct("$b", fullScopeName, getAstAccessOrder(accessToScope, 0, 1, 0))
+                    {prefix + "int $a = " + variableId + ";" + appendix, new ScopeTestStruct[]{
+                            new ScopeTestStruct(variableId, fullScopeName, getAstAccessOrder(accessToScope, 0, 1, 0))
                         }
                     },
-                    {prefix + "int $a = $b + $c;" + appendix, new ScopeTestStruct[]{
-                            //vars $a + $b
-                            new ScopeTestStruct("$b", fullScopeName, getAstAccessOrder(accessToScope, 0, 1, 0, 0)),
+                    {prefix + "int $a = " + variableId + " + $c;" + appendix, new ScopeTestStruct[]{
+                            //vars $a + variableId
+                            new ScopeTestStruct(variableId, fullScopeName, getAstAccessOrder(accessToScope, 0, 1, 0, 0)),
                             //vars $a + $c
                             new ScopeTestStruct("$c", fullScopeName, getAstAccessOrder(accessToScope, 0, 1, 0, 1))
                         }
                     },
-                    {prefix + "int $a = 1 + $b + $c;" + appendix, new ScopeTestStruct[]{
-                            //vars $a + + $b
-                            new ScopeTestStruct("$b", fullScopeName, getAstAccessOrder(accessToScope, 0, 1, 0, 0, 1)),
+                    {prefix + "int $a = $c + " + variableId + ";" + appendix, new ScopeTestStruct[]{
                             //vars $a + $c
-                            new ScopeTestStruct("$c", fullScopeName, getAstAccessOrder(accessToScope, 0, 1, 0, 1))
+                            new ScopeTestStruct("$c", fullScopeName, getAstAccessOrder(accessToScope, 0, 1, 0, 0)),
+                            //vars $a + variableId
+                            new ScopeTestStruct(variableId, fullScopeName, getAstAccessOrder(accessToScope, 0, 1, 0, 1))
                         }
                     },
-                    //
-                    {prefix + "$a = $b;" + appendix, new ScopeTestStruct[]{
-                            //= $a
-                            new ScopeTestStruct("$a", fullScopeName, getAstAccessOrder(accessToScope, 0, 0)),
-                            //= $b
-                            new ScopeTestStruct("$b", fullScopeName, getAstAccessOrder(accessToScope, 0, 1))
+                    {prefix + "int $a = 1 + " + variableId + " + $c;" + appendix, new ScopeTestStruct[]{
+                            //vars $a + + variableId
+                            new ScopeTestStruct(variableId, fullScopeName, getAstAccessOrder(accessToScope, 0, 1, 0, 0, 1)),
+                            //vars $a + $c
+                            new ScopeTestStruct("$c", fullScopeName, getAstAccessOrder(accessToScope, 0, 1, 0, 1))
                         }
                     },
                     //there are no nested local scopes
-                    {prefix + " { $a = $b; } " + appendix, new ScopeTestStruct[]{
+                    {prefix + " { " + variableId + " = $a; } " + appendix, new ScopeTestStruct[]{
+                            //= variableId
+                            new ScopeTestStruct(variableId, fullScopeName, getAstAccessOrder(accessToScope, 0, 0)),
                             //= $a
-                            new ScopeTestStruct("$a", fullScopeName, getAstAccessOrder(accessToScope, 0, 0)),
-                            //= $b
-                            new ScopeTestStruct("$b", fullScopeName, getAstAccessOrder(accessToScope, 0, 1))
+                            new ScopeTestStruct("$a", fullScopeName, getAstAccessOrder(accessToScope, 0, 1))
                         }
                     },
                     //there are no nested local scopes, does not matter how many {} we declare
-                    {prefix + " { { $a = $b;} int $a = $c; } " + appendix, new ScopeTestStruct[]{
+                    {prefix + " { { $a = " + variableId + ";} int $a = $c; } " + appendix, new ScopeTestStruct[]{
                             //= $a
                             new ScopeTestStruct("$a", fullScopeName, getAstAccessOrder(accessToScope, 0, 0)),
-                            //= $b
-                            new ScopeTestStruct("$b", fullScopeName, getAstAccessOrder(accessToScope, 0, 1)),
-                            //vars $a $b
+                            //= "+variableId+"
+                            new ScopeTestStruct(variableId, fullScopeName, getAstAccessOrder(accessToScope, 0, 1)),
+                            //vars $a "+variableId+"
                             new ScopeTestStruct("$c", fullScopeName, getAstAccessOrder(accessToScope, 1, 1, 0))
                         }
                     }
