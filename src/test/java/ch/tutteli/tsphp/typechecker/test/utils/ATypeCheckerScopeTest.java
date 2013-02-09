@@ -42,7 +42,7 @@ public abstract class ATypeCheckerScopeTest extends ATypeCheckerTest
         for (int i = 0; i < testStructs.length; ++i) {
             ScopeTestStruct testStruct = testStructs[i];
             TSPHPAst testCandidate = getAst(testStruct.astAccessOrder);
-            Assert.assertEquals(testString + " failed.", testStruct.astText, testCandidate.getText());
+            Assert.assertEquals(testString + " failed.", testStruct.astText, testCandidate.toStringTree());
             Assert.assertEquals(testString + " failed.", testStruct.astScope, ScopeHelper.getEnclosingScopeNames(testCandidate.scope));
         }
 

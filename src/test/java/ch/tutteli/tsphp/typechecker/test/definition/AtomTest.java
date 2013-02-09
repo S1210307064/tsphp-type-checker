@@ -20,7 +20,6 @@ import ch.tutteli.tsphp.typechecker.test.utils.ATypeCheckerScopeTest;
 import ch.tutteli.tsphp.typechecker.test.utils.ScopeHelper;
 import ch.tutteli.tsphp.typechecker.test.utils.ScopeTestStruct;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import org.antlr.runtime.RecognitionException;
@@ -61,8 +60,6 @@ public class AtomTest extends ATypeCheckerScopeTest
         //nBody class classBody mDecl block
         collection.addAll(ScopeHelper.testStrings("class a{ function void foo(){", "}}",
                 "global.a.foo.local", new Integer[]{1, 0, 4, 0, 4}));
-
-
 
         return collection;
     }

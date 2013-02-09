@@ -152,6 +152,10 @@ atom
 	: 	variableId=	(	'$this'
 		    		|	VariableId
 		    		|	CONSTANT
+		    		|	CLASS_STATIC_ACCESS
+		    		|	METHOD_CALL
+		    		|	FUNCTION_CALL
+		    		|	METHOD_CALL_STATIC
     				)
        		{variableId.scope = currentScope;}
 	;
