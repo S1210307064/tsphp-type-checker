@@ -25,14 +25,15 @@ import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.SymbolFactory;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 public class TestSymbolFactory extends SymbolFactory
-{
-
+{    
     List<ICreateSymbolListener> listeners = new ArrayList<>();
 
     @Override

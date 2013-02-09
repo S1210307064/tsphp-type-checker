@@ -14,10 +14,10 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.test;
+package ch.tutteli.tsphp.typechecker.test.definition;
 
 import ch.tutteli.tsphp.typechecker.TSPHPTypeCheckerDefinition;
-import ch.tutteli.tsphp.typechecker.test.utils.ATypeCheckerTest;
+import ch.tutteli.tsphp.typechecker.test.utils.ATypeCheckerDefinitionTest;
 import ch.tutteli.tsphp.typechecker.test.utils.VariableDeclarationListHelper;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,7 +35,7 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class ClassMemberTest extends ATypeCheckerTest
+public class ClassMemberTest extends ATypeCheckerDefinitionTest
 {
 
     public ClassMemberTest(String testString, String expectedResult) {

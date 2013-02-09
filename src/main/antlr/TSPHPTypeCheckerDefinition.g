@@ -73,6 +73,7 @@ topdown
 	|	constantDeclarationList
 	|	parameterDeclarationList
 	|	variableDeclarationList
+	|	atom
     	;
 
 bottomup
@@ -147,3 +148,7 @@ variableDeclaration[TSPHPAst tMod, TSPHPAst type]
 		{ definitionHelper.defineVariable(currentScope, $tMod, $type, $variableId); }
 	;
 
+atom	
+	:	variableId=VariableId
+       		{variableId.scope = currentScope;}
+	;

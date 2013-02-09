@@ -14,11 +14,11 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.test;
+package ch.tutteli.tsphp.typechecker.test.definition;
 
 import ch.tutteli.tsphp.typechecker.TSPHPTypeCheckerDefinition;
 import ch.tutteli.tsphp.typechecker.symbols.ModifierHelper;
-import ch.tutteli.tsphp.typechecker.test.utils.ATypeCheckerTest;
+import ch.tutteli.tsphp.typechecker.test.utils.ATypeCheckerDefinitionTest;
 import ch.tutteli.tsphp.typechecker.test.utils.IAdder;
 import ch.tutteli.tsphp.typechecker.test.utils.ParameterListHelper;
 import ch.tutteli.tsphp.typechecker.test.utils.TypeHelper;
@@ -36,7 +36,7 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class FunctionTest extends ATypeCheckerTest
+public class FunctionTest extends ATypeCheckerDefinitionTest
 {
 
     public FunctionTest(String testString, String expectedResult) {
@@ -67,7 +67,7 @@ public class FunctionTest extends ATypeCheckerTest
 
         collection.addAll(ParameterListHelper.getTestStrings(
                 "function void foo(", "){}", "global.void global.foo() ", "global.foo.", true));
-        
+
         return collection;
     }
 }

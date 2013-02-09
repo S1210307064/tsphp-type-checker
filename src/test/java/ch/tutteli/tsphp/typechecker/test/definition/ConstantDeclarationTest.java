@@ -14,9 +14,9 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.test;
+package ch.tutteli.tsphp.typechecker.test.definition;
 
-import ch.tutteli.tsphp.typechecker.test.utils.ATypeCheckerTest;
+import ch.tutteli.tsphp.typechecker.test.utils.ATypeCheckerDefinitionTest;
 import ch.tutteli.tsphp.typechecker.test.utils.ConstantHelper;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,7 +31,7 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class ConstantDeclarationTest extends ATypeCheckerTest
+public class ConstantDeclarationTest extends ATypeCheckerDefinitionTest
 {
 
     public ConstantDeclarationTest(String testString, String expectedResult) {

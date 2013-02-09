@@ -63,7 +63,7 @@ public class TestDefinitionHelper extends DefinitionHelper implements IDefinitio
         return scope;
     }
 
-     @Override
+    @Override
     public IScope defineMethod(IScope currentScope, TSPHPAst methodModifier,
             TSPHPAst returnTypeModifier, TSPHPAst returnType, TSPHPAst identifier) {
         IScope scope = super.defineMethod(currentScope, methodModifier, returnTypeModifier, returnType, identifier);
@@ -73,7 +73,7 @@ public class TestDefinitionHelper extends DefinitionHelper implements IDefinitio
 
     @Override
     public void defineVariable(IScope currentScope, TSPHPAst modifier, TSPHPAst type, TSPHPAst variableId) {
-        super.defineVariable(currentScope, modifier,type, variableId);
+        super.defineVariable(currentScope, modifier, type, variableId);
         symbols.add(new HashMap.SimpleEntry<>(newlyCreatedSymbol, type));
     }
 
