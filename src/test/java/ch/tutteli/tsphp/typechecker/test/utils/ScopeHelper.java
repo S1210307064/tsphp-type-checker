@@ -57,8 +57,14 @@ public class ScopeHelper
 
         fullScopeName += ".";
         List<Object[]> collection = new ArrayList<>();
+
+        //variable
         collection.addAll(getVariations(prefix, appendix, "$b", fullScopeName, accessToScope));
+        //this
         collection.addAll(getVariations(prefix, appendix, "$this", fullScopeName, accessToScope));
+        //constant
+        collection.addAll(getVariations(prefix, appendix, "b", fullScopeName, accessToScope));
+
         return collection;
     }
 

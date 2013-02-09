@@ -151,6 +151,7 @@ variableDeclaration[TSPHPAst tMod, TSPHPAst type]
 atom	
 	: 	variableId=	(	'$this'
 		    		|	VariableId
+		    		|	CONSTANT
     				)
        		{variableId.scope = currentScope;}
 	;
