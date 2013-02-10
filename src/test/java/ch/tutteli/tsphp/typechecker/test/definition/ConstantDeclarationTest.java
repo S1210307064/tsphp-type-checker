@@ -56,7 +56,7 @@ public class ConstantDeclarationTest extends ATypeCheckerDefinitionTest
         //class constants
         collection.addAll(ConstantHelper.testStrings(
                 "namespace a\\b\\c; class f{", "}", 
-                global+".a\\b\\c.f ", "a\\b\\c.f", true));
+                global+".a\\b\\c.f{} ", "a\\b\\c.f{}", true));
 
         return collection;
     }

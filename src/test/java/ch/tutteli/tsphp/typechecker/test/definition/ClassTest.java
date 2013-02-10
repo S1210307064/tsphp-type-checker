@@ -54,17 +54,18 @@ public class ClassTest extends ATypeCheckerDefinitionTest
         String global = "global";
 
         collection.addAll(Arrays.asList(new Object[][]{
-                    {"class a{}", global + ".a"},
-                    {"final class a{}", global + ".a|" + fin},
-                    {"abstract class a{}", global + ".a|" + abstr},
+                    {"class a{}", global + ".a{}"},
+                    {"final class a{}", global + ".a{}|" + fin},
+                    {"abstract class a{}", global + ".a{}|" + abstr},
                     {
                         "class a{} class b{} class c extends a\\b{}",
-                        global + ".a " + global + ".b " + global + ".a\\b " + global + ".c"
+                        global + ".a{} " + global + ".b{} " + global + ".a\\b " + global + ".c{}"
                     },
                     {
                         "namespace x{class a{}} namespace y{class b{}} "
                         + "namespace z{class c extends a\\b{}} namespace{class d{}}",
-                        global + ".x.a " + global + ".y.b " + global + ".z.a\\b " + global + ".z.c " + global + ".d"
+                        global + ".x.a{} " + global + ".y.b{} " + global + ".z.a\\b "
+                        + global + ".z.c{} " + global + ".d{}"
                     }
                 }));
 
@@ -73,38 +74,38 @@ public class ClassTest extends ATypeCheckerDefinitionTest
         for (String type : types) {
             collection.add(new Object[]{
                         "namespace b; class a extends " + type + "{}",
-                        global + ".b." + type + " " + global + ".b.a"
+                        global + ".b." + type + " " + global + ".b.a{}"
                     });
             collection.add(new Object[]{
                         "final class a extends " + type + "," + type + "{}",
                         global + "." + type + " " + global + "." + type + " "
-                        + global + ".a|" + fin
+                        + global + ".a{}|" + fin
                     });
             collection.add(new Object[]{
                         "abstract class a extends " + type + "," + type + "," + type + "{}",
                         global + "." + type + " " + global + "." + type + " " + global + "." + type + " "
-                        + global + ".a|" + abstr
+                        + global + ".a{}|" + abstr
                     });
 
             collection.add(new Object[]{
                         "abstract class a implements " + type + "{}",
-                        global + "." + type + " " + global + ".a|" + abstr
+                        global + "." + type + " " + global + ".a{}|" + abstr
                     });
             collection.add(new Object[]{
                         "namespace c; final class a implements " + type + "," + type + "{}",
                         global + ".c." + type + " " + global + ".c." + type + " "
-                        + global + ".c.a|" + fin
+                        + global + ".c.a{}|" + fin
                     });
             collection.add(new Object[]{
                         "class a implements " + type + "," + type + "," + type + "{}",
                         global + "." + type + " " + global + "." + type + " " + global + "." + type + " "
-                        + global + ".a"
+                        + global + ".a{}"
                     });
 
             collection.add(new Object[]{
                         "class a extends " + type + " implements " + type + "{}",
                         global + "." + type + " " + global + "." + type + " "
-                        + global + ".a"
+                        + global + ".a{}"
                     });
         }
 

@@ -70,7 +70,7 @@ public class ClassMemberTest extends ATypeCheckerDefinitionTest
         String global = "global";
         for (Object[] variation : variations) {
             collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
-                    "class a{ " + variation[0] + " ", ";}", global + ".a ", "a", (SortedSet<Integer>) variation[1]));
+                    "class a{ " + variation[0] + " ", ";}", global + ".a{} ", "a{}", (SortedSet<Integer>) variation[1]));
         }
 
         return collection;

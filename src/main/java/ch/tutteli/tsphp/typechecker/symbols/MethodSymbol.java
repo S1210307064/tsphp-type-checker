@@ -16,11 +16,8 @@
  */
 package ch.tutteli.tsphp.typechecker.symbols;
 
-import ch.tutteli.tsphp.common.ASymbol;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.TSPHPAst;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -36,13 +33,9 @@ public class MethodSymbol extends AScopedSymbol implements IMethodSymbol
 
     public MethodSymbol(TSPHPAst definitionAst, Set<Integer> methodModifiers, Set<Integer> theReturnTypeModifier,
             String name, IScope enclosingScope) {
-        super(definitionAst, methodModifiers, name, enclosingScope);
+        // () prevent clashes with class and const identifier
+        super(definitionAst, methodModifiers, name+"()", enclosingScope);
         returnTypeModifier = theReturnTypeModifier;
-    }
-
-    @Override
-    public String getName() {
-        return name + "()";
     }
 
     @Override

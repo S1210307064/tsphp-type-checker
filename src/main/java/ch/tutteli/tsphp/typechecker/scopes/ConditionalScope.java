@@ -22,10 +22,10 @@ import ch.tutteli.tsphp.common.IScope;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class LocalScope extends AScope implements ILocalScope
+public class ConditionalScope extends AScope implements IConditionalScope
 {
 
-    public LocalScope(IScope enclosingScope) {
-        super("local",enclosingScope);
+    public ConditionalScope(IScope enclosingScope) {
+        super("cScope", enclosingScope);
     }
 }

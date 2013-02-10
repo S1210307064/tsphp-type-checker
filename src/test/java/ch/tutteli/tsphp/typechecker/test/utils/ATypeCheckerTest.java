@@ -41,7 +41,7 @@ public abstract class ATypeCheckerTest
     protected IScopeFactory scopeFactory = new ScopeFactory();
     protected TSPHPAst ast;
 
-    public abstract void verify();
+    protected abstract void verify();
 
     public ATypeCheckerTest(String theTestString) {
         testString = theTestString;
@@ -60,8 +60,8 @@ public abstract class ATypeCheckerTest
         testDefinitionHelper = new TestDefinitionHelper(symbolFactory);
 
         TSPHPTypeCheckerDefinition definition = new TSPHPTypeCheckerDefinition(commonTreeNodeStream, scopeFactory, testDefinitionHelper);
-
         definition.downup(ast);
+        
         verify();
     }
 }

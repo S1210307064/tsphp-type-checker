@@ -55,11 +55,11 @@ public class AtomTest extends ATypeCheckerScopeTest
 
         //nBody function block
         collection.addAll(ScopeHelper.testStrings("function void foo(){", "}",
-                "global.foo.local", new Integer[]{1, 0, 4}));
+                "global.foo()", new Integer[]{1, 0, 4}));
 
         //nBody class classBody mDecl block
         collection.addAll(ScopeHelper.testStrings("class a{ function void foo(){", "}}",
-                "global.a.foo.local", new Integer[]{1, 0, 4, 0, 4}));
+                "global.a{}.foo()", new Integer[]{1, 0, 4, 0, 4}));
 
         return collection;
     }

@@ -18,6 +18,8 @@ package ch.tutteli.tsphp.typechecker.scopes;
 
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
+import ch.tutteli.tsphp.common.exceptions.DefinitionException;
+import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
 
 /**
  *
@@ -31,7 +33,7 @@ public class DefaultNamespaceScope extends NamespaceScope
     }
 
     @Override
-    public ISymbol resolve(String name) {
+    public ISymbol resolve(String name) throws TypeCheckerException{
         //default namespace == global namespace, therefore we look straight away in enclosingScope
         return ScopeHelper.resolve(enclosingScope, name);
     }

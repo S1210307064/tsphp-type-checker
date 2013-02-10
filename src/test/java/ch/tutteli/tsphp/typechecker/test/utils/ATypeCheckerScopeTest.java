@@ -37,8 +37,7 @@ public abstract class ATypeCheckerScopeTest extends ATypeCheckerTest
     }
 
     @Override
-    public void verify() {
-
+    protected void verify() {
         for (int i = 0; i < testStructs.length; ++i) {
             ScopeTestStruct testStruct = testStructs[i];
             TSPHPAst testCandidate = getAst(testStruct.astAccessOrder);

@@ -31,5 +31,5 @@ public interface IScopeFactory
 
     INamespaceScope createNamespace(String name, IScope currentScope);
     
-    ILocalScope createLocalScope(IScope currentScope);
+    IConditionalScope createConditionalScope(IScope currentScope);
 }

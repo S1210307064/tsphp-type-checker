@@ -30,6 +30,7 @@ public class ClassSymbol extends AScopedSymbol implements IClassSymbol
 {
 
     public ClassSymbol(TSPHPAst definitionAst, Set<Integer> modifiers, String name, IScope enclosingScope) {
-        super(definitionAst, modifiers, name, enclosingScope);
+        //the @ prevent clashes with constant identifiers
+        super(definitionAst, modifiers,  name+"{}", enclosingScope);
     }
 }

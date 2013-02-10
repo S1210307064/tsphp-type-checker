@@ -25,7 +25,7 @@ import ch.tutteli.tsphp.common.IScope;
 public class NamespaceScope extends AScope implements INamespaceScope
 {
 
-    public NamespaceScope(String scopeName, IScope enclosingScope) {
-        super(scopeName, enclosingScope);
+    public NamespaceScope(String scopeName, IScope globalScope) {
+        super(scopeName, globalScope);
     }
 }

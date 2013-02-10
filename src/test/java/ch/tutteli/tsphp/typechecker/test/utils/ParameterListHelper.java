@@ -31,11 +31,23 @@ import java.util.SortedSet;
 public class ParameterListHelper
 {
 
+    private static String prefix;
+    private static String appendix;
+    private static String prefixExpected;
+    private static String scopeName;
+    private static boolean isDefinitionPhase;
+
     private ParameterListHelper() {
     }
 
-    public static Collection<Object[]> getTestStrings(final String prefix, final String appendix,
-            final String prefixExpected, final String scopeName, final boolean isDefinitionPhase) {
+    public static Collection<Object[]> getTestStrings(final String thePrefix, final String theAppendix,
+            final String thePrefixExpected, final String theScopeName, final boolean isItDefinitionPhase) {
+
+        prefix = thePrefix;
+        appendix = theAppendix;
+        prefixExpected = thePrefixExpected;
+        scopeName = theScopeName;
+        isDefinitionPhase = isItDefinitionPhase;
 
         //check all types
         final List<Object[]> collection = new ArrayList<>();
@@ -73,151 +85,148 @@ public class ParameterListHelper
                     });
         }
 
-        String typeExpected = isDefinitionPhase ? "" : "int";
-
         //normal
-        collection.addAll(getVariations(
-                prefix, "int $a", appendix,
-                prefixExpected, scopeName + "int " + scopeName + "$a" + typeExpected,
-                scopeName, isDefinitionPhase));
+        collection.addAll(getVariations("bool", "bool", ""));
         //cast 
-        collection.addAll(getVariations(
-                prefix, "cast int $a", appendix,
-                prefixExpected, scopeName + "int " + scopeName + "$a" + typeExpected + "|" + cast,
-                scopeName, isDefinitionPhase));
+        collection.addAll(getVariations("cast int", "int", "|" + cast));
         //?
-        collection.addAll(getVariations(
-                prefix, "int? $a", appendix,
-                prefixExpected, scopeName + "int " + scopeName + "$a" + typeExpected + "|" + qMark,
-                scopeName, isDefinitionPhase));
-        //cast and ? mixed
-        collection.addAll(getVariations(
-                prefix, "cast int? $a", appendix,
-                prefixExpected, scopeName + "int " + scopeName + "$a" + typeExpected + "|" + cast + ", " + qMark,
-                scopeName, isDefinitionPhase));
+        collection.addAll(getVariations("float?", "float", "|" + qMark));
 
-        collection.addAll(getVariationsForOptional(prefix, appendix, prefixExpected, scopeName, isDefinitionPhase));
+        //cast and ? mixed
+        collection.addAll(getVariations("cast string?", "string", "|" + cast + ", " + qMark));
+
+        collection.addAll(getVariationsForOptional());
 
         return collection;
     }
 
-    private static Collection<Object[]> getVariations(String prefix, String param, String appendix,
-            String prefixExpected, String paramExpected, String scopeName, boolean isDefinitionPhase) {
+    private static Collection<Object[]> getVariations(String type, String typeExpected, String typeModifierExpected) {
 
-        String typeExpected = isDefinitionPhase ? "" : "int";
+
+        String dynPrefix = scopeName + typeExpected + " " + scopeName;
+        String dynAppendix = (isDefinitionPhase ? "" : typeExpected) + typeModifierExpected;
+
+        String paramStat1 = "int $x";
+        String paramStat2 = "int $y";
+        String paramStat1Expected = scopeName + "int " + scopeName + "$x" + (isDefinitionPhase ? "" : "int");
+        String paramStat2Expected = scopeName + "int " + scopeName + "$y" + (isDefinitionPhase ? "" : "int");
 
         return Arrays.asList(new Object[][]{
                     {
-                        prefix + param + appendix,
-                        prefixExpected + paramExpected
+                        prefix + type + " $a" + appendix,
+                        prefixExpected + dynPrefix + "$a" + dynAppendix
                     },
                     {
-                        prefix + param + ", " + param + appendix,
-                        prefixExpected + paramExpected + " " + paramExpected
-                    },
-                    {
-                        prefix + param + ", int $b, int $c" + appendix,
+                        prefix + type + " $a" + "," + paramStat1 + appendix,
                         prefixExpected
-                        + paramExpected + " "
-                        + scopeName + "int " + scopeName + "$b" + typeExpected + " "
-                        + scopeName + "int " + scopeName + "$c" + typeExpected
+                        + dynPrefix + "$a" + dynAppendix + " "
+                        + paramStat1Expected
                     },
                     {
-                        prefix + param + ", " + param + ", int $c" + appendix,
+                        prefix + paramStat1 + "," + type + " $a" + appendix,
                         prefixExpected
-                        + paramExpected + " "
-                        + paramExpected + " "
-                        + scopeName + "int " + scopeName + "$c" + typeExpected
+                        + paramStat1Expected + " "
+                        + dynPrefix + "$a" + dynAppendix
                     },
                     {
-                        prefix + param + ", int $b," + param + "" + appendix,
+                        prefix + type + " $a" + ", " + paramStat1 + ", " + paramStat2 + appendix,
                         prefixExpected
-                        + paramExpected + " "
-                        + scopeName + "int " + scopeName + "$b" + typeExpected + " "
-                        + paramExpected
+                        + dynPrefix + "$a" + dynAppendix + " "
+                        + paramStat1Expected + " "
+                        + paramStat2Expected
                     },
                     {
-                        prefix + "int $a, " + param + ", int $c" + appendix,
+                        prefix + type + " $a" + ", " + type + " $b" + ", " + paramStat1 + appendix,
                         prefixExpected
-                        + scopeName + "int " + scopeName + "$a" + typeExpected + " "
-                        + paramExpected + " "
-                        + scopeName + "int " + scopeName + "$c" + typeExpected
+                        + dynPrefix + "$a" + dynAppendix + " "
+                        + dynPrefix + "$b" + dynAppendix + " "
+                        + paramStat1Expected
                     },
                     {
-                        prefix + "int $a, " + param + ", " + param + "" + appendix,
+                        prefix + type + " $a" + ", " + paramStat1 + "," + type + " $b" + "" + appendix,
                         prefixExpected
-                        + scopeName + "int " + scopeName + "$a" + typeExpected + " "
-                        + paramExpected + " "
-                        + paramExpected
+                        + dynPrefix + "$a" + dynAppendix + " "
+                        + paramStat1Expected + " "
+                        + dynPrefix + "$b" + dynAppendix
                     },
                     {
-                        prefix + param + ", " + param + ", " + param + "" + appendix,
+                        prefix + paramStat1 + "," + type + " $a" + ", " + paramStat2 + appendix,
                         prefixExpected
-                        + paramExpected + " "
-                        + paramExpected + " "
-                        + paramExpected
+                        + paramStat1Expected + " "
+                        + dynPrefix + "$a" + dynAppendix + " "
+                        + paramStat2Expected
+                    },
+                    {
+                        prefix + paramStat1 + "," + type + " $a" + ", " + type + " $b" + "" + appendix,
+                        prefixExpected
+                        + paramStat1Expected + " "
+                        + dynPrefix + "$a" + dynAppendix + " "
+                        + dynPrefix + "$b" + dynAppendix
+                    },
+                    {
+                        prefix + type + " $a, " + type + " $b , " + type + " $c" + appendix,
+                        prefixExpected
+                        + dynPrefix + "$a" + dynAppendix + " "
+                        + dynPrefix + "$b" + dynAppendix + " "
+                        + dynPrefix + "$c" + dynAppendix
                     }
                 });
     }
 
-    private static Collection<Object[]> getVariationsForOptional(String prefix, String appendix,
-            String prefixExpected, String scopeName, boolean isDefinitionPhase) {
+    private static Collection<Object[]> getVariationsForOptional() {
 
         String typeExpected = isDefinitionPhase ? "" : "int";
         int qMark = TSPHPTypeCheckerDefinition.QuestionMark;
         int cast = TSPHPTypeCheckerDefinition.Cast;
+
+        String a = prefixExpected + scopeName + "int " + scopeName + "$a" + typeExpected;
+        String b = scopeName + "int " + scopeName + "$b" + typeExpected;
+        String c = scopeName + "int " + scopeName + "$c" + typeExpected;
+        String d = scopeName + "int " + scopeName + "$d" + typeExpected;
 
         List<Object[]> collection = new ArrayList<>();
         collection.addAll(Arrays.asList(new Object[][]{
                     //optional parameter
                     {
                         prefix + "int $a, int $b='hallo'" + appendix,
-                        prefixExpected
-                        + scopeName + "int " + scopeName + "$a" + typeExpected + " "
-                        + scopeName + "int " + scopeName + "$b" + typeExpected
+                        a + " " + b
                     },
                     {
-                        prefix + "int $a, int? $i, int $b=+1" + appendix,
-                        prefixExpected
-                        + scopeName + "int " + scopeName + "$a" + typeExpected + " "
-                        + scopeName + "int " + scopeName + "$i" + typeExpected + "|" + qMark + " "
-                        + scopeName + "int " + scopeName + "$b" + typeExpected
+                        prefix + "int $a, int? $b, int $c=+1" + appendix,
+                        a + " "
+                        + b + "|" + qMark + " "
+                        + c
                     },
                     {
-                        prefix + "int $a,cast int? $i, int $b=-10, int $c=2.0" + appendix,
-                        prefixExpected
-                        + scopeName + "int " + scopeName + "$a" + typeExpected + " "
-                        + scopeName + "int " + scopeName + "$i" + typeExpected + "|" + cast + ", " + qMark + " "
-                        + scopeName + "int " + scopeName + "$b" + typeExpected + " "
-                        + scopeName + "int " + scopeName + "$c" + typeExpected
+                        prefix + "int $a,cast int? $b, int $c=-10, int $d=2.0" + appendix,
+                        a + " "
+                        + b + "|" + cast + ", " + qMark + " "
+                        + c + " "
+                        + d
                     },
                     {
                         prefix + "int? $a=null,int $b=true, int $c=E_ALL" + appendix,
-                        prefixExpected
-                        + scopeName + "int " + scopeName + "$a" + typeExpected + "|" + qMark + " "
-                        + scopeName + "int " + scopeName + "$b" + typeExpected + " "
-                        + scopeName + "int " + scopeName + "$c" + typeExpected
+                        a + "|" + qMark + " "
+                        + b + " "
+                        + c
                     },
                     {
                         prefix + "int $a, int $b=false, int $c=null" + appendix,
-                        prefixExpected
-                        + scopeName + "int " + scopeName + "$a" + typeExpected + " "
-                        + scopeName + "int " + scopeName + "$b" + typeExpected + " "
-                        + scopeName + "int " + scopeName + "$c" + typeExpected
+                        a + " "
+                        + b + " "
+                        + c
                     },
                     {
                         prefix + "int $a, int $b, int $c=true" + appendix,
-                        prefixExpected
-                        + scopeName + "int " + scopeName + "$a" + typeExpected + " "
-                        + scopeName + "int " + scopeName + "$b" + typeExpected + " "
-                        + scopeName + "int " + scopeName + "$c" + typeExpected
+                        a + " "
+                        + b + " "
+                        + c
                     },
                     {
                         prefix + "cast int $a=1, int? $b=2, cast int $c=3" + appendix,
-                        prefixExpected
-                        + scopeName + "int " + scopeName + "$a" + typeExpected + "|" + cast + " "
-                        + scopeName + "int " + scopeName + "$b" + typeExpected + "|" + qMark + " "
-                        + scopeName + "int " + scopeName + "$c" + typeExpected + "|" + cast
+                        a + "|" + cast + " "
+                        + b + "|" + qMark + " "
+                        + c + "|" + cast
                     }
                 }));
 
@@ -225,11 +234,7 @@ public class ParameterListHelper
         String[] types = TypeHelper.getClassInterfaceTypes();
 
         for (String type : types) {
-            collection.add(new Object[]{
-                        prefix + "int $a=" + type + "::a" + appendix,
-                        prefixExpected
-                        + scopeName + "int " + scopeName + "$a" + typeExpected
-                    });
+            collection.add(new Object[]{prefix + "int $a=" + type + "::a" + appendix, a});
         }
         return collection;
     }

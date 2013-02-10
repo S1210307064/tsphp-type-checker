@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.SortedSet;
 
 /**
@@ -183,13 +182,14 @@ public class VariableDeclarationListHelper
 
     private static Collection<Object[]> getVariations(String prefix, String operator, String appendix,
             String prefixExpected, String scopeName, String type, String typeExpected) {
+        System.out.println(prefix + " $a" + operator + "1, $b, $c" + appendix);
         return Arrays.asList(new Object[][]{
-                    {
-                        prefix + " $a, $b, $c" + appendix,
-                        prefixExpected + scopeName + type + " " + scopeName + "$a" + typeExpected + " "
-                        + scopeName + type + " " + scopeName + "$b" + typeExpected + " "
-                        + scopeName + type + " " + scopeName + "$c" + typeExpected
-                    },
+//                    {
+//                        prefix + " $a, $b, $c" + appendix,
+//                        prefixExpected + scopeName + type + " " + scopeName + "$a" + typeExpected + " "
+//                        + scopeName + type + " " + scopeName + "$b" + typeExpected + " "
+//                        + scopeName + type + " " + scopeName + "$c" + typeExpected
+//                    },
                     {
                         prefix + " $a" + operator + "1, $b, $c" + appendix,
                         prefixExpected + scopeName + type + " " + scopeName + "$a" + typeExpected + " "

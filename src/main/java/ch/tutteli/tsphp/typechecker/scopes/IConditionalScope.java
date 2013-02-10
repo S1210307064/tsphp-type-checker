@@ -22,7 +22,7 @@ import ch.tutteli.tsphp.common.IScope;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public interface ILocalScope extends IScope
+public interface IConditionalScope extends IScope
 {
     
 }

@@ -17,6 +17,8 @@
 package ch.tutteli.tsphp.typechecker.scopes;
 
 import ch.tutteli.tsphp.common.IScope;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -26,9 +28,7 @@ public class ScopeFactory implements IScopeFactory
 {
 
     private IScope globalScope = new GlobalScope();
-
-    public ScopeFactory() {
-    }
+    private Map<String, INamespaceScope> namespaces = new HashMap<>();
 
     @Override
     public IScope getGlobalScope() {
@@ -37,13 +37,20 @@ public class ScopeFactory implements IScopeFactory
 
     @Override
     public INamespaceScope createNamespace(String name, IScope currentScope) {
-        return !name.equals(IScope.DEFAULT_NAMESPACE)
-                ? new NamespaceScope(name, currentScope)
-                : new DefaultNamespaceScope(currentScope);
+        INamespaceScope scope;
+        if (namespaces.containsKey(name)) {
+            scope = namespaces.get(name);
+        } else {
+            scope = !name.equals(IScope.DEFAULT_NAMESPACE)
+                    ? new NamespaceScope(name, currentScope)
+                    : new DefaultNamespaceScope(currentScope);
+            namespaces.put(name, scope);
+        }
+        return scope;
     }
 
     @Override
-    public ILocalScope createLocalScope(IScope currentScope) {
-        return new LocalScope(currentScope);
+    public IConditionalScope createConditionalScope(IScope currentScope) {
+        return new ConditionalScope(currentScope);
     }
 }

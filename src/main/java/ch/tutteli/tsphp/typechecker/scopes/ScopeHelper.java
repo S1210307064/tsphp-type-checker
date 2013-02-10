@@ -18,6 +18,10 @@ package ch.tutteli.tsphp.typechecker.scopes;
 
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
+import ch.tutteli.tsphp.common.exceptions.DefinitionException;
+import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
+import java.util.Map;
+import org.antlr.runtime.Token;
 
 /**
  *
@@ -30,11 +34,27 @@ public class ScopeHelper
     }
 
     public static void define(IScope scope, ISymbol symbol) {
-        scope.getSymbols().put(symbol.getName(), symbol);
+        Map<String, ISymbol> symbols = scope.getSymbols();
+        symbols.put(symbol.getName(), symbol);
         symbol.setScope(scope);
     }
 
-    public static ISymbol resolve(IScope aThis, String name) {
-        throw new UnsupportedOperationException("Not yet implemented");
+    public static ISymbol resolve(IScope scope, String name) throws TypeCheckerException {
+        ISymbol symbol = scope.getSymbols().get(name);
+// if (!symbols.containsKey(symbolName)) {
+//        } else {
+//            ISymbol definedSymbol = symbols.get(symbolName);
+//            Token token = definedSymbol.getDefinitionAst().getToken();
+//            throw new DefinitionException(symbolName + " was already defined in line "
+//                    + token.getLine() + " position " + token.getCharPositionInLine(), definedSymbol, symbol);
+//        }
+        // check in parent scope if it couldn't be found here
+        if (symbol == null) {
+            IScope parent = scope.getParentScope();
+            if (parent != null) {
+                symbol = parent.resolve(name);
+            }
+        }
+        return symbol;
     }
 }

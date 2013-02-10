@@ -16,20 +16,11 @@
  */
 package ch.tutteli.tsphp.typechecker.test.utils;
 
-import ch.tutteli.tsphp.common.IParser;
-import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.TSPHPAst;
-import ch.tutteli.tsphp.common.TSPHPAstAdaptorRegistry;
-import ch.tutteli.tsphp.parser.ParserFacade;
-import ch.tutteli.tsphp.typechecker.TSPHPTypeCheckerDefinition;
-import ch.tutteli.tsphp.typechecker.scopes.IScopeFactory;
-import ch.tutteli.tsphp.typechecker.scopes.ScopeFactory;
 import java.util.List;
 import java.util.Map;
 import junit.framework.Assert;
-import org.antlr.runtime.RecognitionException;
-import org.antlr.runtime.tree.CommonTreeNodeStream;
 import org.junit.Ignore;
 
 /**
@@ -48,7 +39,7 @@ public abstract class ATypeCheckerDefinitionTest extends ATypeCheckerTest
     }
 
     @Override
-    public void verify() {
+    protected void verify() {
         Assert.assertEquals(testString + " failed.", expectedResult, getSymbolsAsString());
     }
 

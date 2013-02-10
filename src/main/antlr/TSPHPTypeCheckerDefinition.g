@@ -67,7 +67,7 @@ topdown
     	:	enterNamespace
     	|	enterClass
     	|	enterMethodFunction
-    	|	enterBlock
+    	|	enterConditionalBlock
     
     		//symbols
 	|	constantDeclarationList
@@ -85,7 +85,7 @@ exitScope
 		|	'class'
 		|	METHOD_DECLARATION
 		|	Function
-		|	BLOCK
+		|	BLOCK_CONDITIONAL
 		) 
 		{currentScope = currentScope.getEnclosingScope();}
 	;   
@@ -109,9 +109,9 @@ enterMethodFunction
 		{currentScope = definitionHelper.defineMethod(currentScope,$mMod, $rtMod, $returnType, $identifier); }
 	;
 	
-enterBlock
-	:	^(BLOCK .*) 
-		{currentScope = scopeFactory.createLocalScope(currentScope); }	
+enterConditionalBlock
+	:	^(BLOCK_CONDITIONAL .*) 
+		{currentScope = scopeFactory.createConditionalScope(currentScope); }	
 	;
 	
 constantDeclarationList

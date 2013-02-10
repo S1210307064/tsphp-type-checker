@@ -32,7 +32,7 @@ public class DefinitionHelper implements IDefinitionHelper
 {
 
     private ISymbolFactory symbolFactory;
-
+    
     public DefinitionHelper(ISymbolFactory aSymbolFactory) {
         symbolFactory = aSymbolFactory;
     }

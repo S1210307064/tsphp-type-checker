@@ -16,7 +16,6 @@
  */
 package ch.tutteli.tsphp.typechecker.test.definition;
 
-import ch.tutteli.tsphp.typechecker.TSPHPTypeCheckerDefinition;
 import ch.tutteli.tsphp.typechecker.symbols.ModifierHelper;
 import ch.tutteli.tsphp.typechecker.test.utils.ATypeCheckerDefinitionTest;
 import ch.tutteli.tsphp.typechecker.test.utils.IAdder;
@@ -66,7 +65,7 @@ public class FunctionTest extends ATypeCheckerDefinitionTest
 
 
         collection.addAll(ParameterListHelper.getTestStrings(
-                "function void foo(", "){}", "global.void global.foo() ", "global.foo.", true));
+                "function void foo(", "){}", "global.void global.foo() ", "global.foo().", true));
 
         return collection;
     }
