@@ -21,6 +21,8 @@ import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.TSPHPAst;
 import ch.tutteli.tsphp.typechecker.ISymbolTable;
 import ch.tutteli.tsphp.typechecker.SymbolTable;
+import ch.tutteli.tsphp.typechecker.symbols.IClassSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,9 +50,9 @@ public class TestSymbolTable extends SymbolTable implements ISymbolTable, ICreat
     }
 
     @Override
-    public IScope defineClass(IScope currentScope, TSPHPAst modifier, TSPHPAst identifier,
+    public IClassSymbol defineClass(IScope currentScope, TSPHPAst modifier, TSPHPAst identifier,
             TSPHPAst extendsIds, TSPHPAst implementsIds) {
-        IScope scope = super.defineClass(currentScope, modifier, identifier, extendsIds, implementsIds);
+        IClassSymbol scope = super.defineClass(currentScope, modifier, identifier, extendsIds, implementsIds);
 
         TSPHPAst identifiers = null;
         if (extendsIds.getChildCount() > 0 || implementsIds.getChildCount() > 0) {
@@ -64,9 +66,9 @@ public class TestSymbolTable extends SymbolTable implements ISymbolTable, ICreat
     }
 
     @Override
-    public IScope defineMethod(IScope currentScope, TSPHPAst methodModifier,
+    public IMethodSymbol defineMethod(IScope currentScope, TSPHPAst methodModifier,
             TSPHPAst returnTypeModifier, TSPHPAst returnType, TSPHPAst identifier) {
-        IScope scope = super.defineMethod(currentScope, methodModifier, returnTypeModifier, returnType, identifier);
+        IMethodSymbol scope = super.defineMethod(currentScope, methodModifier, returnTypeModifier, returnType, identifier);
         symbols.add(new HashMap.SimpleEntry<>(newlyCreatedSymbol, returnType));
         return scope;
     }

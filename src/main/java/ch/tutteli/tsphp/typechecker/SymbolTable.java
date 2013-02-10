@@ -38,14 +38,14 @@ public class SymbolTable implements ISymbolTable
     }
 
     @Override
-    public IScope defineInterface(IScope currentScope, TSPHPAst identifier, TSPHPAst extendsIds) {
+    public IClassSymbol defineInterface(IScope currentScope, TSPHPAst identifier, TSPHPAst extendsIds) {
         TSPHPAst classModifier = new TSPHPAst();
         classModifier.addChild(new TSPHPAst(new CommonToken(TSPHPTypeCheckerDefinition.Abstract, "abstract")));
         return defineClass(currentScope, classModifier, identifier, extendsIds, new TSPHPAst());
     }
 
     @Override
-    public IScope defineClass(IScope currentScope, TSPHPAst modifier, TSPHPAst identifier, TSPHPAst extendsIds, TSPHPAst implementsIds) {
+    public IClassSymbol defineClass(IScope currentScope, TSPHPAst modifier, TSPHPAst identifier, TSPHPAst extendsIds, TSPHPAst implementsIds) {
         assignScopeToIdentifiers(currentScope, extendsIds);
         assignScopeToIdentifiers(currentScope, implementsIds);
         IClassSymbol classSymbol = symbolFactory.createClassSymbol(modifier, identifier, currentScope);
@@ -55,7 +55,15 @@ public class SymbolTable implements ISymbolTable
     }
 
     @Override
-    public IScope defineMethod(IScope currentScope, TSPHPAst methodModifier,
+    public IMethodSymbol defineConstruct(IScope currentScope, TSPHPAst methodModifier, TSPHPAst identifier) {
+        TSPHPAst returnTypeVoid = new TSPHPAst(new CommonToken(TSPHPTypeCheckerDefinition.Void,"void"));
+        IMethodSymbol methodSymbol = defineMethod(currentScope, methodModifier, new TSPHPAst(), returnTypeVoid, identifier);
+        ((IClassSymbol) currentScope).setConstruct(methodSymbol);
+        return methodSymbol;
+    }
+
+    @Override
+    public IMethodSymbol defineMethod(IScope currentScope, TSPHPAst methodModifier,
             TSPHPAst returnTypeModifier, TSPHPAst returnType, TSPHPAst identifier) {
         returnType.scope = currentScope;
         IMethodSymbol methodSymbol = symbolFactory.createMethodSymbol(methodModifier, returnTypeModifier, identifier, currentScope);

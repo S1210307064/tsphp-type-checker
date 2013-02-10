@@ -29,8 +29,20 @@ import java.util.Set;
 public class ClassSymbol extends AScopedSymbol implements IClassSymbol
 {
 
+    private IMethodSymbol construct;
+
     public ClassSymbol(TSPHPAst definitionAst, Set<Integer> modifiers, String name, IScope enclosingScope) {
         //the {} prevent clashes with constant identifiers and function identifiers
-        super(definitionAst, modifiers,  name+"{}", enclosingScope);
+        super(definitionAst, modifiers, name + "{}", enclosingScope);
+    }
+
+    @Override
+    public void setConstruct(IMethodSymbol newConstruct) {
+        construct = newConstruct;
+    }
+
+    @Override
+    public IMethodSymbol getConstruct() {
+        return construct;
     }
 }

@@ -26,4 +26,8 @@ import ch.tutteli.tsphp.common.IType;
  */
 public interface IClassSymbol extends ISymbol, IType, IScope
 {
+
+    void setConstruct(IMethodSymbol construct);
+
+    IMethodSymbol getConstruct();
 }

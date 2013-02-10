@@ -67,6 +67,7 @@ topdown
     	:	enterNamespace
     	|	enterInterface
     	|	enterClass
+    	|	enterConstruct
     	|	enterMethodFunction
     	|	enterConditionalBlock
     
@@ -85,6 +86,7 @@ exitScope
 	:	(	Namespace
 		|	'interface'
 		|	'class'
+		|	'__construct'
 		|	METHOD_DECLARATION
 		|	Function
 		|	BLOCK_CONDITIONAL
@@ -105,6 +107,11 @@ enterInterface
 enterClass
 	:	^('class' cMod=. identifier=Identifier extIds=. implIds=. .) 
 		{currentScope = symbolTable.defineClass(currentScope,$cMod,$identifier,$extIds,$implIds); }	
+	;
+	
+enterConstruct
+	:	^(identifier='__construct' mMod=. . .)
+		{currentScope = symbolTable.defineConstruct(currentScope, $mMod, $identifier);}
 	;
 
 enterMethodFunction
@@ -131,11 +138,11 @@ constantDeclaration[TSPHPAst type]
 	;
 
 parameterDeclarationList
-	:	^(PARAM_LIST parameterDeclaration+)
+	:	^(PARAMETER_LIST parameterDeclaration+)
 	;
 
 parameterDeclaration
-	:	^(PARAM_DECLARATION 
+	:	^(PARAMETER_DECLARATION 
 			^(TYPE tMod=. type=.) variableDeclaration[$tMod,$type]
 		)
 	;

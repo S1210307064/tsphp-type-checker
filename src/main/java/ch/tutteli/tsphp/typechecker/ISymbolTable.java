@@ -18,6 +18,8 @@ package ch.tutteli.tsphp.typechecker;
 
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.TSPHPAst;
+import ch.tutteli.tsphp.typechecker.symbols.IClassSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 
 /**
  *
@@ -26,12 +28,14 @@ import ch.tutteli.tsphp.common.TSPHPAst;
 public interface ISymbolTable
 {
 
-    IScope defineInterface(IScope currentScope, TSPHPAst identifier, TSPHPAst extendsIds);
+    IClassSymbol defineInterface(IScope currentScope, TSPHPAst identifier, TSPHPAst extendsIds);
 
-    IScope defineClass(IScope currentScope, TSPHPAst modifier, TSPHPAst identifier,
+    IClassSymbol defineClass(IScope currentScope, TSPHPAst modifier, TSPHPAst identifier,
             TSPHPAst extendsIds, TSPHPAst implementsIds);
 
-    IScope defineMethod(IScope currentScope, TSPHPAst methodModifier,
+    IMethodSymbol defineConstruct(IScope currentScope, TSPHPAst methodModifier, TSPHPAst identifier);
+
+    IMethodSymbol defineMethod(IScope currentScope, TSPHPAst methodModifier,
             TSPHPAst returnTypeModifier, TSPHPAst returnType, TSPHPAst identifier);
 
     void defineConstant(IScope currentScope, TSPHPAst type, TSPHPAst identifier);
