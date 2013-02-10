@@ -16,7 +16,6 @@
  */
 package ch.tutteli.tsphp.typechecker;
 
-import ch.tutteli.tsphp.common.IErrorReporter;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.TSPHPAst;
 
@@ -24,8 +23,10 @@ import ch.tutteli.tsphp.common.TSPHPAst;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public interface IDefinitionHelper 
+public interface ISymbolTable
 {
+
+    IScope defineInterface(IScope currentScope, TSPHPAst identifier, TSPHPAst extendsIds);
 
     IScope defineClass(IScope currentScope, TSPHPAst modifier, TSPHPAst identifier,
             TSPHPAst extendsIds, TSPHPAst implementsIds);

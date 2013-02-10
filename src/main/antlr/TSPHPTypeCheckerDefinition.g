@@ -48,16 +48,16 @@ import ch.tutteli.tsphp.typechecker.scopes.IScopeFactory;
 
 @members {
 
-protected IDefinitionHelper definitionHelper;
+protected ISymbolTable symbolTable;
 protected IScope currentScope;
 protected IScopeFactory scopeFactory;
 
 
-public TSPHPTypeCheckerDefinition(TreeNodeStream input, IScopeFactory theScopeFactory, IDefinitionHelper theDefinitionHelper) {
+public TSPHPTypeCheckerDefinition(TreeNodeStream input, IScopeFactory theScopeFactory, ISymbolTable theSymbolTable) {
     this(input);
     scopeFactory = theScopeFactory;
     currentScope = theScopeFactory.getGlobalScope();
-    definitionHelper = theDefinitionHelper;    
+    symbolTable = theSymbolTable;
 }
 
 }
@@ -65,6 +65,7 @@ public TSPHPTypeCheckerDefinition(TreeNodeStream input, IScopeFactory theScopeFa
 topdown
 	//scoped symbols
     	:	enterNamespace
+    	|	enterInterface
     	|	enterClass
     	|	enterMethodFunction
     	|	enterConditionalBlock
@@ -82,6 +83,7 @@ bottomup
    
 exitScope
 	:	(	Namespace
+		|	'interface'
 		|	'class'
 		|	METHOD_DECLARATION
 		|	Function
@@ -94,10 +96,15 @@ enterNamespace
 	:	^(Namespace t=(TYPE_NAME|DEFAULT_NAMESPACE) .) 
 		{currentScope = scopeFactory.createNamespace($t.text, currentScope); }
 	;
+
+enterInterface
+	:	^('interface' identifier=Identifier extIds=. .)
+		{currentScope = symbolTable.defineInterface(currentScope,$identifier,$extIds); }
+	;
 	
 enterClass
 	:	^('class' cMod=. identifier=Identifier extIds=. implIds=. .) 
-		{currentScope = definitionHelper.defineClass(currentScope,$cMod,$identifier,$extIds,$implIds); }	
+		{currentScope = symbolTable.defineClass(currentScope,$cMod,$identifier,$extIds,$implIds); }	
 	;
 
 enterMethodFunction
@@ -106,7 +113,7 @@ enterMethodFunction
 			) 
 			mMod=. ^(TYPE rtMod=. returnType=.) identifier=. . .
 		)
-		{currentScope = definitionHelper.defineMethod(currentScope,$mMod, $rtMod, $returnType, $identifier); }
+		{currentScope = symbolTable.defineMethod(currentScope,$mMod, $rtMod, $returnType, $identifier); }
 	;
 	
 enterConditionalBlock
@@ -120,7 +127,7 @@ constantDeclarationList
 
 constantDeclaration[TSPHPAst type]
 	:	^(identifier=Identifier .)
-		{ definitionHelper.defineConstant(currentScope, $type,$identifier); }
+		{ symbolTable.defineConstant(currentScope, $type,$identifier); }
 	;
 
 parameterDeclarationList
@@ -145,7 +152,7 @@ variableDeclaration[TSPHPAst tMod, TSPHPAst type]
 		(	^(variableId=VariableId .)
 		|	variableId=VariableId	
 		)
-		{ definitionHelper.defineVariable(currentScope, $tMod, $type, $variableId); }
+		{ symbolTable.defineVariable(currentScope, $tMod, $type, $variableId); }
 	;
 
 atom	

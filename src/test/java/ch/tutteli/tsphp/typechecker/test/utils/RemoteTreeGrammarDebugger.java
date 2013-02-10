@@ -40,7 +40,7 @@ public class RemoteTreeGrammarDebugger
 
         TestSymbolFactory testSymbolFactory = new TestSymbolFactory();
         TSPHPTypeCheckerDefinition definition = new TSPHPTypeCheckerDefinition(
-                commonTreeNodeStream, new ScopeFactory(), new TestDefinitionHelper(testSymbolFactory));
+                commonTreeNodeStream, new ScopeFactory(), new TestSymbolTable(testSymbolFactory));
 
         definition.downup(ast);
         System.exit(0);

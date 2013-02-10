@@ -28,13 +28,20 @@ import org.antlr.runtime.CommonToken;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class DefinitionHelper implements IDefinitionHelper
+public class SymbolTable implements ISymbolTable
 {
 
     private ISymbolFactory symbolFactory;
-    
-    public DefinitionHelper(ISymbolFactory aSymbolFactory) {
+
+    public SymbolTable(ISymbolFactory aSymbolFactory) {
         symbolFactory = aSymbolFactory;
+    }
+
+    @Override
+    public IScope defineInterface(IScope currentScope, TSPHPAst identifier, TSPHPAst extendsIds) {
+        TSPHPAst classModifier = new TSPHPAst();
+        classModifier.addChild(new TSPHPAst(new CommonToken(TSPHPTypeCheckerDefinition.Abstract, "abstract")));
+        return defineClass(currentScope, classModifier, identifier, extendsIds, new TSPHPAst());
     }
 
     @Override

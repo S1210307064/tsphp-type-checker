@@ -37,7 +37,7 @@ public abstract class ATypeCheckerTest
 {
 
     protected String testString;
-    protected TestDefinitionHelper testDefinitionHelper;
+    protected TestSymbolTable testDefinitionHelper;
     protected IScopeFactory scopeFactory = new ScopeFactory();
     protected TSPHPAst ast;
 
@@ -57,7 +57,7 @@ public abstract class ATypeCheckerTest
         commonTreeNodeStream.setTokenStream(parser.getTokenStream());
 
         TestSymbolFactory symbolFactory = new TestSymbolFactory();
-        testDefinitionHelper = new TestDefinitionHelper(symbolFactory);
+        testDefinitionHelper = new TestSymbolTable(symbolFactory);
 
         TSPHPTypeCheckerDefinition definition = new TSPHPTypeCheckerDefinition(commonTreeNodeStream, scopeFactory, testDefinitionHelper);
         definition.downup(ast);

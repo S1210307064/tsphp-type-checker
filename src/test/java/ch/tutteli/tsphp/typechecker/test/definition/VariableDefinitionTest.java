@@ -99,59 +99,58 @@ public class VariableDefinitionTest extends ATypeCheckerDefinitionTest
         }
 
 
-
-//        //Different namespaces
-//        collection.addAll(Arrays.asList(new Object[][]{
-//                    {
-//                        "namespace a{int $a=1;} namespace b{float $b=1;}",
-//                        global + "a.int " + global + "a.$a "
-//                        + global + "b.float " + global + "b.$b"
-//                    },
-//                    {
-//                        "namespace{int $d=1;} namespace a{float $a=1;} namespace b{int $b=1;}",
-//                        global + "int " + global + "$d "
-//                        + global + "a.float " + global + "a.$a "
-//                        + global + "b.int " + global + "b.$b"
-//                    },
-//                    {
-//                        "int $a; bool $b; float $c=1, $d;",
-//                        global + "int " + global + "$a "
-//                        + global + "bool " + global + "$b "
-//                        + global + "float " + global + "$c "
-//                        + global + "float " + global + "$d"
-//                    },
-//                    {
-//                        "namespace a\\c; int $a; bool $b; float $c=1, $d;",
-//                        global + "a\\c.int " + global + "a\\c.$a "
-//                        + global + "a\\c.bool " + global + "a\\c.$b "
-//                        + global + "a\\c.float " + global + "a\\c.$c "
-//                        + global + "a\\c.float " + global + "a\\c.$d"
-//                    },
-//                    {
-//                        "namespace b{int $a; bool $b; float $e=1.2;} namespace c\\e{ float $c=1, $d;}",
-//                        global + "b.int " + global + "b.$a "
-//                        + global + "b.bool " + global + "b.$b "
-//                        + global + "b.float " + global + "b.$e "
-//                        + global + "c\\e.float " + global + "c\\e.$c "
-//                        + global + "c\\e.float " + global + "c\\e.$d"
-//                    },
-//                    {
-//                        "namespace t\\r; class a{ function void foo(){ int $a=1; bool $b=true,$c=false;}}",
-//                        global + "t\\r.a{} " + global + "t\\r.a{}.void " + global + "t\\r.a{}.foo()|" + TSPHPTypeCheckerDefinition.Public + " "
-//                        + global + "t\\r.a{}.foo().int " + global + "t\\r.a{}.foo().$a "
-//                        + global + "t\\r.a{}.foo().bool " + global + "t\\r.a{}.foo().$b "
-//                        + global + "t\\r.a{}.foo().bool " + global + "t\\r.a{}.foo().$c"
-//                    },
-//                    {
-//                        "namespace{ function void foo(){ int $a=1; bool $b=true, $c=false;}}"
-//                        + "namespace b{ function void bar(){float $d;}}",
-//                        global + "void " + global + "foo() "
-//                        + global + "foo().int " + global + "foo().$a "
-//                        + global + "foo().bool " + global + "foo().$b "
-//                        + global + "foo().bool " + global + "foo().$c "
-//                        + global + "b.void " + global + "b.bar() "
-//                        + global + "b.bar().float " + global + "b.bar().$d"
-//                    },}));
+        //Different namespaces
+        collection.addAll(Arrays.asList(new Object[][]{
+                    {
+                        "namespace a{int $a=1;} namespace b{float $b=1;}",
+                        global + "a.int " + global + "a.$a "
+                        + global + "b.float " + global + "b.$b"
+                    },
+                    {
+                        "namespace{int $d=1;} namespace a{float $a=1;} namespace b{int $b=1;}",
+                        global + "int " + global + "$d "
+                        + global + "a.float " + global + "a.$a "
+                        + global + "b.int " + global + "b.$b"
+                    },
+                    {
+                        "int $a; bool $b; float $c=1, $d;",
+                        global + "int " + global + "$a "
+                        + global + "bool " + global + "$b "
+                        + global + "float " + global + "$c "
+                        + global + "float " + global + "$d"
+                    },
+                    {
+                        "namespace a\\c; int $a; bool $b; float $c=1, $d;",
+                        global + "a\\c.int " + global + "a\\c.$a "
+                        + global + "a\\c.bool " + global + "a\\c.$b "
+                        + global + "a\\c.float " + global + "a\\c.$c "
+                        + global + "a\\c.float " + global + "a\\c.$d"
+                    },
+                    {
+                        "namespace b{int $a; bool $b; float $e=1.2;} namespace c\\e{ float $c=1, $d;}",
+                        global + "b.int " + global + "b.$a "
+                        + global + "b.bool " + global + "b.$b "
+                        + global + "b.float " + global + "b.$e "
+                        + global + "c\\e.float " + global + "c\\e.$c "
+                        + global + "c\\e.float " + global + "c\\e.$d"
+                    },
+                    {
+                        "namespace t\\r; class a{ function void foo(){ int $a=1; bool $b=true,$c=false;}}",
+                        global + "t\\r.a{} " + global + "t\\r.a{}.void " + global + "t\\r.a{}.foo()|" + TSPHPTypeCheckerDefinition.Public + " "
+                        + global + "t\\r.a{}.foo().int " + global + "t\\r.a{}.foo().$a "
+                        + global + "t\\r.a{}.foo().bool " + global + "t\\r.a{}.foo().$b "
+                        + global + "t\\r.a{}.foo().bool " + global + "t\\r.a{}.foo().$c"
+                    },
+                    {
+                        "namespace{ function void foo(){ int $a=1; bool $b=true, $c=false;}}"
+                        + "namespace b{ function void bar(){float $d;}}",
+                        global + "void " + global + "foo() "
+                        + global + "foo().int " + global + "foo().$a "
+                        + global + "foo().bool " + global + "foo().$b "
+                        + global + "foo().bool " + global + "foo().$c "
+                        + global + "b.void " + global + "b.bar() "
+                        + global + "b.bar().float " + global + "b.bar().$d"
+                    },}));
         return collection;
     }
 }

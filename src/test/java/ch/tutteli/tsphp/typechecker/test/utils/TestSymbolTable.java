@@ -19,8 +19,8 @@ package ch.tutteli.tsphp.typechecker.test.utils;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.TSPHPAst;
-import ch.tutteli.tsphp.typechecker.DefinitionHelper;
-import ch.tutteli.tsphp.typechecker.IDefinitionHelper;
+import ch.tutteli.tsphp.typechecker.ISymbolTable;
+import ch.tutteli.tsphp.typechecker.SymbolTable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,14 +30,14 @@ import java.util.Map.Entry;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class TestDefinitionHelper extends DefinitionHelper implements IDefinitionHelper, ICreateSymbolListener
+public class TestSymbolTable extends SymbolTable implements ISymbolTable, ICreateSymbolListener
 {
 
     private TestSymbolFactory symbolFactory;
     private List<Entry<ISymbol, TSPHPAst>> symbols = new ArrayList<>();
     private ISymbol newlyCreatedSymbol;
 
-    public TestDefinitionHelper(TestSymbolFactory theSymbolFactory) {
+    public TestSymbolTable(TestSymbolFactory theSymbolFactory) {
         super(theSymbolFactory);
         symbolFactory = theSymbolFactory;
         symbolFactory.registerListener(this);
