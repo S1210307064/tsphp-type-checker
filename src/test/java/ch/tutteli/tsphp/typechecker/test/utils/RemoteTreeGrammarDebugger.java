@@ -20,7 +20,7 @@ import ch.tutteli.tsphp.common.IParser;
 import ch.tutteli.tsphp.common.TSPHPAst;
 import ch.tutteli.tsphp.common.TSPHPAstAdaptorRegistry;
 import ch.tutteli.tsphp.parser.ParserFacade;
-import ch.tutteli.tsphp.typechecker.TSPHPTypeCheckerDefinition;
+import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
 import ch.tutteli.tsphp.typechecker.scopes.ScopeFactory;
 import org.antlr.runtime.tree.CommonTreeNodeStream;
 

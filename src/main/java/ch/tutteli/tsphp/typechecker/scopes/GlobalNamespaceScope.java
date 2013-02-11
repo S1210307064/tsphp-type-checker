@@ -17,29 +17,14 @@
 package ch.tutteli.tsphp.typechecker.scopes;
 
 import ch.tutteli.tsphp.common.IScope;
-import ch.tutteli.tsphp.common.ISymbol;
-import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class ConditionalScope extends AScope implements IConditionalScope
+public class GlobalNamespaceScope extends AScope implements IScope
 {
-
-    public ConditionalScope(IScope enclosingScope) {
-        super("cScope", enclosingScope);
-    }
-
-    @Override
-    public ISymbol resolve(String name) throws TypeCheckerException {
-        ISymbol symbolEnclosingScope = enclosingScope.resolve(name);
-        ISymbol symbol = ScopeHelper.resolve(this, name);
-        if (symbol == null) {
-            symbol = symbolEnclosingScope;
-        } else if (symbolEnclosingScope != null) {
-            //todo error, cannot redeclare in conditional scope
-        }
-        return symbol;
+    public GlobalNamespaceScope(String scopeName, IScope globalScope) {
+        super(scopeName, globalScope);
     }
 }

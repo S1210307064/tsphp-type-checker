@@ -58,14 +58,14 @@ public class FunctionTest extends ATypeCheckerDefinitionTest
                 String typeModifiers = ModifierHelper.getModifiers(modifiers);
                 collection.add(new Object[]{
                             "function " + type + " get(){}",
-                            "global." + typeExpected + " global.get()" + typeModifiers
+                            "global.default.default." + typeExpected + " global.default.get()" + typeModifiers
                         });
             }
         });
 
 
         collection.addAll(ParameterListHelper.getTestStrings(
-                "function void foo(", "){}", "global.void global.foo() ", "global.foo().", true));
+                "function void foo(", "){}", "global.default.default.void global.default.foo() ", "global.default.default.foo().", true));
 
         return collection;
     }

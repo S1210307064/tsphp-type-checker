@@ -18,6 +18,8 @@ package ch.tutteli.tsphp.typechecker;
 
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.TSPHPAst;
+import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
+import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tutteli.tsphp.typechecker.symbols.IClassSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
@@ -35,6 +37,19 @@ public class SymbolTable implements ISymbolTable
 
     public SymbolTable(ISymbolFactory aSymbolFactory) {
         symbolFactory = aSymbolFactory;
+    }
+
+    @Override
+    public void defineUse(IScope currentScope, TSPHPAst type) {
+        String alias = type.getText();
+        alias = alias.substring(alias.lastIndexOf("\\"));
+        defineUse(currentScope, type, alias);
+    }
+
+    @Override
+    public void defineUse(IScope currentScope, TSPHPAst type, String alias) {
+        type.scope = currentScope;
+        ((INamespaceScope)currentScope).addUse(alias,type);
     }
 
     @Override
@@ -56,7 +71,7 @@ public class SymbolTable implements ISymbolTable
 
     @Override
     public IMethodSymbol defineConstruct(IScope currentScope, TSPHPAst methodModifier, TSPHPAst identifier) {
-        TSPHPAst returnTypeVoid = new TSPHPAst(new CommonToken(TSPHPTypeCheckerDefinition.Void,"void"));
+        TSPHPAst returnTypeVoid = new TSPHPAst(new CommonToken(TSPHPTypeCheckerDefinition.Void, "void"));
         IMethodSymbol methodSymbol = defineMethod(currentScope, methodModifier, new TSPHPAst(), returnTypeVoid, identifier);
         ((IClassSymbol) currentScope).setConstruct(methodSymbol);
         return methodSymbol;

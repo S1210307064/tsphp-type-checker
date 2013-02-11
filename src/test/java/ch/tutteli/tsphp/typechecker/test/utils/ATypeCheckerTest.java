@@ -20,7 +20,7 @@ import ch.tutteli.tsphp.common.IParser;
 import ch.tutteli.tsphp.common.TSPHPAst;
 import ch.tutteli.tsphp.common.TSPHPAstAdaptorRegistry;
 import ch.tutteli.tsphp.parser.ParserFacade;
-import ch.tutteli.tsphp.typechecker.TSPHPTypeCheckerDefinition;
+import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
 import ch.tutteli.tsphp.typechecker.scopes.IScopeFactory;
 import ch.tutteli.tsphp.typechecker.scopes.ScopeFactory;
 import junit.framework.Assert;
@@ -37,8 +37,8 @@ public abstract class ATypeCheckerTest
 {
 
     protected String testString;
-    protected TestSymbolTable testDefinitionHelper;
-    protected IScopeFactory scopeFactory = new ScopeFactory();
+    protected TestSymbolTable testSymbolTable;
+    protected TestScopeFactory scopeFactory = new TestScopeFactory();
     protected TSPHPAst ast;
 
     protected abstract void verify();
@@ -57,9 +57,9 @@ public abstract class ATypeCheckerTest
         commonTreeNodeStream.setTokenStream(parser.getTokenStream());
 
         TestSymbolFactory symbolFactory = new TestSymbolFactory();
-        testDefinitionHelper = new TestSymbolTable(symbolFactory);
+        testSymbolTable = new TestSymbolTable(symbolFactory);
 
-        TSPHPTypeCheckerDefinition definition = new TSPHPTypeCheckerDefinition(commonTreeNodeStream, scopeFactory, testDefinitionHelper);
+        TSPHPTypeCheckerDefinition definition = new TSPHPTypeCheckerDefinition(commonTreeNodeStream, scopeFactory, testSymbolTable);
         definition.downup(ast);
         
         verify();

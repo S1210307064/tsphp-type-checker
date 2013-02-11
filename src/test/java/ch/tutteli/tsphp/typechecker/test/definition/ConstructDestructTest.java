@@ -16,12 +16,10 @@
  */
 package ch.tutteli.tsphp.typechecker.test.definition;
 
-import ch.tutteli.tsphp.typechecker.TSPHPTypeCheckerDefinition;
+import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
 import ch.tutteli.tsphp.typechecker.symbols.ModifierHelper;
 import ch.tutteli.tsphp.typechecker.test.utils.ATypeCheckerDefinitionTest;
-import ch.tutteli.tsphp.typechecker.test.utils.IAdder;
 import ch.tutteli.tsphp.typechecker.test.utils.ParameterListHelper;
-import ch.tutteli.tsphp.typechecker.test.utils.TypeHelper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -92,13 +90,13 @@ public class ConstructDestructTest extends ATypeCheckerDefinitionTest
         for (Object[] variation : variations) {
             collection.add(new Object[]{
                         prefix + variation[0] + " function __construct(){}" + appendix,
-                        prefixExpected + "global.a.b{}.void "
-                        + "global.a.b{}.__construct()" + ModifierHelper.getModifiers((SortedSet<Integer>) variation[1])
+                        prefixExpected + "global.a.a.b{}.void "
+                        + "global.a.a.b{}.__construct()" + ModifierHelper.getModifiers((SortedSet<Integer>) variation[1])
                     });
             collection.add(new Object[]{
                         prefix + variation[0] + " function __destruct(){}" + appendix,
-                        prefixExpected + "global.a.b{}.void "
-                        + "global.a.b{}.__destruct()" + ModifierHelper.getModifiers((SortedSet<Integer>) variation[1])
+                        prefixExpected + "global.a.a.b{}.void "
+                        + "global.a.a.b{}.__destruct()" + ModifierHelper.getModifiers((SortedSet<Integer>) variation[1])
                     });
         }
 
@@ -113,28 +111,29 @@ public class ConstructDestructTest extends ATypeCheckerDefinitionTest
         for (Object[] variation : variations) {
             collection.add(new Object[]{
                         prefix + variation[0] + " function __construct();" + appendix,
-                        prefixExpected + "global.a.b{}.void "
-                        + "global.a.b{}.__construct()" + ModifierHelper.getModifiers((SortedSet<Integer>) variation[1])
+                        prefixExpected + "global.a.a.b{}.void "
+                        + "global.a.a.b{}.__construct()" + ModifierHelper.getModifiers((SortedSet<Integer>) variation[1])
                     });
             collection.add(new Object[]{
                         prefix + variation[0] + " function __destruct();" + appendix,
-                        prefixExpected + "global.a.b{}.void "
-                        + "global.a.b{}.__destruct()" + ModifierHelper.getModifiers((SortedSet<Integer>) variation[1])
+                        prefixExpected + "global.a.a.b{}.void "
+                        + "global.a.a.b{}.__destruct()" + ModifierHelper.getModifiers((SortedSet<Integer>) variation[1])
                     });
         }
         collection.add(new Object[]{
                     prefix + "abstract function __construct(); abstract function __destruct();" + appendix,
-                    prefixExpected + "global.a.b{}.void "
-                    + "global.a.b{}.__construct()" + ModifierHelper.getModifiers((SortedSet<Integer>) variations[0][1]) + " "
-                    + "global.a.b{}.void "
-                    + "global.a.b{}.__destruct()" + ModifierHelper.getModifiers((SortedSet<Integer>) variations[0][1])
+                    prefixExpected + "global.a.a.b{}.void "
+                    + "global.a.a.b{}.__construct()" + ModifierHelper.getModifiers((SortedSet<Integer>) variations[0][1]) + " "
+                    + "global.a.a.b{}.void "
+                    + "global.a.a.b{}.__destruct()" + ModifierHelper.getModifiers((SortedSet<Integer>) variations[0][1])
                 });
     }
 
     private static void addParameters() {
         collection.addAll(ParameterListHelper.getTestStrings(
                 prefix + "function __construct(", "){}" + appendix,
-                prefixExpected + "global.a.b{}.void global.a.b{}.__construct()|" + TSPHPTypeCheckerDefinition.Public + " ",
-                "global.a.b{}.__construct().", true));
+                prefixExpected
+                + "global.a.a.b{}.void global.a.a.b{}.__construct()|" + TSPHPTypeCheckerDefinition.Public + " ",
+                "global.a.a.b{}.__construct().", true));
     }
 }

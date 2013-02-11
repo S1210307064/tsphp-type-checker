@@ -28,23 +28,31 @@ public class ScopeFactory implements IScopeFactory
 {
 
     private IScope globalScope = new GlobalScope();
-    private Map<String, INamespaceScope> namespaces = new HashMap<>();
-
+    private Map<String, IScope> globalNamespaces = new HashMap<>();
+    
     @Override
     public IScope getGlobalScope() {
         return globalScope;
     }
+    
+    @Override
+    public Map<String, IScope> getGlobalNamespaceScopes(){
+        return globalNamespaces;
+    }
+    
 
     @Override
-    public INamespaceScope createNamespace(String name, IScope currentScope) {
-        INamespaceScope scope;
-        if (namespaces.containsKey(name)) {
-            scope = namespaces.get(name);
+    public INamespaceScope createNamespace(String name) {
+        return new NamespaceScope(name, getOrCreateGlobalNamespace(name));
+    }
+
+    private IScope getOrCreateGlobalNamespace(String name) {
+        IScope scope;
+        if (globalNamespaces.containsKey(name)) {
+            scope = globalNamespaces.get(name);
         } else {
-            scope = !name.equals(IScope.DEFAULT_NAMESPACE)
-                    ? new NamespaceScope(name, currentScope)
-                    : new DefaultNamespaceScope(currentScope);
-            namespaces.put(name, scope);
+            scope = new GlobalNamespaceScope(name, globalScope);
+            globalNamespaces.put(name, scope);
         }
         return scope;
     }

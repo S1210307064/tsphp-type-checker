@@ -17,7 +17,7 @@
 package ch.tutteli.tsphp.typechecker.symbols;
 
 import ch.tutteli.tsphp.common.TSPHPAst;
-import ch.tutteli.tsphp.typechecker.TSPHPTypeCheckerDefinition;
+import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
 import java.util.Set;
 
 /**

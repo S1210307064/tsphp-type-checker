@@ -28,6 +28,10 @@ import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 public interface ISymbolTable
 {
 
+    void defineUse(IScope currentScope, TSPHPAst type);
+
+    void defineUse(IScope currentScope, TSPHPAst type, String alias);
+
     IClassSymbol defineInterface(IScope currentScope, TSPHPAst identifier, TSPHPAst extendsIds);
 
     IClassSymbol defineClass(IScope currentScope, TSPHPAst modifier, TSPHPAst identifier,

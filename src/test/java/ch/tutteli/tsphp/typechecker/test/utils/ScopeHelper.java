@@ -35,21 +35,15 @@ public class ScopeHelper
     public static String getEnclosingScopeNames(IScope scope) {
         StringBuilder stringBuilder = new StringBuilder();
         while (scope != null) {
-            if (isNotDefaultNamespace(scope)) {
-                stringBuilder.insert(0, ".");
-                stringBuilder.insert(0, scope.getScopeName());
-            }
+            stringBuilder.insert(0, ".");
+            stringBuilder.insert(0, scope.getScopeName());
             scope = scope.getEnclosingScope();
         }
         return stringBuilder.toString();
     }
 
-    static boolean isNotDefaultNamespace(IScope scope) {
-        return !scope.getScopeName().equals(IScope.DEFAULT_NAMESPACE);
-    }
-
     public static Collection<Object[]> testStringsDefaultNamespace() {
-        return testStrings("", "", "global", new Integer[]{1});
+        return testStrings("", "", "global.default.default", new Integer[]{1});
     }
 
     public static Collection<Object[]> testStrings(String prefix, String appendix,
@@ -59,39 +53,38 @@ public class ScopeHelper
         List<Object[]> collection = new ArrayList<>();
 
         String[][] variableIds = new String[][]{
-            {"$b", "$b","$b"},
+            {"$b", "$b", "$b"},
             {"$this", "$this"},
             {"self::$b", "(sMemAccess self $b)"},
             {"parent::$b", "(sMemAccess parent $b)"},
-            {"foo()","(fCall foo args)"},
-            {"$a->foo()","(mCall $a foo args)"},
-            {"$this->foo()","(mCall $this foo args)"},
-            {"self::foo()","(smCall self foo args)"},
-            {"parent::foo()","(smCall parent foo args)"},            
-        };
+            {"foo()", "(fCall foo args)"},
+            {"$a->foo()", "(mCall $a foo args)"},
+            {"$this->foo()", "(mCall $this foo args)"},
+            {"self::foo()", "(smCall self foo args)"},
+            {"parent::foo()", "(smCall parent foo args)"},};
 
         for (String[] variableId : variableIds) {
-            collection.addAll(getVariations(prefix, appendix, variableId[0],variableId[1], 
+            collection.addAll(getVariations(prefix, appendix, variableId[0], variableId[1],
                     fullScopeName, accessToScope));
-            collection.addAll(getAccessVariations(prefix, appendix, variableId[0],variableId[1],
+            collection.addAll(getAccessVariations(prefix, appendix, variableId[0], variableId[1],
                     fullScopeName, accessToScope));
         }
-        collection.addAll(getVariations(prefix, appendix,"b", "b",
+        collection.addAll(getVariations(prefix, appendix, "b", "b",
                 fullScopeName, accessToScope));
-        collection.addAll(getVariations(prefix, appendix,"self::b", "(sMemAccess self b)",
+        collection.addAll(getVariations(prefix, appendix, "self::b", "(sMemAccess self b)",
                 fullScopeName, accessToScope));
-        collection.addAll(getVariations(prefix, appendix,"parent::b", "(sMemAccess parent b)", 
+        collection.addAll(getVariations(prefix, appendix, "parent::b", "(sMemAccess parent b)",
                 fullScopeName, accessToScope));
-     
+
         String[] types = TypeHelper.getClassInterfaceTypes();
         for (String type : types) {
-            collection.addAll(getVariations(prefix, appendix, type + "::b", "(sMemAccess "+type+" b)",
+            collection.addAll(getVariations(prefix, appendix, type + "::b", "(sMemAccess " + type + " b)",
                     fullScopeName, accessToScope));
-            collection.addAll(getVariations(prefix, appendix, type + "::$b", "(sMemAccess "+type+" $b)",
+            collection.addAll(getVariations(prefix, appendix, type + "::$b", "(sMemAccess " + type + " $b)",
                     fullScopeName, accessToScope));
-            collection.addAll(getAccessVariations(prefix, appendix, type + "::$b", "(sMemAccess "+type+" $b)",
+            collection.addAll(getAccessVariations(prefix, appendix, type + "::$b", "(sMemAccess " + type + " $b)",
                     fullScopeName, accessToScope));
-            collection.addAll(getAccessVariations(prefix, appendix, type + "::foo()", "(smCall "+type+" foo args)",
+            collection.addAll(getAccessVariations(prefix, appendix, type + "::foo()", "(smCall " + type + " foo args)",
                     fullScopeName, accessToScope));
         }
 
@@ -168,17 +161,17 @@ public class ScopeHelper
                     },
                     {prefix + variableId + "[1+1][0];" + appendix, new ScopeTestStruct[]{
                             //arrAccess arrAccess variableId
-                            new ScopeTestStruct(astText, fullScopeName, getAstAccessOrder(accessToScope, 0, 0,0))
+                            new ScopeTestStruct(astText, fullScopeName, getAstAccessOrder(accessToScope, 0, 0, 0))
                         }
                     },
                     {prefix + variableId + "->foo();" + appendix, new ScopeTestStruct[]{
                             //smCall/mCall/fCall variableId
-                            new ScopeTestStruct(astText, fullScopeName, getAstAccessOrder(accessToScope, 0,0))
+                            new ScopeTestStruct(astText, fullScopeName, getAstAccessOrder(accessToScope, 0, 0))
                         }
                     },
                     {prefix + variableId + "->foo()->bar();" + appendix, new ScopeTestStruct[]{
                             //smCall/mCall/fCall smCall/mCall/fCall variableId
-                            new ScopeTestStruct(astText, fullScopeName, getAstAccessOrder(accessToScope, 0,0,0))
+                            new ScopeTestStruct(astText, fullScopeName, getAstAccessOrder(accessToScope, 0, 0, 0))
                         }
                     }
                 });

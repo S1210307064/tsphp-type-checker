@@ -32,7 +32,7 @@ public abstract class AScope implements IScope
 {
 
     protected String scopeName;
-    protected IScope enclosingScope; // null if default namespace
+    protected IScope enclosingScope;
     private Map<String, ISymbol> symbols = new LinkedHashMap<>();
 
     public AScope(String theScopeName, IScope theEnclosingScope) {

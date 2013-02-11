@@ -44,7 +44,7 @@ public abstract class ATypeCheckerDefinitionTest extends ATypeCheckerTest
     }
 
     public String getSymbolsAsString() {
-        List<Map.Entry<ISymbol, TSPHPAst>> symbols = testDefinitionHelper.getSymbols();
+        List<Map.Entry<ISymbol, TSPHPAst>> symbols = testSymbolTable.getSymbols();
         StringBuilder stringBuilder = new StringBuilder();
         boolean isFirstSymbol = true;
         for (Map.Entry<ISymbol, TSPHPAst> entry : symbols) {
@@ -52,8 +52,9 @@ public abstract class ATypeCheckerDefinitionTest extends ATypeCheckerTest
                 stringBuilder.append(" ");
             }
             isFirstSymbol = false;
-            stringBuilder.append(getTypesAsString(entry.getValue()));
-            stringBuilder.append(entry.getKey());
+            stringBuilder.append(getTypesAsString(entry.getValue()))
+                    .append(ScopeHelper.getEnclosingScopeNames(entry.getKey().getDefinitionScope()))
+                    .append(entry.getKey().toString());
         }
         return stringBuilder.toString();
     }

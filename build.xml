@@ -49,7 +49,7 @@
     <property name="src.test" location="${src}/test/java" />
     <property name="antlr" location="${src}/main/antlr" />
     <property name="antlr.output" location="${src}/main/antlr/output" />
-    <property name="antlr.copyLocation" location="${src.main}/ch/tutteli/tsphp/typechecker" />
+    <property name="antlr.copyLocation" location="${src.main}/ch/tutteli/tsphp/typechecker/antlr" />
     <property name="parser" location="${basedir}/../TSPHP-parser"/>
     <property name="parser.tokens" location="${parser}/src/main/antlr/output"/>
     <property name="parser.jar" location="${parser}/build/lib"/>

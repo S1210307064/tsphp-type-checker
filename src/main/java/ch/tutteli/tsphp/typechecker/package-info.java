@@ -15,7 +15,7 @@
  */
 
 /**
- * Contains the  the generated files from ANTLR v.3.5
+ * Contains the TypeChecker class (interface to the outside of the component)
  */
 package ch.tutteli.tsphp.typechecker;
 

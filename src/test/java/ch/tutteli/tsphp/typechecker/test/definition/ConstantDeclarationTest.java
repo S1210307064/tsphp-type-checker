@@ -47,16 +47,17 @@ public class ConstantDeclarationTest extends ATypeCheckerDefinitionTest
     public static Collection<Object[]> testStrings() {
         List<Object[]> collection = new ArrayList<>();
 
-        String global="global";
-        
-        collection.addAll(ConstantHelper.testStrings("", "", "", "", true));
-        collection.addAll(ConstantHelper.testStrings("namespace a {", "}", "", "a", true));
-        collection.addAll(ConstantHelper.testStrings("namespace a\\b {", "}", "", "a\\b", true));
-        
+        String global = "global.";
+
+        collection.addAll(ConstantHelper.testStrings("", "", "", global+"default.", global + "default.default.", true));
+        collection.addAll(ConstantHelper.testStrings("namespace a {", "}", "", global + "a.", global + "a.a.", true));
+        collection.addAll(ConstantHelper.testStrings("namespace a\\b {", "}", "",
+                global + "a\\b.", global + "a\\b.a\\b.", true));
+
         //class constants
         collection.addAll(ConstantHelper.testStrings(
-                "namespace a\\b\\c; class f{", "}", 
-                global+".a\\b\\c.f{} ", "a\\b\\c.f{}", true));
+                "namespace a\\b\\c; class f{", "}", global + "a\\b\\c.f{} ",
+                global + "a\\b\\c.a\\b\\c.f{}.", global + "a\\b\\c.a\\b\\c.f{}.", true));
 
         return collection;
     }

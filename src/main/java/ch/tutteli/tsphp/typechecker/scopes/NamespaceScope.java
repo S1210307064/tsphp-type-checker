@@ -17,6 +17,11 @@
 package ch.tutteli.tsphp.typechecker.scopes;
 
 import ch.tutteli.tsphp.common.IScope;
+import ch.tutteli.tsphp.common.ISymbol;
+import ch.tutteli.tsphp.common.TSPHPAst;
+import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  *
@@ -25,7 +30,31 @@ import ch.tutteli.tsphp.common.IScope;
 public class NamespaceScope extends AScope implements INamespaceScope
 {
 
-    public NamespaceScope(String scopeName, IScope globalScope) {
-        super(scopeName, globalScope);
+    private Map<String, TSPHPAst> uses = new LinkedHashMap<>();
+
+    public NamespaceScope(String scopeName, IScope globalNamespaceScope) {
+        super(scopeName, globalNamespaceScope);
+    }
+
+    @Override
+    public ISymbol resolve(String name) throws TypeCheckerException {
+        //we resolve from the corresponding global namespace scope 
+        return ScopeHelper.resolve(enclosingScope, name);
+    }
+
+    @Override
+    public void define(ISymbol symbol) {
+        //we define symbols in the corresponding global namespace scope
+        ScopeHelper.define(enclosingScope, symbol);
+    }
+
+    @Override
+    public void addUse(String alias, TSPHPAst type) {
+        uses.put(alias, type);
+    }
+
+    @Override
+    public TSPHPAst getUse(String alias) {
+        return uses.get(alias);
     }
 }

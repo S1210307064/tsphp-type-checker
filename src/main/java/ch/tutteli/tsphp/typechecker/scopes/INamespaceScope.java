@@ -17,6 +17,7 @@
 package ch.tutteli.tsphp.typechecker.scopes;
 
 import ch.tutteli.tsphp.common.IScope;
+import ch.tutteli.tsphp.common.TSPHPAst;
 
 /**
  *
@@ -24,4 +25,8 @@ import ch.tutteli.tsphp.common.IScope;
  */
 public interface INamespaceScope extends IScope
 {
+
+    void addUse(String alias, TSPHPAst type);
+
+    TSPHPAst getUse(String alias);
 }

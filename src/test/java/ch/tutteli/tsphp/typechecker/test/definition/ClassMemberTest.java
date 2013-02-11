@@ -16,7 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker.test.definition;
 
-import ch.tutteli.tsphp.typechecker.TSPHPTypeCheckerDefinition;
+import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
 import ch.tutteli.tsphp.typechecker.test.utils.ATypeCheckerDefinitionTest;
 import ch.tutteli.tsphp.typechecker.test.utils.VariableDeclarationListHelper;
 import java.util.ArrayList;
@@ -62,15 +62,14 @@ public class ClassMemberTest extends ATypeCheckerDefinitionTest
             {"protected static ", new TreeSet<>(Arrays.asList(new Integer[]{prot, stat}))},
             {"public", new TreeSet<>(Arrays.asList(new Integer[]{pub}))},
             {"public static ", new TreeSet<>(Arrays.asList(new Integer[]{pub, stat}))},
-            {"static", new TreeSet<>(Arrays.asList(new Integer[]{pub, stat}))},    
+            {"static", new TreeSet<>(Arrays.asList(new Integer[]{pub, stat}))},
             {"static private", new TreeSet<>(Arrays.asList(new Integer[]{priv, stat}))},
             {"static protected", new TreeSet<>(Arrays.asList(new Integer[]{prot, stat}))},
-            {"static public", new TreeSet<>(Arrays.asList(new Integer[]{pub, stat}))},            
-        };
-        String global = "global";
+            {"static public", new TreeSet<>(Arrays.asList(new Integer[]{pub, stat}))},};
+        String global = "global.";
         for (Object[] variation : variations) {
             collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
-                    "class a{ " + variation[0] + " ", ";}", global + ".a{} ", "a{}", (SortedSet<Integer>) variation[1]));
+                    "class a{ " + variation[0] + " ", ";}", global + "default.a{} ", global + "default.default.a{}.", global +  "default.default.a{}.", (SortedSet<Integer>) variation[1]));
         }
 
         return collection;

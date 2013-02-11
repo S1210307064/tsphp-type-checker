@@ -16,7 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker.test.definition;
 
-import ch.tutteli.tsphp.typechecker.TSPHPTypeCheckerDefinition;
+import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
 import ch.tutteli.tsphp.typechecker.symbols.ModifierHelper;
 import ch.tutteli.tsphp.typechecker.test.utils.ATypeCheckerDefinitionTest;
 import ch.tutteli.tsphp.typechecker.test.utils.IAdder;
@@ -71,27 +71,27 @@ public class InterfaceMethodTest extends ATypeCheckerDefinitionTest
                 String typeModifiers = ModifierHelper.getModifiers(modifiers);
                 collection.add(new Object[]{
                             prefix + "function " + type + " get();" + appendix,
-                            prefixExpected + "global.a.b{}." + typeExpected
-                            + " global.a.b{}.get()" + methodModifier + typeModifiers
+                            prefixExpected + "global.a.a.b{}." + typeExpected
+                            + " global.a.a.b{}.get()" + methodModifier + typeModifiers
                         });
             }
         });
 
         collection.add(new Object[]{
                     prefix + "function void foo();" + appendix,
-                    prefixExpected + "global.a.b{}.void "
-                    + "global.a.b{}.foo()" + methodModifier
+                    prefixExpected + "global.a.a.b{}.void "
+                    + "global.a.a.b{}.foo()" + methodModifier
                 });
         collection.add(new Object[]{
                     prefix + "public function void foo();" + appendix,
-                    prefixExpected + "global.a.b{}.void "
-                    + "global.a.b{}.foo()" + methodModifier
+                    prefixExpected + "global.a.a.b{}.void "
+                    + "global.a.a.b{}.foo()" + methodModifier
                 });
 
         collection.addAll(ParameterListHelper.getTestStrings(
                 prefix + "function void foo(", ");" + appendix,
-                prefixExpected + "global.a.b{}.void global.a.b{}.foo()" + methodModifier + " ",
-                "global.a.b{}.foo().", true));
+                prefixExpected + "global.a.a.b{}.void global.a.a.b{}.foo()" + methodModifier + " ",
+                "global.a.a.b{}.foo().", true));
         return collection;
     }
 }

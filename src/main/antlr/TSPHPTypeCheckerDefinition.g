@@ -38,10 +38,11 @@ options {
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker;
+package ch.tutteli.tsphp.typechecker.antlr;
 
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.TSPHPAst;
+import ch.tutteli.tsphp.typechecker.ISymbolTable;
 import ch.tutteli.tsphp.typechecker.scopes.IScopeFactory;
 
 }
@@ -64,12 +65,13 @@ public TSPHPTypeCheckerDefinition(TreeNodeStream input, IScopeFactory theScopeFa
 
 topdown
 	//scoped symbols
-    	:	enterNamespace
-    	|	enterInterface
-    	|	enterClass
-    	|	enterConstruct
-    	|	enterMethodFunction
-    	|	enterConditionalBlock
+    	:	namespaceDeclaration
+    	|	useDeclarationList
+    	|	interfaceDeclaration
+    	|	classDeclaration
+    	|	constructDeclaration
+    	|	methodFunctionDeclaration
+    	|	conditionalBlock
     
     		//symbols
 	|	constantDeclarationList
@@ -79,12 +81,17 @@ topdown
     	;
 
 bottomup
-    	:   exitScope
+    	:   	exitNamespace
+    	|	exitScope
    	;
-   
+
+exitNamespace
+	:	Namespace
+		{currentScope = currentScope.getEnclosingScope().getEnclosingScope();}
+	;
+	
 exitScope
-	:	(	Namespace
-		|	'interface'
+	:	(	'interface'
 		|	'class'
 		|	'__construct'
 		|	METHOD_DECLARATION
@@ -94,27 +101,39 @@ exitScope
 		{currentScope = currentScope.getEnclosingScope();}
 	;   
     
-enterNamespace
+namespaceDeclaration
 	:	^(Namespace t=(TYPE_NAME|DEFAULT_NAMESPACE) .) 
-		{currentScope = scopeFactory.createNamespace($t.text, currentScope); }
+		{currentScope = scopeFactory.createNamespace($t.text); }
 	;
 
-enterInterface
+useDeclarationList
+	:	^('use'	useDeclaration+)
+	;
+	
+useDeclaration
+	:	type=TYPE_NAME 
+		{symbolTable.defineUse(currentScope,$type);}
+		
+	|	type=TYPE_NAME identifier=Identifier
+		{symbolTable.defineUse(currentScope,$type, $identifier.text);}
+	;
+	
+interfaceDeclaration
 	:	^('interface' identifier=Identifier extIds=. .)
 		{currentScope = symbolTable.defineInterface(currentScope,$identifier,$extIds); }
 	;
 	
-enterClass
+classDeclaration
 	:	^('class' cMod=. identifier=Identifier extIds=. implIds=. .) 
 		{currentScope = symbolTable.defineClass(currentScope,$cMod,$identifier,$extIds,$implIds); }	
 	;
 	
-enterConstruct
+constructDeclaration
 	:	^(identifier='__construct' mMod=. . .)
 		{currentScope = symbolTable.defineConstruct(currentScope, $mMod, $identifier);}
 	;
 
-enterMethodFunction
+methodFunctionDeclaration
 	:	^( 	(	METHOD_DECLARATION
 			|	Function
 			) 
@@ -123,7 +142,7 @@ enterMethodFunction
 		{currentScope = symbolTable.defineMethod(currentScope,$mMod, $rtMod, $returnType, $identifier); }
 	;
 	
-enterConditionalBlock
+conditionalBlock
 	:	^(BLOCK_CONDITIONAL .*) 
 		{currentScope = scopeFactory.createConditionalScope(currentScope); }	
 	;

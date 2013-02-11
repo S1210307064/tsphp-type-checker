@@ -18,10 +18,7 @@ package ch.tutteli.tsphp.typechecker.scopes;
 
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
-import ch.tutteli.tsphp.common.exceptions.DefinitionException;
 import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
-import java.util.Map;
-import org.antlr.runtime.Token;
 
 /**
  *
@@ -33,10 +30,9 @@ public class ScopeHelper
     private ScopeHelper() {
     }
 
-    public static void define(IScope scope, ISymbol symbol) {
-        Map<String, ISymbol> symbols = scope.getSymbols();
-        symbols.put(symbol.getName(), symbol);
-        symbol.setScope(scope);
+    public static void define(IScope definitionScope, ISymbol symbol) {
+        definitionScope.getSymbols().put(symbol.getName(), symbol);
+        symbol.setDefinitionScope(definitionScope);
     }
 
     public static ISymbol resolve(IScope scope, String name) throws TypeCheckerException {

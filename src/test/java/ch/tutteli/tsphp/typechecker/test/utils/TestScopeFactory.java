@@ -14,25 +14,27 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.scopes;
+package ch.tutteli.tsphp.typechecker.test.utils;
 
-import ch.tutteli.tsphp.common.IScope;
-import java.util.Map;
+import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
+import ch.tutteli.tsphp.typechecker.scopes.ScopeFactory;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public interface IScopeFactory
+public class TestScopeFactory extends ScopeFactory
 {
 
-    static final String DEFAULT_NAMESPACE = "default";
+    public List<INamespaceScope> scopes = new ArrayList<>();
 
-    IScope getGlobalScope();
+    @Override
+    public INamespaceScope createNamespace(String name) {
+        INamespaceScope scope = super.createNamespace(name);
+        scopes.add(scope);
+        return scope;
 
-    Map<String, IScope> getGlobalNamespaceScopes();
-
-    INamespaceScope createNamespace(String name);
-
-    IConditionalScope createConditionalScope(IScope currentScope);
+    }
 }

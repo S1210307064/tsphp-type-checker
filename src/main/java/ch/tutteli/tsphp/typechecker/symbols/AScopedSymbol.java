@@ -19,7 +19,6 @@ package ch.tutteli.tsphp.typechecker.symbols;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.TSPHPAst;
-import ch.tutteli.tsphp.common.exceptions.DefinitionException;
 import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
 import ch.tutteli.tsphp.typechecker.scopes.ScopeHelper;
 import java.util.LinkedHashMap;
@@ -49,13 +48,13 @@ public abstract class AScopedSymbol extends ASymbolWithModifier implements IScop
     }
 
     @Override
-    public ISymbol resolve(String name) throws TypeCheckerException {
-        return ScopeHelper.resolve(this, name);
+    public void define(ISymbol symbol) {
+        ScopeHelper.define(this, symbol);
     }
 
     @Override
-    public void define(ISymbol symbol) {
-        ScopeHelper.define(this, symbol);
+    public ISymbol resolve(String name) throws TypeCheckerException {
+        return ScopeHelper.resolve(this, name);
     }
 
     @Override

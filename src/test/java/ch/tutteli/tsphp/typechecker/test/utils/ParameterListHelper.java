@@ -16,7 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker.test.utils;
 
-import ch.tutteli.tsphp.typechecker.TSPHPTypeCheckerDefinition;
+import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
 import ch.tutteli.tsphp.typechecker.symbols.ModifierHelper;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,7 +41,8 @@ public class ParameterListHelper
     }
 
     public static Collection<Object[]> getTestStrings(final String thePrefix, final String theAppendix,
-            final String thePrefixExpected, final String theScopeName, final boolean isItDefinitionPhase) {
+            final String thePrefixExpected, final String theScopeName,
+            final boolean isItDefinitionPhase) {
 
         prefix = thePrefix;
         appendix = theAppendix;

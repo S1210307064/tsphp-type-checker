@@ -8,3 +8,6 @@ nbproject/*
 
 /src/main/java/ch/tutteli/tsphp/typechecker/TSPHPTypeCheckerDefinition.java
 /src/main/java/ch/tutteli/tsphp/typechecker/TSPHPTypeCheckerDefinition.tokens
+
+/src/main/java/ch/tutteli/tsphp/typechecker/antlr/TSPHPTypeCheckerDefinition.java
+/src/main/java/ch/tutteli/tsphp/typechecker/antlr/TSPHPTypeCheckerDefinition.tokens
