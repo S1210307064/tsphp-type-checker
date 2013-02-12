@@ -23,9 +23,11 @@ import ch.tutteli.tsphp.typechecker.error.ErrorHelperRegistry;
 import ch.tutteli.tsphp.typechecker.error.ErrorMessageProvider;
 import ch.tutteli.tsphp.typechecker.error.IErrorHelper;
 import ch.tutteli.tsphp.typechecker.symbols.VariableSymbol;
+import ch.tutteli.tsphp.typechecker.test.testutils.ATypeCheckerTest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import org.antlr.runtime.CommonToken;
 import org.antlr.runtime.Token;
@@ -39,7 +41,7 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class ErrorHelperTest
+public class ErrorHelperTest extends ATypeCheckerTest
 {
 
     private String identifier;
@@ -51,6 +53,7 @@ public class ErrorHelperTest
 
     public ErrorHelperTest(String theIdentifier, int theLineExisting, int thePositionExisting,
             int theLineNew, int thePositionNew) {
+        super();
         identifier = theIdentifier;
         lineExisting = theLineExisting;
         positionExisting = thePositionExisting;
@@ -59,8 +62,6 @@ public class ErrorHelperTest
 
         failed = identifier + " " + lineExisting + ":" + positionExisting
                 + " / " + lineNew + ":" + positionNew + " failed";
-
-        ErrorHelperRegistry.set(new ErrorHelper(new ErrorMessageProvider()));
     }
 
     @Test
@@ -87,8 +88,8 @@ public class ErrorHelperTest
     public void testAddAlreadyDefinedException() {
         TSPHPAst ast1 = createAst(identifier, lineExisting, positionExisting);
         TSPHPAst ast2 = createAst(identifier, lineNew, positionNew);
-        ast1.symbol = new VariableSymbol(ast1, null, "$a");
-        ast2.symbol = new VariableSymbol(ast2, null, "$a");
+        ast1.symbol = new VariableSymbol(ast1, new HashSet<Integer>(), "$a");
+        ast2.symbol = new VariableSymbol(ast2, new HashSet<Integer>(), "$a");
         ErrorHelperRegistry.get().addAlreadyDefinedException(ast1.symbol, ast2.symbol);
         check(ast1, ast2, ast1, ast2);
     }
@@ -138,8 +139,8 @@ public class ErrorHelperTest
 
             DefinitionException definitionException = (DefinitionException) exception;
 
-            Assert.assertEquals(expectedExceptions[count][0].symbol, definitionException.getExistingDefinition());
-            Assert.assertEquals(expectedExceptions[count][1].symbol, definitionException.getNewDefinition());
+            Assert.assertEquals(expectedExceptions[count][0], definitionException.getExistingDefinition());
+            Assert.assertEquals(expectedExceptions[count][1], definitionException.getNewDefinition());
             ++count;
         }
     }

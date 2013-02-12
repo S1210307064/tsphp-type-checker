@@ -18,7 +18,6 @@ package ch.tutteli.tsphp.typechecker.scopes;
 
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
-import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.TSPHPAst;
 
 /**
@@ -32,10 +31,8 @@ public interface IScopeHelper
 
     void definitionCheck(IScope definitionScope, ISymbol symbol);
 
-    ISymbol resolve(IScope scope, String name);
-    
-    ITypeSymbol resolveType(INamespaceScope scope, TSPHPAst typeAst);
-    
+    void definitionCheck(ISymbol firstDefinition, ISymbol symbolToCheck);
 
-    TSPHPAst resolveAlias(String typeName, INamespaceScope namespace);
+    ISymbol resolve(IScope scope, TSPHPAst typeAst);
+
 }

@@ -17,22 +17,19 @@
 package ch.tutteli.tsphp.typechecker;
 
 import ch.tutteli.tsphp.common.IScope;
+import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.TSPHPAst;
-import ch.tutteli.tsphp.common.exceptions.ReferenceException;
-import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
-import ch.tutteli.tsphp.typechecker.error.ErrorHelperRegistry;
 import ch.tutteli.tsphp.typechecker.scopes.GlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.IConditionalScope;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.IScopeFactory;
-import ch.tutteli.tsphp.typechecker.symbols.BuiltInTypeSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IAliasSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IClassSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
-import ch.tutteli.tsphp.typechecker.symbols.ScalarTypeSymbol;
 import java.util.HashMap;
 import java.util.Map;
 import org.antlr.runtime.CommonToken;
@@ -44,11 +41,11 @@ import org.antlr.runtime.CommonToken;
 public class SymbolTable implements ISymbolTable
 {
 
-    public static String[] scalarTypes = new String[]{"bool", "int", "float", "string"};
     public static String[] compoundTypes = new String[]{"array", "resource", "object"};
     private ISymbolFactory symbolFactory;
     private IScopeFactory scopeFactory;
     private Map<String, IScope> globalNamespaces = new HashMap<>();
+    private IScope globalDefaultNamespace;
 
     public SymbolTable(ISymbolFactory aSymbolFactory, IScopeFactory aScopeFactory) {
         symbolFactory = aSymbolFactory;
@@ -58,15 +55,17 @@ public class SymbolTable implements ISymbolTable
     }
 
     private void initTypeSystem() {
-        IScope globalDefaultNamespace = getOrCreateGlobalNamespace("\\");
+        globalDefaultNamespace = getOrCreateGlobalNamespace("\\");
 
+        String[] scalarTypes = new String[]{"bool", "int", "float", "string"};
         for (String type : scalarTypes) {
-            globalDefaultNamespace.define(new ScalarTypeSymbol(type));
+            globalDefaultNamespace.define(symbolFactory.createScalarTypeSymbol(type));
         }
 
-        for (String type : compoundTypes) {
-            globalDefaultNamespace.define(new BuiltInTypeSymbol(type));
-        }
+        globalDefaultNamespace.define(symbolFactory.createPseudoTypeSymbol("resource"));
+        ITypeSymbol object = symbolFactory.createPseudoTypeSymbol("object");
+        globalDefaultNamespace.define(object);
+        globalDefaultNamespace.define(symbolFactory.createArrayTypeSymbol("array", object));
     }
 
     @Override
@@ -75,16 +74,18 @@ public class SymbolTable implements ISymbolTable
     }
 
     @Override
-    public void defineUse(IScope currentScope, TSPHPAst type) {
+    public void defineUse(INamespaceScope currentScope, TSPHPAst type) {
         String alias = type.getText();
         alias = alias.substring(alias.lastIndexOf("\\"));
         defineUse(currentScope, type, alias);
     }
 
     @Override
-    public void defineUse(IScope currentScope, TSPHPAst type, String alias) {
+    public void defineUse(INamespaceScope currentScope, TSPHPAst type, String alias) {
         type.scope = currentScope;
-        ((INamespaceScope) currentScope).addUse(alias, type);
+        IAliasSymbol aliasSymbol = symbolFactory.createAliasSymbol(type, alias);
+        type.symbol = aliasSymbol;
+        currentScope.defineUse(aliasSymbol);
     }
 
     @Override
@@ -175,19 +176,28 @@ public class SymbolTable implements ISymbolTable
     }
 
     @Override
+    public ISymbol resolve(TSPHPAst ast) {
+        IScope scope = getResolvingScope(ast);
+        return scope.resolve(ast);
+    }
+
+    @Override
     public ITypeSymbol resolveType(TSPHPAst typeAst) {
-        ITypeSymbol type;
-
         IScope scope = getResolvingScope(typeAst);
-        type = scope.resolveType(typeAst);
-        typeAst.symbol = type;
+        return scope.resolveType(typeAst);
+    }
 
-        if (type == null) {
-            ReferenceException ex = ErrorHelperRegistry.get().addAndGetUnkownTypeException(typeAst);
-            type = new TSPHPErroneusTypeAst(typeAst, ex);
+    @Override
+    public ISymbol resolveWithFallBack(TSPHPAst ast) {
+        IScope scope = getResolvingScope(ast);
+        ISymbol symbol = scope.resolve(ast);
+
+        if (symbol == null && !scope.equals(globalDefaultNamespace)) {
+            symbol = globalDefaultNamespace.resolve(ast);
         }
 
-        return type;
+        ast.symbol = symbol;
+        return symbol;
     }
 
     private IScope getResolvingScope(TSPHPAst typeAst) {
@@ -207,5 +217,10 @@ public class SymbolTable implements ISymbolTable
         int lastBackslashPosition = typeName.lastIndexOf("\\") + 1;
         String namespaceName = typeName.substring(0, lastBackslashPosition);
         return globalNamespaces.get(namespaceName);
+    }
+
+    @Override
+    public ITypeSymbol resolvePrimitiveType(TSPHPAst typeASt) {
+        return (ITypeSymbol) globalDefaultNamespace.resolveType(typeASt);
     }
 }

@@ -36,13 +36,21 @@ public class ConditionalScope extends AScope implements IConditionalScope
     }
 
     @Override
-    public ISymbol resolve(String name) {
-        ISymbol symbolEnclosingScope = enclosingScope.resolve(name);
-        ISymbol symbol = ScopeHelperRegistry.get().resolve(this, name);
-        if (symbol == null) {
-            symbol = symbolEnclosingScope;
-        } else if (symbolEnclosingScope != null) {
+    public void definitionCheck(ISymbol symbol) {
+        super.definitionCheck(symbol);
+
+        //Check if already defined in enclosing scope
+        ISymbol symbolEnclosingScope = enclosingScope.resolve(symbol.getDefinitionAst());
+        if (symbolEnclosingScope != null) {
             generateAlreadyDefinedException(symbolEnclosingScope, symbol);
+        }
+    }
+
+    @Override
+    public ISymbol resolve(TSPHPAst ast) {
+        ISymbol symbol = super.resolve(ast);
+        if (symbol == null) {
+            symbol = enclosingScope.resolve(ast);
         }
         return symbol;
     }

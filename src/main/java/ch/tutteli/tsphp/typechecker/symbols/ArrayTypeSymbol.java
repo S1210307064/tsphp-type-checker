@@ -17,26 +17,18 @@
 package ch.tutteli.tsphp.typechecker.symbols;
 
 import ch.tutteli.tsphp.common.ASymbol;
-import ch.tutteli.tsphp.common.TSPHPAst;
-import java.util.Set;
-import java.util.TreeSet;
+import ch.tutteli.tsphp.common.ITypeSymbol;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public abstract class ASymbolWithModifier extends ASymbol
+public class ArrayTypeSymbol extends ASymbol implements IArrayTypeSymbol
 {
 
-    protected Set<Integer> modifiers;
+    ITypeSymbol baseType;
 
-    public ASymbolWithModifier(TSPHPAst definitionAst, Set<Integer> theModifiers, String name) {
-        super(definitionAst, name);
-        modifiers = theModifiers;
-    }
-
-    @Override
-    public String toString() {
-        return super.toString() + ModifierHelper.getModifiers(new TreeSet<>(modifiers));
+    public ArrayTypeSymbol(String name, ITypeSymbol baseType) {
+        super(null, name);
     }
 }

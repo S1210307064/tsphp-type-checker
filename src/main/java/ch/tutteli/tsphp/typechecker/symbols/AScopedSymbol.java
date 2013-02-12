@@ -20,8 +20,6 @@ import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.TSPHPAst;
-import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
-import ch.tutteli.tsphp.typechecker.error.ErrorHelperRegistry;
 import ch.tutteli.tsphp.typechecker.scopes.ScopeHelperRegistry;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -57,12 +55,12 @@ public abstract class AScopedSymbol extends ASymbolWithModifier implements IScop
 
     @Override
     public void definitionCheck(ISymbol symbol) {
-        ScopeHelperRegistry.get().definitionCheck(this, symbol);
+        ScopeHelperRegistry.get().definitionCheck((IScope) this, symbol);
     }
 
     @Override
-    public ISymbol resolve(String name) {
-        return ScopeHelperRegistry.get().resolve(this, name);
+    public ISymbol resolve(TSPHPAst ast) {
+        return ScopeHelperRegistry.get().resolve(this, ast);
     }
 
     @Override

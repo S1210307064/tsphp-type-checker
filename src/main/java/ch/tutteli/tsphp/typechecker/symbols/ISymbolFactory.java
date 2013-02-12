@@ -17,6 +17,7 @@
 package ch.tutteli.tsphp.typechecker.symbols;
 
 import ch.tutteli.tsphp.common.IScope;
+import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.TSPHPAst;
 
 /**
@@ -25,6 +26,14 @@ import ch.tutteli.tsphp.common.TSPHPAst;
  */
 public interface ISymbolFactory
 {
+
+    IScalarTypeSymbol createScalarTypeSymbol(String name);
+
+    IArrayTypeSymbol createArrayTypeSymbol(String name, ITypeSymbol baseType);
+
+    IPseudoTypeSymbol createPseudoTypeSymbol(String name);
+    
+    IAliasSymbol createAliasSymbol(TSPHPAst useDefinition, String alias);
 
     IClassSymbol createClassSymbol(TSPHPAst classModifier, TSPHPAst identifier, IScope currentScope);
 

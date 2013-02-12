@@ -17,26 +17,16 @@
 package ch.tutteli.tsphp.typechecker.symbols;
 
 import ch.tutteli.tsphp.common.ASymbol;
-import ch.tutteli.tsphp.common.TSPHPAst;
-import java.util.Set;
-import java.util.TreeSet;
-
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
+ *
+ * Adopted from the book Language Implementation Patterns by Terence Parr
  */
-public abstract class ASymbolWithModifier extends ASymbol
+public class PseudoTypeSymbol extends ASymbol implements IPseudoTypeSymbol
 {
 
-    protected Set<Integer> modifiers;
-
-    public ASymbolWithModifier(TSPHPAst definitionAst, Set<Integer> theModifiers, String name) {
-        super(definitionAst, name);
-        modifiers = theModifiers;
-    }
-
-    @Override
-    public String toString() {
-        return super.toString() + ModifierHelper.getModifiers(new TreeSet<>(modifiers));
+    public PseudoTypeSymbol(String name) {
+        super(null,name);
     }
 }

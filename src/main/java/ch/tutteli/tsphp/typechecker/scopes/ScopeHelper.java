@@ -18,16 +18,9 @@ package ch.tutteli.tsphp.typechecker.scopes;
 
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
-import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.TSPHPAst;
-import ch.tutteli.tsphp.common.exceptions.DefinitionException;
-import ch.tutteli.tsphp.typechecker.TSPHPErroneusTypeAst;
 import ch.tutteli.tsphp.typechecker.error.ErrorHelperRegistry;
-import ch.tutteli.tsphp.typechecker.error.IErrorHelper;
 import ch.tutteli.tsphp.typechecker.utils.MapHelper;
-import java.util.List;
-import java.util.Map;
-import org.antlr.runtime.Token;
 
 /**
  *
@@ -44,76 +37,19 @@ public class ScopeHelper implements IScopeHelper
 
     @Override
     public void definitionCheck(IScope definitionScope, ISymbol symbol) {
-        ISymbol firstDefinition = definitionScope.getSymbols().get(symbol.getName()).get(0);
+        definitionCheck(definitionScope.getSymbols().get(symbol.getName()).get(0), symbol);
+    }
 
-        //was symbol already declared
-        if (!firstDefinition.equals(symbol)) {
-            ErrorHelperRegistry.get().addAlreadyDefinedException(firstDefinition, symbol);
+    @Override
+    public void definitionCheck(ISymbol firstDefinition, ISymbol symbolToCheck) {
+        if (!firstDefinition.equals(symbolToCheck)) {
+            ErrorHelperRegistry.get().addAlreadyDefinedException(firstDefinition, symbolToCheck);
         }
     }
 
     @Override
-    public ISymbol resolve(IScope scope, String name) {
+    public ISymbol resolve(IScope scope,TSPHPAst ast) {
         throw new UnsupportedOperationException();
     }
-
-    @Override
-    public ITypeSymbol resolveType(INamespaceScope scope, TSPHPAst typeAst) {
-        ITypeSymbol typeSymbol = scope.getEnclosingScope().resolveType(typeAst);
-        typeSymbol = changeToAliasTypeSymbolIfDefined(scope, typeAst, typeSymbol);
-
-//        if (typeSymbol != null && isNotFullTypeName(typeSymbol.getDefinitionAst().getText())) {
-//            Token token = typeSymbol.getDefinitionAst().getToken();
-//            token.setText(scope.getScopeName() + token.getText());
-//        }
-
-        return typeSymbol;
-    }
-
-    private ITypeSymbol changeToAliasTypeSymbolIfDefined(INamespaceScope scope, TSPHPAst typeAst, ITypeSymbol typeSymbol) {
-
-        IErrorHelper errorHelper = ErrorHelperRegistry.get();
-
-        TSPHPAst useDefinition = resolveAlias(typeAst.getText(), scope);
-        if (hasTypeNameClash(scope, useDefinition, typeSymbol)) {
-            useDefinition = errorHelper.addAlreadyDefinedExceptionAndRecover(
-                    typeSymbol.getDefinitionAst(), useDefinition);
-        }
-
-        if (useDefinition != null) {
-            if (isNotForwardReference(useDefinition)) {
-                typeSymbol = useDefinition.symbol.getType();
-            } else {
-                DefinitionException ex = errorHelper.addUseForwardReferenceException(typeAst, useDefinition);
-                typeSymbol = new TSPHPErroneusTypeAst(typeAst, ex);
-            }
-        }
-        return typeSymbol;
-    }
-
-    private boolean hasTypeNameClash(IScope scope, TSPHPAst useDefinition, ITypeSymbol typeSymbol) {
-        return useDefinition != null && typeSymbol != null && typeSymbol.getDefinitionScope().equals(scope);
-    }
-
-    public boolean isNotForwardReference(TSPHPAst useDefinition) {
-        return useDefinition.symbol.getType() != null;
-    }
-
-    @Override
-    public TSPHPAst resolveAlias(String typeName, INamespaceScope namespace) {
-        String alias = getPotentialAlias(typeName);
-        return namespace.getOneUse(alias);
-    }
-
-    private String getPotentialAlias(String typeName) {
-        int backslashPosition = typeName.indexOf("\\") + 1;
-        if (backslashPosition != -1) {
-            typeName = typeName.substring(0, backslashPosition);
-        }
-        return typeName;
-    }
-
-    private boolean isNotFullTypeName(String typeName) {
-        return !typeName.substring(0, 1).equals("\\");
-    }
+    
 }

@@ -21,9 +21,6 @@ import ch.tutteli.tsphp.common.TSPHPAst;
 import ch.tutteli.tsphp.common.TSPHPAstAdaptorRegistry;
 import ch.tutteli.tsphp.parser.ParserFacade;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
-import ch.tutteli.tsphp.typechecker.error.ErrorHelper;
-import ch.tutteli.tsphp.typechecker.error.ErrorHelperRegistry;
-import ch.tutteli.tsphp.typechecker.error.ErrorMessageProvider;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.CommonTreeNodeStream;
 import org.junit.Assert;
@@ -52,9 +49,8 @@ public abstract class ATypeCheckerDefinitionTest extends ATypeCheckerTest
     }
 
     private void init() {
-        TestSymbolFactory symbolFactory = new TestSymbolFactory();
         scopeFactory = new TestScopeFactory();
-        symbolTable = new TestSymbolTable(symbolFactory, scopeFactory);
+        symbolTable = new TestSymbolTable(new TestSymbolFactory(), scopeFactory);
     }
 
     public void check() throws RecognitionException {

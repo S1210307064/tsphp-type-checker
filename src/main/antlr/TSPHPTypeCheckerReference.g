@@ -43,6 +43,8 @@ package ch.tutteli.tsphp.typechecker.antlr;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.TSPHPAst;
 import ch.tutteli.tsphp.typechecker.ISymbolTable;
+import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
+import ch.tutteli.tsphp.typechecker.symbols.IAliasSymbol;
 
 }
 
@@ -56,12 +58,27 @@ import ch.tutteli.tsphp.typechecker.ISymbolTable;
 }
 
 topdown
-    :   variableDeclarationList
+    :   useDeclarationList
+    |	variableDeclarationList
     ;
 
+useDeclarationList
+	:	^('use'	useDeclaration+)
+	;
+	
+useDeclaration
+	:	(	type=TYPE_NAME 
+		|	type=TYPE_NAME identifier=Identifier
+		)
+		{
+			$type.symbol.setType(symbolTable.resolveType($start));
+			INamespaceScope namespaceScope = (INamespaceScope) $type.scope;
+			namespaceScope.useDefinitionCheck((IAliasSymbol) $type.symbol);
+		}
+	;
 
 variableDeclarationList 
-	:	^(VARIABLE_DECLARATION_LIST ^(TYPE tMod=. allTypes) variableDeclaration[(ITypeSymbol) $allTypes.start]+ )
+	:	^(VARIABLE_DECLARATION_LIST ^(TYPE . allTypes) variableDeclaration[$allTypes.type]+ )
         ;
         
 variableDeclaration[ITypeSymbol type]
@@ -76,16 +93,22 @@ variableDeclaration[ITypeSymbol type]
 	;
 	
 allTypes returns [ITypeSymbol type]
-@init {
-	$type = symbolTable.resolveType($start);
-}
-	:	'bool'
-	|	'int'
-	|	'float'
-	|	'string'
-	|	'array'
-	|	'object'
-	|	'resource'
+	:	(	'bool'
+		|	'int'
+		|	'float'
+		|	'string'
+		|	'array'
+		|	'object'
+		|	'resource'
+		)
+		{
+			$type = symbolTable.resolvePrimitiveType($start);
+			$start.symbol = $type;
+		}
 	|	TYPE_NAME
+		{
+			$type = symbolTable.resolveType($start);
+			$start.symbol = $type;
+		}
 	;
 

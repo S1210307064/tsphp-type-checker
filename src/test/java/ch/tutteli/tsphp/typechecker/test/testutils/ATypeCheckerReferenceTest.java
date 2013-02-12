@@ -33,12 +33,12 @@ public abstract class ATypeCheckerReferenceTest extends ATypeCheckerDefinitionTe
         super(testString);
     }
 
-    public abstract void verifyReferences();
+    protected abstract void verifyReferences();
 
     @Override
     protected final void verifyDefinitions() {
         commonTreeNodeStream.reset();
-        reference = new TSPHPTypeCheckerReference(commonTreeNodeStream);
+        reference = new TSPHPTypeCheckerReference(commonTreeNodeStream, symbolTable);
         reference.downup(ast);
     }
 }

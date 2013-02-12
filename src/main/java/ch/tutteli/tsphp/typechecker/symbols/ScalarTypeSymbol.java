@@ -17,7 +17,6 @@
 package ch.tutteli.tsphp.typechecker.symbols;
 
 import ch.tutteli.tsphp.common.ASymbol;
-import ch.tutteli.tsphp.common.ITypeSymbol;
 
 /**
  *
@@ -25,7 +24,7 @@ import ch.tutteli.tsphp.common.ITypeSymbol;
  *
  * Adopted from the book Language Implementation Patterns by Terence Parr
  */
-public class ScalarTypeSymbol extends ASymbol implements ITypeSymbol
+public class ScalarTypeSymbol extends ASymbol implements IScalarTypeSymbol
 {
     public ScalarTypeSymbol(String name) {
         super(null, name);

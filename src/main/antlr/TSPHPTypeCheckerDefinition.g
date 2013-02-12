@@ -43,6 +43,7 @@ package ch.tutteli.tsphp.typechecker.antlr;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.TSPHPAst;
 import ch.tutteli.tsphp.typechecker.ISymbolTable;
+import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.IScopeFactory;
 
 }
@@ -110,10 +111,10 @@ useDeclarationList
 	
 useDeclaration
 	:	type=TYPE_NAME 
-		{symbolTable.defineUse(currentScope,$type);}
+		{symbolTable.defineUse((INamespaceScope) currentScope,$type);}
 		
 	|	type=TYPE_NAME identifier=Identifier
-		{symbolTable.defineUse(currentScope,$type, $identifier.text);}
+		{symbolTable.defineUse((INamespaceScope) currentScope,$type, $identifier.text);}
 	;
 	
 interfaceDeclaration

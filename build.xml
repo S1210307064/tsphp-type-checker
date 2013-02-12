@@ -132,7 +132,7 @@
             <arg path="${antlr}"/>
             <arg value="-o"/>
             <arg path="${antlr.copyLocation}"/>
-            <arg path="${antlr}/TSPHPTypeCheckerDefinition.g"/>
+            <arg path="${antlr}/TSPHPTypeChecker*.g"/>
             <classpath>
                 <path refid="libset" />
             </classpath>

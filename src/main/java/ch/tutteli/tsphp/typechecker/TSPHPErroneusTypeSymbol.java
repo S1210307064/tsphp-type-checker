@@ -14,29 +14,28 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.symbols;
+package ch.tutteli.tsphp.typechecker;
 
 import ch.tutteli.tsphp.common.ASymbol;
+import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.TSPHPAst;
-import java.util.Set;
-import java.util.TreeSet;
+import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public abstract class ASymbolWithModifier extends ASymbol
+public class TSPHPErroneusTypeSymbol extends ASymbol implements ITypeSymbol
 {
 
-    protected Set<Integer> modifiers;
+    private TypeCheckerException exception;
 
-    public ASymbolWithModifier(TSPHPAst definitionAst, Set<Integer> theModifiers, String name) {
-        super(definitionAst, name);
-        modifiers = theModifiers;
+    public TSPHPErroneusTypeSymbol(TSPHPAst type, TypeCheckerException theException) {
+        super(type, type.getText());
+        exception = theException;
     }
 
-    @Override
-    public String toString() {
-        return super.toString() + ModifierHelper.getModifiers(new TreeSet<>(modifiers));
+    public TypeCheckerException getException() {
+        return exception;
     }
 }

@@ -17,17 +17,15 @@
 package ch.tutteli.tsphp.typechecker.symbols;
 
 import ch.tutteli.tsphp.common.ASymbol;
-import ch.tutteli.tsphp.common.ITypeSymbol;
+import ch.tutteli.tsphp.common.TSPHPAst;
+
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
- *
- * Adopted from the book Language Implementation Patterns by Terence Parr
  */
-public class BuiltInTypeSymbol extends ASymbol implements ITypeSymbol
+public class AliasSymbol extends ASymbol implements IAliasSymbol
 {
-
-    public BuiltInTypeSymbol(String name) {
-        super(null,name);
+    public AliasSymbol(TSPHPAst theDefinitionAst, String aliasName) {
+        super(theDefinitionAst, aliasName);
     }
 }

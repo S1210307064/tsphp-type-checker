@@ -20,7 +20,12 @@ import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.TSPHPAst;
-import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
+import ch.tutteli.tsphp.common.exceptions.DefinitionException;
+import ch.tutteli.tsphp.common.exceptions.ReferenceException;
+import ch.tutteli.tsphp.typechecker.TSPHPErroneusTypeSymbol;
+import ch.tutteli.tsphp.typechecker.error.ErrorHelperRegistry;
+import ch.tutteli.tsphp.typechecker.error.IErrorHelper;
+import ch.tutteli.tsphp.typechecker.symbols.IAliasSymbol;
 import ch.tutteli.tsphp.typechecker.utils.MapHelper;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -33,7 +38,7 @@ import java.util.Map;
 public class NamespaceScope extends AScope implements INamespaceScope
 {
 
-    private Map<String, List<TSPHPAst>> uses = new LinkedHashMap<>();
+    private Map<String, List<IAliasSymbol>> uses = new LinkedHashMap<>();
 
     public NamespaceScope(String scopeName, IScope globalNamespaceScope) {
         super(scopeName, globalNamespaceScope);
@@ -49,28 +54,89 @@ public class NamespaceScope extends AScope implements INamespaceScope
     }
 
     @Override
-    public ISymbol resolve(String name) {
-        //we resolve from the corresponding global namespace scope 
-        return enclosingScope.resolve(name);
+    public void definitionCheck(ISymbol symbol) {
+        //check in global namespace scope, because they have been defined there
+        enclosingScope.definitionCheck(symbol);
     }
 
     @Override
-    public ITypeSymbol resolveType(TSPHPAst typeAst) {
-        return ScopeHelperRegistry.get().resolveType(this, typeAst);
+    public void defineUse(IAliasSymbol symbol) {
+        MapHelper.addToListMap(uses, symbol.getName(), symbol);
     }
 
     @Override
-    public void addUse(String alias, TSPHPAst type) {
-        MapHelper.addToListMap(uses, alias, type);
+    public void useDefinitionCheck(IAliasSymbol symbol) {
+        ScopeHelperRegistry.get().definitionCheck(uses.get(symbol.getName()).get(0), symbol);
     }
 
     @Override
-    public List<TSPHPAst> getUse(String alias) {
+    public List<IAliasSymbol> getUse(String alias) {
         return uses.get(alias);
     }
 
     @Override
-    public TSPHPAst getOneUse(String alias) {
-        return uses.containsKey(alias) ? uses.get(alias).get(0) : null;
+    public TSPHPAst getFirstUseDefinitionAst(String alias) {
+        return uses.containsKey(alias) ? uses.get(alias).get(0).getDefinitionAst() : null;
+    }
+
+    @Override
+    public ISymbol resolve(TSPHPAst ast) {
+        //we resolve from the corresponding global namespace scope 
+        return enclosingScope.resolve(ast);
+    }
+
+    @Override
+    public ITypeSymbol resolveType(TSPHPAst typeAst) {
+        ITypeSymbol typeSymbol = enclosingScope.resolveType(typeAst);
+        typeSymbol = changeToAliasTypeSymbolIfDefined(typeAst, typeSymbol);
+
+        if (typeSymbol == null) {
+            ReferenceException ex = ErrorHelperRegistry.get().addAndGetUnkownTypeException(typeAst);
+            typeSymbol = new TSPHPErroneusTypeSymbol(typeAst, ex);
+        }
+
+        return typeSymbol;
+    }
+
+    private ITypeSymbol changeToAliasTypeSymbolIfDefined(TSPHPAst typeAst, ITypeSymbol typeSymbol) {
+
+        IErrorHelper errorHelper = ErrorHelperRegistry.get();
+
+        TSPHPAst useDefinition = resolveAlias(typeAst.getText());
+        if (hasTypeNameClash(useDefinition, typeSymbol)) {
+            useDefinition = errorHelper.addAlreadyDefinedExceptionAndRecover(
+                    typeSymbol.getDefinitionAst(), useDefinition);
+        }
+
+        if (useDefinition != null) {
+            if (isNotForwardReference(useDefinition)) {
+                typeSymbol = useDefinition.symbol.getType();
+            } else {
+                DefinitionException ex = errorHelper.addUseForwardReferenceException(typeAst, useDefinition);
+                typeSymbol = new TSPHPErroneusTypeSymbol(typeAst, ex);
+            }
+        }
+        return typeSymbol;
+    }
+
+    private boolean hasTypeNameClash(TSPHPAst useDefinition, ITypeSymbol typeSymbol) {
+        return useDefinition != null && typeSymbol != null && typeSymbol.getDefinitionScope().equals(this);
+    }
+
+    public boolean isNotForwardReference(TSPHPAst useDefinition) {
+        return useDefinition.symbol.getType() != null;
+    }
+
+    private TSPHPAst resolveAlias(String typeName) {
+        String alias = getPotentialAlias(typeName);
+        return getFirstUseDefinitionAst(alias);
+    }
+
+    private String getPotentialAlias(String typeName) {
+        int backslashPosition = typeName.indexOf("\\") + 1;
+        if (backslashPosition != -1) {
+            typeName = typeName.substring(0, backslashPosition);
+        }
+        return typeName;
     }
 }

@@ -17,10 +17,9 @@
 package ch.tutteli.tsphp.typechecker.scopes;
 
 import ch.tutteli.tsphp.common.IScope;
+import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.TSPHPAst;
-import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
-import ch.tutteli.tsphp.typechecker.symbols.IClassSymbol;
 
 /**
  *
@@ -38,7 +37,10 @@ public class GlobalNamespaceScope extends AScope implements IScope
         ITypeSymbol typeSymbol = null;
         String typeName = withoutNamespacePrefix(typeAst.getText());
         if (symbols.containsKey(typeName)) {
-            typeSymbol = (ITypeSymbol) symbols.get(typeName).get(0);
+            ISymbol symbol = symbols.get(typeName).get(0);
+            if (symbol instanceof ITypeSymbol) {
+                typeSymbol = (ITypeSymbol) symbol;
+            }
         }
         return typeSymbol;
     }

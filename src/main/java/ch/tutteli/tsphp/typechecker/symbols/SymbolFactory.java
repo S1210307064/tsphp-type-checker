@@ -17,6 +17,7 @@
 package ch.tutteli.tsphp.typechecker.symbols;
 
 import ch.tutteli.tsphp.common.IScope;
+import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.TSPHPAst;
 import java.util.HashSet;
 import java.util.List;
@@ -28,6 +29,26 @@ import java.util.Set;
  */
 public class SymbolFactory implements ISymbolFactory
 {
+
+    @Override
+    public IScalarTypeSymbol createScalarTypeSymbol(String name) {
+        return new ScalarTypeSymbol(name);
+    }
+
+    @Override
+    public IArrayTypeSymbol createArrayTypeSymbol(String name, ITypeSymbol baseType) {
+        return new ArrayTypeSymbol(name, baseType);
+    }
+
+    @Override
+    public IPseudoTypeSymbol createPseudoTypeSymbol(String name) {
+        return new PseudoTypeSymbol(name);
+    }
+
+    @Override
+    public IAliasSymbol createAliasSymbol(TSPHPAst useDefinition, String alias) {
+        return new AliasSymbol(useDefinition, alias);
+    }
 
     @Override
     public IClassSymbol createClassSymbol(TSPHPAst classModifierAst, TSPHPAst identifier, IScope currentScope) {

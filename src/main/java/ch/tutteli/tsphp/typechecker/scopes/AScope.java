@@ -20,7 +20,6 @@ import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.TSPHPAst;
-import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,8 +53,8 @@ public abstract class AScope implements IScope
     }
 
     @Override
-    public ISymbol resolve(String name){
-        return ScopeHelperRegistry.get().resolve(this, name);
+    public ISymbol resolve(TSPHPAst typeAst){
+        return ScopeHelperRegistry.get().resolve(this, typeAst);
     }
 
     @Override

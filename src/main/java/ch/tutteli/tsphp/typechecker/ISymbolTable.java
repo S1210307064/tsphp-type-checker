@@ -16,8 +16,8 @@
  */
 package ch.tutteli.tsphp.typechecker;
 
-import ch.tutteli.tsphp.common.IErrorReporter;
 import ch.tutteli.tsphp.common.IScope;
+import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.TSPHPAst;
 import ch.tutteli.tsphp.typechecker.scopes.IConditionalScope;
@@ -37,9 +37,9 @@ public interface ISymbolTable
 
     INamespaceScope defineNamespace(String name);
 
-    void defineUse(IScope currentScope, TSPHPAst type);
+    void defineUse(INamespaceScope currentScope, TSPHPAst type);
 
-    void defineUse(IScope currentScope, TSPHPAst type, String alias);
+    void defineUse(INamespaceScope currentScope, TSPHPAst type, String alias);
 
     void defineConstant(IScope currentScope, TSPHPAst type, TSPHPAst identifier);
 
@@ -57,5 +57,18 @@ public interface ISymbolTable
 
     void defineVariable(IScope currentScope, TSPHPAst modifier, TSPHPAst type, TSPHPAst variableId);
 
-    ITypeSymbol resolveType(TSPHPAst type);
+    /**
+     * Try to resolve the type for the given typeAst and returns an {@link TSPHPErroneusTypeSymbol} if the type could
+     * not be found.
+     *
+     * @param typeAst The AST node which contains the type name. For instance, int, MyClass, \Exception etc.
+     * @return The corresponding type or a {@link TSPHPErroneusTypeSymbol} if could not be found.
+     */
+    ITypeSymbol resolveType(TSPHPAst typeAst);
+    
+    ITypeSymbol resolvePrimitiveType(TSPHPAst typeASt);
+    
+    ISymbol resolve(TSPHPAst ast);
+
+    ISymbol resolveWithFallBack(TSPHPAst ast);
 }

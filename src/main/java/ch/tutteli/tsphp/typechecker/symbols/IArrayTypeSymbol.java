@@ -14,24 +14,15 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker;
+package ch.tutteli.tsphp.typechecker.symbols;
 
-import ch.tutteli.tsphp.common.ASymbol;
 import ch.tutteli.tsphp.common.ITypeSymbol;
-import ch.tutteli.tsphp.common.TSPHPAst;
-import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class TSPHPErroneusTypeAst extends ASymbol implements ITypeSymbol
+public interface IArrayTypeSymbol extends ITypeSymbol
 {
-
-    TypeCheckerException exception;
-
-    public TSPHPErroneusTypeAst(TSPHPAst type, TypeCheckerException theException) {
-        super(type, type.getText());
-        exception = theException;
-    }
+    
 }
