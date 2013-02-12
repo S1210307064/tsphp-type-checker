@@ -49,6 +49,7 @@ public class SymbolTable implements ISymbolTable
     private ISymbolFactory symbolFactory;
     private IScopeFactory scopeFactory;
     private Map<String, IScope> globalNamespaces = new HashMap<>();
+    private IScope globalDefaultNamespace;
 
     public SymbolTable(ISymbolFactory aSymbolFactory, IScopeFactory aScopeFactory) {
         symbolFactory = aSymbolFactory;
@@ -58,7 +59,7 @@ public class SymbolTable implements ISymbolTable
     }
 
     private void initTypeSystem() {
-        IScope globalDefaultNamespace = getOrCreateGlobalNamespace("\\");
+        globalDefaultNamespace = getOrCreateGlobalNamespace("\\");
 
         for (String type : scalarTypes) {
             globalDefaultNamespace.define(new ScalarTypeSymbol(type));
@@ -180,13 +181,16 @@ public class SymbolTable implements ISymbolTable
 
         IScope scope = getResolvingScope(typeAst);
         type = scope.resolveType(typeAst);
-        typeAst.symbol = type;
-
-        if (type == null) {
+       
+        if (type == null && !scope.equals(globalDefaultNamespace)) {
+            type = globalDefaultNamespace.resolveType(typeAst);
+        }
+        if (type == null){
             ReferenceException ex = ErrorHelperRegistry.get().addAndGetUnkownTypeException(typeAst);
             type = new TSPHPErroneusTypeAst(typeAst, ex);
         }
-
+        
+        typeAst.symbol = type;
         return type;
     }
 

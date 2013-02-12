@@ -34,12 +34,12 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class ResolvePrimitiveTypeTest extends ASymbolTableTest
+public class ClassTypeTest extends ASymbolTableTest
 {
 
     private String type;
 
-    public ResolvePrimitiveTypeTest(String theType) {
+    public ClassTypeTest(String theType) {
         super();
         type = theType;
     }
@@ -47,13 +47,6 @@ public class ResolvePrimitiveTypeTest extends ASymbolTableTest
     @Test
     public void testResolveType() {
         INamespaceScope scope = symbolTable.defineNamespace("\\");
-        ISymbol typeSymbol = symbolTable.getGlobalNamespaceScopes().get("\\").getSymbols().get(type).get(0);
-        Assert.assertEquals(typeSymbol, symbolTable.resolveType(AstHelper.getAstWithTokenText(type,scope)));
-    }
-    
-     @Test
-    public void testResolveTypeFromOtherNamespace() {
-        INamespaceScope scope = symbolTable.defineNamespace("\\a\\a\\");
         ISymbol typeSymbol = symbolTable.getGlobalNamespaceScopes().get("\\").getSymbols().get(type).get(0);
         Assert.assertEquals(typeSymbol, symbolTable.resolveType(AstHelper.getAstWithTokenText(type,scope)));
     }

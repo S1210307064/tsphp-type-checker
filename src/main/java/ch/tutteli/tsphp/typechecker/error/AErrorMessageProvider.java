@@ -44,7 +44,7 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
         }
         if (definitionErrors.containsKey(key)) {
             message = definitionErrors.get(key);
-
+            message = message.replace("%id%", "" + dto.identifier);
             message = message.replace("%line%", "" + dto.lineExistingDefinition);
             message = message.replace("%pos%", "" + dto.positionExistingDefinition);
             message = message.replace("%lineE%", "" + dto.line);
@@ -63,6 +63,7 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
         }
         if (referenceErrors.containsKey(key)) {
             message = referenceErrors.get(key);
+            message = message.replace("%id%", "" + dto.identifier);
             message = message.replace("%line%", "" + dto.line);
             message = message.replace("%pos%", "" + dto.position);
         } else {
