@@ -16,10 +16,15 @@
  */
 package ch.tutteli.tsphp.typechecker;
 
+import ch.tutteli.tsphp.common.IErrorReporter;
 import ch.tutteli.tsphp.common.IScope;
+import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.TSPHPAst;
+import ch.tutteli.tsphp.typechecker.scopes.IConditionalScope;
+import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tutteli.tsphp.typechecker.symbols.IClassSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
+import java.util.Map;
 
 /**
  *
@@ -28,9 +33,15 @@ import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 public interface ISymbolTable
 {
 
+    Map<String, IScope> getGlobalNamespaceScopes();
+
+    INamespaceScope defineNamespace(String name);
+
     void defineUse(IScope currentScope, TSPHPAst type);
 
     void defineUse(IScope currentScope, TSPHPAst type, String alias);
+
+    void defineConstant(IScope currentScope, TSPHPAst type, TSPHPAst identifier);
 
     IClassSymbol defineInterface(IScope currentScope, TSPHPAst identifier, TSPHPAst extendsIds);
 
@@ -42,7 +53,9 @@ public interface ISymbolTable
     IMethodSymbol defineMethod(IScope currentScope, TSPHPAst methodModifier,
             TSPHPAst returnTypeModifier, TSPHPAst returnType, TSPHPAst identifier);
 
-    void defineConstant(IScope currentScope, TSPHPAst type, TSPHPAst identifier);
+    IConditionalScope defineConditionalScope(IScope currentScope);
 
     void defineVariable(IScope currentScope, TSPHPAst modifier, TSPHPAst type, TSPHPAst variableId);
+
+    ITypeSymbol resolveType(TSPHPAst type);
 }

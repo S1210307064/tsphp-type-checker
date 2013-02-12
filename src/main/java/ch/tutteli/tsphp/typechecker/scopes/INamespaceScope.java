@@ -18,6 +18,7 @@ package ch.tutteli.tsphp.typechecker.scopes;
 
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.TSPHPAst;
+import java.util.List;
 
 /**
  *
@@ -28,5 +29,13 @@ public interface INamespaceScope extends IScope
 
     void addUse(String alias, TSPHPAst type);
 
-    TSPHPAst getUse(String alias);
+    /**
+     * Return one or more AST which contains the use declaration for the alias or null if the alias could not be found.
+     *
+     * @param alias The alias which shall be found
+     * @return A list of ASTs or null
+     */
+    List<TSPHPAst> getUse(String alias);
+
+    public TSPHPAst getOneUse(String typeName);
 }

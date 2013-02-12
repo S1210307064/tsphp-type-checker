@@ -17,12 +17,10 @@
 package ch.tutteli.tsphp.typechecker.test.definition;
 
 import ch.tutteli.tsphp.common.IScope;
-import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
-import ch.tutteli.tsphp.typechecker.test.utils.ATypeCheckerTest;
-import ch.tutteli.tsphp.typechecker.test.utils.ScopeHelper;
+import ch.tutteli.tsphp.typechecker.test.testutils.ATypeCheckerDefinitionTest;
+import ch.tutteli.tsphp.typechecker.test.testutils.ScopeTestHelper;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Map;
 import junit.framework.Assert;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
@@ -34,7 +32,7 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class NamespaceTest extends ATypeCheckerTest
+public class NamespaceTest extends ATypeCheckerDefinitionTest
 {
 
     String namespaces;
@@ -50,15 +48,15 @@ public class NamespaceTest extends ATypeCheckerTest
     }
 
     @Override
-    protected void verify() {
+    protected void verifyDefinitions() {
         Assert.assertEquals(testString + " failed.", namespaces, getNamespacesAsString());
     }
 
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
-        String deflt = "global.default.default.";
-        String b = "global.b.b.";
-        String ab = "global.a\\b.a\\b.";
+        String deflt = "\\.\\.";
+        String b = "\\b\\.\\b\\.";
+        String ab = "\\a\\b\\.\\a\\b\\.";
 
         return Arrays.asList(new Object[][]{
                     {"int $a=1;", deflt},
@@ -85,7 +83,7 @@ public class NamespaceTest extends ATypeCheckerTest
                 stringBuilder.append(" ");
             }
             isNotFirst = true;
-            stringBuilder.append(ScopeHelper.getEnclosingScopeNames(scope));
+            stringBuilder.append(ScopeTestHelper.getEnclosingScopeNames(scope));
 
         }
         return stringBuilder.toString();

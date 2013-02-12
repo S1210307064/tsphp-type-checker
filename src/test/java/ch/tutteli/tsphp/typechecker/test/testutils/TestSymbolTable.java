@@ -14,13 +14,14 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.test.utils;
+package ch.tutteli.tsphp.typechecker.test.testutils;
 
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.TSPHPAst;
 import ch.tutteli.tsphp.typechecker.ISymbolTable;
 import ch.tutteli.tsphp.typechecker.SymbolTable;
+import ch.tutteli.tsphp.typechecker.error.IErrorHelper;
 import ch.tutteli.tsphp.typechecker.symbols.IClassSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import java.util.ArrayList;
@@ -39,9 +40,9 @@ public class TestSymbolTable extends SymbolTable implements ISymbolTable, ICreat
     private List<Entry<ISymbol, TSPHPAst>> symbols = new ArrayList<>();
     private ISymbol newlyCreatedSymbol;
 
-    public TestSymbolTable(TestSymbolFactory theSymbolFactory) {
-        super(theSymbolFactory);
-        symbolFactory = theSymbolFactory;
+    public TestSymbolTable(TestSymbolFactory testSymbolFactory, TestScopeFactory testScopeFactory) {
+        super(testSymbolFactory, testScopeFactory);
+        symbolFactory = testSymbolFactory;
         symbolFactory.registerListener(this);
     }
 

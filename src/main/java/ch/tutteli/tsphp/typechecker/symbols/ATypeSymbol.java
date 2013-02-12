@@ -14,17 +14,13 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.scopes;
-
-import ch.tutteli.tsphp.common.IScope;
+package ch.tutteli.tsphp.typechecker.symbols;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class GlobalScope extends AScope implements IScope
+public class ATypeSymbol
 {
-    public GlobalScope() {
-        super("global", null);
-    }
+    
 }

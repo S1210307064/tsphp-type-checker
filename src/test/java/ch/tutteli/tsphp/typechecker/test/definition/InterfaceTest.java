@@ -17,8 +17,8 @@
 package ch.tutteli.tsphp.typechecker.test.definition;
 
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
-import ch.tutteli.tsphp.typechecker.test.utils.ATypeCheckerDefinitionTest;
-import ch.tutteli.tsphp.typechecker.test.utils.TypeHelper;
+import ch.tutteli.tsphp.typechecker.test.testutils.ATypeCheckerDefinitionStringTest;
+import ch.tutteli.tsphp.typechecker.test.testutils.TypeHelper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -33,7 +33,7 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class InterfaceTest extends ATypeCheckerDefinitionTest
+public class InterfaceTest extends ATypeCheckerDefinitionStringTest
 {
 
     public InterfaceTest(String testString, String expectedResult) {
@@ -50,20 +50,19 @@ public class InterfaceTest extends ATypeCheckerDefinitionTest
         List<Object[]> collection = new ArrayList<>();
 
         int abstr = TSPHPTypeCheckerDefinition.Abstract;
-        String global = "global.";
 
         collection.addAll(Arrays.asList(new Object[][]{
-                    {"interface a{}", global + "default.a{}|" + abstr},
+                    {"interface a{}", "\\.\\.a|" + abstr},
                     {
                         "interface a{} interface b{} interface c extends a\\b{}",
-                        global + "default.a{}|" + abstr + " " + global + "default.b{}|" + abstr + " "
-                        + global + "default.default.a\\b " + global + "default.c{}|" + abstr
+                        "\\.\\.a|" + abstr + " " + "\\.\\.b|" + abstr + " "
+                        + "\\.\\.a\\b " + "\\.\\.c|" + abstr
                     },
                     {
                         "namespace x{interface a{}} namespace y{interface b{}} "
                         + "namespace z{interface c extends a\\b{}} namespace{interface d{}}",
-                        global + "x.a{}|" + abstr + " " + global + "y.b{}|" + abstr + " "
-                        + global + "z.z.a\\b " + global + "z.c{}|" + abstr + " " + global + "default.d{}|" + abstr
+                        "\\x\\.\\x\\.a|" + abstr + " " + "\\y\\.\\y\\.b|" + abstr + " "
+                        + "\\z\\.\\z\\.a\\b " + "\\z\\.\\z\\.c|" + abstr + " " + "\\.\\.d|" + abstr
                     }
                 }));
 
@@ -72,19 +71,17 @@ public class InterfaceTest extends ATypeCheckerDefinitionTest
         for (String type : types) {
             collection.add(new Object[]{
                         "namespace b; interface a extends " + type + "{}",
-                        global + "b.b." + type + " " + global + "b.a{}|" + abstr
+                        "\\b\\.\\b\\." + type + " " + "\\b\\.\\b\\.a|" + abstr
                     });
             collection.add(new Object[]{
                         "interface a extends " + type + "," + type + "{}",
-                        global + "default.default." + type + " " + global + "default.default." + type + " "
-                        + global + "default.a{}|" + abstr
+                        "\\.\\." + type + " " + "\\.\\." + type + " "
+                        + "\\.\\.a|" + abstr
                     });
             collection.add(new Object[]{
                         "interface a extends " + type + "," + type + "," + type + "{}",
-                        global + "default.default." + type + " "
-                        + global + "default.default." + type + " "
-                        + global + "default.default." + type + " "
-                        + global + "default.a{}|" + abstr
+                        "\\.\\." + type + " " + "\\.\\." + type + " " + "\\.\\." + type + " "
+                        + "\\.\\.a|" + abstr
                     });
         }
 

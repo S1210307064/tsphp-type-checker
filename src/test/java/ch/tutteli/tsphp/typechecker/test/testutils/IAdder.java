@@ -14,15 +14,16 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.test.utils;
+package ch.tutteli.tsphp.typechecker.test.testutils;
 
-import ch.tutteli.tsphp.common.ISymbol;
+import java.util.SortedSet;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public interface ICreateSymbolListener
+public interface IAdder
 {
-    void setNewlyCreatedSymbol(ISymbol symbol);
+
+    void add(String type, String typeExpected, SortedSet<Integer> modifiers);
 }

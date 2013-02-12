@@ -17,7 +17,6 @@
 package ch.tutteli.tsphp.typechecker.scopes;
 
 import ch.tutteli.tsphp.common.IScope;
-import java.util.Map;
 
 /**
  *
@@ -25,14 +24,7 @@ import java.util.Map;
  */
 public interface IScopeFactory
 {
-
-    static final String DEFAULT_NAMESPACE = "default";
-
-    IScope getGlobalScope();
-
-    Map<String, IScope> getGlobalNamespaceScopes();
-
-    INamespaceScope createNamespace(String name);
+    INamespaceScope createNamespace(String name, IScope currentScope);
 
     IConditionalScope createConditionalScope(IScope currentScope);
 }

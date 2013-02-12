@@ -16,8 +16,8 @@
  */
 package ch.tutteli.tsphp.typechecker.test.definition;
 
-import ch.tutteli.tsphp.typechecker.test.utils.ATypeCheckerDefinitionTest;
-import ch.tutteli.tsphp.typechecker.test.utils.ConstantHelper;
+import ch.tutteli.tsphp.typechecker.test.testutils.ATypeCheckerDefinitionStringTest;
+import ch.tutteli.tsphp.typechecker.test.testutils.ConstantHelper;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -31,7 +31,7 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class ConstantDeclarationTest extends ATypeCheckerDefinitionTest
+public class ConstantDeclarationTest extends ATypeCheckerDefinitionStringTest
 {
 
     public ConstantDeclarationTest(String testString, String expectedResult) {
@@ -47,17 +47,15 @@ public class ConstantDeclarationTest extends ATypeCheckerDefinitionTest
     public static Collection<Object[]> testStrings() {
         List<Object[]> collection = new ArrayList<>();
 
-        String global = "global.";
 
-        collection.addAll(ConstantHelper.testStrings("", "", "", global+"default.", global + "default.default.", true));
-        collection.addAll(ConstantHelper.testStrings("namespace a {", "}", "", global + "a.", global + "a.a.", true));
-        collection.addAll(ConstantHelper.testStrings("namespace a\\b {", "}", "",
-                global + "a\\b.", global + "a\\b.a\\b.", true));
+        collection.addAll(ConstantHelper.testStrings("", "", "", "\\.\\.", true));
+        collection.addAll(ConstantHelper.testStrings("namespace a {", "}", "", "\\a\\.\\a\\.", true));
+        collection.addAll(ConstantHelper.testStrings("namespace a\\b {", "}", "", "\\a\\b\\.\\a\\b\\.", true));
 
         //class constants
         collection.addAll(ConstantHelper.testStrings(
-                "namespace a\\b\\c; class f{", "}", global + "a\\b\\c.f{} ",
-                global + "a\\b\\c.a\\b\\c.f{}.", global + "a\\b\\c.a\\b\\c.f{}.", true));
+                "namespace a\\b\\c; class f{", "}", "\\a\\b\\c\\.\\a\\b\\c\\.f ",
+                "\\a\\b\\c\\.\\a\\b\\c\\.f.", true));
 
         return collection;
     }

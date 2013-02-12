@@ -18,10 +18,10 @@ package ch.tutteli.tsphp.typechecker.test.definition;
 
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
 import ch.tutteli.tsphp.typechecker.symbols.ModifierHelper;
-import ch.tutteli.tsphp.typechecker.test.utils.ATypeCheckerDefinitionTest;
-import ch.tutteli.tsphp.typechecker.test.utils.IAdder;
-import ch.tutteli.tsphp.typechecker.test.utils.ParameterListHelper;
-import ch.tutteli.tsphp.typechecker.test.utils.TypeHelper;
+import ch.tutteli.tsphp.typechecker.test.testutils.ATypeCheckerDefinitionStringTest;
+import ch.tutteli.tsphp.typechecker.test.testutils.IAdder;
+import ch.tutteli.tsphp.typechecker.test.testutils.ParameterListHelper;
+import ch.tutteli.tsphp.typechecker.test.testutils.TypeHelper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -38,12 +38,12 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class MethodTest extends ATypeCheckerDefinitionTest
+public class MethodTest extends ATypeCheckerDefinitionStringTest
 {
 
     private static String prefix = "namespace a{ class b{";
     private static String appendix = "}}";
-    private static String prefixExpected = "global.a.b{} ";
+    private static String prefixExpected = "\\a\\.\\a\\.b ";
     private static List<Object[]> collection;
 
     public MethodTest(String testString, String expectedResult) {
@@ -74,8 +74,8 @@ public class MethodTest extends ATypeCheckerDefinitionTest
                 String typeModifiers = ModifierHelper.getModifiers(modifiers);
                 collection.add(new Object[]{
                             prefix + "function " + type + " get(){}" + appendix,
-                            prefixExpected + "global.a.a.b{}." + typeExpected
-                            + " global.a.a.b{}.get()|" + TSPHPTypeCheckerDefinition.Public + typeModifiers
+                            prefixExpected + "\\a\\.\\a\\.b." + typeExpected
+                            + " \\a\\.\\a\\.b.get()|" + TSPHPTypeCheckerDefinition.Public + typeModifiers
                         });
             }
         });
@@ -138,8 +138,8 @@ public class MethodTest extends ATypeCheckerDefinitionTest
         for (Object[] variation : variations) {
             collection.add(new Object[]{
                         prefix + variation[0] + " function void foo(){}" + appendix,
-                        prefixExpected + "global.a.a.b{}.void "
-                        + "global.a.a.b{}.foo()" + ModifierHelper.getModifiers((SortedSet<Integer>) variation[1])
+                        prefixExpected + "\\a\\.\\a\\.b.void "
+                        + "\\a\\.\\a\\.b.foo()" + ModifierHelper.getModifiers((SortedSet<Integer>) variation[1])
                     });
         }
 
@@ -154,23 +154,23 @@ public class MethodTest extends ATypeCheckerDefinitionTest
         for (Object[] variation : variations) {
             collection.add(new Object[]{
                         prefix + variation[0] + " function void foo();" + appendix,
-                        prefixExpected + "global.a.a.b{}.void "
-                        + "global.a.a.b{}.foo()" + ModifierHelper.getModifiers((SortedSet<Integer>) variation[1])
+                        prefixExpected + "\\a\\.\\a\\.b.void "
+                        + "\\a\\.\\a\\.b.foo()" + ModifierHelper.getModifiers((SortedSet<Integer>) variation[1])
                     });
         }
         collection.add(new Object[]{
                     prefix + "abstract function void foo(); abstract function void bar();" + appendix,
-                    prefixExpected + "global.a.a.b{}.void "
-                    + "global.a.a.b{}.foo()" + ModifierHelper.getModifiers((SortedSet<Integer>) variations[0][1]) + " "
-                    + "global.a.a.b{}.void "
-                    + "global.a.a.b{}.bar()" + ModifierHelper.getModifiers((SortedSet<Integer>) variations[0][1])
+                    prefixExpected + "\\a\\.\\a\\.b.void "
+                    + "\\a\\.\\a\\.b.foo()" + ModifierHelper.getModifiers((SortedSet<Integer>) variations[0][1]) + " "
+                    + "\\a\\.\\a\\.b.void "
+                    + "\\a\\.\\a\\.b.bar()" + ModifierHelper.getModifiers((SortedSet<Integer>) variations[0][1])
                 });
     }
 
     private static void addParameters() {
         collection.addAll(ParameterListHelper.getTestStrings(
                 prefix + "function void foo(", "){}" + appendix,
-                prefixExpected + "global.a.a.b{}.void global.a.a.b{}.foo()|" + TSPHPTypeCheckerDefinition.Public + " ",
-                "global.a.a.b{}.foo().", true));
+                prefixExpected + "\\a\\.\\a\\.b.void \\a\\.\\a\\.b.foo()|" + TSPHPTypeCheckerDefinition.Public + " ",
+                "\\a\\.\\a\\.b.foo().", true));
     }
 }

@@ -14,24 +14,21 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.test.utils;
-
-import java.util.List;
+package ch.tutteli.tsphp.typechecker.error;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class ScopeTestStruct
+public class ErrorHelperRegistry
 {
-
-    public String astText;
-    public String astScope;
-    public List<Integer> astAccessOrder;
-
-    public ScopeTestStruct(String theAstText, String theAstScope, List<Integer> theAstAccessOrder) {
-        astText = theAstText;
-        astScope = theAstScope;
-        astAccessOrder = theAstAccessOrder;
+    private static IErrorHelper errorHelper;
+    private ErrorHelperRegistry(){}
+    
+    public static IErrorHelper get(){
+        return errorHelper;
+    }
+    public static void set(IErrorHelper newErrorHelper){
+        errorHelper = newErrorHelper;
     }
 }

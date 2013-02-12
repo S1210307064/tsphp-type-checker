@@ -17,7 +17,7 @@
 package ch.tutteli.tsphp.typechecker.test.definition;
 
 import ch.tutteli.tsphp.common.IScope;
-import ch.tutteli.tsphp.typechecker.test.utils.ATypeCheckerTest;
+import ch.tutteli.tsphp.typechecker.test.testutils.ATypeCheckerDefinitionTest;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
@@ -32,7 +32,7 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class GlobalNamespaceTest extends ATypeCheckerTest
+public class GlobalNamespaceTest extends ATypeCheckerDefinitionTest
 {
 
     String[] namespaces;
@@ -48,8 +48,8 @@ public class GlobalNamespaceTest extends ATypeCheckerTest
     }
 
     @Override
-    protected void verify() {
-        Map<String, IScope> globalNamespaceScopes = scopeFactory.getGlobalNamespaceScopes();
+    protected void verifyDefinitions() {
+        Map<String, IScope> globalNamespaceScopes = symbolTable.getGlobalNamespaceScopes();
         Assert.assertEquals(testString + " failed. size wrong ", namespaces.length, globalNamespaceScopes.size());
 
         for (String namespace : namespaces) {
@@ -61,14 +61,15 @@ public class GlobalNamespaceTest extends ATypeCheckerTest
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
         return Arrays.asList(new Object[][]{
-                    {"int $a=1;", new String[]{"default"}},
-                    {"namespace{}", new String[]{"default"}},
-                    {"namespace{} namespace{}", new String[]{"default"}},
-                    {"namespace{} namespace b{} namespace a\\b{}", new String[]{"default", "b", "a\\b"}},
-                    {"namespace{} namespace{}  namespace a\\b{}", new String[]{"default", "a\\b"}},
-                    {"namespace{} namespace b{} namespace{} ", new String[]{"default", "b"}},
-                    {"namespace{} namespace{} namespace{} ", new String[]{"default"}},
-                    {"namespace a;", new String[]{"a"}}
+                    {"int $a=1;", new String[]{"\\"}},
+                    {"namespace{}", new String[]{"\\"}},
+                    {"namespace{} namespace{}", new String[]{"\\"}},
+                    {"namespace{} namespace b{} namespace a\\b{}", new String[]{"\\", "\\b\\", "\\a\\b\\"}},
+                    {"namespace{} namespace{}  namespace a\\b{}", new String[]{"\\", "\\a\\b\\"}},
+                    {"namespace{} namespace b{} namespace{} ", new String[]{"\\", "\\b\\"}},
+                    {"namespace{} namespace{} namespace{} ", new String[]{"\\"}},
+                    //default space is always created since int, float etc. is defined in default namespace
+                    {"namespace a;", new String[]{"\\","\\a\\"}}
                 });
     }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.test.utils;
+package ch.tutteli.tsphp.typechecker.test.testutils;
 
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ public class ConstantHelper
 {
 
     public static Collection<Object[]> testStrings(String prefix, String appendix, String prefixExpected,
-            final String scopeName, final String fullScopeName, boolean isDefinitionPhase) {
+          final String scopeName, boolean isDefinitionPhase) {
 
         List<Object[]> collection = new ArrayList<>();
         String[] types = TypeHelper.getScalarTypes();
@@ -38,30 +38,30 @@ public class ConstantHelper
             String typeExpected = isDefinitionPhase ? "" : type;
             collection.add(new Object[]{
                         prefix + "const " + type + " a=true;" + appendix,
-                        prefixExpected + fullScopeName + type + " " + scopeName + "a" + typeExpected + "|" + fin
+                        prefixExpected + scopeName + type + " " + scopeName + "#a" + typeExpected + "|" + fin
                     });
             collection.add(new Object[]{
                         prefix + "const " + type + " a=true, b=false;" + appendix,
-                        prefixExpected + fullScopeName + type + " " + scopeName + "a" + typeExpected + "|" + fin + " "
-                        + fullScopeName + type + " " + scopeName + "b" + typeExpected + "|" + fin
+                        prefixExpected + scopeName + type + " " + scopeName + "#a" + typeExpected + "|" + fin + " "
+                        + scopeName + type + " " + scopeName + "#b" + typeExpected + "|" + fin
                     });
             collection.add(new Object[]{
                         prefix + "const " + type + " a=1,b=2;" + appendix,
-                        prefixExpected + fullScopeName + type + " " + scopeName + "a" + typeExpected + "|" + fin + " "
-                        + fullScopeName + type + " " + scopeName + "b" + typeExpected + "|" + fin
+                        prefixExpected + scopeName + type + " " + scopeName + "#a" + typeExpected + "|" + fin + " "
+                        + scopeName + type + " " + scopeName + "#b" + typeExpected + "|" + fin
                     });
             collection.add(new Object[]{
                         prefix + "const " + type + " a=1.0,b=2.0,c=null;" + appendix,
-                        prefixExpected + fullScopeName + type + " " + scopeName + "a" + typeExpected + "|" + fin + " "
-                        + fullScopeName + type + " " + scopeName + "b" + typeExpected + "|" + fin + " "
-                        + fullScopeName + type + " " + scopeName + "c" + typeExpected + "|" + fin
+                        prefixExpected + scopeName + type + " " + scopeName + "#a" + typeExpected + "|" + fin + " "
+                        + scopeName + type + " " + scopeName + "#b" + typeExpected + "|" + fin + " "
+                        + scopeName + type + " " + scopeName + "#c" + typeExpected + "|" + fin
                     });
             collection.add(new Object[]{
                         prefix + "const " + type + " a=1,b=\"2\",c=null,d='2';" + appendix,
-                        prefixExpected + fullScopeName + type + " " + scopeName + "a" + typeExpected + "|" + fin + " "
-                        + fullScopeName + type + " " + scopeName + "b" + typeExpected + "|" + fin + " "
-                        + fullScopeName + type + " " + scopeName + "c" + typeExpected + "|" + fin + " "
-                        + fullScopeName + type + " " + scopeName + "d" + typeExpected + "|" + fin
+                        prefixExpected + scopeName + type + " " + scopeName + "#a" + typeExpected + "|" + fin + " "
+                        + scopeName + type + " " + scopeName + "#b" + typeExpected + "|" + fin + " "
+                        + scopeName + type + " " + scopeName + "#c" + typeExpected + "|" + fin + " "
+                        + scopeName + type + " " + scopeName + "#d" + typeExpected + "|" + fin
                     });
         }
         return collection;

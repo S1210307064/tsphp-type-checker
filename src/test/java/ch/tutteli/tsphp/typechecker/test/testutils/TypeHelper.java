@@ -14,9 +14,8 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.test.utils;
+package ch.tutteli.tsphp.typechecker.test.testutils;
 
-import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,11 +39,11 @@ public class TypeHelper
     public static String[] getClassInterfaceTypes() {
         return new String[]{
                     "a",
-                    "a\\A",
+                    "a\\C",
                     "a\\b\\A",
-                    "\\a",
-                    "\\a\\A",
-                    "\\a\\b\\A"
+                    "\\e",
+                    "\\f\\D",
+                    "\\g\\b\\A"
                 };
     }
 

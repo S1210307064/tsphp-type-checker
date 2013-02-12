@@ -14,16 +14,24 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.test.utils;
+package ch.tutteli.tsphp.typechecker;
 
-import java.util.SortedSet;
+import ch.tutteli.tsphp.common.ASymbol;
+import ch.tutteli.tsphp.common.ITypeSymbol;
+import ch.tutteli.tsphp.common.TSPHPAst;
+import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public interface IAdder
+public class TSPHPErroneusTypeAst extends ASymbol implements ITypeSymbol
 {
 
-    void add(String type, String typeExpected, SortedSet<Integer> modifiers);
+    TypeCheckerException exception;
+
+    public TSPHPErroneusTypeAst(TSPHPAst type, TypeCheckerException theException) {
+        super(type, type.getText());
+        exception = theException;
+    }
 }

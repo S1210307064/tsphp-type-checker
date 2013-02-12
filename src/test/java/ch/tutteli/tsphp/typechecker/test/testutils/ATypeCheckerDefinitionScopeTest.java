@@ -14,11 +14,11 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.test.utils;
+package ch.tutteli.tsphp.typechecker.test.testutils;
 
 import ch.tutteli.tsphp.common.TSPHPAst;
 import java.util.List;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Ignore;
 
 /**
@@ -26,23 +26,23 @@ import org.junit.Ignore;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @Ignore
-public abstract class ATypeCheckerScopeTest extends ATypeCheckerTest
+public abstract class ATypeCheckerDefinitionScopeTest extends ATypeCheckerDefinitionTest
 {
 
     protected ScopeTestStruct[] testStructs;
 
-    public ATypeCheckerScopeTest(String testString, ScopeTestStruct[] theTestStructs) {
+    public ATypeCheckerDefinitionScopeTest(String testString, ScopeTestStruct[] theTestStructs) {
         super(testString);
         testStructs = theTestStructs;
     }
 
     @Override
-    protected void verify() {
+    protected void verifyDefinitions() {
         for (int i = 0; i < testStructs.length; ++i) {
             ScopeTestStruct testStruct = testStructs[i];
             TSPHPAst testCandidate = getAst(testStruct.astAccessOrder);
             Assert.assertEquals(testString + " failed. wrong ast text,", testStruct.astText, testCandidate.toStringTree());
-            Assert.assertEquals(testString + " failed. wrong scope,", testStruct.astScope, ScopeHelper.getEnclosingScopeNames(testCandidate.scope));
+            Assert.assertEquals(testString + " failed. wrong scope,", testStruct.astScope, ScopeTestHelper.getEnclosingScopeNames(testCandidate.scope));
         }
 
     }

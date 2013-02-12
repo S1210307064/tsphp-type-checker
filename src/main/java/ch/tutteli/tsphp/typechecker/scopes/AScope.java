@@ -18,8 +18,11 @@ package ch.tutteli.tsphp.typechecker.scopes;
 
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
+import ch.tutteli.tsphp.common.ITypeSymbol;
+import ch.tutteli.tsphp.common.TSPHPAst;
 import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,7 +36,7 @@ public abstract class AScope implements IScope
 
     protected String scopeName;
     protected IScope enclosingScope;
-    private Map<String, ISymbol> symbols = new LinkedHashMap<>();
+    protected Map<String, List<ISymbol>> symbols = new LinkedHashMap<>();
 
     public AScope(String theScopeName, IScope theEnclosingScope) {
         scopeName = theScopeName;
@@ -42,12 +45,23 @@ public abstract class AScope implements IScope
 
     @Override
     public void define(ISymbol symbol) {
-        ScopeHelper.define(this, symbol);
+        ScopeHelperRegistry.get().define(this, symbol);
     }
 
     @Override
-    public ISymbol resolve(String name) throws TypeCheckerException {
-        return ScopeHelper.resolve(this, name);
+    public void definitionCheck(ISymbol symbol) {
+        ScopeHelperRegistry.get().definitionCheck(this, symbol);
+    }
+
+    @Override
+    public ISymbol resolve(String name){
+        return ScopeHelperRegistry.get().resolve(this, name);
+    }
+
+    @Override
+    public ITypeSymbol resolveType(TSPHPAst typeAst) {
+        //only INamespaceScope define types.
+        return enclosingScope.resolveType(typeAst);
     }
 
     @Override
@@ -66,7 +80,7 @@ public abstract class AScope implements IScope
     }
 
     @Override
-    public Map<String, ISymbol> getSymbols() {
+    public Map<String, List<ISymbol>> getSymbols() {
         return symbols;
     }
 

@@ -14,13 +14,14 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.test.utils;
+package ch.tutteli.tsphp.typechecker.test.testutils;
 
 import ch.tutteli.tsphp.common.IParser;
 import ch.tutteli.tsphp.common.TSPHPAst;
 import ch.tutteli.tsphp.common.TSPHPAstAdaptorRegistry;
 import ch.tutteli.tsphp.parser.ParserFacade;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
+import ch.tutteli.tsphp.typechecker.error.ErrorHelper;
 import ch.tutteli.tsphp.typechecker.scopes.ScopeFactory;
 import org.antlr.runtime.tree.CommonTreeNodeStream;
 
@@ -40,7 +41,7 @@ public class RemoteTreeGrammarDebugger
 
         TestSymbolFactory testSymbolFactory = new TestSymbolFactory();
         TSPHPTypeCheckerDefinition definition = new TSPHPTypeCheckerDefinition(
-                commonTreeNodeStream, new ScopeFactory(), new TestSymbolTable(testSymbolFactory));
+                commonTreeNodeStream, new TestSymbolTable(testSymbolFactory, new TestScopeFactory()));
 
         definition.downup(ast);
         System.exit(0);

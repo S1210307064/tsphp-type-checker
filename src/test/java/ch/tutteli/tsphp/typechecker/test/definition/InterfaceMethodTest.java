@@ -18,10 +18,10 @@ package ch.tutteli.tsphp.typechecker.test.definition;
 
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
 import ch.tutteli.tsphp.typechecker.symbols.ModifierHelper;
-import ch.tutteli.tsphp.typechecker.test.utils.ATypeCheckerDefinitionTest;
-import ch.tutteli.tsphp.typechecker.test.utils.IAdder;
-import ch.tutteli.tsphp.typechecker.test.utils.ParameterListHelper;
-import ch.tutteli.tsphp.typechecker.test.utils.TypeHelper;
+import ch.tutteli.tsphp.typechecker.test.testutils.ATypeCheckerDefinitionStringTest;
+import ch.tutteli.tsphp.typechecker.test.testutils.IAdder;
+import ch.tutteli.tsphp.typechecker.test.testutils.ParameterListHelper;
+import ch.tutteli.tsphp.typechecker.test.testutils.TypeHelper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -38,12 +38,12 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class InterfaceMethodTest extends ATypeCheckerDefinitionTest
+public class InterfaceMethodTest extends ATypeCheckerDefinitionStringTest
 {
 
     private static String prefix = "namespace a{ interface b{";
     private static String appendix = "}}";
-    private static String prefixExpected = "global.a.b{}|" + TSPHPTypeCheckerDefinition.Abstract + " ";
+    private static String prefixExpected = "\\a\\.\\a\\.b|" + TSPHPTypeCheckerDefinition.Abstract + " ";
     private static List<Object[]> collection;
 
     public InterfaceMethodTest(String testString, String expectedResult) {
@@ -71,27 +71,27 @@ public class InterfaceMethodTest extends ATypeCheckerDefinitionTest
                 String typeModifiers = ModifierHelper.getModifiers(modifiers);
                 collection.add(new Object[]{
                             prefix + "function " + type + " get();" + appendix,
-                            prefixExpected + "global.a.a.b{}." + typeExpected
-                            + " global.a.a.b{}.get()" + methodModifier + typeModifiers
+                            prefixExpected + "\\a\\.\\a\\.b." + typeExpected
+                            + " \\a\\.\\a\\.b.get()" + methodModifier + typeModifiers
                         });
             }
         });
 
         collection.add(new Object[]{
                     prefix + "function void foo();" + appendix,
-                    prefixExpected + "global.a.a.b{}.void "
-                    + "global.a.a.b{}.foo()" + methodModifier
+                    prefixExpected + "\\a\\.\\a\\.b.void "
+                    + "\\a\\.\\a\\.b.foo()" + methodModifier
                 });
         collection.add(new Object[]{
                     prefix + "public function void foo();" + appendix,
-                    prefixExpected + "global.a.a.b{}.void "
-                    + "global.a.a.b{}.foo()" + methodModifier
+                    prefixExpected + "\\a\\.\\a\\.b.void "
+                    + "\\a\\.\\a\\.b.foo()" + methodModifier
                 });
 
         collection.addAll(ParameterListHelper.getTestStrings(
                 prefix + "function void foo(", ");" + appendix,
-                prefixExpected + "global.a.a.b{}.void global.a.a.b{}.foo()" + methodModifier + " ",
-                "global.a.a.b{}.foo().", true));
+                prefixExpected + "\\a\\.\\a\\.b.void \\a\\.\\a\\.b.foo()" + methodModifier + " ",
+                "\\a\\.\\a\\.b.foo().", true));
         return collection;
     }
 }

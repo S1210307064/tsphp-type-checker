@@ -28,13 +28,11 @@ import java.util.TreeSet;
 public class MethodSymbol extends AScopedSymbol implements IMethodSymbol
 {
 
-    
     private Set<Integer> returnTypeModifier;
 
     public MethodSymbol(TSPHPAst definitionAst, Set<Integer> methodModifiers, Set<Integer> theReturnTypeModifier,
             String name, IScope enclosingScope) {
-        // () prevent clashes with class and const identifier
-        super(definitionAst, methodModifiers, name+"()", enclosingScope);
+        super(definitionAst, methodModifiers, name, enclosingScope);
         returnTypeModifier = theReturnTypeModifier;
     }
 

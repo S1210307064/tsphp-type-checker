@@ -14,7 +14,7 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.test.utils;
+package ch.tutteli.tsphp.typechecker.test.testutils;
 
 import ch.tutteli.tsphp.common.IScope;
 import java.util.ArrayList;
@@ -26,11 +26,8 @@ import java.util.List;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class ScopeHelper
+public class ScopeTestHelper  
 {
-
-    private ScopeHelper() {
-    }
 
     public static String getEnclosingScopeNames(IScope scope) {
         StringBuilder stringBuilder = new StringBuilder();
@@ -43,7 +40,7 @@ public class ScopeHelper
     }
 
     public static Collection<Object[]> testStringsDefaultNamespace() {
-        return testStrings("", "", "global.default.default", new Integer[]{1});
+        return testStrings("", "", "\\.\\", new Integer[]{1});
     }
 
     public static Collection<Object[]> testStrings(String prefix, String appendix,

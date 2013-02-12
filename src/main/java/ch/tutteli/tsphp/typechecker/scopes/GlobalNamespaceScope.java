@@ -17,6 +17,10 @@
 package ch.tutteli.tsphp.typechecker.scopes;
 
 import ch.tutteli.tsphp.common.IScope;
+import ch.tutteli.tsphp.common.ITypeSymbol;
+import ch.tutteli.tsphp.common.TSPHPAst;
+import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
+import ch.tutteli.tsphp.typechecker.symbols.IClassSymbol;
 
 /**
  *
@@ -24,7 +28,26 @@ import ch.tutteli.tsphp.common.IScope;
  */
 public class GlobalNamespaceScope extends AScope implements IScope
 {
-    public GlobalNamespaceScope(String scopeName, IScope globalScope) {
-        super(scopeName, globalScope);
+
+    public GlobalNamespaceScope(String scopeName) {
+        super(scopeName, null);
+    }
+
+    @Override
+    public ITypeSymbol resolveType(TSPHPAst typeAst) {
+        ITypeSymbol typeSymbol = null;
+        String typeName = withoutNamespacePrefix(typeAst.getText());
+        if (symbols.containsKey(typeName)) {
+            typeSymbol = (ITypeSymbol) symbols.get(typeName).get(0);
+        }
+        return typeSymbol;
+    }
+
+    private String withoutNamespacePrefix(String typeName) {
+        int scopeNameLenght = scopeName.length();
+        if (typeName.length() > scopeNameLenght && typeName.substring(0, scopeNameLenght).equals(scopeName)) {
+            typeName = typeName.substring(scopeNameLenght);
+        }
+        return typeName;
     }
 }

@@ -54,11 +54,9 @@ protected IScope currentScope;
 protected IScopeFactory scopeFactory;
 
 
-public TSPHPTypeCheckerDefinition(TreeNodeStream input, IScopeFactory theScopeFactory, ISymbolTable theSymbolTable) {
+public TSPHPTypeCheckerDefinition(TreeNodeStream input, ISymbolTable theSymbolTable) {
     this(input);
-    scopeFactory = theScopeFactory;
-    currentScope = theScopeFactory.getGlobalScope();
-    symbolTable = theSymbolTable;
+    symbolTable = theSymbolTable;    
 }
 
 }
@@ -103,7 +101,7 @@ exitScope
     
 namespaceDeclaration
 	:	^(Namespace t=(TYPE_NAME|DEFAULT_NAMESPACE) .) 
-		{currentScope = scopeFactory.createNamespace($t.text); }
+		{currentScope = symbolTable.defineNamespace($t.text); }
 	;
 
 useDeclarationList
@@ -144,7 +142,7 @@ methodFunctionDeclaration
 	
 conditionalBlock
 	:	^(BLOCK_CONDITIONAL .*) 
-		{currentScope = scopeFactory.createConditionalScope(currentScope); }	
+		{currentScope = symbolTable.defineConditionalScope(currentScope); }	
 	;
 	
 constantDeclarationList
@@ -187,8 +185,8 @@ atom
 		    		|	CONSTANT
 		    		|	CLASS_STATIC_ACCESS
 		    		|	METHOD_CALL
-		    		|	FUNCTION_CALL
 		    		|	METHOD_CALL_STATIC
+		    		|	FUNCTION_CALL
     				)
        		{variableId.scope = currentScope;}
 	;

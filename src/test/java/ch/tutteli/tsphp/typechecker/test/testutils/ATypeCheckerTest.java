@@ -14,27 +14,25 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.test.utils;
+package ch.tutteli.tsphp.typechecker.test.testutils;
 
-import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
-import ch.tutteli.tsphp.typechecker.scopes.ScopeFactory;
-import java.util.ArrayList;
-import java.util.List;
+import ch.tutteli.tsphp.typechecker.error.ErrorHelper;
+import ch.tutteli.tsphp.typechecker.error.ErrorHelperRegistry;
+import ch.tutteli.tsphp.typechecker.error.ErrorMessageProvider;
+import ch.tutteli.tsphp.typechecker.scopes.ScopeHelper;
+import ch.tutteli.tsphp.typechecker.scopes.ScopeHelperRegistry;
+import org.junit.Ignore;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class TestScopeFactory extends ScopeFactory
+@Ignore
+public class ATypeCheckerTest
 {
 
-    public List<INamespaceScope> scopes = new ArrayList<>();
-
-    @Override
-    public INamespaceScope createNamespace(String name) {
-        INamespaceScope scope = super.createNamespace(name);
-        scopes.add(scope);
-        return scope;
-
+    public ATypeCheckerTest() {
+        ScopeHelperRegistry.set(new ScopeHelper());
+        ErrorHelperRegistry.set(new ErrorHelper(new ErrorMessageProvider()));
     }
 }

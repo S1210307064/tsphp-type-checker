@@ -16,9 +16,9 @@
  */
 package ch.tutteli.tsphp.typechecker.test.definition;
 
-import ch.tutteli.tsphp.typechecker.test.utils.ATypeCheckerScopeTest;
-import ch.tutteli.tsphp.typechecker.test.utils.ScopeHelper;
-import ch.tutteli.tsphp.typechecker.test.utils.ScopeTestStruct;
+import ch.tutteli.tsphp.typechecker.test.testutils.ATypeCheckerDefinitionScopeTest;
+import ch.tutteli.tsphp.typechecker.test.testutils.ScopeTestHelper;
+import ch.tutteli.tsphp.typechecker.test.testutils.ScopeTestStruct;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -32,7 +32,7 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class AtomTest extends ATypeCheckerScopeTest
+public class AtomTest extends ATypeCheckerDefinitionScopeTest
 {
 
     public AtomTest(String testString, ScopeTestStruct[] theTestStructs) {
@@ -47,19 +47,16 @@ public class AtomTest extends ATypeCheckerScopeTest
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
         List<Object[]> collection = new ArrayList<>();
-        collection.addAll(ScopeHelper.testStringsDefaultNamespace());
-        collection.addAll(ScopeHelper.testStrings("namespace a;", "",
-                "global.a.a", new Integer[]{1}));
-        collection.addAll(ScopeHelper.testStrings("namespace a\\b{", "}",
-                "global.a\\b.a\\b", new Integer[]{1}));
+        collection.addAll(ScopeTestHelper.testStringsDefaultNamespace());
+        collection.addAll(ScopeTestHelper.testStrings("namespace a;", "", "\\a\\.\\a\\", new Integer[]{1}));
+        collection.addAll(ScopeTestHelper.testStrings("namespace a\\b{", "}", "\\a\\b\\.\\a\\b\\", new Integer[]{1}));
 
         //nBody function block
-        collection.addAll(ScopeHelper.testStrings("function void foo(){", "}",
-                "global.default.default.foo()", new Integer[]{1, 0, 4}));
+        collection.addAll(ScopeTestHelper.testStrings("function void foo(){", "}", "\\.\\.foo()", new Integer[]{1, 0, 4}));
 
         //nBody class classBody mDecl block
-        collection.addAll(ScopeHelper.testStrings("class a{ function void foo(){", "}}",
-                "global.default.default.a{}.foo()", new Integer[]{1, 0, 4, 0, 4}));
+        collection.addAll(ScopeTestHelper.testStrings("class a{ function void foo(){", "}}",
+                "\\.\\.a.foo()", new Integer[]{1, 0, 4, 0, 4}));
 
         return collection;
     }

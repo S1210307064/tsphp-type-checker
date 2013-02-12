@@ -17,10 +17,10 @@
 package ch.tutteli.tsphp.typechecker.test.definition;
 
 import ch.tutteli.tsphp.typechecker.symbols.ModifierHelper;
-import ch.tutteli.tsphp.typechecker.test.utils.ATypeCheckerDefinitionTest;
-import ch.tutteli.tsphp.typechecker.test.utils.IAdder;
-import ch.tutteli.tsphp.typechecker.test.utils.ParameterListHelper;
-import ch.tutteli.tsphp.typechecker.test.utils.TypeHelper;
+import ch.tutteli.tsphp.typechecker.test.testutils.ATypeCheckerDefinitionStringTest;
+import ch.tutteli.tsphp.typechecker.test.testutils.IAdder;
+import ch.tutteli.tsphp.typechecker.test.testutils.ParameterListHelper;
+import ch.tutteli.tsphp.typechecker.test.testutils.TypeHelper;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -35,7 +35,7 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class FunctionTest extends ATypeCheckerDefinitionTest
+public class FunctionTest extends ATypeCheckerDefinitionStringTest
 {
 
     public FunctionTest(String testString, String expectedResult) {
@@ -58,14 +58,14 @@ public class FunctionTest extends ATypeCheckerDefinitionTest
                 String typeModifiers = ModifierHelper.getModifiers(modifiers);
                 collection.add(new Object[]{
                             "function " + type + " get(){}",
-                            "global.default.default." + typeExpected + " global.default.get()" + typeModifiers
+                            "\\.\\." + typeExpected + " \\.\\.get()" + typeModifiers
                         });
             }
         });
 
 
         collection.addAll(ParameterListHelper.getTestStrings(
-                "function void foo(", "){}", "global.default.default.void global.default.foo() ", "global.default.default.foo().", true));
+                "function void foo(", "){}", "\\.\\.void \\.\\.foo() ", "\\.\\.foo().", true));
 
         return collection;
     }

@@ -18,7 +18,11 @@ package ch.tutteli.tsphp.typechecker.scopes;
 
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
+import ch.tutteli.tsphp.common.TSPHPAst;
 import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
+import ch.tutteli.tsphp.typechecker.error.ErrorHelperRegistry;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -32,14 +36,21 @@ public class ConditionalScope extends AScope implements IConditionalScope
     }
 
     @Override
-    public ISymbol resolve(String name) throws TypeCheckerException {
+    public ISymbol resolve(String name) {
         ISymbol symbolEnclosingScope = enclosingScope.resolve(name);
-        ISymbol symbol = ScopeHelper.resolve(this, name);
+        ISymbol symbol = ScopeHelperRegistry.get().resolve(this, name);
         if (symbol == null) {
             symbol = symbolEnclosingScope;
         } else if (symbolEnclosingScope != null) {
-            //todo error, cannot redeclare in conditional scope
+            generateAlreadyDefinedException(symbolEnclosingScope, symbol);
         }
         return symbol;
+    }
+
+    private void generateAlreadyDefinedException(ISymbol symbolEnclosingScope, ISymbol symbol) {
+        List<TSPHPAst> definitions = new ArrayList<>();
+        definitions.add(symbolEnclosingScope.getDefinitionAst());
+        definitions.add(symbol.getDefinitionAst());
+        ErrorHelperRegistry.get().addAlreadyDefinedException(definitions);
     }
 }

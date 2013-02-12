@@ -14,18 +14,19 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.test.utils;
+package ch.tutteli.tsphp.typechecker.test.testutils;
 
 import ch.tutteli.tsphp.common.IParser;
 import ch.tutteli.tsphp.common.TSPHPAst;
 import ch.tutteli.tsphp.common.TSPHPAstAdaptorRegistry;
 import ch.tutteli.tsphp.parser.ParserFacade;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
-import ch.tutteli.tsphp.typechecker.scopes.IScopeFactory;
-import ch.tutteli.tsphp.typechecker.scopes.ScopeFactory;
-import junit.framework.Assert;
+import ch.tutteli.tsphp.typechecker.error.ErrorHelper;
+import ch.tutteli.tsphp.typechecker.error.ErrorHelperRegistry;
+import ch.tutteli.tsphp.typechecker.error.ErrorMessageProvider;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.CommonTreeNodeStream;
+import org.junit.Assert;
 import org.junit.Ignore;
 
 /**
@@ -33,18 +34,27 @@ import org.junit.Ignore;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @Ignore
-public abstract class ATypeCheckerTest
+public abstract class ATypeCheckerDefinitionTest extends ATypeCheckerTest
 {
 
     protected String testString;
-    protected TestSymbolTable testSymbolTable;
-    protected TestScopeFactory scopeFactory = new TestScopeFactory();
+    protected TestSymbolTable symbolTable;
+    protected TestScopeFactory scopeFactory;
     protected TSPHPAst ast;
+    protected CommonTreeNodeStream commonTreeNodeStream;
 
-    protected abstract void verify();
+    protected abstract void verifyDefinitions();
 
-    public ATypeCheckerTest(String theTestString) {
+    public ATypeCheckerDefinitionTest(String theTestString) {
+        super();
         testString = theTestString;
+        init();
+    }
+
+    private void init() {
+        TestSymbolFactory symbolFactory = new TestSymbolFactory();
+        scopeFactory = new TestScopeFactory();
+        symbolTable = new TestSymbolTable(symbolFactory, scopeFactory);
     }
 
     public void check() throws RecognitionException {
@@ -53,15 +63,12 @@ public abstract class ATypeCheckerTest
 
         Assert.assertFalse(testString + " failed - parser throw exception", parser.hasFoundError());
 
-        CommonTreeNodeStream commonTreeNodeStream = new CommonTreeNodeStream(TSPHPAstAdaptorRegistry.get(), ast);
+        commonTreeNodeStream = new CommonTreeNodeStream(TSPHPAstAdaptorRegistry.get(), ast);
         commonTreeNodeStream.setTokenStream(parser.getTokenStream());
 
-        TestSymbolFactory symbolFactory = new TestSymbolFactory();
-        testSymbolTable = new TestSymbolTable(symbolFactory);
-
-        TSPHPTypeCheckerDefinition definition = new TSPHPTypeCheckerDefinition(commonTreeNodeStream, scopeFactory, testSymbolTable);
+        TSPHPTypeCheckerDefinition definition = new TSPHPTypeCheckerDefinition(commonTreeNodeStream, symbolTable);
         definition.downup(ast);
-        
-        verify();
+
+        verifyDefinitions();
     }
 }

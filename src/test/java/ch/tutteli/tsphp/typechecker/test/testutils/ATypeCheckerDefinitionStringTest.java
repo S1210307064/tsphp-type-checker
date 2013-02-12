@@ -14,7 +14,7 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.test.utils;
+package ch.tutteli.tsphp.typechecker.test.testutils;
 
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.TSPHPAst;
@@ -28,23 +28,23 @@ import org.junit.Ignore;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @Ignore
-public abstract class ATypeCheckerDefinitionTest extends ATypeCheckerTest
+public abstract class ATypeCheckerDefinitionStringTest extends ATypeCheckerDefinitionTest
 {
 
     protected String expectedResult;
 
-    public ATypeCheckerDefinitionTest(String testString, String theExpectedResult) {
+    public ATypeCheckerDefinitionStringTest(String testString, String theExpectedResult) {
         super(testString);
         expectedResult = theExpectedResult;
     }
 
     @Override
-    protected void verify() {
+    protected void verifyDefinitions() {
         Assert.assertEquals(testString + " failed.", expectedResult, getSymbolsAsString());
     }
 
     public String getSymbolsAsString() {
-        List<Map.Entry<ISymbol, TSPHPAst>> symbols = testSymbolTable.getSymbols();
+        List<Map.Entry<ISymbol, TSPHPAst>> symbols = symbolTable.getSymbols();
         StringBuilder stringBuilder = new StringBuilder();
         boolean isFirstSymbol = true;
         for (Map.Entry<ISymbol, TSPHPAst> entry : symbols) {
@@ -53,7 +53,7 @@ public abstract class ATypeCheckerDefinitionTest extends ATypeCheckerTest
             }
             isFirstSymbol = false;
             stringBuilder.append(getTypesAsString(entry.getValue()))
-                    .append(ScopeHelper.getEnclosingScopeNames(entry.getKey().getDefinitionScope()))
+                    .append(ScopeTestHelper.getEnclosingScopeNames(entry.getKey().getDefinitionScope()))
                     .append(entry.getKey().toString());
         }
         return stringBuilder.toString();
@@ -74,7 +74,7 @@ public abstract class ATypeCheckerDefinitionTest extends ATypeCheckerTest
     }
 
     private String getSingleTypeAsString(TSPHPAst type) {
-        return ScopeHelper.getEnclosingScopeNames(type.scope) + type.getText() + " ";
+        return ScopeTestHelper.getEnclosingScopeNames(type.scope) + type.getText() + " ";
     }
 
     private String getMultipleTypesAsString(TSPHPAst types) {

@@ -18,10 +18,13 @@ package ch.tutteli.tsphp.typechecker.symbols;
 
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
+import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.TSPHPAst;
 import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
-import ch.tutteli.tsphp.typechecker.scopes.ScopeHelper;
+import ch.tutteli.tsphp.typechecker.error.ErrorHelperRegistry;
+import ch.tutteli.tsphp.typechecker.scopes.ScopeHelperRegistry;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -35,7 +38,7 @@ public abstract class AScopedSymbol extends ASymbolWithModifier implements IScop
 {
 
     protected IScope enclosingScope;
-    public Map<String, ISymbol> members = new LinkedHashMap<>();
+    protected Map<String, List<ISymbol>> members = new LinkedHashMap<>();
 
     public AScopedSymbol(TSPHPAst definitionAst, Set<Integer> modifiers, String name, IScope theEnclosingScope) {
         super(definitionAst, modifiers, name);
@@ -43,18 +46,29 @@ public abstract class AScopedSymbol extends ASymbolWithModifier implements IScop
     }
 
     @Override
-    public Map<String, ISymbol> getSymbols() {
+    public Map<String, List<ISymbol>> getSymbols() {
         return members;
     }
 
     @Override
     public void define(ISymbol symbol) {
-        ScopeHelper.define(this, symbol);
+        ScopeHelperRegistry.get().define(this, symbol);
     }
 
     @Override
-    public ISymbol resolve(String name) throws TypeCheckerException {
-        return ScopeHelper.resolve(this, name);
+    public void definitionCheck(ISymbol symbol) {
+        ScopeHelperRegistry.get().definitionCheck(this, symbol);
+    }
+
+    @Override
+    public ISymbol resolve(String name) {
+        return ScopeHelperRegistry.get().resolve(this, name);
+    }
+
+    @Override
+    public ITypeSymbol resolveType(TSPHPAst typeAst) {
+        //only INamespaceScope define types.
+        return enclosingScope.resolveType(typeAst);
     }
 
     @Override

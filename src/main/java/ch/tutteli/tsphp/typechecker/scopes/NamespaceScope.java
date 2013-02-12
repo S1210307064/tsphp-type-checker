@@ -18,9 +18,12 @@ package ch.tutteli.tsphp.typechecker.scopes;
 
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
+import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.TSPHPAst;
 import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
+import ch.tutteli.tsphp.typechecker.utils.MapHelper;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,31 +33,44 @@ import java.util.Map;
 public class NamespaceScope extends AScope implements INamespaceScope
 {
 
-    private Map<String, TSPHPAst> uses = new LinkedHashMap<>();
+    private Map<String, List<TSPHPAst>> uses = new LinkedHashMap<>();
 
     public NamespaceScope(String scopeName, IScope globalNamespaceScope) {
         super(scopeName, globalNamespaceScope);
     }
 
     @Override
-    public ISymbol resolve(String name) throws TypeCheckerException {
-        //we resolve from the corresponding global namespace scope 
-        return ScopeHelper.resolve(enclosingScope, name);
+    public void define(ISymbol symbol) {
+        //we define symbols in the corresponding global namespace scope in order that it can be found from other
+        //namespaces as well
+        enclosingScope.define(symbol);
+        //However, definition scope is this one, is used for alias resolving and name clashes
+        symbol.setDefinitionScope(this);
     }
 
     @Override
-    public void define(ISymbol symbol) {
-        //we define symbols in the corresponding global namespace scope
-        ScopeHelper.define(enclosingScope, symbol);
+    public ISymbol resolve(String name) {
+        //we resolve from the corresponding global namespace scope 
+        return enclosingScope.resolve(name);
+    }
+
+    @Override
+    public ITypeSymbol resolveType(TSPHPAst typeAst) {
+        return ScopeHelperRegistry.get().resolveType(this, typeAst);
     }
 
     @Override
     public void addUse(String alias, TSPHPAst type) {
-        uses.put(alias, type);
+        MapHelper.addToListMap(uses, alias, type);
     }
 
     @Override
-    public TSPHPAst getUse(String alias) {
+    public List<TSPHPAst> getUse(String alias) {
         return uses.get(alias);
+    }
+
+    @Override
+    public TSPHPAst getOneUse(String alias) {
+        return uses.containsKey(alias) ? uses.get(alias).get(0) : null;
     }
 }
