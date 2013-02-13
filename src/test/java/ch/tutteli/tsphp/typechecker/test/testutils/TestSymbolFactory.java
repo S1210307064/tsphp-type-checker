@@ -18,7 +18,7 @@ package ch.tutteli.tsphp.typechecker.test.testutils;
 
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
-import ch.tutteli.tsphp.common.TSPHPAst;
+import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.typechecker.symbols.IClassSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
@@ -35,14 +35,14 @@ public class TestSymbolFactory extends SymbolFactory
     List<ICreateSymbolListener> listeners = new ArrayList<>();
 
     @Override
-    public IClassSymbol createClassSymbol(TSPHPAst classModifierAst, TSPHPAst identifier, IScope currentScope) {
+    public IClassSymbol createClassSymbol(ITSPHPAst classModifierAst, ITSPHPAst identifier, IScope currentScope) {
         IClassSymbol symbol = super.createClassSymbol(classModifierAst, identifier, currentScope);
         updateListener(symbol);
         return symbol;
     }
 
     @Override
-    public IMethodSymbol createMethodSymbol(TSPHPAst methodModifier, TSPHPAst returnTypeModifier, TSPHPAst identifier,
+    public IMethodSymbol createMethodSymbol(ITSPHPAst methodModifier, ITSPHPAst returnTypeModifier, ITSPHPAst identifier,
             IScope currentScope) {
         IMethodSymbol symbol = super.createMethodSymbol(methodModifier, returnTypeModifier, identifier, currentScope);
         updateListener(symbol);
@@ -50,7 +50,7 @@ public class TestSymbolFactory extends SymbolFactory
     }
 
     @Override
-    public IVariableSymbol createVariableSymbol(TSPHPAst typeModifierAst, TSPHPAst variableId) {
+    public IVariableSymbol createVariableSymbol(ITSPHPAst typeModifierAst, ITSPHPAst variableId) {
         IVariableSymbol symbol = super.createVariableSymbol(typeModifierAst, variableId);
         updateListener(symbol);
         return symbol;

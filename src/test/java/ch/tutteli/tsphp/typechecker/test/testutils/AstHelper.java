@@ -17,6 +17,7 @@
 package ch.tutteli.tsphp.typechecker.test.testutils;
 
 import ch.tutteli.tsphp.common.IScope;
+import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.TSPHPAst;
 import org.antlr.runtime.CommonToken;
 
@@ -30,13 +31,13 @@ public class AstHelper
     private AstHelper() {
     }
 
-    public static TSPHPAst getAstWithTokenText(String text, IScope scope) {
-        TSPHPAst ast = getAstWithTokenText(text);
-        ast.scope = scope;
+    public static ITSPHPAst getAstWithTokenText(String text, IScope scope) {
+        ITSPHPAst ast = getAstWithTokenText(text);
+        ast.setScope(scope);
         return ast;
     }
 
-    public static TSPHPAst getAstWithTokenText(String text) {
+    public static ITSPHPAst getAstWithTokenText(String text) {
         return new TSPHPAst(new CommonToken(0, text));
     }
 }

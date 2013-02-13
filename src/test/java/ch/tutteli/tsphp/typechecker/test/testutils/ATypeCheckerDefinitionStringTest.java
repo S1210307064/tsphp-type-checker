@@ -17,7 +17,7 @@
 package ch.tutteli.tsphp.typechecker.test.testutils;
 
 import ch.tutteli.tsphp.common.ISymbol;
-import ch.tutteli.tsphp.common.TSPHPAst;
+import ch.tutteli.tsphp.common.ITSPHPAst;
 import java.util.List;
 import java.util.Map;
 import junit.framework.Assert;
@@ -44,10 +44,10 @@ public abstract class ATypeCheckerDefinitionStringTest extends ATypeCheckerDefin
     }
 
     public String getSymbolsAsString() {
-        List<Map.Entry<ISymbol, TSPHPAst>> symbols = symbolTable.getSymbols();
+        List<Map.Entry<ISymbol, ITSPHPAst>> symbols = symbolTable.getSymbols();
         StringBuilder stringBuilder = new StringBuilder();
         boolean isFirstSymbol = true;
-        for (Map.Entry<ISymbol, TSPHPAst> entry : symbols) {
+        for (Map.Entry<ISymbol, ITSPHPAst> entry : symbols) {
             if (!isFirstSymbol) {
                 stringBuilder.append(" ");
             }
@@ -59,7 +59,7 @@ public abstract class ATypeCheckerDefinitionStringTest extends ATypeCheckerDefin
         return stringBuilder.toString();
     }
 
-    private String getTypesAsString(TSPHPAst types) {
+    private String getTypesAsString(ITSPHPAst types) {
         String typesAsString;
 
         if (types == null) {
@@ -73,16 +73,16 @@ public abstract class ATypeCheckerDefinitionStringTest extends ATypeCheckerDefin
         return typesAsString;
     }
 
-    private String getSingleTypeAsString(TSPHPAst type) {
-        return ScopeTestHelper.getEnclosingScopeNames(type.scope) + type.getText() + " ";
+    private String getSingleTypeAsString(ITSPHPAst type) {
+        return ScopeTestHelper.getEnclosingScopeNames(type.getScope()) + type.getText() + " ";
     }
 
-    private String getMultipleTypesAsString(TSPHPAst types) {
+    private String getMultipleTypesAsString(ITSPHPAst types) {
 
         StringBuilder stringBuilder = new StringBuilder();
         int lenght = types.getChildCount();
         for (int i = 0; i < lenght; ++i) {
-            stringBuilder.append(getSingleTypeAsString((TSPHPAst) types.getChild(i)));
+            stringBuilder.append(getSingleTypeAsString((ITSPHPAst) types.getChild(i)));
         }
         return stringBuilder.toString();
     }

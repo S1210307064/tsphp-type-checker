@@ -17,7 +17,7 @@
 package ch.tutteli.tsphp.typechecker.symbols;
 
 import ch.tutteli.tsphp.common.IScope;
-import ch.tutteli.tsphp.common.TSPHPAst;
+import ch.tutteli.tsphp.common.ITSPHPAst;
 import java.util.Set;
 
 /**
@@ -31,7 +31,7 @@ public class ClassSymbol extends AScopedSymbol implements IClassSymbol
 
     private IMethodSymbol construct;
 
-    public ClassSymbol(TSPHPAst definitionAst, Set<Integer> modifiers, String name, IScope enclosingScope) {
+    public ClassSymbol(ITSPHPAst definitionAst, Set<Integer> modifiers, String name, IScope enclosingScope) {
         super(definitionAst, modifiers, name, enclosingScope);
     }
 

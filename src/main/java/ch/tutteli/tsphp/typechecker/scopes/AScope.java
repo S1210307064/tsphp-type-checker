@@ -19,7 +19,7 @@ package ch.tutteli.tsphp.typechecker.scopes;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITypeSymbol;
-import ch.tutteli.tsphp.common.TSPHPAst;
+import ch.tutteli.tsphp.common.ITSPHPAst;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,12 +53,12 @@ public abstract class AScope implements IScope
     }
 
     @Override
-    public ISymbol resolve(TSPHPAst typeAst){
+    public ISymbol resolve(ITSPHPAst typeAst){
         return ScopeHelperRegistry.get().resolve(this, typeAst);
     }
 
     @Override
-    public ITypeSymbol resolveType(TSPHPAst typeAst) {
+    public ITypeSymbol resolveType(ITSPHPAst typeAst) {
         //only INamespaceScope define types.
         return enclosingScope.resolveType(typeAst);
     }

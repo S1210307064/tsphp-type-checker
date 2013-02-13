@@ -17,7 +17,8 @@
 package ch.tutteli.tsphp.typechecker.symbols;
 
 import ch.tutteli.tsphp.common.ASymbol;
-import ch.tutteli.tsphp.common.TSPHPAst;
+import ch.tutteli.tsphp.common.IScope;
+import ch.tutteli.tsphp.common.ITSPHPAst;
 
 /**
  *
@@ -25,7 +26,26 @@ import ch.tutteli.tsphp.common.TSPHPAst;
  */
 public class AliasSymbol extends ASymbol implements IAliasSymbol
 {
-    public AliasSymbol(TSPHPAst theDefinitionAst, String aliasName) {
+
+    private IScope referenceGlobalNamespaceScope;
+
+    public AliasSymbol(ITSPHPAst theDefinitionAst, String aliasName) {
         super(theDefinitionAst, aliasName);
+
+    }
+
+    @Override
+    public boolean isType() {
+        return type != null;
+    }
+
+    @Override
+    public IScope getReferenceGlobalNamespaceScope() {
+        return referenceGlobalNamespaceScope;
+    }
+
+    @Override
+    public void setReferenceGlobalNamespaceScope(IScope theReferenceGlobalNamespaceScope) {
+        referenceGlobalNamespaceScope = theReferenceGlobalNamespaceScope;
     }
 }

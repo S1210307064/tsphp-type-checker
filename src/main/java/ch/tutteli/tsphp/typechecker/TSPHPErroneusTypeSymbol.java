@@ -18,7 +18,7 @@ package ch.tutteli.tsphp.typechecker;
 
 import ch.tutteli.tsphp.common.ASymbol;
 import ch.tutteli.tsphp.common.ITypeSymbol;
-import ch.tutteli.tsphp.common.TSPHPAst;
+import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
 
 /**
@@ -30,7 +30,7 @@ public class TSPHPErroneusTypeSymbol extends ASymbol implements ITypeSymbol
 
     private TypeCheckerException exception;
 
-    public TSPHPErroneusTypeSymbol(TSPHPAst type, TypeCheckerException theException) {
+    public TSPHPErroneusTypeSymbol(ITSPHPAst type, TypeCheckerException theException) {
         super(type, type.getText());
         exception = theException;
     }

@@ -19,7 +19,7 @@ package ch.tutteli.tsphp.typechecker.scopes;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITypeSymbol;
-import ch.tutteli.tsphp.common.TSPHPAst;
+import ch.tutteli.tsphp.common.ITSPHPAst;
 
 /**
  *
@@ -33,7 +33,7 @@ public class GlobalNamespaceScope extends AScope implements IScope
     }
 
     @Override
-    public ITypeSymbol resolveType(TSPHPAst typeAst) {
+    public ITypeSymbol resolveType(ITSPHPAst typeAst) {
         ITypeSymbol typeSymbol = null;
         String typeName = withoutNamespacePrefix(typeAst.getText());
         if (symbols.containsKey(typeName)) {

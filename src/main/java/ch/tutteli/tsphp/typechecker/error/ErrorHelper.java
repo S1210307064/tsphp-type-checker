@@ -17,6 +17,7 @@
 package ch.tutteli.tsphp.typechecker.error;
 
 import ch.tutteli.tsphp.common.ISymbol;
+import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.TSPHPAst;
 import ch.tutteli.tsphp.common.exceptions.DefinitionException;
 import ch.tutteli.tsphp.common.exceptions.ReferenceException;
@@ -49,8 +50,8 @@ public class ErrorHelper implements IErrorHelper
     }
 
     @Override
-    public void addAlreadyDefinedException(List<TSPHPAst> definitionAsts) {
-        TSPHPAst firstDefinition = definitionAsts.get(0);
+    public void addAlreadyDefinedException(List<ITSPHPAst> definitionAsts) {
+        ITSPHPAst firstDefinition = definitionAsts.get(0);
         int size = definitionAsts.size();
         for (int i = 1; i < size; ++i) {
             addAlreadyDefinedException(firstDefinition, definitionAsts.get(i));
@@ -63,33 +64,19 @@ public class ErrorHelper implements IErrorHelper
     }
 
     @Override
-    public void addAlreadyDefinedException(TSPHPAst existingDefintion, TSPHPAst newDefinition) {
-        Token newToken = newDefinition.token;
-        Token existingToken = existingDefintion.token;
+    public void addAlreadyDefinedException(ITSPHPAst existingDefintion, ITSPHPAst newDefinition) {
+        
 
         String errorMessage = errorMessageProvider.getErrorDefinitionMessage("alreadyDefined",
                 new DefinitionErrorDto(newDefinition.getText(),
-                existingToken.getLine(), existingToken.getCharPositionInLine(),
-                newToken.getLine(), newToken.getCharPositionInLine()));
+                existingDefintion.getLine(), existingDefintion.getCharPositionInLine(),
+                newDefinition.getLine(), newDefinition.getCharPositionInLine()));
 
         exceptions.add(new DefinitionException(errorMessage, existingDefintion, newDefinition));
     }
 
     @Override
-    public TSPHPAst addAlreadyDefinedExceptionAndRecover(TSPHPAst ast1, TSPHPAst ast2) {
-        TSPHPAst existingDefinition;
-        if (isAst1DefinedBeforeAst2(ast1, ast2)) {
-            existingDefinition = ast1;
-            addAlreadyDefinedException(ast1, ast2);
-        } else {
-            existingDefinition = ast2;
-            addAlreadyDefinedException(ast2, ast1);
-        }
-        return existingDefinition;
-    }
-
-    @Override
-    public DefinitionException addUseForwardReferenceException(TSPHPAst typeAst, TSPHPAst useDefinition) {
+    public DefinitionException addAndGetUseForwardReferenceException(ITSPHPAst typeAst, ITSPHPAst useDefinition) {
 
         String errorMessage = errorMessageProvider.getErrorDefinitionMessage("",
                 new DefinitionErrorDto(typeAst.getText(),
@@ -102,22 +89,11 @@ public class ErrorHelper implements IErrorHelper
     }
 
     @Override
-    public ReferenceException addAndGetUnkownTypeException(TSPHPAst typeAst) {
+    public ReferenceException addAndGetUnkownTypeException(ITSPHPAst typeAst) {
         String errorMessage = errorMessageProvider.getErrorReferenceMessage("unkownType",
                 new ReferenceErrorDto(typeAst.getText(), typeAst.getLine(), typeAst.getCharPositionInLine()));
         ReferenceException exception = new ReferenceException(errorMessage, typeAst);
         exceptions.add(exception);
         return exception;
-    }
-
-    @Override
-    public TSPHPAst recoverFromTypeClash(TSPHPAst ast1, TSPHPAst ast2) {
-        return isAst1DefinedBeforeAst2(ast1, ast2) ? ast1 : ast2;
-    }
-
-    private boolean isAst1DefinedBeforeAst2(TSPHPAst ast1, TSPHPAst ast2) {
-        return ast1.token.getLine() < ast2.token.getLine()
-                || (ast1.token.getLine() == ast2.token.getLine()
-                && ast1.token.getCharPositionInLine() <= ast2.token.getCharPositionInLine());
     }
 }

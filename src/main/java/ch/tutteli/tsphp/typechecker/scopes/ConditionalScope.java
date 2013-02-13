@@ -18,8 +18,7 @@ package ch.tutteli.tsphp.typechecker.scopes;
 
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
-import ch.tutteli.tsphp.common.TSPHPAst;
-import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
+import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.typechecker.error.ErrorHelperRegistry;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +46,7 @@ public class ConditionalScope extends AScope implements IConditionalScope
     }
 
     @Override
-    public ISymbol resolve(TSPHPAst ast) {
+    public ISymbol resolve(ITSPHPAst ast) {
         ISymbol symbol = super.resolve(ast);
         if (symbol == null) {
             symbol = enclosingScope.resolve(ast);
@@ -56,7 +55,7 @@ public class ConditionalScope extends AScope implements IConditionalScope
     }
 
     private void generateAlreadyDefinedException(ISymbol symbolEnclosingScope, ISymbol symbol) {
-        List<TSPHPAst> definitions = new ArrayList<>();
+        List<ITSPHPAst> definitions = new ArrayList<>();
         definitions.add(symbolEnclosingScope.getDefinitionAst());
         definitions.add(symbol.getDefinitionAst());
         ErrorHelperRegistry.get().addAlreadyDefinedException(definitions);

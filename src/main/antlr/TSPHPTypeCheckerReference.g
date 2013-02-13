@@ -17,7 +17,7 @@
 tree grammar TSPHPTypeCheckerReference;
 options {
   tokenVocab = TSPHP;
-  ASTLabelType = TSPHPAst;
+  ASTLabelType = ITSPHPAst;
   filter = true;
 }
 
@@ -41,7 +41,7 @@ options {
 package ch.tutteli.tsphp.typechecker.antlr;
 
 import ch.tutteli.tsphp.common.ITypeSymbol;
-import ch.tutteli.tsphp.common.TSPHPAst;
+import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.typechecker.ISymbolTable;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasSymbol;
@@ -67,13 +67,11 @@ useDeclarationList
 	;
 	
 useDeclaration
-	:	(	type=TYPE_NAME 
-		|	type=TYPE_NAME identifier=Identifier
-		)
+	:	^(USE_DECLRATARION type=TYPE_NAME .)
 		{
-			$type.symbol.setType(symbolTable.resolveType($start));
-			INamespaceScope namespaceScope = (INamespaceScope) $type.scope;
-			namespaceScope.useDefinitionCheck((IAliasSymbol) $type.symbol);
+			$type.getSymbol().setType(symbolTable.resolveType($type));
+			INamespaceScope namespaceScope = (INamespaceScope) $type.getScope();
+			namespaceScope.useDefinitionCheck((IAliasSymbol) $type.getSymbol());
 		}
 	;
 
@@ -87,8 +85,8 @@ variableDeclaration[ITypeSymbol type]
 		|	variableId=VariableId	
 		)
 		{ 
-			$variableId.symbol.setType(type); 
-			$variableId.scope.definitionCheck($variableId.symbol);
+			$variableId.getSymbol().setType(type); 
+			$variableId.getScope().definitionCheck($variableId.getSymbol());
 		}
 	;
 	
@@ -103,12 +101,12 @@ allTypes returns [ITypeSymbol type]
 		)
 		{
 			$type = symbolTable.resolvePrimitiveType($start);
-			$start.symbol = $type;
+			$start.setSymbol($type);
 		}
 	|	TYPE_NAME
 		{
 			$type = symbolTable.resolveType($start);
-			$start.symbol = $type;
+			$start.setSymbol($type);
 		}
 	;
 

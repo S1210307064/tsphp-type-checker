@@ -18,7 +18,7 @@ package ch.tutteli.tsphp.typechecker.error;
 
 import ch.tutteli.tsphp.common.IErrorReporter;
 import ch.tutteli.tsphp.common.ISymbol;
-import ch.tutteli.tsphp.common.TSPHPAst;
+import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.exceptions.DefinitionException;
 import ch.tutteli.tsphp.common.exceptions.ReferenceException;
 import java.util.List;
@@ -30,17 +30,13 @@ import java.util.List;
 public interface IErrorHelper extends IErrorReporter
 {
 
-    TSPHPAst recoverFromTypeClash(TSPHPAst ast1, TSPHPAst ast2);
-
-    TSPHPAst addAlreadyDefinedExceptionAndRecover(TSPHPAst ast1, TSPHPAst ast2);
-
     void addAlreadyDefinedException(ISymbol existingSymbol, ISymbol newSymbol);
 
-    void addAlreadyDefinedException(TSPHPAst existingDefintion, TSPHPAst newDefinition);
+    void addAlreadyDefinedException(ITSPHPAst existingDefintion, ITSPHPAst newDefinition);
 
-    void addAlreadyDefinedException(List<TSPHPAst> definitionAsts);
+    void addAlreadyDefinedException(List<ITSPHPAst> definitionAsts);
 
-    DefinitionException addUseForwardReferenceException(TSPHPAst typeAst, TSPHPAst useDefinition);
+    DefinitionException addAndGetUseForwardReferenceException(ITSPHPAst typeAst, ITSPHPAst useDefinition);
 
-    public ReferenceException addAndGetUnkownTypeException(TSPHPAst typeAst);
+    public ReferenceException addAndGetUnkownTypeException(ITSPHPAst typeAst);
 }

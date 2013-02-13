@@ -17,7 +17,7 @@
 package ch.tutteli.tsphp.typechecker.test.testutils;
 
 import ch.tutteli.tsphp.common.IParser;
-import ch.tutteli.tsphp.common.TSPHPAst;
+import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.TSPHPAstAdaptorRegistry;
 import ch.tutteli.tsphp.parser.ParserFacade;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
@@ -37,7 +37,7 @@ public abstract class ATypeCheckerDefinitionTest extends ATypeCheckerTest
     protected String testString;
     protected TestSymbolTable symbolTable;
     protected TestScopeFactory scopeFactory;
-    protected TSPHPAst ast;
+    protected ITSPHPAst ast;
     protected CommonTreeNodeStream commonTreeNodeStream;
 
     protected abstract void verifyDefinitions();

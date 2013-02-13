@@ -18,6 +18,7 @@ package ch.tutteli.tsphp.typechecker.test.testutils;
 
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
+import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.TSPHPAst;
 import ch.tutteli.tsphp.typechecker.ISymbolTable;
 import ch.tutteli.tsphp.typechecker.SymbolTable;
@@ -37,7 +38,7 @@ public class TestSymbolTable extends SymbolTable implements ISymbolTable, ICreat
 {
 
     private TestSymbolFactory symbolFactory;
-    private List<Entry<ISymbol, TSPHPAst>> symbols = new ArrayList<>();
+    private List<Entry<ISymbol, ITSPHPAst>> symbols = new ArrayList<>();
     private ISymbol newlyCreatedSymbol;
 
     public TestSymbolTable(TestSymbolFactory testSymbolFactory, TestScopeFactory testScopeFactory) {
@@ -46,16 +47,16 @@ public class TestSymbolTable extends SymbolTable implements ISymbolTable, ICreat
         symbolFactory.registerListener(this);
     }
 
-    public List<Entry<ISymbol, TSPHPAst>> getSymbols() {
+    public List<Entry<ISymbol, ITSPHPAst>> getSymbols() {
         return symbols;
     }
 
     @Override
-    public IClassSymbol defineClass(IScope currentScope, TSPHPAst modifier, TSPHPAst identifier,
-            TSPHPAst extendsIds, TSPHPAst implementsIds) {
+    public IClassSymbol defineClass(IScope currentScope, ITSPHPAst modifier, ITSPHPAst identifier,
+            ITSPHPAst extendsIds, ITSPHPAst implementsIds) {
         IClassSymbol scope = super.defineClass(currentScope, modifier, identifier, extendsIds, implementsIds);
 
-        TSPHPAst identifiers = null;
+        ITSPHPAst identifiers = null;
         if (extendsIds.getChildCount() > 0 || implementsIds.getChildCount() > 0) {
             identifiers = new TSPHPAst();
             appendChildrenFromTo(extendsIds, identifiers);
@@ -67,15 +68,15 @@ public class TestSymbolTable extends SymbolTable implements ISymbolTable, ICreat
     }
 
     @Override
-    public IMethodSymbol defineMethod(IScope currentScope, TSPHPAst methodModifier,
-            TSPHPAst returnTypeModifier, TSPHPAst returnType, TSPHPAst identifier) {
+    public IMethodSymbol defineMethod(IScope currentScope, ITSPHPAst methodModifier,
+            ITSPHPAst returnTypeModifier, ITSPHPAst returnType, ITSPHPAst identifier) {
         IMethodSymbol scope = super.defineMethod(currentScope, methodModifier, returnTypeModifier, returnType, identifier);
         symbols.add(new HashMap.SimpleEntry<>(newlyCreatedSymbol, returnType));
         return scope;
     }
 
     @Override
-    public void defineVariable(IScope currentScope, TSPHPAst modifier, TSPHPAst type, TSPHPAst variableId) {
+    public void defineVariable(IScope currentScope, ITSPHPAst modifier, ITSPHPAst type, ITSPHPAst variableId) {
         super.defineVariable(currentScope, modifier, type, variableId);
         symbols.add(new HashMap.SimpleEntry<>(newlyCreatedSymbol, type));
     }
@@ -85,7 +86,7 @@ public class TestSymbolTable extends SymbolTable implements ISymbolTable, ICreat
         newlyCreatedSymbol = symbol;
     }
 
-    private void appendChildrenFromTo(TSPHPAst source, TSPHPAst target) {
+    private void appendChildrenFromTo(ITSPHPAst source, ITSPHPAst target) {
         int lenght = source.getChildCount();
         for (int i = 0; i < lenght; ++i) {
             target.addChild(source.getChild(i));

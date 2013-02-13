@@ -16,7 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker.symbols;
 
-import ch.tutteli.tsphp.common.TSPHPAst;
+import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
 import java.util.Set;
 
@@ -27,7 +27,7 @@ import java.util.Set;
 public class VariableSymbol extends ASymbolWithModifier implements IVariableSymbol
 {
 
-    public VariableSymbol(TSPHPAst definitionAst, Set<Integer> modifiers, String name) {
+    public VariableSymbol(ITSPHPAst definitionAst, Set<Integer> modifiers, String name) {
         super(definitionAst, modifiers, name);
 
     }

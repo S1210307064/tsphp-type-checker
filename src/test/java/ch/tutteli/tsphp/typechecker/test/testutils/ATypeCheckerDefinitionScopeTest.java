@@ -16,7 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker.test.testutils;
 
-import ch.tutteli.tsphp.common.TSPHPAst;
+import ch.tutteli.tsphp.common.ITSPHPAst;
 import java.util.List;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -40,17 +40,21 @@ public abstract class ATypeCheckerDefinitionScopeTest extends ATypeCheckerDefini
     protected void verifyDefinitions() {
         for (int i = 0; i < testStructs.length; ++i) {
             ScopeTestStruct testStruct = testStructs[i];
-            TSPHPAst testCandidate = getAst(testStruct.astAccessOrder);
-            Assert.assertEquals(testString + " failed. wrong ast text,", testStruct.astText, testCandidate.toStringTree());
-            Assert.assertEquals(testString + " failed. wrong scope,", testStruct.astScope, ScopeTestHelper.getEnclosingScopeNames(testCandidate.scope));
+            ITSPHPAst testCandidate = getAst(testStruct.astAccessOrder);
+
+            Assert.assertEquals(testString + " failed. wrong ast text,", testStruct.astText,
+                    testCandidate.toStringTree());
+
+            Assert.assertEquals(testString + " failed. wrong scope,", testStruct.astScope,
+                    ScopeTestHelper.getEnclosingScopeNames(testCandidate.getScope()));
         }
 
     }
 
-    private TSPHPAst getAst(List<Integer> astAccessOrder) {
-        TSPHPAst tmp = ast;
+    private ITSPHPAst getAst(List<Integer> astAccessOrder) {
+        ITSPHPAst tmp = ast;
         for (Integer index : astAccessOrder) {
-            tmp = (TSPHPAst) tmp.getChild(index);
+            tmp = tmp.getChild(index);
         }
         return tmp;
     }

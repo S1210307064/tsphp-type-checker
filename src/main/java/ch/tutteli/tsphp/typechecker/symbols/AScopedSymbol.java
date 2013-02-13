@@ -19,7 +19,7 @@ package ch.tutteli.tsphp.typechecker.symbols;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITypeSymbol;
-import ch.tutteli.tsphp.common.TSPHPAst;
+import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.typechecker.scopes.ScopeHelperRegistry;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -38,7 +38,7 @@ public abstract class AScopedSymbol extends ASymbolWithModifier implements IScop
     protected IScope enclosingScope;
     protected Map<String, List<ISymbol>> members = new LinkedHashMap<>();
 
-    public AScopedSymbol(TSPHPAst definitionAst, Set<Integer> modifiers, String name, IScope theEnclosingScope) {
+    public AScopedSymbol(ITSPHPAst definitionAst, Set<Integer> modifiers, String name, IScope theEnclosingScope) {
         super(definitionAst, modifiers, name);
         enclosingScope = theEnclosingScope;
     }
@@ -59,12 +59,12 @@ public abstract class AScopedSymbol extends ASymbolWithModifier implements IScop
     }
 
     @Override
-    public ISymbol resolve(TSPHPAst ast) {
+    public ISymbol resolve(ITSPHPAst ast) {
         return ScopeHelperRegistry.get().resolve(this, ast);
     }
 
     @Override
-    public ITypeSymbol resolveType(TSPHPAst typeAst) {
+    public ITypeSymbol resolveType(ITSPHPAst typeAst) {
         //only INamespaceScope define types.
         return enclosingScope.resolveType(typeAst);
     }

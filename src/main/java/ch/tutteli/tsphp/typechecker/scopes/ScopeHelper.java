@@ -18,7 +18,7 @@ package ch.tutteli.tsphp.typechecker.scopes;
 
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
-import ch.tutteli.tsphp.common.TSPHPAst;
+import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.typechecker.error.ErrorHelperRegistry;
 import ch.tutteli.tsphp.typechecker.utils.MapHelper;
 
@@ -48,7 +48,7 @@ public class ScopeHelper implements IScopeHelper
     }
 
     @Override
-    public ISymbol resolve(IScope scope,TSPHPAst ast) {
+    public ISymbol resolve(IScope scope,ITSPHPAst ast) {
         throw new UnsupportedOperationException();
     }
     

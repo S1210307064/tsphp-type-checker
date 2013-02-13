@@ -17,7 +17,7 @@
 package ch.tutteli.tsphp.typechecker.scopes;
 
 import ch.tutteli.tsphp.common.IScope;
-import ch.tutteli.tsphp.common.TSPHPAst;
+import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasSymbol;
 import java.util.List;
 
@@ -30,6 +30,8 @@ public interface INamespaceScope extends IScope
 
     void defineUse(IAliasSymbol symbol);
 
+    void useDefinitionCheck(IAliasSymbol symbol);
+    
     /**
      * Return one or more AST which contains the use declaration for the alias or null if the alias could not be found.
      *
@@ -37,8 +39,4 @@ public interface INamespaceScope extends IScope
      * @return A list of ASTs or null
      */
     List<IAliasSymbol> getUse(String alias);
-
-    TSPHPAst getFirstUseDefinitionAst(String alias);
-
-    void useDefinitionCheck(IAliasSymbol symbol);
 }

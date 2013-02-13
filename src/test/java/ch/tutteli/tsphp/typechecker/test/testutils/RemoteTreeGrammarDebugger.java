@@ -17,7 +17,7 @@
 package ch.tutteli.tsphp.typechecker.test.testutils;
 
 import ch.tutteli.tsphp.common.IParser;
-import ch.tutteli.tsphp.common.TSPHPAst;
+import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.TSPHPAstAdaptorRegistry;
 import ch.tutteli.tsphp.parser.ParserFacade;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
@@ -35,7 +35,7 @@ public class RemoteTreeGrammarDebugger
     public static void main(String[] args) throws Exception {
 
         IParser parser = new ParserFacade();
-        TSPHPAst ast = parser.parse("$a=1, $b, $c;");
+        ITSPHPAst ast = parser.parse("$a=1, $b, $c;");
         CommonTreeNodeStream commonTreeNodeStream = new CommonTreeNodeStream(TSPHPAstAdaptorRegistry.get(), ast);
         commonTreeNodeStream.setTokenStream(parser.getTokenStream());
 

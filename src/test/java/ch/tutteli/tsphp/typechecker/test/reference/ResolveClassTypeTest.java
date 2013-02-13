@@ -16,6 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker.test.reference;
 
+import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.TSPHPAst;
 import ch.tutteli.tsphp.typechecker.TSPHPErroneusTypeSymbol;
@@ -37,7 +38,7 @@ public class ResolveClassTypeTest extends ASymbolTableTest
     @Test
     public void testNotFound() {
         INamespaceScope scope = symbolTable.defineNamespace("\\");
-        TSPHPAst ast = AstHelper.getAstWithTokenText("NotDefinedType", scope);
+        ITSPHPAst ast = AstHelper.getAstWithTokenText("NotDefinedType", scope);
         ITypeSymbol typeSymbol = symbolTable.resolveType(ast);
         Assert.assertTrue(typeSymbol instanceof TSPHPErroneusTypeSymbol);
         TSPHPErroneusTypeSymbol errorSymbol = (TSPHPErroneusTypeSymbol) typeSymbol;
@@ -47,7 +48,7 @@ public class ResolveClassTypeTest extends ASymbolTableTest
     @Test
     public void testNoFallback() {
         INamespaceScope scope = symbolTable.defineNamespace("\\");
-        TSPHPAst ast = AstHelper.getAstWithTokenText("MyClass", scope);
+        ITSPHPAst ast = AstHelper.getAstWithTokenText("MyClass", scope);
         IClassSymbol classSymbol = symbolTable.defineClass(scope, new TSPHPAst(), ast, new TSPHPAst(), new TSPHPAst());
         Assert.assertEquals(classSymbol, symbolTable.resolveType(ast));
 
@@ -62,12 +63,12 @@ public class ResolveClassTypeTest extends ASymbolTableTest
     @Test
     public void testAliasTypeNotFound() {
         INamespaceScope scope = symbolTable.defineNamespace("\\");
-        TSPHPAst ast = AstHelper.getAstWithTokenText("MyClass", scope);
+        ITSPHPAst ast = AstHelper.getAstWithTokenText("MyClass", scope);
 
         AliasSymbol aliasSymbol = new AliasSymbol(ast, "test");
         scope.defineUse(aliasSymbol);
 
-        TSPHPAst ast2 = AstHelper.getAstWithTokenText("test", scope);
+        ITSPHPAst ast2 = AstHelper.getAstWithTokenText("test", scope);
         ITypeSymbol typeSymbol = symbolTable.resolveType(ast2);
         Assert.assertTrue(typeSymbol instanceof TSPHPErroneusTypeSymbol);
         TSPHPErroneusTypeSymbol errorSymbol = (TSPHPErroneusTypeSymbol) typeSymbol;

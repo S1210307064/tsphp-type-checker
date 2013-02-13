@@ -16,6 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker.symbols;
 
+import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 
 /**
@@ -25,4 +26,9 @@ import ch.tutteli.tsphp.common.ISymbol;
 public interface IAliasSymbol extends ISymbol
 {
 
+    boolean isType();
+
+    IScope getReferenceGlobalNamespaceScope();
+
+    void setReferenceGlobalNamespaceScope(IScope theReferenceGlobalNamespaceScope);
 }

@@ -17,6 +17,8 @@
 package ch.tutteli.tsphp.typechecker.test.reference;
 
 import ch.tutteli.tsphp.typechecker.error.DefinitionErrorDto;
+import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
+import ch.tutteli.tsphp.typechecker.symbols.PseudoTypeSymbol;
 import ch.tutteli.tsphp.typechecker.test.testutils.ATypeCheckerReferenceErrorTest;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,11 +34,20 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class VariableDefinitionErrorTest extends ATypeCheckerReferenceErrorTest
+public class UseDefinitionErrorTest extends ATypeCheckerReferenceErrorTest
 {
 
-    public VariableDefinitionErrorTest(String testString, DefinitionErrorDto expectedLinesAndPositions) {
+    public UseDefinitionErrorTest(String testString, DefinitionErrorDto expectedLinesAndPositions) {
         super(testString, expectedLinesAndPositions);
+        INamespaceScope scope = symbolTable.defineNamespace("\\");
+        scope.define(new PseudoTypeSymbol("A"));
+        scope.define(new PseudoTypeSymbol("C"));
+        scope = symbolTable.defineNamespace("\\A\\");
+        scope.define(new PseudoTypeSymbol("B"));
+        scope = symbolTable.defineNamespace("\\C\\");
+        scope.define(new PseudoTypeSymbol("B"));
+        scope = symbolTable.defineNamespace("\\A\\C\\");
+        scope.define(new PseudoTypeSymbol("B"));
     }
 
     @Test
@@ -54,20 +65,22 @@ public class VariableDefinitionErrorTest extends ATypeCheckerReferenceErrorTest
         collection.addAll(getVariations("namespace a{", "}"));
         collection.addAll(getVariations("namespace a\\b;", ""));
         collection.addAll(getVariations("namespace a\\b\\z{", "}"));
-        collection.addAll(Arrays.asList(new Object[][]{
-                    {"namespace{\n int $a=1;} namespace{\n int $a=1;}", new DefinitionErrorDto("$a", 3, 5, 2, 5)},
-                    {"namespace a {\n int $a=1;} namespace a{\n int $a=1;}", new DefinitionErrorDto("$a", 3, 5, 2, 5)}
-                }));
         return collection;
     }
 
     public static Collection<Object[]> getVariations(String prefix, String appendix) {
-        DefinitionErrorDto errorDto = new DefinitionErrorDto("$a", 3, 5, 2, 5);
+        DefinitionErrorDto errorDto = new DefinitionErrorDto("B", 3, 1, 2, 1);
         return Arrays.asList(new Object[][]{
-                    {prefix + "\n int $a;\n int $a;" + appendix, errorDto},
-                    {prefix + "\n int $a=1;\n int $a;" + appendix, errorDto},
-                    {prefix + "\n int $a=1;\n int $a=1;" + appendix, errorDto},
-                    {prefix + "\n int $a;\n int $a=1;" + appendix, errorDto},
+                    {prefix + "use \\A as \n B; use \\C as \n B;" + appendix, errorDto},
+                    {prefix + "use \\A as \n B, \\C as \n B;" + appendix, errorDto},
+                    {prefix + "use \n \\A\\B; use \\C as \n B;" + appendix, errorDto},
+                    {prefix + "use \n \\A\\B, \\C as \n B;" + appendix, errorDto},
+                    {prefix + "use \\A as \n B; use \n \\C\\B;" + appendix, errorDto},
+                    {prefix + "use \\A as \n B, \n \\C\\B;" + appendix, errorDto},
+                    {prefix + "use \n \\A\\C\\B; use \n \\C\\B;" + appendix, errorDto},
+                    {prefix + "use \n \\A\\C\\B, \n \\C\\B;" + appendix, errorDto},
+                    {prefix + "use \n \\A\\B; use \\A; use \n \\C\\B;" + appendix, errorDto},
+                    {prefix + "use \\A as \n B; use \\A; use \n \\C\\B;" + appendix, errorDto}
                 });
     }
 }

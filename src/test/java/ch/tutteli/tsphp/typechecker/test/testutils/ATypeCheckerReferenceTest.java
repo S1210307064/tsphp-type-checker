@@ -40,5 +40,6 @@ public abstract class ATypeCheckerReferenceTest extends ATypeCheckerDefinitionTe
         commonTreeNodeStream.reset();
         reference = new TSPHPTypeCheckerReference(commonTreeNodeStream, symbolTable);
         reference.downup(ast);
+        verifyReferences();
     }
 }

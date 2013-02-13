@@ -18,7 +18,7 @@ package ch.tutteli.tsphp.typechecker.symbols;
 
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ITypeSymbol;
-import ch.tutteli.tsphp.common.TSPHPAst;
+import ch.tutteli.tsphp.common.ITSPHPAst;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -46,33 +46,33 @@ public class SymbolFactory implements ISymbolFactory
     }
 
     @Override
-    public IAliasSymbol createAliasSymbol(TSPHPAst useDefinition, String alias) {
+    public IAliasSymbol createAliasSymbol(ITSPHPAst useDefinition, String alias) {
         return new AliasSymbol(useDefinition, alias);
     }
 
     @Override
-    public IClassSymbol createClassSymbol(TSPHPAst classModifierAst, TSPHPAst identifier, IScope currentScope) {
+    public IClassSymbol createClassSymbol(ITSPHPAst classModifierAst, ITSPHPAst identifier, IScope currentScope) {
         return new ClassSymbol(identifier, getModifiers(classModifierAst), identifier.getText(), currentScope);
     }
 
     @Override
-    public IMethodSymbol createMethodSymbol(TSPHPAst methodModifier, TSPHPAst returnTypeModifier, TSPHPAst identifier,
+    public IMethodSymbol createMethodSymbol(ITSPHPAst methodModifier, ITSPHPAst returnTypeModifier, ITSPHPAst identifier,
             IScope currentScope) {
         return new MethodSymbol(identifier, getModifiers(methodModifier), getModifiers(returnTypeModifier),
                 identifier.getText(), currentScope);
     }
 
     @Override
-    public IVariableSymbol createVariableSymbol(TSPHPAst typeModifier, TSPHPAst variableId) {
+    public IVariableSymbol createVariableSymbol(ITSPHPAst typeModifier, ITSPHPAst variableId) {
         return new VariableSymbol(variableId, getModifiers(typeModifier), variableId.getText());
     }
 
-    private Set<Integer> getModifiers(TSPHPAst modifierAst) {
+    private Set<Integer> getModifiers(ITSPHPAst modifierAst) {
         Set<Integer> modifiers = new HashSet<>();
 
-        List<TSPHPAst> children = (List<TSPHPAst>) modifierAst.getChildren();
+        List<ITSPHPAst> children = (List<ITSPHPAst>) modifierAst.getChildren();
         if (children != null && !children.isEmpty()) {
-            for (TSPHPAst child : children) {
+            for (ITSPHPAst child : children) {
                 modifiers.add(child.getType());
             }
         }

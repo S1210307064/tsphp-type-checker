@@ -18,6 +18,7 @@ package ch.tutteli.tsphp.typechecker.test.testutils;
 
 import ch.tutteli.tsphp.common.IErrorReporter;
 import ch.tutteli.tsphp.common.exceptions.DefinitionException;
+import ch.tutteli.tsphp.typechecker.error.DefinitionErrorDto;
 import ch.tutteli.tsphp.typechecker.error.ErrorHelperRegistry;
 import java.util.List;
 import junit.framework.Assert;
@@ -32,11 +33,11 @@ import org.junit.Ignore;
 public abstract class ATypeCheckerReferenceErrorTest extends ATypeCheckerReferenceTest
 {
 
-    protected DefinitionErrorStruct linesAndPositions;
+    protected DefinitionErrorDto errorDto;
 
-    public ATypeCheckerReferenceErrorTest(String testString, DefinitionErrorStruct expectedLinesAndPositions) {
+    public ATypeCheckerReferenceErrorTest(String testString, DefinitionErrorDto expectedLinesAndPositions) {
         super(testString);
-        linesAndPositions = expectedLinesAndPositions;
+        errorDto = expectedLinesAndPositions;
     }
 
     
@@ -47,22 +48,22 @@ public abstract class ATypeCheckerReferenceErrorTest extends ATypeCheckerReferen
 
         List<Exception> exceptions = errorReporter.getExceptions();
         if (exceptions.size() > 1) {
-            Assert.fail(testString + " failed. More than one exception occured. "
+            Assert.fail(testString + " failed. More than one exception occured."
                     + exceptions.get(0).getMessage() + "--" + exceptions.get(1).getMessage());
         }
 
-        DefinitionException defException = (DefinitionException) exceptions.get(0);
-        Token existingToken = defException.getExistingDefinition().getToken();
-        Token newToken = defException.getNewDefinition().getToken();
-        Assert.assertEquals(testString + " failed. wrong existing line. ",
-                linesAndPositions.existingLine, existingToken.getLine());
-        Assert.assertEquals(testString + " failed. wrong existing position. ",
-                linesAndPositions.existingPosition, existingToken.getCharPositionInLine());
+        DefinitionException defException = (DefinitionException) exceptions.get(0);    
+        
+        Assert.assertEquals(errorDto.identifier,  defException.getExistingDefinition().getText());
+        
+        Assert.assertEquals(testString + " failed. wrong existing line.",
+                errorDto.lineExistingDefinition, defException.getExistingDefinition().getLine());
+        Assert.assertEquals(testString + " failed. wrong existing position.",
+                errorDto.positionExistingDefinition, defException.getExistingDefinition().getCharPositionInLine());
 
         Assert.assertEquals(testString + " failed. wrong new line. ",
-                linesAndPositions.newLine, newToken.getLine());
+                errorDto.line, defException.getNewDefinition().getLine());
         Assert.assertEquals(testString + " failed. wrong new position. ",
-                linesAndPositions.newPosition, newToken.getCharPositionInLine());
-
+                errorDto.position, defException.getNewDefinition().getCharPositionInLine());
     }
 }

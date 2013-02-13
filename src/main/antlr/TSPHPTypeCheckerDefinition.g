@@ -17,7 +17,7 @@
 tree grammar TSPHPTypeCheckerDefinition;
 options {
 	tokenVocab = TSPHP;
-	ASTLabelType = TSPHPAst;
+	ASTLabelType = ITSPHPAst;
 	filter = true;        
 }
 
@@ -41,7 +41,7 @@ options {
 package ch.tutteli.tsphp.typechecker.antlr;
 
 import ch.tutteli.tsphp.common.IScope;
-import ch.tutteli.tsphp.common.TSPHPAst;
+import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.typechecker.ISymbolTable;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.IScopeFactory;
@@ -110,11 +110,8 @@ useDeclarationList
 	;
 	
 useDeclaration
-	:	type=TYPE_NAME 
-		{symbolTable.defineUse((INamespaceScope) currentScope,$type);}
-		
-	|	type=TYPE_NAME identifier=Identifier
-		{symbolTable.defineUse((INamespaceScope) currentScope,$type, $identifier.text);}
+	:	^(USE_DECLRATARION type=TYPE_NAME identifier=Identifier)
+		{symbolTable.defineUse((INamespaceScope) currentScope, $type, $identifier);}
 	;
 	
 interfaceDeclaration
@@ -150,7 +147,7 @@ constantDeclarationList
 	:	^(CONSTANT_DECLARATION_LIST type=. constantDeclaration[$type]+)
 	;
 
-constantDeclaration[TSPHPAst type]
+constantDeclaration[ITSPHPAst type]
 	:	^(identifier=Identifier .)
 		{ symbolTable.defineConstant(currentScope, $type,$identifier); }
 	;
@@ -172,7 +169,7 @@ variableDeclarationList
     		)
         ;
 	
-variableDeclaration[TSPHPAst tMod, TSPHPAst type]
+variableDeclaration[ITSPHPAst tMod, ITSPHPAst type]
 	:
 		(	^(variableId=VariableId .)
 		|	variableId=VariableId	
@@ -189,5 +186,5 @@ atom
 		    		|	METHOD_CALL_STATIC
 		    		|	FUNCTION_CALL
     				)
-       		{variableId.scope = currentScope;}
+       		{variableId.setScope(currentScope);}
 	;

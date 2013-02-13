@@ -16,6 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker.test.error;
 
+import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.TSPHPAst;
 import ch.tutteli.tsphp.common.exceptions.DefinitionException;
 import ch.tutteli.tsphp.typechecker.error.ErrorHelper;
@@ -65,40 +66,29 @@ public class ErrorHelperTest extends ATypeCheckerTest
     }
 
     @Test
-    public void testAddAlreadyDefinedExceptionAndRecoverAst1First() {
-        TSPHPAst ast1 = createAst(identifier, lineExisting, positionExisting);
-        TSPHPAst ast2 = createAst(identifier, lineNew, positionNew);
+    public void testAddAlreadyDefinedExceptionAndRecover() {
+        ITSPHPAst ast1 = createAst(identifier, lineExisting, positionExisting);
+        ITSPHPAst ast2 = createAst(identifier, lineNew, positionNew);
 
-        TSPHPAst result = ErrorHelperRegistry.get().addAlreadyDefinedExceptionAndRecover(ast1, ast2);
-        Assert.assertEquals(failed, ast1, result);
+        ErrorHelperRegistry.get().addAlreadyDefinedException(ast1, ast2);
         check(ast1, ast2, ast1, ast2);
     }
 
     @Test
-    public void testAddAlreadyDefinedExceptionAndRecoverAst2First() {
-        TSPHPAst ast1 = createAst(identifier, lineNew, positionNew);
-        TSPHPAst ast2 = createAst(identifier, lineExisting, positionExisting);
-
-        TSPHPAst result = ErrorHelperRegistry.get().addAlreadyDefinedExceptionAndRecover(ast1, ast2);
-        Assert.assertEquals(failed, ast2, result);
-        check(ast1, ast2, ast2, ast1);
-    }
-
-    @Test
     public void testAddAlreadyDefinedException() {
-        TSPHPAst ast1 = createAst(identifier, lineExisting, positionExisting);
-        TSPHPAst ast2 = createAst(identifier, lineNew, positionNew);
-        ast1.symbol = new VariableSymbol(ast1, new HashSet<Integer>(), "$a");
-        ast2.symbol = new VariableSymbol(ast2, new HashSet<Integer>(), "$a");
-        ErrorHelperRegistry.get().addAlreadyDefinedException(ast1.symbol, ast2.symbol);
+        ITSPHPAst ast1 = createAst(identifier, lineExisting, positionExisting);
+        ITSPHPAst ast2 = createAst(identifier, lineNew, positionNew);
+        ast1.setSymbol(new VariableSymbol(ast1, new HashSet<Integer>(), "$a"));
+        ast2.setSymbol(new VariableSymbol(ast2, new HashSet<Integer>(), "$a"));
+        ErrorHelperRegistry.get().addAlreadyDefinedException(ast1.getSymbol(), ast2.getSymbol());
         check(ast1, ast2, ast1, ast2);
     }
 
     @Test
     public void testAddAlreadyDefinedExceptionList2() {
-        TSPHPAst ast1 = createAst(identifier, lineNew, positionNew);
-        TSPHPAst ast2 = createAst(identifier, lineExisting, positionExisting);
-        List<TSPHPAst> definitionAsts = new ArrayList<>();
+        ITSPHPAst ast1 = createAst(identifier, lineNew, positionNew);
+        ITSPHPAst ast2 = createAst(identifier, lineExisting, positionExisting);
+        List<ITSPHPAst> definitionAsts = new ArrayList<>();
         definitionAsts.add(ast1);
         definitionAsts.add(ast2);
         ErrorHelperRegistry.get().addAlreadyDefinedException(definitionAsts);
@@ -107,25 +97,25 @@ public class ErrorHelperTest extends ATypeCheckerTest
 
     @Test
     public void testAddAlreadyDefinedExceptionList3() {
-        TSPHPAst ast1 = createAst(identifier, lineNew, positionNew);
-        TSPHPAst ast2 = createAst(identifier, lineExisting, positionExisting);
-        TSPHPAst ast3 = createAst(identifier, lineExisting + 1, positionExisting + 1);
-        List<TSPHPAst> definitionAsts = new ArrayList<>();
+        ITSPHPAst ast1 = createAst(identifier, lineNew, positionNew);
+        ITSPHPAst ast2 = createAst(identifier, lineExisting, positionExisting);
+        ITSPHPAst ast3 = createAst(identifier, lineExisting + 1, positionExisting + 1);
+        List<ITSPHPAst> definitionAsts = new ArrayList<>();
         definitionAsts.add(ast1);
         definitionAsts.add(ast2);
         definitionAsts.add(ast3);
         ErrorHelperRegistry.get().addAlreadyDefinedException(definitionAsts);
-        check(ast1, ast2, new TSPHPAst[][]{
+        check(ast1, ast2, new ITSPHPAst[][]{
                     {ast1, ast2},
                     {ast1, ast3},});
     }
 
-    protected void check(TSPHPAst ast1, TSPHPAst ast2, TSPHPAst existingDefinition, TSPHPAst newDefinition) {
-        check(ast1, ast2, new TSPHPAst[][]{{existingDefinition, newDefinition}});
+    protected void check(ITSPHPAst ast1, ITSPHPAst ast2, ITSPHPAst existingDefinition, ITSPHPAst newDefinition) {
+        check(ast1, ast2, new ITSPHPAst[][]{{existingDefinition, newDefinition}});
     }
 
-    protected void check(TSPHPAst ast1, TSPHPAst ast2,
-            TSPHPAst[][] expectedExceptions) {
+    protected void check(ITSPHPAst ast1, ITSPHPAst ast2,
+            ITSPHPAst[][] expectedExceptions) {
         IErrorHelper errorHelper = ErrorHelperRegistry.get();
         Assert.assertTrue(failed + ", exceptions was empty.", errorHelper.hasFoundError());
         List<Exception> exceptions = errorHelper.getExceptions();
@@ -145,7 +135,7 @@ public class ErrorHelperTest extends ATypeCheckerTest
         }
     }
 
-    private TSPHPAst createAst(String tokenText, int line, int position) {
+    private ITSPHPAst createAst(String tokenText, int line, int position) {
         Token token = new CommonToken(0, tokenText);
         token.setLine(line);
         token.setCharPositionInLine(position);
