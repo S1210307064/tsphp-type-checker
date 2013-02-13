@@ -68,6 +68,20 @@ public class VariableDefinitionErrorTest extends ATypeCheckerReferenceErrorTest
                     {prefix + "\n int $a=1;\n int $a;" + appendix, errorDto},
                     {prefix + "\n int $a=1;\n int $a=1;" + appendix, errorDto},
                     {prefix + "\n int $a;\n int $a=1;" + appendix, errorDto},
+                    {prefix + "\n int $a; if(true){\n int $a=1;}" + appendix, errorDto},
+                    {prefix + "\n int $a; if(true);else \n int $a;" + appendix, errorDto},
+                    {prefix + "if(true){}else{\n int $a=1;} \n int $a; " + appendix, errorDto},
+                    {prefix + "\n int $a; switch($a){case 1: \n int $a=1;}" + appendix, errorDto},
+                    {prefix + "switch($a){case 1: \n int $a=1;} \n int $a=1;" + appendix, errorDto},
+                    {prefix + "\n int $a=1; for(\n int $a;;){}" + appendix, errorDto},
+                    {prefix + "for(;;){\n int $a;} \n int $a; " + appendix, errorDto},
+                    {prefix + "for(;;)\n int $a; \n int $a; " + appendix, errorDto},
+                    {prefix + "foreach([1,2] as object $b){\n int $a;} \n int $a; " + appendix, errorDto},
+                    {prefix + "\n int $a=1; foreach([1,2] as object $b){\n int $a=1;} " + appendix, errorDto},
+                    {prefix + "\n int $a; while(true){ \n int $a=1;}" + appendix, errorDto},
+                    {prefix + "while(true) \n int $a=1; \n int $a;" + appendix, errorDto},
+                    {prefix + "do \n int $a; while(true); \n int $a;" + appendix, errorDto},
+                    {prefix + "\n int $a=1+1; do{ \n int $a;}while(true); " + appendix, errorDto}
                 });
     }
 }

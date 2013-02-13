@@ -41,7 +41,8 @@ public class ConditionalScope extends AScope implements IConditionalScope
         //Check if already defined in enclosing scope
         ISymbol symbolEnclosingScope = enclosingScope.resolve(symbol.getDefinitionAst());
         if (symbolEnclosingScope != null) {
-            generateAlreadyDefinedException(symbolEnclosingScope, symbol);
+            
+             ErrorHelperRegistry.get().determineAlreadyDefinedException(symbolEnclosingScope, symbol);
         }
     }
 
@@ -52,12 +53,5 @@ public class ConditionalScope extends AScope implements IConditionalScope
             symbol = enclosingScope.resolve(ast);
         }
         return symbol;
-    }
-
-    private void generateAlreadyDefinedException(ISymbol symbolEnclosingScope, ISymbol symbol) {
-        List<ITSPHPAst> definitions = new ArrayList<>();
-        definitions.add(symbolEnclosingScope.getDefinitionAst());
-        definitions.add(symbol.getDefinitionAst());
-        ErrorHelperRegistry.get().addAlreadyDefinedException(definitions);
     }
 }

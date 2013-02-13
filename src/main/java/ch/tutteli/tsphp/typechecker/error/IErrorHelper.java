@@ -21,7 +21,6 @@ import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.exceptions.DefinitionException;
 import ch.tutteli.tsphp.common.exceptions.ReferenceException;
-import java.util.List;
 
 /**
  *
@@ -30,11 +29,19 @@ import java.util.List;
 public interface IErrorHelper extends IErrorReporter
 {
 
+    /**
+     * Determine which AST was defined earlier and call the method addAlreadyefinedException correspondingly.
+     */
+    void determineAlreadyDefinedException(ITSPHPAst ast1, ITSPHPAst ast2);
+
+    /**
+     * Determine which symbol was defined earlier and call the method addAlreadyefinedException correspondingly.
+     */
+    void determineAlreadyDefinedException(ISymbol symbolEnclosingScope, ISymbol symbol);
+
     void addAlreadyDefinedException(ISymbol existingSymbol, ISymbol newSymbol);
 
     void addAlreadyDefinedException(ITSPHPAst existingDefintion, ITSPHPAst newDefinition);
-
-    void addAlreadyDefinedException(List<ITSPHPAst> definitionAsts);
 
     DefinitionException addAndGetUseForwardReferenceException(ITSPHPAst typeAst, ITSPHPAst useDefinition);
 

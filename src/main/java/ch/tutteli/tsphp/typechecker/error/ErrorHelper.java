@@ -50,12 +50,19 @@ public class ErrorHelper implements IErrorHelper
     }
 
     @Override
-    public void addAlreadyDefinedException(List<ITSPHPAst> definitionAsts) {
-        ITSPHPAst firstDefinition = definitionAsts.get(0);
-        int size = definitionAsts.size();
-        for (int i = 1; i < size; ++i) {
-            addAlreadyDefinedException(firstDefinition, definitionAsts.get(i));
+    public void determineAlreadyDefinedException(ISymbol symbol1, ISymbol symbol2) {
+        determineAlreadyDefinedException(symbol1.getDefinitionAst(), symbol2.getDefinitionAst());
+
+    }
+
+    @Override
+    public void determineAlreadyDefinedException(ITSPHPAst ast1, ITSPHPAst ast2) {
+        if (ast1.isDefinedEarlierThan(ast2)) {
+            addAlreadyDefinedException(ast1, ast2);
+        } else {
+            addAlreadyDefinedException(ast2, ast1);
         }
+
     }
 
     @Override
@@ -65,7 +72,7 @@ public class ErrorHelper implements IErrorHelper
 
     @Override
     public void addAlreadyDefinedException(ITSPHPAst existingDefintion, ITSPHPAst newDefinition) {
-        
+
 
         String errorMessage = errorMessageProvider.getErrorDefinitionMessage("alreadyDefined",
                 new DefinitionErrorDto(newDefinition.getText(),
