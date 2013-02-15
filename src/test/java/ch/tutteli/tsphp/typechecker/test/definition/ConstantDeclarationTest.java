@@ -16,7 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker.test.definition;
 
-import ch.tutteli.tsphp.typechecker.test.testutils.ATypeCheckerDefinitionStringTest;
+import ch.tutteli.tsphp.typechecker.test.testutils.ATypeCheckerDefinitionSymbolTest;
 import ch.tutteli.tsphp.typechecker.test.testutils.ConstantHelper;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,7 +31,7 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class ConstantDeclarationTest extends ATypeCheckerDefinitionStringTest
+public class ConstantDeclarationTest extends ATypeCheckerDefinitionSymbolTest
 {
 
     public ConstantDeclarationTest(String testString, String expectedResult) {

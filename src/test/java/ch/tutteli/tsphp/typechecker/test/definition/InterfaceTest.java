@@ -17,7 +17,7 @@
 package ch.tutteli.tsphp.typechecker.test.definition;
 
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
-import ch.tutteli.tsphp.typechecker.test.testutils.ATypeCheckerDefinitionStringTest;
+import ch.tutteli.tsphp.typechecker.test.testutils.ATypeCheckerDefinitionSymbolTest;
 import ch.tutteli.tsphp.typechecker.test.testutils.TypeHelper;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,7 +33,7 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class InterfaceTest extends ATypeCheckerDefinitionStringTest
+public class InterfaceTest extends ATypeCheckerDefinitionSymbolTest
 {
 
     public InterfaceTest(String testString, String expectedResult) {

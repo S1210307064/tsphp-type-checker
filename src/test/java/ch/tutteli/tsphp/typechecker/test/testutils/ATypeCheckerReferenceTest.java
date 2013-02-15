@@ -17,6 +17,9 @@
 package ch.tutteli.tsphp.typechecker.test.testutils;
 
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerReference;
+import ch.tutteli.tsphp.typechecker.error.ErrorHelperRegistry;
+import ch.tutteli.tsphp.typechecker.error.IErrorHelper;
+import junit.framework.Assert;
 import org.junit.Ignore;
 
 /**
@@ -35,11 +38,20 @@ public abstract class ATypeCheckerReferenceTest extends ATypeCheckerDefinitionTe
 
     protected abstract void verifyReferences();
 
+    protected void checkReferences() {
+        IErrorHelper errorHelper = ErrorHelperRegistry.get();
+        Assert.assertFalse(testString + " failed. Exceptions occured." + errorHelper.getExceptions(),
+                errorHelper.hasFoundError());
+
+        verifyReferences();
+
+    }
+
     @Override
     protected final void verifyDefinitions() {
         commonTreeNodeStream.reset();
         reference = new TSPHPTypeCheckerReference(commonTreeNodeStream, symbolTable);
         reference.downup(ast);
-        verifyReferences();
+        checkReferences();
     }
 }

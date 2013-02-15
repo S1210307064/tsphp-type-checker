@@ -23,10 +23,7 @@ import ch.tutteli.tsphp.common.ITypeSymbol;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public interface IClassSymbol extends ITypeSymbol, IScope
+public interface IInterfaceTypeSymbol extends ITypeSymbol, IScope
 {
-
-    void setConstruct(IMethodSymbol construct);
-
-    IMethodSymbol getConstruct();
+    
 }

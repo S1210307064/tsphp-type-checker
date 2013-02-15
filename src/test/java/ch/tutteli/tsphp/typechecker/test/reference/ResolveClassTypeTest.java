@@ -16,62 +16,163 @@
  */
 package ch.tutteli.tsphp.typechecker.test.reference;
 
-import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.common.ITypeSymbol;
-import ch.tutteli.tsphp.common.TSPHPAst;
-import ch.tutteli.tsphp.typechecker.TSPHPErroneusTypeSymbol;
-import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
-import ch.tutteli.tsphp.typechecker.symbols.AliasSymbol;
-import ch.tutteli.tsphp.typechecker.symbols.IClassSymbol;
-import ch.tutteli.tsphp.typechecker.test.testutils.ASymbolTableTest;
-import ch.tutteli.tsphp.typechecker.test.testutils.AstHelper;
-import org.junit.Assert;
+import ch.tutteli.tsphp.typechecker.test.testutils.ATypeCheckerReferenceTest;
+import java.util.Arrays;
+import java.util.Collection;
+import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class ResolveClassTypeTest extends ASymbolTableTest
+@RunWith(Parameterized.class)
+public class ResolveClassTypeTest extends ATypeCheckerReferenceTest
 {
 
-    @Test
-    public void testNotFound() {
-        INamespaceScope scope = symbolTable.defineNamespace("\\");
-        ITSPHPAst ast = AstHelper.getAstWithTokenText("NotDefinedType", scope);
-        ITypeSymbol typeSymbol = symbolTable.resolveType(ast);
-        Assert.assertTrue(typeSymbol instanceof TSPHPErroneusTypeSymbol);
-        TSPHPErroneusTypeSymbol errorSymbol = (TSPHPErroneusTypeSymbol) typeSymbol;
-        Assert.assertEquals(ast, errorSymbol.getDefinitionAst());
+    public ResolveClassTypeTest(String testString) {
+        super(testString);
     }
 
     @Test
-    public void testNoFallback() {
-        INamespaceScope scope = symbolTable.defineNamespace("\\");
-        ITSPHPAst ast = AstHelper.getAstWithTokenText("MyClass", scope);
-        IClassSymbol classSymbol = symbolTable.defineClass(scope, new TSPHPAst(), ast, new TSPHPAst(), new TSPHPAst());
-        Assert.assertEquals(classSymbol, symbolTable.resolveType(ast));
-
-        scope = symbolTable.defineNamespace("\\a\\");
-        ast = AstHelper.getAstWithTokenText("MyClass", scope);
-        ITypeSymbol typeSymbol = symbolTable.resolveType(ast);
-        Assert.assertTrue(typeSymbol instanceof TSPHPErroneusTypeSymbol);
-        TSPHPErroneusTypeSymbol errorSymbol = (TSPHPErroneusTypeSymbol) typeSymbol;
-        Assert.assertEquals(ast, errorSymbol.getDefinitionAst());
+    public void test() throws RecognitionException {
+        check();
     }
 
-    @Test
-    public void testAliasTypeNotFound() {
-        INamespaceScope scope = symbolTable.defineNamespace("\\");
-        ITSPHPAst ast = AstHelper.getAstWithTokenText("MyClass", scope);
-
-        AliasSymbol aliasSymbol = new AliasSymbol(ast, "test");
-        scope.defineUse(aliasSymbol);
-
-        ITSPHPAst ast2 = AstHelper.getAstWithTokenText("test", scope);
-        ITypeSymbol typeSymbol = symbolTable.resolveType(ast2);
-        Assert.assertTrue(typeSymbol instanceof TSPHPErroneusTypeSymbol);
-        TSPHPErroneusTypeSymbol errorSymbol = (TSPHPErroneusTypeSymbol) typeSymbol;
-        Assert.assertEquals(ast2, errorSymbol.getDefinitionAst());
+    @Override
+    protected void verifyReferences() {
     }
+
+    @Parameterized.Parameters
+    public static Collection<Object[]> testStrings() {
+        return Arrays.asList(new Object[][]{
+                    //absolute types
+                    {
+                        "/* 1 */ namespace {class a{}} namespace x{class a{}} namespace x\\a{ class a{}}"
+                        + "namespace x\\a\\a{ class a{}} \n"
+                        + "namespace { \\a $a; \\x\\a $b; \\x\\a\\a $c; \\x\\a\\a\\a $d;}"
+                    },
+                    {
+                        "/* 2 */ namespace {class a{}} namespace x{class a{}} namespace x\\a{ class a{}}"
+                        + "namespace x\\a\\a{ class a{}} \n"
+                        + "namespace b{ \\a $a; \\x\\a $b; \\x\\a\\a $c; \\x\\a\\a\\a $d;}"
+                    },
+                    {
+                        "/* 3 */ namespace {class a{}} namespace x{class a{}} namespace x\\a{ class a{}}"
+                        + "namespace x\\a\\a{ class a{}}\n"
+                        + "namespace c\\c{ \\a $a; \\x\\a $b; \\x\\a\\a $c; \\x\\a\\a\\a $d;}"
+                    },
+                    {
+                        "/* 4 */ namespace {class a{}} namespace x{class a{}} namespace x\\a{ class a{}}"
+                        + "namespace x\\a\\a{ class a{}}\n"
+                        + "namespace d\\c\\d{ \\a $a; \\x\\a $b; \\x\\a\\a $c; \\x\\a\\a\\a $d;}"
+                    },
+                    //relative types in default namespace are the same as absolute names
+                    {
+                        "/* 5 */ namespace {class a{}} namespace x{class a{}} namespace x\\a{ class a{}}"
+                        + "namespace x\\a\\a{ class a{}} \n"
+                        + "namespace{ a $a; x\\a $b; x\\a\\a $c; x\\a\\a\\a $d;}"
+                    },
+                    //relative types
+                    {
+                        "/* 6 */ namespace x{class a{}} namespace x\\x{ class a{}}"
+                        + "namespace x\\x\\a{ class a{}} \n"
+                        + "namespace x { a $a; x\\a $b; x\\a\\a $c; }"
+                    },
+                    {
+                        "/* 7 */ namespace x\\x{ class a{}} namespace x\\x\\x{ class a{}} namespace x\\x\\x\\a{ class a{}} \n"
+                        + "namespace x\\x { a $a; x\\a $b; x\\a\\a $c; }"
+                    },
+                    //aliases for same namespace
+                    {
+                        "/* 8 */ new z(); use z as y; class z{} new y();"
+                    },
+                    {
+                        "/* 8.1 */ namespace {new z(); use z as y; class z{} new y();}"
+                    },
+                    {
+                        "/* 8.2 */ namespace b; new z(); use b\\z as y; class z{} new y();"
+                    },
+                    {
+                        "/* 8.3 */ namespace b {new z(); use b\\z as y; class z{} new y();}"
+                    },
+                    {
+                        "/* 8.4 */ namespace b\\c {new z(); use b\\c\\z as y; class z{} new y();}"
+                    },
+                    //aliases for absolute types
+                    {
+                        "/* 9 */ namespace {class a{}} namespace x{class a{}} namespace x\\a{ class a{}}"
+                        + "namespace x\\a\\a{ class a{}} \n"
+                        + "namespace { use \\a as b; b $b; use \\x\\a as c; c $c; use \\x\\a\\a as d; d $d;"
+                        + "use \\x\\a\\a\\a as e; e $e;}"
+                    },
+                    {
+                        "/* 10 */ namespace {class a{}} namespace x{class a{}} namespace x\\a{ class a{}}"
+                        + "namespace x\\a\\a{ class a{}} \n"
+                        + "namespace b{ use \\a as b; b $b; use \\x\\a as c; c $c; use \\x\\a\\a as d; d $d;"
+                        + "use \\x\\a\\a\\a as e; e $e;}"
+                    },
+                    {
+                        "/* 11 */ namespace {class a{}} namespace x{class a{}} namespace x\\a{ class a{}}"
+                        + "namespace x\\a\\a{ class a{}} \n"
+                        + "namespace b\\c{ use \\a as b; b $b; use \\x\\a as c; c $c; use \\x\\a\\a as d; d $d;"
+                        + "use \\x\\a\\a\\a as e; e $e;}"
+                    },
+                    {
+                        "/* 12 */ namespace {class a{}} namespace x{class a{}} namespace x\\a{ class a{}}"
+                        + "namespace x\\a\\a{ class a{}} \n"
+                        + "namespace b\\c\\d{ use \\a as b; b $b; use \\x\\a as c; c $c; use \\x\\a\\a as d; d $d;"
+                        + "use \\x\\a\\a\\a as e; e $e;}"
+                    },
+                    //aliases for "relative types" -> PHP treat them also as absolute types
+                    {
+                        "/* 13 */ namespace {class a{}} namespace x{class a{}} namespace x\\a{ class a{}}"
+                        + "namespace x\\a\\a{ class a{}} \n"
+                        + "namespace { use a as b; b $b; use x\\a as c; c $c; use x\\a\\a as d; d $d;"
+                        + "use x\\a\\a\\a as e; e $e;}"
+                    },
+                    //aliases for relative types
+                    {
+                        "/* 14 */ namespace {class a{}} namespace x{class a{}} namespace x\\a{ class a{}}"
+                        + "namespace x\\a\\a{ class a{}} \n"
+                        + "namespace b { use a as b; b $b; use x\\a as c; c $c; use x\\a\\a as d; d $d;"
+                        + "use x\\a\\a\\a as e; e $e;}"
+                    },
+                    {
+                        "/* 15 */ namespace {class a{}} namespace x{class a{}} namespace x\\a{ class a{}}"
+                        + "namespace x\\a\\a{ class a{}} \n"
+                        + "namespace b\\c { use a as b; b $b; use x\\a as c; c $c; use x\\a\\a as d; d $d;"
+                        + "use x\\a\\a\\a as e; e $e;}"
+                    },
+                    //all mixed together
+                    {
+                        //def
+                        "/* 16 */ namespace x{ class c{}}"
+                        + "namespace x\\c{class B{}} "
+                        + "namespace x{class z{}} "
+                        //ref
+                        + "namespace x{ \n "
+                        + "use x\\c as z; \n"
+                        + "z\\B $a; \n"
+                        + "z $b; \n"
+                        + "}"
+                    }
+                });
+    }
+//    @Test
+//    public void testAliasNamespaceNotFound() {
+//        INamespaceScope scope = symbolTable.defineNamespace("\\");
+//        ITSPHPAst typeAst = AstTestHelper.getAstWithTokenText("MyClass", scope);
+//        ITSPHPAst alias = AstTestHelper.getAstWithTokenText("test", scope);
+//
+//        symbolTable.defineUse(scope, typeAst, alias);
+//
+//        ITSPHPAst ast2 = AstTestHelper.getAstWithTokenText("test\\MyClass", scope);
+//        ITypeSymbol typeSymbol = symbolTable.resolveType(ast2);
+//        Assert.assertTrue(typeSymbol instanceof TSPHPErroneusTypeSymbol);
+//        TSPHPErroneusTypeSymbol errorSymbol = (TSPHPErroneusTypeSymbol) typeSymbol;
+//        Assert.assertEquals(ast2, errorSymbol.getDefinitionAst());
+//    }
 }

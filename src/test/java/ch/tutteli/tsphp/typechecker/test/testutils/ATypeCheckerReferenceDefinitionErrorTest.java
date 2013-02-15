@@ -18,9 +18,8 @@ package ch.tutteli.tsphp.typechecker.test.testutils;
 
 import ch.tutteli.tsphp.common.IErrorReporter;
 import ch.tutteli.tsphp.common.exceptions.DefinitionException;
-import ch.tutteli.tsphp.common.exceptions.ReferenceException;
+import ch.tutteli.tsphp.typechecker.error.DefinitionErrorDto;
 import ch.tutteli.tsphp.typechecker.error.ErrorHelperRegistry;
-import ch.tutteli.tsphp.typechecker.error.ReferenceErrorDto;
 import java.util.List;
 import junit.framework.Assert;
 import org.junit.Ignore;
@@ -30,12 +29,12 @@ import org.junit.Ignore;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @Ignore
-public abstract class ATypeCheckerReferenceErrorTest extends ATypeCheckerReferenceTest
+public abstract class ATypeCheckerReferenceDefinitionErrorTest extends ATypeCheckerReferenceTest
 {
 
-    protected ReferenceErrorDto[] errorDtos;
+    protected DefinitionErrorDto[] errorDtos;
 
-    public ATypeCheckerReferenceErrorTest(String testString, ReferenceErrorDto[] theErrorDtos) {
+    public ATypeCheckerReferenceDefinitionErrorTest(String testString, DefinitionErrorDto[] theErrorDtos) {
         super(testString);
         errorDtos = theErrorDtos;
     }
@@ -47,25 +46,27 @@ public abstract class ATypeCheckerReferenceErrorTest extends ATypeCheckerReferen
 
     @Override
     public void verifyReferences() {
-        String test = testString.replaceAll("\n", "");
         IErrorReporter errorReporter = ErrorHelperRegistry.get();
         Assert.assertTrue(testString + " failed. No exception occured.", errorReporter.hasFoundError());
 
         List<Exception> exceptions = errorReporter.getExceptions();
-        Assert.assertEquals(test + " failed. More or less exceptions occured." + exceptions.toString(), errorDtos.length,
+        Assert.assertEquals(testString + " failed. More or less exceptions occured." + exceptions.toString(), errorDtos.length,
                 exceptions.size());
 
         for (int i = 0; i < errorDtos.length; ++i) {
-            ReferenceException exception = (ReferenceException) exceptions.get(i);
-            
-            Assert.assertEquals(test + " failed. wrong identifier.",
-                    errorDtos[i].identifier, exception.getDefinition().getText());
 
-            Assert.assertEquals(test + " failed. wrong new line.",
-                    errorDtos[i].line, exception.getDefinition().getLine());
-            
-            Assert.assertEquals(test + " failed. wrong new position.",
-                    errorDtos[i].position, exception.getDefinition().getCharPositionInLine());
+            DefinitionException exception = (DefinitionException) exceptions.get(i);
+            Assert.assertEquals(errorDtos[i].identifier, exception.getExistingDefinition().getText());
+
+            Assert.assertEquals(errorDtos[i] + " -- " + testString + " failed. wrong existing line.",
+                    errorDtos[i].lineExistingDefinition, exception.getExistingDefinition().getLine());
+            Assert.assertEquals(errorDtos[i] + " -- " + testString + " failed. wrong existing position.",
+                    errorDtos[i].positionExistingDefinition, exception.getExistingDefinition().getCharPositionInLine());
+
+            Assert.assertEquals(errorDtos[i] + " -- " + testString + " failed. wrong new line. ",
+                    errorDtos[i].line, exception.getNewDefinition().getLine());
+            Assert.assertEquals(errorDtos[i] + " -- " + testString + " failed. wrong new position. ",
+                    errorDtos[i].position, exception.getNewDefinition().getCharPositionInLine());
         }
     }
 }

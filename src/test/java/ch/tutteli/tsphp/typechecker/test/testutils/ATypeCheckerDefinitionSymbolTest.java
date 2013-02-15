@@ -28,12 +28,12 @@ import org.junit.Ignore;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @Ignore
-public abstract class ATypeCheckerDefinitionStringTest extends ATypeCheckerDefinitionTest
+public abstract class ATypeCheckerDefinitionSymbolTest extends ATypeCheckerDefinitionTest
 {
 
     protected String expectedResult;
 
-    public ATypeCheckerDefinitionStringTest(String testString, String theExpectedResult) {
+    public ATypeCheckerDefinitionSymbolTest(String testString, String theExpectedResult) {
         super(testString);
         expectedResult = theExpectedResult;
     }
@@ -42,7 +42,7 @@ public abstract class ATypeCheckerDefinitionStringTest extends ATypeCheckerDefin
     protected void verifyDefinitions() {
         Assert.assertEquals(testString + " failed.", expectedResult, getSymbolsAsString());
     }
-
+    
     public String getSymbolsAsString() {
         List<Map.Entry<ISymbol, ITSPHPAst>> symbols = symbolTable.getSymbols();
         StringBuilder stringBuilder = new StringBuilder();
@@ -59,7 +59,7 @@ public abstract class ATypeCheckerDefinitionStringTest extends ATypeCheckerDefin
         return stringBuilder.toString();
     }
 
-    private String getTypesAsString(ITSPHPAst types) {
+    protected String getTypesAsString(ITSPHPAst types) {
         String typesAsString;
 
         if (types == null) {
@@ -73,11 +73,11 @@ public abstract class ATypeCheckerDefinitionStringTest extends ATypeCheckerDefin
         return typesAsString;
     }
 
-    private String getSingleTypeAsString(ITSPHPAst type) {
+    protected String getSingleTypeAsString(ITSPHPAst type) {
         return ScopeTestHelper.getEnclosingScopeNames(type.getScope()) + type.getText() + " ";
     }
 
-    private String getMultipleTypesAsString(ITSPHPAst types) {
+    protected String getMultipleTypesAsString(ITSPHPAst types) {
 
         StringBuilder stringBuilder = new StringBuilder();
         int lenght = types.getChildCount();

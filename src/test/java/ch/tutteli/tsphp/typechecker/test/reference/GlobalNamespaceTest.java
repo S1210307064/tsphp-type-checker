@@ -19,7 +19,7 @@ package ch.tutteli.tsphp.typechecker.test.reference;
 import ch.tutteli.tsphp.typechecker.scopes.GlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.symbols.ScalarTypeSymbol;
 import ch.tutteli.tsphp.typechecker.test.testutils.ATypeCheckerTest;
-import ch.tutteli.tsphp.typechecker.test.testutils.AstHelper;
+import ch.tutteli.tsphp.typechecker.test.testutils.AstTestHelper;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -34,7 +34,7 @@ public class GlobalNamespaceTest extends ATypeCheckerTest
         GlobalNamespaceScope globalNamespace = new GlobalNamespaceScope("\\a\\b\\c");
         ScalarTypeSymbol symbol = new ScalarTypeSymbol("int");
         globalNamespace.define(symbol);
-        Assert.assertEquals(symbol, globalNamespace.resolveType(AstHelper.getAstWithTokenText("int")));
+        Assert.assertEquals(symbol, globalNamespace.resolveType(AstTestHelper.getAstWithTokenText("int")));
     }
 
     @Test
@@ -42,7 +42,7 @@ public class GlobalNamespaceTest extends ATypeCheckerTest
         GlobalNamespaceScope globalNamespace = new GlobalNamespaceScope("\\a\\b\\");
          ScalarTypeSymbol symbol = new ScalarTypeSymbol("float");
         globalNamespace.define(symbol);
-        Assert.assertEquals(symbol,globalNamespace.resolveType(AstHelper.getAstWithTokenText("float")));
+        Assert.assertEquals(symbol,globalNamespace.resolveType(AstTestHelper.getAstWithTokenText("float")));
     }
     
     
@@ -51,7 +51,7 @@ public class GlobalNamespaceTest extends ATypeCheckerTest
         GlobalNamespaceScope globalNamespace = new GlobalNamespaceScope("\\");
          ScalarTypeSymbol symbol = new ScalarTypeSymbol("float");
         globalNamespace.define(symbol);
-        Assert.assertEquals(symbol,globalNamespace.resolveType(AstHelper.getAstWithTokenText("float")));
+        Assert.assertEquals(symbol,globalNamespace.resolveType(AstTestHelper.getAstWithTokenText("float")));
     }
     
     @Test
@@ -59,7 +59,7 @@ public class GlobalNamespaceTest extends ATypeCheckerTest
         GlobalNamespaceScope globalNamespace = new GlobalNamespaceScope("\\a\\b\\");
          ScalarTypeSymbol symbol = new ScalarTypeSymbol("float");
         globalNamespace.define(symbol);
-        Assert.assertEquals(symbol,globalNamespace.resolveType(AstHelper.getAstWithTokenText("\\a\\b\\float")));
+        Assert.assertEquals(symbol,globalNamespace.resolveType(AstTestHelper.getAstWithTokenText("\\a\\b\\float")));
     }
     
     
@@ -68,6 +68,6 @@ public class GlobalNamespaceTest extends ATypeCheckerTest
         GlobalNamespaceScope globalNamespace = new GlobalNamespaceScope("\\a\\b\\");
          ScalarTypeSymbol symbol = new ScalarTypeSymbol("float");
         globalNamespace.define(symbol);
-        Assert.assertNull(globalNamespace.resolveType(AstHelper.getAstWithTokenText("float2")));
+        Assert.assertNull(globalNamespace.resolveType(AstTestHelper.getAstWithTokenText("float2")));
     }
 }

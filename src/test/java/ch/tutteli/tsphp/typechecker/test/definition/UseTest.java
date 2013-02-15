@@ -16,15 +16,11 @@
  */
 package ch.tutteli.tsphp.typechecker.test.definition;
 
-import ch.tutteli.tsphp.typechecker.symbols.ModifierHelper;
 import ch.tutteli.tsphp.typechecker.test.testutils.ATypeCheckerDefinitionSymbolTest;
-import ch.tutteli.tsphp.typechecker.test.testutils.IAdder;
-import ch.tutteli.tsphp.typechecker.test.testutils.ParameterListHelper;
 import ch.tutteli.tsphp.typechecker.test.testutils.TypeHelper;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.SortedSet;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,10 +31,10 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class FunctionTest extends ATypeCheckerDefinitionSymbolTest
+public class UseTest extends ATypeCheckerDefinitionSymbolTest
 {
 
-    public FunctionTest(String testString, String expectedResult) {
+    public UseTest(String testString, String expectedResult) {
         super(testString, expectedResult);
     }
 
@@ -49,23 +45,20 @@ public class FunctionTest extends ATypeCheckerDefinitionSymbolTest
 
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
-        final List<Object[]> collection = new ArrayList<>();
-
-        TypeHelper.getAllTypesInclModifier(new IAdder()
-        {
-            @Override
-            public void add(String type, String typeExpected, SortedSet modifiers) {
-                String typeModifiers = ModifierHelper.getModifiers(modifiers);
-                collection.add(new Object[]{
-                            "function " + type + " get(){}",
-                            "\\.\\." + typeExpected + " \\.\\.get()" + typeModifiers
-                        });
-            }
-        });
+        List<Object[]> collection = new ArrayList<>();
 
 
-        collection.addAll(ParameterListHelper.getTestStrings(
-                "function void foo(", "){}", "\\.\\.void \\.\\.foo() ", "\\.\\.foo().", true));
+        String[] types = TypeHelper.getClassInterfaceTypes();
+        for (String type : types) {
+            collection.add(new Object[]{
+                        "use " + type + " as c;",
+                        "\\.\\." + type + " \\.\\.c"
+                    });
+            collection.add(new Object[]{
+                        "namespace b; use " + type + " as b;",
+                        "\\b\\.\\b\\." + type + " \\b\\.\\b\\.b"
+                    });
+        }
 
         return collection;
     }

@@ -17,8 +17,8 @@
 package ch.tutteli.tsphp.typechecker.symbols;
 
 import ch.tutteli.tsphp.common.IScope;
-import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
+import ch.tutteli.tsphp.common.ITypeSymbol;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -51,7 +51,12 @@ public class SymbolFactory implements ISymbolFactory
     }
 
     @Override
-    public IClassSymbol createClassSymbol(ITSPHPAst classModifierAst, ITSPHPAst identifier, IScope currentScope) {
+    public IInterfaceTypeSymbol createInterfaceTypeSymbol(ITSPHPAst modifier, ITSPHPAst identifier, IScope currentScope) {
+        return new InterfaceTypeSymbol(identifier, getModifiers(modifier), identifier.getText(), currentScope);
+    }
+
+    @Override
+    public IClassTypeSymbol createClassTypeSymbol(ITSPHPAst classModifierAst, ITSPHPAst identifier, IScope currentScope) {
         return new ClassSymbol(identifier, getModifiers(classModifierAst), identifier.getText(), currentScope);
     }
 

@@ -63,7 +63,7 @@ public TSPHPTypeCheckerDefinition(TreeNodeStream input, ISymbolTable theSymbolTa
 }
 
 topdown
-	//scoped symbols
+		//scoped symbols
     	:	namespaceDeclaration
     	|	useDeclarationList
     	|	interfaceDeclaration
@@ -110,23 +110,23 @@ useDeclarationList
 	;
 	
 useDeclaration
-	:	^(USE_DECLRATARION type=TYPE_NAME identifier=Identifier)
-		{symbolTable.defineUse((INamespaceScope) currentScope, $type, $identifier);}
+	:	^(USE_DECLRATARION type=TYPE_NAME alias=Identifier)
+		{symbolTable.defineUse((INamespaceScope) currentScope, $type, $alias);}
 	;
 	
 interfaceDeclaration
-	:	^('interface' identifier=Identifier extIds=. .)
-		{currentScope = symbolTable.defineInterface(currentScope,$identifier,$extIds); }
+	:	^('interface' iMod=. identifier=Identifier extIds=. .)
+		{currentScope = symbolTable.defineInterface(currentScope, $iMod, $identifier, $extIds); }
 	;
 	
 classDeclaration
 	:	^('class' cMod=. identifier=Identifier extIds=. implIds=. .) 
-		{currentScope = symbolTable.defineClass(currentScope,$cMod,$identifier,$extIds,$implIds); }	
+		{currentScope = symbolTable.defineClass(currentScope, $cMod, $identifier, $extIds, $implIds); }	
 	;
 	
 constructDeclaration
-	:	^(identifier='__construct' mMod=. . .)
-		{currentScope = symbolTable.defineConstruct(currentScope, $mMod, $identifier);}
+	:	^(identifier='__construct' mMod=.  ^(TYPE rtMod=. returnType=.) . .)
+		{currentScope = symbolTable.defineConstruct(currentScope, $mMod, $rtMod, $returnType, $identifier);}
 	;
 
 methodFunctionDeclaration
@@ -144,12 +144,12 @@ conditionalBlock
 	;
 	
 constantDeclarationList
-	:	^(CONSTANT_DECLARATION_LIST type=. constantDeclaration[$type]+)
+	:	^(CONSTANT_DECLARATION_LIST ^(TYPE tMod=. type=.) constantDeclaration[$tMod, $type]+)
 	;
 
-constantDeclaration[ITSPHPAst type]
+constantDeclaration[ITSPHPAst tMod, ITSPHPAst type]
 	:	^(identifier=Identifier .)
-		{ symbolTable.defineConstant(currentScope, $type,$identifier); }
+		{ symbolTable.defineConstant(currentScope,$tMod, $type,$identifier); }
 	;
 
 parameterDeclarationList

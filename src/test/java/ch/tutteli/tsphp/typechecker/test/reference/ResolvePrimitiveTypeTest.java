@@ -19,7 +19,7 @@ package ch.tutteli.tsphp.typechecker.test.reference;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tutteli.tsphp.typechecker.test.testutils.ASymbolTableTest;
-import ch.tutteli.tsphp.typechecker.test.testutils.AstHelper;
+import ch.tutteli.tsphp.typechecker.test.testutils.AstTestHelper;
 import ch.tutteli.tsphp.typechecker.test.testutils.TypeHelper;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,7 +40,6 @@ public class ResolvePrimitiveTypeTest extends ASymbolTableTest
     private String type;
 
     public ResolvePrimitiveTypeTest(String theType) {
-        super();
         type = theType;
     }
 
@@ -48,14 +47,14 @@ public class ResolvePrimitiveTypeTest extends ASymbolTableTest
     public void testResolveType() {
         INamespaceScope scope = symbolTable.defineNamespace("\\");
         ISymbol typeSymbol = symbolTable.getGlobalNamespaceScopes().get("\\").getSymbols().get(type).get(0);
-        Assert.assertEquals(typeSymbol, symbolTable.resolvePrimitiveType(AstHelper.getAstWithTokenText(type,scope)));
+        Assert.assertEquals(typeSymbol, symbolTable.resolvePrimitiveType(AstTestHelper.getAstWithTokenText(type,scope)));
     }
     
      @Test
     public void testResolveTypeFromOtherNamespace() {
         INamespaceScope scope = symbolTable.defineNamespace("\\a\\a\\");
         ISymbol typeSymbol = symbolTable.getGlobalNamespaceScopes().get("\\").getSymbols().get(type).get(0);
-        Assert.assertEquals(typeSymbol, symbolTable.resolvePrimitiveType(AstHelper.getAstWithTokenText(type,scope)));
+        Assert.assertEquals(typeSymbol, symbolTable.resolvePrimitiveType(AstTestHelper.getAstWithTokenText(type,scope)));
     }
 
     @Parameterized.Parameters

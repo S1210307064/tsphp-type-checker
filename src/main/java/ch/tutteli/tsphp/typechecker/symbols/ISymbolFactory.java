@@ -32,10 +32,12 @@ public interface ISymbolFactory
     IArrayTypeSymbol createArrayTypeSymbol(String name, ITypeSymbol baseType);
 
     IPseudoTypeSymbol createPseudoTypeSymbol(String name);
-    
+
     IAliasSymbol createAliasSymbol(ITSPHPAst useDefinition, String alias);
 
-    IClassSymbol createClassSymbol(ITSPHPAst classModifier, ITSPHPAst identifier, IScope currentScope);
+    IInterfaceTypeSymbol createInterfaceTypeSymbol(ITSPHPAst modifier, ITSPHPAst identifier, IScope currentScope);
+
+    IClassTypeSymbol createClassTypeSymbol(ITSPHPAst classModifier, ITSPHPAst identifier, IScope currentScope);
 
     IMethodSymbol createMethodSymbol(ITSPHPAst methodModifier, ITSPHPAst returnTypeModifier, ITSPHPAst identifier,
             IScope currentScope);

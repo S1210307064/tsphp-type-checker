@@ -16,32 +16,35 @@
  */
 package ch.tutteli.tsphp.typechecker.symbols;
 
-import ch.tutteli.tsphp.common.IScope;
+import ch.tutteli.tsphp.common.ASymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
-import java.util.Set;
+import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
- *
- * Adopted from the book Language Implementation Patterns by Terence Parr
  */
-public class ClassSymbol extends AScopedSymbol implements IClassTypeSymbol
+public class ErroneusTypeSymbol extends ASymbol implements IErroneusTypeSymbol
 {
 
-    private IMethodSymbol construct;
+    private TypeCheckerException exception;
 
-    public ClassSymbol(ITSPHPAst definitionAst, Set<Integer> modifiers, String name, IScope enclosingScope) {
-        super(definitionAst, modifiers, name, enclosingScope);
+    public ErroneusTypeSymbol(ITSPHPAst type) {
+        super(type, type.getText());
+    }
+
+    public ErroneusTypeSymbol(ITSPHPAst type, TypeCheckerException theException) {
+        super(type, type.getText());
+        exception = theException;
     }
 
     @Override
-    public void setConstruct(IMethodSymbol newConstruct) {
-        construct = newConstruct;
+    public TypeCheckerException getException() {
+        return exception;
     }
 
     @Override
-    public IMethodSymbol getConstruct() {
-        return construct;
+    public void setException(TypeCheckerException theException) {
+        exception = theException;
     }
 }

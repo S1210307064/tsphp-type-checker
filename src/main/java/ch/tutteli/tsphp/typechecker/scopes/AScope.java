@@ -85,6 +85,6 @@ public abstract class AScope implements IScope
 
     @Override
     public String toString() {
-        return symbols.keySet().toString();
+        return scopeName+":"+symbols.keySet().toString();
     }
 }

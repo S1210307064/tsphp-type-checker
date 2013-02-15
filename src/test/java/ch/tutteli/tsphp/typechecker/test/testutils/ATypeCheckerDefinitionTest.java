@@ -38,7 +38,7 @@ public abstract class ATypeCheckerDefinitionTest extends ATypeCheckerTest
     protected TestSymbolTable symbolTable;
     protected TestScopeFactory scopeFactory;
     protected ITSPHPAst ast;
-    protected CommonTreeNodeStream commonTreeNodeStream;
+    public static CommonTreeNodeStream commonTreeNodeStream;
 
     protected abstract void verifyDefinitions();
 
@@ -61,10 +61,10 @@ public abstract class ATypeCheckerDefinitionTest extends ATypeCheckerTest
 
         commonTreeNodeStream = new CommonTreeNodeStream(TSPHPAstAdaptorRegistry.get(), ast);
         commonTreeNodeStream.setTokenStream(parser.getTokenStream());
-
+        commonTreeNodeStream.reset();
         TSPHPTypeCheckerDefinition definition = new TSPHPTypeCheckerDefinition(commonTreeNodeStream, symbolTable);
         definition.downup(ast);
-
+        
         verifyDefinitions();
     }
 }

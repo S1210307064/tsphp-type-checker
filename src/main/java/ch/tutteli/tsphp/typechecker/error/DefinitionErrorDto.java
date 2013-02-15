@@ -35,4 +35,10 @@ public class DefinitionErrorDto extends ReferenceErrorDto
         lineExistingDefinition = theLineExistingDefinition;
         positionExistingDefinition = thePositionExistingDefinition;
     }
+
+    @Override
+    public String toString() {
+        return identifier + " " + line + "|" + position + " "
+                + lineExistingDefinition + "|" + positionExistingDefinition;
+    }
 }

@@ -18,6 +18,7 @@ package ch.tutteli.tsphp.typechecker.symbols;
 
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
+import java.util.Map;
 
 /**
  *
@@ -26,9 +27,7 @@ import ch.tutteli.tsphp.common.ISymbol;
 public interface IAliasSymbol extends ISymbol
 {
 
-    boolean isType();
+    Map<String, IScope> getGlobalNamespaceScopes();
 
-    IScope getReferenceGlobalNamespaceScope();
-
-    void setReferenceGlobalNamespaceScope(IScope theReferenceGlobalNamespaceScope);
+    void setGlobalNamespaceScopes(Map<String, IScope> globalNamespaceScopes);
 }

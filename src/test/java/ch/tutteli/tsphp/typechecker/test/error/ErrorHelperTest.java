@@ -84,32 +84,6 @@ public class ErrorHelperTest extends ATypeCheckerTest
         check(ast1, ast2, ast1, ast2);
     }
 
-    @Test
-    public void testAddAlreadyDefinedExceptionList2() {
-        ITSPHPAst ast1 = createAst(identifier, lineNew, positionNew);
-        ITSPHPAst ast2 = createAst(identifier, lineExisting, positionExisting);
-        List<ITSPHPAst> definitionAsts = new ArrayList<>();
-        definitionAsts.add(ast1);
-        definitionAsts.add(ast2);
-        ErrorHelperRegistry.get().addAlreadyDefinedException(definitionAsts);
-        check(ast1, ast2, ast1, ast2);
-    }
-
-    @Test
-    public void testAddAlreadyDefinedExceptionList3() {
-        ITSPHPAst ast1 = createAst(identifier, lineNew, positionNew);
-        ITSPHPAst ast2 = createAst(identifier, lineExisting, positionExisting);
-        ITSPHPAst ast3 = createAst(identifier, lineExisting + 1, positionExisting + 1);
-        List<ITSPHPAst> definitionAsts = new ArrayList<>();
-        definitionAsts.add(ast1);
-        definitionAsts.add(ast2);
-        definitionAsts.add(ast3);
-        ErrorHelperRegistry.get().addAlreadyDefinedException(definitionAsts);
-        check(ast1, ast2, new ITSPHPAst[][]{
-                    {ast1, ast2},
-                    {ast1, ast3},});
-    }
-
     protected void check(ITSPHPAst ast1, ITSPHPAst ast2, ITSPHPAst existingDefinition, ITSPHPAst newDefinition) {
         check(ast1, ast2, new ITSPHPAst[][]{{existingDefinition, newDefinition}});
     }

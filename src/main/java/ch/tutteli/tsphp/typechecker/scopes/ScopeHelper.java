@@ -49,14 +49,19 @@ public class ScopeHelper implements IScopeHelper
         }
     }
 
+    public IScope getCorrespondingGlobalNamespace(Map<String, IScope> globalNamespaceScopes, String typeName) {
+        int lastBackslashPosition = typeName.lastIndexOf("\\") + 1;
+        String namespaceName = typeName.substring(0, lastBackslashPosition);
+        return globalNamespaceScopes.get(namespaceName);
+    }
+
     @Override
-    public ISymbol resolve(IScope scope,ITSPHPAst ast) {
-        ISymbol symbol=null;
-        Map<String,List<ISymbol>> symbols = scope.getSymbols();
-        if(symbols.containsKey(ast.getText())){
+    public ISymbol resolve(IScope scope, ITSPHPAst ast) {
+        ISymbol symbol = null;
+        Map<String, List<ISymbol>> symbols = scope.getSymbols();
+        if (symbols.containsKey(ast.getText())) {
             symbol = symbols.get(ast.getText()).get(0);
-        }       
+        }
         return symbol;
     }
-    
 }

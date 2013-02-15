@@ -25,12 +25,17 @@ import org.antlr.runtime.CommonToken;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class AstHelper
+public class AstTestHelper
 {
 
-    private AstHelper() {
+    private AstTestHelper() {
     }
 
+     public static ITSPHPAst getAstWithTokenText(String text, IScope scope, int tokenIndex) {
+         ITSPHPAst ast = getAstWithTokenText(text, scope);
+         ast.setTokenStartIndex(tokenIndex);
+         return ast;
+     }
     public static ITSPHPAst getAstWithTokenText(String text, IScope scope) {
         ITSPHPAst ast = getAstWithTokenText(text);
         ast.setScope(scope);

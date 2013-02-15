@@ -16,9 +16,9 @@
  */
 tree grammar TSPHPTypeCheckerReference;
 options {
-  tokenVocab = TSPHP;
-  ASTLabelType = ITSPHPAst;
-  filter = true;
+	tokenVocab = TSPHP;
+	ASTLabelType = ITSPHPAst;
+	filter = true;
 }
 
 @header{
@@ -45,39 +45,77 @@ import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.typechecker.ISymbolTable;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IInterfaceTypeSymbol;
 
 }
 
 @members {
-    ISymbolTable symbolTable;
-    public TSPHPTypeCheckerReference(TreeNodeStream input, ISymbolTable theSymbolTable) {
-        this(input);
-        symbolTable = theSymbolTable;
-    }
-    
+ISymbolTable symbolTable;
+
+public TSPHPTypeCheckerReference(TreeNodeStream input, ISymbolTable theSymbolTable) {
+    this(input);
+    symbolTable = theSymbolTable;
+}
 }
 
 topdown
-    :   useDeclarationList
-    |	variableDeclarationList
-    ;
-
+	:  	useDeclarationList
+    	|	interfaceDeclaration
+   	|	classDeclaration
+    	|	variableDeclarationList
+    	;
+   
+    
 useDeclarationList
 	:	^('use'	useDeclaration+)
 	;
 	
 useDeclaration
-	:	^(USE_DECLRATARION type=TYPE_NAME .)
+	:	^(USE_DECLRATARION type=TYPE_NAME alias=.)
 		{
-			$type.getSymbol().setType(symbolTable.resolveType($type));
-			INamespaceScope namespaceScope = (INamespaceScope) $type.getScope();
-			namespaceScope.useDefinitionCheck((IAliasSymbol) $type.getSymbol());
+			ITypeSymbol typeSymbol = symbolTable.resolveUseType($type, $alias);
+			type.setSymbol(typeSymbol);
+			$alias.getSymbol().setType(typeSymbol);
+			
+			INamespaceScope namespaceScope = (INamespaceScope) $alias.getScope();
+			namespaceScope.useDefinitionCheck((IAliasSymbol) $alias.getSymbol());
+		}
+	;
+
+interfaceDeclaration
+	:	^('interface' iMod=. identifier=Identifier extIds=. .)
+		{
+			INamespaceScope namespaceScope = (INamespaceScope) $identifier.getScope();
+			namespaceScope.interfaceDefinitionCheck((IInterfaceTypeSymbol) $identifier.getSymbol());
+		}
+	;
+	
+classDeclaration
+	:	^('class' cMod=. identifier=Identifier extIds=. implIds=. .) 
+		{
+			INamespaceScope namespaceScope = (INamespaceScope) $identifier.getScope();
+			namespaceScope.classDefinitionCheck((IClassTypeSymbol) $identifier.getSymbol());
 		}
 	;
 
 variableDeclarationList 
 	:	^(VARIABLE_DECLARATION_LIST ^(TYPE . allTypes) variableDeclaration[$allTypes.type]+ )
         ;
+        
+constructDeclaration
+	:	^(identifier='__construct' mMod=. . .)
+	
+	;
+
+methodFunctionDeclaration
+	:	^( 	(	METHOD_DECLARATION
+			|	Function
+			) 
+			mMod=. ^(TYPE rtMod=. returnType=.) identifier=. . .
+		)
+	
+	;
         
 variableDeclaration[ITypeSymbol type]
 	:

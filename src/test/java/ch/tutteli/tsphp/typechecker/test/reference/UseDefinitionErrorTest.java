@@ -19,7 +19,7 @@ package ch.tutteli.tsphp.typechecker.test.reference;
 import ch.tutteli.tsphp.typechecker.error.DefinitionErrorDto;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tutteli.tsphp.typechecker.symbols.PseudoTypeSymbol;
-import ch.tutteli.tsphp.typechecker.test.testutils.ATypeCheckerReferenceErrorTest;
+import ch.tutteli.tsphp.typechecker.test.testutils.ATypeCheckerReferenceDefinitionErrorTest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -34,10 +34,10 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class UseDefinitionErrorTest extends ATypeCheckerReferenceErrorTest
+public class UseDefinitionErrorTest extends ATypeCheckerReferenceDefinitionErrorTest
 {
 
-    public UseDefinitionErrorTest(String testString, DefinitionErrorDto expectedLinesAndPositions) {
+    public UseDefinitionErrorTest(String testString, DefinitionErrorDto[] expectedLinesAndPositions) {
         super(testString, expectedLinesAndPositions);
         INamespaceScope scope = symbolTable.defineNamespace("\\");
         scope.define(new PseudoTypeSymbol("A"));
@@ -69,7 +69,7 @@ public class UseDefinitionErrorTest extends ATypeCheckerReferenceErrorTest
     }
 
     public static Collection<Object[]> getVariations(String prefix, String appendix) {
-        DefinitionErrorDto errorDto = new DefinitionErrorDto("B", 3, 1, 2, 1);
+        DefinitionErrorDto[] errorDto = new DefinitionErrorDto[]{new DefinitionErrorDto("B", 3, 1, 2, 1)};
         return Arrays.asList(new Object[][]{
                     {prefix + "use \\A as \n B; use \\C as \n B;" + appendix, errorDto},
                     {prefix + "use \\A as \n B, \\C as \n B;" + appendix, errorDto},
@@ -80,7 +80,20 @@ public class UseDefinitionErrorTest extends ATypeCheckerReferenceErrorTest
                     {prefix + "use \n \\A\\C\\B; use \n \\C\\B;" + appendix, errorDto},
                     {prefix + "use \n \\A\\C\\B, \n \\C\\B;" + appendix, errorDto},
                     {prefix + "use \n \\A\\B; use \\A; use \n \\C\\B;" + appendix, errorDto},
-                    {prefix + "use \\A as \n B; use \\A; use \n \\C\\B;" + appendix, errorDto}
+                    {prefix + "use \\A as \n B; use \\A; use \n \\C\\B;" + appendix, errorDto},
+                    //More than one
+                    {prefix + "use \\A as \n B; use \\A; use \n \\C\\B, \\C as \n B;" + appendix,
+                        new DefinitionErrorDto[]{
+                            new DefinitionErrorDto("B", 3, 1, 2, 1),
+                            new DefinitionErrorDto("B", 4, 1, 2, 1)
+                        }
+                    },
+                    {prefix + "use \\A, \\A as \n B; use \\C; use \n \\C\\B, \\C as \n B;" + appendix,
+                        new DefinitionErrorDto[]{
+                            new DefinitionErrorDto("B", 3, 1, 2, 1),
+                            new DefinitionErrorDto("B", 4, 1, 2, 1)
+                        }
+                    }
                 });
     }
 }

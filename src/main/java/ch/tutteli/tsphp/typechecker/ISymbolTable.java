@@ -18,11 +18,12 @@ package ch.tutteli.tsphp.typechecker;
 
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
-import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
+import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.typechecker.scopes.IConditionalScope;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
-import ch.tutteli.tsphp.typechecker.symbols.IClassSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IInterfaceTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import java.util.Map;
 
@@ -39,14 +40,16 @@ public interface ISymbolTable
 
     void defineUse(INamespaceScope currentScope, ITSPHPAst type, ITSPHPAst alias);
 
-    void defineConstant(IScope currentScope, ITSPHPAst type, ITSPHPAst identifier);
+    void defineConstant(IScope currentScope, ITSPHPAst modifier, ITSPHPAst type, ITSPHPAst identifier);
 
-    IClassSymbol defineInterface(IScope currentScope, ITSPHPAst identifier, ITSPHPAst extendsIds);
+    IInterfaceTypeSymbol defineInterface(IScope currentScope, ITSPHPAst modifier, ITSPHPAst identifier,
+            ITSPHPAst extendsIds);
 
-    IClassSymbol defineClass(IScope currentScope, ITSPHPAst modifier, ITSPHPAst identifier,
+    IClassTypeSymbol defineClass(IScope currentScope, ITSPHPAst modifier, ITSPHPAst identifier,
             ITSPHPAst extendsIds, ITSPHPAst implementsIds);
 
-    IMethodSymbol defineConstruct(IScope currentScope, ITSPHPAst methodModifier, ITSPHPAst identifier);
+    IMethodSymbol defineConstruct(IScope currentScope, ITSPHPAst methodModifier,
+            ITSPHPAst returnTypeModifier, ITSPHPAst returnType, ITSPHPAst identifier);
 
     IMethodSymbol defineMethod(IScope currentScope, ITSPHPAst methodModifier,
             ITSPHPAst returnTypeModifier, ITSPHPAst returnType, ITSPHPAst identifier);
@@ -54,6 +57,12 @@ public interface ISymbolTable
     IConditionalScope defineConditionalScope(IScope currentScope);
 
     void defineVariable(IScope currentScope, ITSPHPAst modifier, ITSPHPAst type, ITSPHPAst variableId);
+
+    ISymbol resolve(ITSPHPAst ast);
+
+    ISymbol resolveWithFallBack(ITSPHPAst ast);
+
+    ITypeSymbol resolveUseType(ITSPHPAst typeAst, ITSPHPAst alias);
 
     /**
      * Try to resolve the type for the given typeAst and returns an {@link TSPHPErroneusTypeSymbol} if the type could
@@ -63,10 +72,6 @@ public interface ISymbolTable
      * @return The corresponding type or a {@link TSPHPErroneusTypeSymbol} if could not be found.
      */
     ITypeSymbol resolveType(ITSPHPAst typeAst);
-    
-    ITypeSymbol resolvePrimitiveType(ITSPHPAst typeASt);
-    
-    ISymbol resolve(ITSPHPAst ast);
 
-    ISymbol resolveWithFallBack(ITSPHPAst ast);
+    ITypeSymbol resolvePrimitiveType(ITSPHPAst typeASt);
 }

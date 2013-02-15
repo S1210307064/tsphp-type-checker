@@ -16,19 +16,24 @@
  */
 package ch.tutteli.tsphp.typechecker.test.testutils;
 
+import ch.tutteli.tsphp.common.AstHelperRegistry;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.TSPHPAst;
 import ch.tutteli.tsphp.typechecker.ISymbolTable;
 import ch.tutteli.tsphp.typechecker.SymbolTable;
-import ch.tutteli.tsphp.typechecker.error.IErrorHelper;
-import ch.tutteli.tsphp.typechecker.symbols.IClassSymbol;
+import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
+import ch.tutteli.tsphp.typechecker.symbols.IAliasSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IInterfaceTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 
 /**
  *
@@ -52,9 +57,28 @@ public class TestSymbolTable extends SymbolTable implements ISymbolTable, ICreat
     }
 
     @Override
-    public IClassSymbol defineClass(IScope currentScope, ITSPHPAst modifier, ITSPHPAst identifier,
+    public void defineUse(INamespaceScope currentScope, ITSPHPAst type, ITSPHPAst alias) {
+        super.defineUse(currentScope, type, alias);
+        symbols.add(new HashMap.SimpleEntry<>(alias.getSymbol(), type));
+    }
+
+    @Override
+    public IInterfaceTypeSymbol defineInterface(IScope currentScope, ITSPHPAst modifier, ITSPHPAst identifier,
+            ITSPHPAst extendsIds) {
+        IInterfaceTypeSymbol symbol = super.defineInterface(currentScope, modifier, identifier, extendsIds);
+        ITSPHPAst identifiers = null;
+        if (extendsIds.getChildCount() > 0) {
+            identifiers = new TSPHPAst();
+            appendChildrenFromTo(extendsIds, identifiers);
+        }
+        symbols.add(new HashMap.SimpleEntry<>(newlyCreatedSymbol, identifiers));
+        return symbol;
+    }
+
+    @Override
+    public IClassTypeSymbol defineClass(IScope currentScope, ITSPHPAst modifier, ITSPHPAst identifier,
             ITSPHPAst extendsIds, ITSPHPAst implementsIds) {
-        IClassSymbol scope = super.defineClass(currentScope, modifier, identifier, extendsIds, implementsIds);
+        IClassTypeSymbol scope = super.defineClass(currentScope, modifier, identifier, extendsIds, implementsIds);
 
         ITSPHPAst identifiers = null;
         if (extendsIds.getChildCount() > 0 || implementsIds.getChildCount() > 0) {
@@ -62,8 +86,8 @@ public class TestSymbolTable extends SymbolTable implements ISymbolTable, ICreat
             appendChildrenFromTo(extendsIds, identifiers);
             appendChildrenFromTo(implementsIds, identifiers);
         }
-
         symbols.add(new HashMap.SimpleEntry<>(newlyCreatedSymbol, identifiers));
+
         return scope;
     }
 
@@ -89,7 +113,7 @@ public class TestSymbolTable extends SymbolTable implements ISymbolTable, ICreat
     private void appendChildrenFromTo(ITSPHPAst source, ITSPHPAst target) {
         int lenght = source.getChildCount();
         for (int i = 0; i < lenght; ++i) {
-            target.addChild(source.getChild(i));
+            target.addChild(AstHelperRegistry.get().copyAst(source.getChild(i)));
         }
     }
 }
