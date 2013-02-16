@@ -17,6 +17,7 @@
 package ch.tutteli.tsphp.typechecker.symbols;
 
 import ch.tutteli.tsphp.common.ASymbol;
+import ch.tutteli.tsphp.common.ILowerCaseStringMap;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import java.util.Map;
@@ -28,19 +29,19 @@ import java.util.Map;
 public class AliasSymbol extends ASymbol implements IAliasSymbol
 {
 
-    private Map<String, IScope> globalNamespaceScopes;
+    private ILowerCaseStringMap<IScope> globalNamespaceScopes;
 
     public AliasSymbol(ITSPHPAst theDefinitionAst, String aliasName) {
         super(theDefinitionAst, aliasName);
     }
 
     @Override
-    public Map<String, IScope> getGlobalNamespaceScopes() {
+    public ILowerCaseStringMap<IScope> getGlobalNamespaceScopes() {
         return globalNamespaceScopes;
     }
 
     @Override
-    public void setGlobalNamespaceScopes(Map<String, IScope> theGlobalNamespaceScopes) {
+    public void setGlobalNamespaceScopes(ILowerCaseStringMap<IScope> theGlobalNamespaceScopes) {
         globalNamespaceScopes = theGlobalNamespaceScopes;
     }
 }

@@ -31,6 +31,9 @@ public class ErrorMessageProvider extends AErrorMessageProvider
         definitionErrors.put("alreadyDefined", "Line %line%|%pos% - %id% was already defined in line %lineE%|%posE%");
         definitionErrors.put("definedInOuterScope",
                 "Line %line%|%pos% - %id% was already defined in outerscope in line %lineE%|%posE%");
+        definitionErrors.put("aliasForwardReference",
+                "Line %line%|%pos% - alias is used before its use declaration. Corresponding use declaration is "
+                + "in line %lineE%|%posE%");
     }
 
     @Override
@@ -44,13 +47,13 @@ public class ErrorMessageProvider extends AErrorMessageProvider
         return "DefinitionException occured, corresponding error message is not defined. "
                 + "Please report bug to http://tsphp.tutteli.ch\n"
                 + "However, the following information was gathered.\n"
-                + "Line " + dto.line + "|" + dto.position + " - " + dto.identifier + " was already defined in line"
-                + dto.lineExistingDefinition + "|" + dto.positionExistingDefinition + ".";
+                + "Line " + dto.line + "|" + dto.position + " - " + dto.identifier + " was already defined in line "
+                + dto.lineNewDefinition + "|" + dto.positionNewDefinition + ".";
     }
 
     @Override
-    protected String getStandardErrorReferenceMessage(ReferenceErrorDto dto) {
-        return "ReferenceException occured, corresponding error message is not defined. "
+    protected String getStandardErrorReferenceMessage(UnresolvedReferenceErrorDto dto) {
+        return "UnresolvedReferenceException occured, corresponding error message is not defined. "
                 + "Please report bug to http://tsphp.tutteli.ch\n"
                 + "However, the following information was gathered.\n"
                 + "Line " + dto.line + "|" + dto.position + " - " + dto.identifier + " could not been resolved to its"

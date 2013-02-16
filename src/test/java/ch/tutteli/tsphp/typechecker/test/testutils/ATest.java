@@ -14,28 +14,25 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.scopes;
+package ch.tutteli.tsphp.typechecker.test.testutils;
 
-import ch.tutteli.tsphp.common.ILowerCaseStringMap;
-import ch.tutteli.tsphp.common.IScope;
-import ch.tutteli.tsphp.common.ISymbol;
-import ch.tutteli.tsphp.common.ITSPHPAst;
-import java.util.Map;
+import ch.tutteli.tsphp.typechecker.error.ErrorHelper;
+import ch.tutteli.tsphp.typechecker.error.ErrorHelperRegistry;
+import ch.tutteli.tsphp.typechecker.error.ErrorMessageProvider;
+import ch.tutteli.tsphp.typechecker.scopes.ScopeHelper;
+import ch.tutteli.tsphp.typechecker.scopes.ScopeHelperRegistry;
+import org.junit.Ignore;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public interface IScopeHelper
+@Ignore
+public class ATest
 {
 
-    void define(IScope definitionScope, ISymbol symbol);
-
-    void definitionCheck(IScope definitionScope, ISymbol symbol);
-
-    void definitionCheck(ISymbol firstDefinition, ISymbol symbolToCheck);
-
-    IScope getCorrespondingGlobalNamespace(ILowerCaseStringMap<IScope> globalNamespaceScopes, String typeName);
-
-    ISymbol resolve(IScope scope, ITSPHPAst typeAst);
+    public ATest() {
+        ScopeHelperRegistry.set(new ScopeHelper());
+        ErrorHelperRegistry.set(new ErrorHelper(new ErrorMessageProvider()));
+    }
 }

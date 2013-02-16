@@ -24,5 +24,5 @@ public interface IErrorMessageProvider
 {
     String getErrorDefinitionMessage(String key, DefinitionErrorDto dto);
 
-    String getErrorReferenceMessage(String unkownType, ReferenceErrorDto referenceErrorDto);
+    String getErrorReferenceMessage(String unkownType, UnresolvedReferenceErrorDto referenceErrorDto);
 }

@@ -16,7 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker.test.definition;
 
-import ch.tutteli.tsphp.typechecker.test.testutils.ATypeCheckerDefinitionScopeTest;
+import ch.tutteli.tsphp.typechecker.test.testutils.ADefinitionScopeTest;
 import ch.tutteli.tsphp.typechecker.test.testutils.ScopeTestHelper;
 import ch.tutteli.tsphp.typechecker.test.testutils.ScopeTestStruct;
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class AtomTest extends ATypeCheckerDefinitionScopeTest
+public class AtomTest extends ADefinitionScopeTest
 {
 
     public AtomTest(String testString, ScopeTestStruct[] theTestStructs) {

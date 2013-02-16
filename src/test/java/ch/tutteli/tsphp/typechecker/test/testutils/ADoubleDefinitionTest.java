@@ -16,6 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker.test.testutils;
 
+import ch.tutteli.tsphp.common.ILowerCaseStringMap;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import java.util.Arrays;
@@ -30,7 +31,7 @@ import org.junit.Ignore;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @Ignore
-public abstract class ATypeCheckerDoubleDefinitionTest extends ATypeCheckerDefinitionTest
+public abstract class ADoubleDefinitionTest extends ADefinitionTest
 {
 
     protected ScopeTestStruct[] testStructs;
@@ -38,7 +39,7 @@ public abstract class ATypeCheckerDoubleDefinitionTest extends ATypeCheckerDefin
     protected String identifier;
     protected int occurence;
 
-    public ATypeCheckerDoubleDefinitionTest(String testString, String theNamespace, String theIdentifier, int howMany) {
+    public ADoubleDefinitionTest(String testString, String theNamespace, String theIdentifier, int howMany) {
         super(testString);
         namespace = theNamespace;
         identifier = theIdentifier;
@@ -47,15 +48,15 @@ public abstract class ATypeCheckerDoubleDefinitionTest extends ATypeCheckerDefin
 
     @Override
     protected void verifyDefinitions() {
-        Map<String, IScope> globalNamespaces = symbolTable.getGlobalNamespaceScopes();
+        ILowerCaseStringMap<IScope> globalNamespaces = symbolTable.getGlobalNamespaceScopes();
         IScope globalNamespace = globalNamespaces.get(namespace);
-        Assert.assertNotNull(testString + " failed, global namespace " + namespace + " could not be found.",
+        Assert.assertNotNull(errorMessagePrefix + " failed, global namespace " + namespace + " could not be found.",
                 globalNamespace);
 
-        Map<String, List<ISymbol>> symbols = globalNamespace.getSymbols();
-        Assert.assertNotNull(testString + " failed, symbols was null.", symbols);
-        Assert.assertTrue(testString + " failed. " + identifier + " not found.", symbols.containsKey(identifier));
-        Assert.assertEquals(testString + " failed. size was wrong", occurence, symbols.get(identifier).size());
+        ILowerCaseStringMap<List<ISymbol>> symbols = globalNamespace.getSymbols();
+        Assert.assertNotNull(errorMessagePrefix + " failed, symbols was null.", symbols);
+        Assert.assertTrue(errorMessagePrefix + " failed. " + identifier + " not found.", symbols.containsKey(identifier));
+        Assert.assertEquals(errorMessagePrefix + " failed. size was wrong", occurence, symbols.get(identifier).size());
     }
 
     protected static Collection<Object[]> getDifferentNamespaces(String statements, String identifiers, int occurence) {

@@ -29,12 +29,12 @@ import org.junit.Ignore;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @Ignore
-public abstract class ATypeCheckerReferenceDefinitionErrorTest extends ATypeCheckerReferenceTest
+public abstract class AReferenceDefinitionErrorTest extends AReferenceTest
 {
 
     protected DefinitionErrorDto[] errorDtos;
 
-    public ATypeCheckerReferenceDefinitionErrorTest(String testString, DefinitionErrorDto[] theErrorDtos) {
+    public AReferenceDefinitionErrorTest(String testString, DefinitionErrorDto[] theErrorDtos) {
         super(testString);
         errorDtos = theErrorDtos;
     }
@@ -46,27 +46,31 @@ public abstract class ATypeCheckerReferenceDefinitionErrorTest extends ATypeChec
 
     @Override
     public void verifyReferences() {
+
         IErrorReporter errorReporter = ErrorHelperRegistry.get();
-        Assert.assertTrue(testString + " failed. No exception occured.", errorReporter.hasFoundError());
+        Assert.assertTrue(errorMessagePrefix + " failed. No exception occured.", errorReporter.hasFoundError());
 
         List<Exception> exceptions = errorReporter.getExceptions();
-        Assert.assertEquals(testString + " failed. More or less exceptions occured." + exceptions.toString(), errorDtos.length,
-                exceptions.size());
+        Assert.assertEquals(errorMessagePrefix + " failed. More or less exceptions occured." + exceptions.toString(),
+                errorDtos.length, exceptions.size());
 
         for (int i = 0; i < errorDtos.length; ++i) {
 
             DefinitionException exception = (DefinitionException) exceptions.get(i);
-            Assert.assertEquals(errorDtos[i].identifier, exception.getExistingDefinition().getText());
 
-            Assert.assertEquals(errorDtos[i] + " -- " + testString + " failed. wrong existing line.",
-                    errorDtos[i].lineExistingDefinition, exception.getExistingDefinition().getLine());
-            Assert.assertEquals(errorDtos[i] + " -- " + testString + " failed. wrong existing position.",
-                    errorDtos[i].positionExistingDefinition, exception.getExistingDefinition().getCharPositionInLine());
+            Assert.assertEquals(errorMessagePrefix + " failed. wrong existing identifier.",
+                    errorDtos[i].identifier, exception.getExistingDefinition().getText());
+            Assert.assertEquals(errorMessagePrefix + " failed. wrong existing line.",
+                    errorDtos[i].line, exception.getExistingDefinition().getLine());
+            Assert.assertEquals(errorMessagePrefix + " failed. wrong existing position.",
+                    errorDtos[i].position, exception.getExistingDefinition().getCharPositionInLine());
 
-            Assert.assertEquals(errorDtos[i] + " -- " + testString + " failed. wrong new line. ",
-                    errorDtos[i].line, exception.getNewDefinition().getLine());
-            Assert.assertEquals(errorDtos[i] + " -- " + testString + " failed. wrong new position. ",
-                    errorDtos[i].position, exception.getNewDefinition().getCharPositionInLine());
+               Assert.assertEquals(errorMessagePrefix + " failed. wrong existing identifier.",
+                    errorDtos[i].identifierNewDefinition, exception.getNewDefinition().getText());
+            Assert.assertEquals(errorMessagePrefix + " failed. wrong new line. ",
+                    errorDtos[i].lineNewDefinition, exception.getNewDefinition().getLine());
+            Assert.assertEquals(errorMessagePrefix + " failed. wrong new position. ",
+                    errorDtos[i].positionNewDefinition, exception.getNewDefinition().getCharPositionInLine());
         }
     }
 }

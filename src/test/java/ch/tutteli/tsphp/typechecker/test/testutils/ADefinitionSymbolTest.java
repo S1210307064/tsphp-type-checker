@@ -28,12 +28,12 @@ import org.junit.Ignore;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @Ignore
-public abstract class ATypeCheckerDefinitionSymbolTest extends ATypeCheckerDefinitionTest
+public abstract class ADefinitionSymbolTest extends ADefinitionTest
 {
 
     protected String expectedResult;
 
-    public ATypeCheckerDefinitionSymbolTest(String testString, String theExpectedResult) {
+    public ADefinitionSymbolTest(String testString, String theExpectedResult) {
         super(testString);
         expectedResult = theExpectedResult;
     }

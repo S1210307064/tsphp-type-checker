@@ -31,10 +31,11 @@ import org.junit.Ignore;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @Ignore
-public abstract class ATypeCheckerDefinitionTest extends ATypeCheckerTest
+public abstract class ADefinitionTest extends ATest
 {
 
     protected String testString;
+    protected String errorMessagePrefix;
     protected TestSymbolTable symbolTable;
     protected TestScopeFactory scopeFactory;
     protected ITSPHPAst ast;
@@ -42,9 +43,10 @@ public abstract class ATypeCheckerDefinitionTest extends ATypeCheckerTest
 
     protected abstract void verifyDefinitions();
 
-    public ATypeCheckerDefinitionTest(String theTestString) {
+    public ADefinitionTest(String theTestString) {
         super();
         testString = theTestString;
+        errorMessagePrefix = testString.replaceAll("\n", " ") + "\n" + testString;
         init();
     }
 
@@ -57,14 +59,14 @@ public abstract class ATypeCheckerDefinitionTest extends ATypeCheckerTest
         IParser parser = new ParserFacade();
         ast = parser.parse(testString);
 
-        Assert.assertFalse(testString + " failed - parser throw exception", parser.hasFoundError());
+        Assert.assertFalse(testString.replaceAll("\n", " ") + " failed - parser throw exception", parser.hasFoundError());
 
         commonTreeNodeStream = new CommonTreeNodeStream(TSPHPAstAdaptorRegistry.get(), ast);
         commonTreeNodeStream.setTokenStream(parser.getTokenStream());
         commonTreeNodeStream.reset();
         TSPHPTypeCheckerDefinition definition = new TSPHPTypeCheckerDefinition(commonTreeNodeStream, symbolTable);
         definition.downup(ast);
-        
+
         verifyDefinitions();
     }
 }

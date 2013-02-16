@@ -24,7 +24,7 @@ import ch.tutteli.tsphp.typechecker.error.ErrorHelperRegistry;
 import ch.tutteli.tsphp.typechecker.error.ErrorMessageProvider;
 import ch.tutteli.tsphp.typechecker.error.IErrorHelper;
 import ch.tutteli.tsphp.typechecker.symbols.VariableSymbol;
-import ch.tutteli.tsphp.typechecker.test.testutils.ATypeCheckerTest;
+import ch.tutteli.tsphp.typechecker.test.testutils.ATest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -42,7 +42,7 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class ErrorHelperTest extends ATypeCheckerTest
+public class ErrorHelperTest extends ATest
 {
 
     private String identifier;

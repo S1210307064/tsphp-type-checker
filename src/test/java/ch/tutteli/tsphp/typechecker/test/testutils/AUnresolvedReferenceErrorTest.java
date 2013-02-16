@@ -17,10 +17,9 @@
 package ch.tutteli.tsphp.typechecker.test.testutils;
 
 import ch.tutteli.tsphp.common.IErrorReporter;
-import ch.tutteli.tsphp.common.exceptions.DefinitionException;
-import ch.tutteli.tsphp.common.exceptions.ReferenceException;
+import ch.tutteli.tsphp.common.exceptions.UnresolvedReferenceException;
 import ch.tutteli.tsphp.typechecker.error.ErrorHelperRegistry;
-import ch.tutteli.tsphp.typechecker.error.ReferenceErrorDto;
+import ch.tutteli.tsphp.typechecker.error.UnresolvedReferenceErrorDto;
 import java.util.List;
 import junit.framework.Assert;
 import org.junit.Ignore;
@@ -30,12 +29,12 @@ import org.junit.Ignore;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @Ignore
-public abstract class ATypeCheckerReferenceErrorTest extends ATypeCheckerReferenceTest
+public abstract class AUnresolvedReferenceErrorTest extends AReferenceTest
 {
 
-    protected ReferenceErrorDto[] errorDtos;
+    protected UnresolvedReferenceErrorDto[] errorDtos;
 
-    public ATypeCheckerReferenceErrorTest(String testString, ReferenceErrorDto[] theErrorDtos) {
+    public AUnresolvedReferenceErrorTest(String testString, UnresolvedReferenceErrorDto[] theErrorDtos) {
         super(testString);
         errorDtos = theErrorDtos;
     }
@@ -56,7 +55,7 @@ public abstract class ATypeCheckerReferenceErrorTest extends ATypeCheckerReferen
                 exceptions.size());
 
         for (int i = 0; i < errorDtos.length; ++i) {
-            ReferenceException exception = (ReferenceException) exceptions.get(i);
+            UnresolvedReferenceException exception = (UnresolvedReferenceException) exceptions.get(i);
             
             Assert.assertEquals(test + " failed. wrong identifier.",
                     errorDtos[i].identifier, exception.getDefinition().getText());

@@ -27,12 +27,12 @@ import org.junit.Ignore;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @Ignore
-public abstract class ATypeCheckerReferenceTest extends ATypeCheckerDefinitionTest
+public abstract class AReferenceTest extends ADefinitionTest
 {
 
     protected TSPHPTypeCheckerReference reference;
 
-    public ATypeCheckerReferenceTest(String testString) {
+    public AReferenceTest(String testString) {
         super(testString);
     }
 
@@ -53,5 +53,17 @@ public abstract class ATypeCheckerReferenceTest extends ATypeCheckerDefinitionTe
         reference = new TSPHPTypeCheckerReference(commonTreeNodeStream, symbolTable);
         reference.downup(ast);
         checkReferences();
+    }
+
+    protected static String getAliasFullType(String type) {
+        return type.substring(0, 1).equals("\\") ? type : "\\" + type;
+    }
+
+    protected static String getFullName(String namespace, String type) {
+        String fullType = type;
+        if (!type.substring(0, 1).equals("\\")) {
+            fullType = namespace + type;
+        }
+        return fullType;
     }
 }

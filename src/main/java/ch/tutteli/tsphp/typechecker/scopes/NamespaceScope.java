@@ -16,10 +16,12 @@
  */
 package ch.tutteli.tsphp.typechecker.scopes;
 
+import ch.tutteli.tsphp.common.ILowerCaseStringMap;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
+import ch.tutteli.tsphp.common.LowerCaseStringMap;
 import ch.tutteli.tsphp.common.exceptions.DefinitionException;
 import ch.tutteli.tsphp.typechecker.error.ErrorHelperRegistry;
 import ch.tutteli.tsphp.typechecker.symbols.ErroneusTypeSymbol;
@@ -27,9 +29,7 @@ import ch.tutteli.tsphp.typechecker.symbols.IAliasSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IInterfaceTypeSymbol;
 import ch.tutteli.tsphp.typechecker.utils.MapHelper;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -38,7 +38,7 @@ import java.util.Map;
 public class NamespaceScope extends AScope implements INamespaceScope
 {
 
-    private Map<String, List<IAliasSymbol>> uses = new LinkedHashMap<>();
+    private ILowerCaseStringMap<List<IAliasSymbol>> uses = new LowerCaseStringMap<>();
 
     public NamespaceScope(String scopeName, IScope globalNamespaceScope) {
         super(scopeName, globalNamespaceScope);
@@ -141,16 +141,17 @@ public class NamespaceScope extends AScope implements INamespaceScope
         ITypeSymbol typeSymbol;
 
         if (useDefinition.isDefinedEarlierThan(typeAst)) {
-            IAliasSymbol aliasSymbol = (IAliasSymbol) useDefinition.getSymbol();
             typeSymbol = useDefinition.getSymbol().getType();
             String typeName = typeAst.getText();
             if (isUsedAsNamespace(alias, typeName)) {
                 String fullTypeName = getFullName(typeSymbol);
-                if (!fullTypeName.substring(fullTypeName.length()-1).equals("\\")) {
+                if (!fullTypeName.substring(fullTypeName.length() - 1).equals("\\")) {
                     fullTypeName += "\\";
                 }
                 typeName = fullTypeName + typeName.substring(alias.length() + 1);
                 typeAst.setText(typeName);
+
+                IAliasSymbol aliasSymbol = (IAliasSymbol) useDefinition.getSymbol();
                 IScope globalNamespaceScope = ScopeHelperRegistry.get().
                         getCorrespondingGlobalNamespace(aliasSymbol.getGlobalNamespaceScopes(), typeName);
                 typeSymbol = globalNamespaceScope.resolveType(typeAst);

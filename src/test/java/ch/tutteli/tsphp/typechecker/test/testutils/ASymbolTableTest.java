@@ -28,7 +28,7 @@ import org.junit.Ignore;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @Ignore
-public class ASymbolTableTest extends ATypeCheckerTest
+public class ASymbolTableTest extends ATest
 {
 
     protected IScopeFactory scopeFactory;

@@ -26,12 +26,12 @@ import org.junit.Ignore;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @Ignore
-public abstract class ATypeCheckerDefinitionScopeTest extends ATypeCheckerDefinitionTest
+public abstract class ADefinitionScopeTest extends ADefinitionTest
 {
 
     protected ScopeTestStruct[] testStructs;
 
-    public ATypeCheckerDefinitionScopeTest(String testString, ScopeTestStruct[] theTestStructs) {
+    public ADefinitionScopeTest(String testString, ScopeTestStruct[] theTestStructs) {
         super(testString);
         testStructs = theTestStructs;
     }

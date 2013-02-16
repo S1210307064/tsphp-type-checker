@@ -16,7 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker.test.definition;
 
-import ch.tutteli.tsphp.typechecker.test.testutils.ATypeCheckerDoubleDefinitionTest;
+import ch.tutteli.tsphp.typechecker.test.testutils.ADoubleDefinitionTest;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -30,7 +30,7 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class DoubleFunctionDefinitionTest extends ATypeCheckerDoubleDefinitionTest
+public class DoubleFunctionDefinitionTest extends ADoubleDefinitionTest
 {
 
     public DoubleFunctionDefinitionTest(String testString, String theNamespace, String theIdentifier, int howMany) {
@@ -48,10 +48,11 @@ public class DoubleFunctionDefinitionTest extends ATypeCheckerDoubleDefinitionTe
         String a = "function void a(){}";
         String a2 = "function void a(int $a){}";
         String A = "function void A(){}";
+        collection.addAll(getDifferentNamespaces(a + "", "a()", 1));
         collection.addAll(getDifferentNamespaces(A + "", "A()", 1));
-        collection.addAll(getDifferentNamespaces(a + " " + A + "", "A()", 1));
+        collection.addAll(getDifferentNamespaces(a + " " + A + "", "A()", 2));
         collection.addAll(getDifferentNamespaces(a + " " + a + "", "a()", 2));
-        collection.addAll(getDifferentNamespaces(a + " " + A + " " + a + "", "a()", 2));
+        collection.addAll(getDifferentNamespaces(a + " " + A + " " + a + "", "a()", 3));
         //doesn't matter if parameter list is different
         collection.addAll(getDifferentNamespaces(a + " " + a2 + " " + a + "", "a()", 3));
         return collection;

@@ -25,7 +25,5 @@ import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
  */
 public interface IErroneusTypeSymbol extends ITypeSymbol
 {
-
     TypeCheckerException getException();
-    void setException(TypeCheckerException exception);
 }

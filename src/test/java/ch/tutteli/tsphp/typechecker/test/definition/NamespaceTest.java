@@ -17,7 +17,7 @@
 package ch.tutteli.tsphp.typechecker.test.definition;
 
 import ch.tutteli.tsphp.common.IScope;
-import ch.tutteli.tsphp.typechecker.test.testutils.ATypeCheckerDefinitionTest;
+import ch.tutteli.tsphp.typechecker.test.testutils.ADefinitionTest;
 import ch.tutteli.tsphp.typechecker.test.testutils.ScopeTestHelper;
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,7 +32,7 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class NamespaceTest extends ATypeCheckerDefinitionTest
+public class NamespaceTest extends ADefinitionTest
 {
 
     String namespaces;

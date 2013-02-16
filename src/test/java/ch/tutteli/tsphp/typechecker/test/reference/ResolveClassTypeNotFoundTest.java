@@ -16,8 +16,8 @@
  */
 package ch.tutteli.tsphp.typechecker.test.reference;
 
-import ch.tutteli.tsphp.typechecker.error.ReferenceErrorDto;
-import ch.tutteli.tsphp.typechecker.test.testutils.ATypeCheckerReferenceErrorTest;
+import ch.tutteli.tsphp.typechecker.error.UnresolvedReferenceErrorDto;
+import ch.tutteli.tsphp.typechecker.test.testutils.AUnresolvedReferenceErrorTest;
 import ch.tutteli.tsphp.typechecker.test.testutils.TypeHelper;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,10 +33,10 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class ResolveClassTypeNotFoundTest extends ATypeCheckerReferenceErrorTest
+public class ResolveClassTypeNotFoundTest extends AUnresolvedReferenceErrorTest
 {
 
-    public ResolveClassTypeNotFoundTest(String testString, ReferenceErrorDto[] theErrorDtos) {
+    public ResolveClassTypeNotFoundTest(String testString, UnresolvedReferenceErrorDto[] theErrorDtos) {
         super(testString, theErrorDtos);
     }
 
@@ -58,21 +58,35 @@ public class ResolveClassTypeNotFoundTest extends ATypeCheckerReferenceErrorTest
                     //aliases are always absolute        
                     {
                         "namespace b  {class a{} use a as b;\n b $b;} ",
-                        new ReferenceErrorDto[]{new ReferenceErrorDto("\\a", 2, 1)}
+                        new UnresolvedReferenceErrorDto[]{new UnresolvedReferenceErrorDto("\\a", 2, 1)}
                     },
                     {
                         "namespace b\\c  {class a{} use a as b;\n b $b;} ",
-                        new ReferenceErrorDto[]{new ReferenceErrorDto("\\a", 2, 1)}
+                        new UnresolvedReferenceErrorDto[]{new UnresolvedReferenceErrorDto("\\a", 2, 1)}
                     },
                     {
                         "namespace b\\c\\d  {class a{} use a as b;\n b $b;} ",
-                        new ReferenceErrorDto[]{new ReferenceErrorDto("\\a", 2, 1)}
+                        new UnresolvedReferenceErrorDto[]{new UnresolvedReferenceErrorDto("\\a", 2, 1)}
                     }
                 }));
 
         return collection;
     }
-
+//    @Test
+//    public void testAliasNamespaceNotFound() {
+//        INamespaceScope scope = symbolTable.defineNamespace("\\");
+//        ITSPHPAst typeAst = AstTestHelper.getAstWithTokenText("MyClass", scope);
+//        ITSPHPAst alias = AstTestHelper.getAstWithTokenText("test", scope);
+//
+//        symbolTable.defineUse(scope, typeAst, alias);
+//
+//        ITSPHPAst ast2 = AstTestHelper.getAstWithTokenText("test\\MyClass", scope);
+//        ITypeSymbol typeSymbol = symbolTable.resolveType(ast2);
+//        Assert.assertTrue(typeSymbol instanceof TSPHPErroneusTypeSymbol);
+//        TSPHPErroneusTypeSymbol errorSymbol = (TSPHPErroneusTypeSymbol) typeSymbol;
+//        Assert.assertEquals(ast2, errorSymbol.getDefinitionAst());
+//    }
+    
     public static Collection<Object[]> getVariations(String prefix, String appendix, String namespace) {
         List<Object[]> collection = new ArrayList<>();
         String[] types = TypeHelper.getClassInterfaceTypes();
@@ -81,28 +95,16 @@ public class ResolveClassTypeNotFoundTest extends ATypeCheckerReferenceErrorTest
             String fullType = getFullName(namespace, type);
             collection.add(new Object[]{
                         prefix + "\n " + type + "$a;" + appendix,
-                        new ReferenceErrorDto[]{new ReferenceErrorDto(fullType, 2, 1)}
+                        new UnresolvedReferenceErrorDto[]{new UnresolvedReferenceErrorDto(fullType, 2, 1)}
                     });
 
             //Alias
             String aliasFullType = getAliasFullType(type);
             collection.add(new Object[]{
                         prefix + "use " + type + " as test;\n test $a;" + appendix,
-                        new ReferenceErrorDto[]{new ReferenceErrorDto(aliasFullType, 2, 1)}
+                        new UnresolvedReferenceErrorDto[]{new UnresolvedReferenceErrorDto(aliasFullType, 2, 1)}
                     });
         }
         return collection;
-    }
-
-    private static String getFullName(String namespace, String type) {
-        String fullType = type;
-        if (!type.substring(0, 1).equals("\\")) {
-            fullType = namespace + type;
-        }
-        return fullType;
-    }
-
-    private static String getAliasFullType(String type) {
-        return type.substring(0, 1).equals("\\") ? type : "\\" + type;
     }
 }

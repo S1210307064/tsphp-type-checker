@@ -29,10 +29,6 @@ public class ErroneusTypeSymbol extends ASymbol implements IErroneusTypeSymbol
 
     private TypeCheckerException exception;
 
-    public ErroneusTypeSymbol(ITSPHPAst type) {
-        super(type, type.getText());
-    }
-
     public ErroneusTypeSymbol(ITSPHPAst type, TypeCheckerException theException) {
         super(type, type.getText());
         exception = theException;
@@ -41,10 +37,5 @@ public class ErroneusTypeSymbol extends ASymbol implements IErroneusTypeSymbol
     @Override
     public TypeCheckerException getException() {
         return exception;
-    }
-
-    @Override
-    public void setException(TypeCheckerException theException) {
-        exception = theException;
     }
 }

@@ -16,13 +16,13 @@
  */
 package ch.tutteli.tsphp.typechecker.scopes;
 
+import ch.tutteli.tsphp.common.ILowerCaseStringMap;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.typechecker.error.ErrorHelperRegistry;
 import ch.tutteli.tsphp.typechecker.utils.MapHelper;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -49,7 +49,8 @@ public class ScopeHelper implements IScopeHelper
         }
     }
 
-    public IScope getCorrespondingGlobalNamespace(Map<String, IScope> globalNamespaceScopes, String typeName) {
+    @Override
+    public IScope getCorrespondingGlobalNamespace(ILowerCaseStringMap<IScope> globalNamespaceScopes, String typeName) {
         int lastBackslashPosition = typeName.lastIndexOf("\\") + 1;
         String namespaceName = typeName.substring(0, lastBackslashPosition);
         return globalNamespaceScopes.get(namespaceName);
@@ -58,7 +59,7 @@ public class ScopeHelper implements IScopeHelper
     @Override
     public ISymbol resolve(IScope scope, ITSPHPAst ast) {
         ISymbol symbol = null;
-        Map<String, List<ISymbol>> symbols = scope.getSymbols();
+        ILowerCaseStringMap<List<ISymbol>> symbols = scope.getSymbols();
         if (symbols.containsKey(ast.getText())) {
             symbol = symbols.get(ast.getText()).get(0);
         }

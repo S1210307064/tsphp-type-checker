@@ -17,7 +17,7 @@
 package ch.tutteli.tsphp.typechecker.test.reference;
 
 import ch.tutteli.tsphp.typechecker.error.DefinitionErrorDto;
-import ch.tutteli.tsphp.typechecker.test.testutils.ATypeCheckerReferenceDefinitionErrorTest;
+import ch.tutteli.tsphp.typechecker.test.testutils.AReferenceDefinitionErrorTest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,10 +32,10 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class VariableDefinitionErrorTest extends ATypeCheckerReferenceDefinitionErrorTest
+public class VariableDoubleDefinitionErrorTest extends AReferenceDefinitionErrorTest
 {
 
-    public VariableDefinitionErrorTest(String testString, DefinitionErrorDto[] expectedLinesAndPositions) {
+    public VariableDoubleDefinitionErrorTest(String testString, DefinitionErrorDto[] expectedLinesAndPositions) {
         super(testString, expectedLinesAndPositions);
     }
 
@@ -47,7 +47,7 @@ public class VariableDefinitionErrorTest extends ATypeCheckerReferenceDefinition
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
         List<Object[]> collection = new ArrayList<>();
-    
+
         collection.addAll(getVariations("", ""));
         collection.addAll(getVariations("namespace{", "}"));
         collection.addAll(getVariations("namespace a;", ""));
@@ -56,17 +56,17 @@ public class VariableDefinitionErrorTest extends ATypeCheckerReferenceDefinition
         collection.addAll(getVariations("namespace a\\b\\z{", "}"));
         collection.addAll(Arrays.asList(new Object[][]{
                     {
-                        "namespace{\n int $a=1;} namespace{\n int $a=1;}", 
-                        new DefinitionErrorDto[]{new DefinitionErrorDto("$a", 3, 5, 2, 5)}},
+                        "namespace{\n int $a=1;} namespace{\n int $a=1;}",
+                        new DefinitionErrorDto[]{new DefinitionErrorDto("$a", 2, 5, "$a", 3, 5)}},
                     {
-                        "namespace a {\n int $a=1;} namespace a{\n int $a=1;}", 
-                        new DefinitionErrorDto[]{new DefinitionErrorDto("$a", 3, 5, 2, 5)}
+                        "namespace a {\n int $a=1;} namespace a{\n int $a=1;}",
+                        new DefinitionErrorDto[]{new DefinitionErrorDto("$a", 2, 5, "$a", 3, 5)}
                     },
                     {
-                        "namespace a {\n int $a=1;} namespace a{\n int $a=1;} namespace a{\n int $a=1;}", 
+                        "namespace a {\n int $a=1;} namespace a{\n int $a=1;} namespace a{\n int $a=1;}",
                         new DefinitionErrorDto[]{
-                            new DefinitionErrorDto("$a", 3, 5, 2, 5),
-                            new DefinitionErrorDto("$a", 4, 5, 2, 5)
+                            new DefinitionErrorDto("$a", 2, 5, "$a", 3, 5),
+                            new DefinitionErrorDto("$a", 2, 5, "$a", 4, 5)
                         }
                     }
                 }));
@@ -74,7 +74,7 @@ public class VariableDefinitionErrorTest extends ATypeCheckerReferenceDefinition
     }
 
     public static Collection<Object[]> getVariations(String prefix, String appendix) {
-        DefinitionErrorDto[] errorDto = new DefinitionErrorDto[]{new DefinitionErrorDto("$a", 3, 5, 2, 5)};
+        DefinitionErrorDto[] errorDto = new DefinitionErrorDto[]{new DefinitionErrorDto("$a", 2, 5, "$a", 3, 5)};
         return Arrays.asList(new Object[][]{
                     {prefix + "\n int $a;\n int $a;" + appendix, errorDto},
                     {prefix + "\n int $a=1;\n int $a;" + appendix, errorDto},
@@ -103,17 +103,16 @@ public class VariableDefinitionErrorTest extends ATypeCheckerReferenceDefinition
                     //
                     {prefix + "\n int $a=1+1; do{ \n int $a;}while(true); \n int $a=1;" + appendix,
                         new DefinitionErrorDto[]{
-                            new DefinitionErrorDto("$a", 3, 5, 2, 5),
-                            new DefinitionErrorDto("$a", 4, 5, 2, 5)
+                            new DefinitionErrorDto("$a", 2, 5, "$a", 3, 5),
+                            new DefinitionErrorDto("$a", 2, 5, "$a", 4, 5)
                         }
                     },
                     {prefix + "\n int $a=1+1,\n     $a=1, \n     $a;" + appendix,
                         new DefinitionErrorDto[]{
-                            new DefinitionErrorDto("$a", 3, 5, 2, 5),
-                            new DefinitionErrorDto("$a", 4, 5, 2, 5)
+                            new DefinitionErrorDto("$a", 2, 5, "$a", 3, 5),
+                            new DefinitionErrorDto("$a", 2, 5, "$a", 4, 5)
                         }
                     }
-                
                 });
     }
 }

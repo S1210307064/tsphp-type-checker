@@ -14,25 +14,19 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.test.testutils;
+package ch.tutteli.tsphp.typechecker.symbols;
 
-import ch.tutteli.tsphp.typechecker.error.ErrorHelper;
-import ch.tutteli.tsphp.typechecker.error.ErrorHelperRegistry;
-import ch.tutteli.tsphp.typechecker.error.ErrorMessageProvider;
-import ch.tutteli.tsphp.typechecker.scopes.ScopeHelper;
-import ch.tutteli.tsphp.typechecker.scopes.ScopeHelperRegistry;
-import org.junit.Ignore;
+import ch.tutteli.tsphp.common.ASymbol;
+import ch.tutteli.tsphp.common.ITSPHPAst;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-@Ignore
-public class ATypeCheckerTest
+public class AliasTypeSymbol extends ASymbol implements IAliasTypeSymbol
 {
 
-    public ATypeCheckerTest() {
-        ScopeHelperRegistry.set(new ScopeHelper());
-        ErrorHelperRegistry.set(new ErrorHelper(new ErrorMessageProvider()));
+    public AliasTypeSymbol(ITSPHPAst theDefinitionAst, String theName) {
+        super(theDefinitionAst, theName);
     }
 }

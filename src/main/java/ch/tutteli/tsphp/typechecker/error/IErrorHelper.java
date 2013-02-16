@@ -20,7 +20,7 @@ import ch.tutteli.tsphp.common.IErrorReporter;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.exceptions.DefinitionException;
-import ch.tutteli.tsphp.common.exceptions.ReferenceException;
+import ch.tutteli.tsphp.common.exceptions.UnresolvedReferenceException;
 
 /**
  *
@@ -45,5 +45,5 @@ public interface IErrorHelper extends IErrorReporter
 
     DefinitionException addAndGetUseForwardReferenceException(ITSPHPAst typeAst, ITSPHPAst useDefinition);
 
-    public ReferenceException addAndGetUnkownTypeException(ITSPHPAst typeAst);
+    public UnresolvedReferenceException addAndGetUnkownTypeException(ITSPHPAst typeAst);
 }

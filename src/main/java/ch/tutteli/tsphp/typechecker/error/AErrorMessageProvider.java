@@ -34,7 +34,7 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
 
     protected abstract String getStandardErrorDefinitionMessage(DefinitionErrorDto dto);
 
-    protected abstract String getStandardErrorReferenceMessage(ReferenceErrorDto dto);
+    protected abstract String getStandardErrorReferenceMessage(UnresolvedReferenceErrorDto dto);
 
     @Override
     public String getErrorDefinitionMessage(String key, DefinitionErrorDto dto) {
@@ -45,8 +45,8 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
         if (definitionErrors.containsKey(key)) {
             message = definitionErrors.get(key);
             message = message.replace("%id%", "" + dto.identifier);
-            message = message.replace("%line%", "" + dto.lineExistingDefinition);
-            message = message.replace("%pos%", "" + dto.positionExistingDefinition);
+            message = message.replace("%line%", "" + dto.lineNewDefinition);
+            message = message.replace("%pos%", "" + dto.positionNewDefinition);
             message = message.replace("%lineE%", "" + dto.line);
             message = message.replace("%posE%", "" + dto.position);
         } else {
@@ -56,7 +56,7 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
     }
 
     @Override
-    public String getErrorReferenceMessage(String key, ReferenceErrorDto dto) {
+    public String getErrorReferenceMessage(String key, UnresolvedReferenceErrorDto dto) {
         String message;
         if (referenceErrors == null) {
             loadReferenceErrorMessages();

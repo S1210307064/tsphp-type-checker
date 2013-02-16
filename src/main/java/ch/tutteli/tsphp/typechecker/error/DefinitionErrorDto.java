@@ -20,25 +20,28 @@ package ch.tutteli.tsphp.typechecker.error;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class DefinitionErrorDto extends ReferenceErrorDto
+public class DefinitionErrorDto extends UnresolvedReferenceErrorDto
 {
 
-    public int lineExistingDefinition;
-    public int positionExistingDefinition;
+    public String identifierNewDefinition;
+    public int lineNewDefinition;
+    public int positionNewDefinition;
 
-    public DefinitionErrorDto(String theIdentifier, int theLineNewDefinition, int thePositionNewDefinition,
-            int theLineExistingDefinition, int thePositionExistingDefinition) {
-        super(theIdentifier, theLineExistingDefinition, thePositionExistingDefinition);
-        identifier = theIdentifier;
-        line = theLineNewDefinition;
-        position = thePositionNewDefinition;
-        lineExistingDefinition = theLineExistingDefinition;
-        positionExistingDefinition = thePositionExistingDefinition;
+    public DefinitionErrorDto(
+            String theExistingIdentifier, int theLineExistingDefinition, int thePositionExistingDefinition,
+            String theNewIdentifier, int theLineNewDefinition, int thePositionNewDefinition) {
+        super(theNewIdentifier, theLineExistingDefinition, thePositionExistingDefinition);
+        identifier = theExistingIdentifier;
+        line = theLineExistingDefinition;
+        position = thePositionExistingDefinition;
+        identifierNewDefinition = theNewIdentifier;
+        lineNewDefinition = theLineNewDefinition;
+        positionNewDefinition = thePositionNewDefinition;
     }
 
     @Override
     public String toString() {
         return identifier + " " + line + "|" + position + " "
-                + lineExistingDefinition + "|" + positionExistingDefinition;
+                + lineNewDefinition + "|" + positionNewDefinition;
     }
 }

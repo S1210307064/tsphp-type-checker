@@ -16,7 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker.test.reference;
 
-import ch.tutteli.tsphp.typechecker.test.testutils.ATypeCheckerReferenceTest;
+import ch.tutteli.tsphp.typechecker.test.testutils.AReferenceTest;
 import java.util.Arrays;
 import java.util.Collection;
 import org.antlr.runtime.RecognitionException;
@@ -29,7 +29,7 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class ResolveClassTypeTest extends ATypeCheckerReferenceTest
+public class ResolveClassTypeTest extends AReferenceTest
 {
 
     public ResolveClassTypeTest(String testString) {
@@ -87,19 +87,19 @@ public class ResolveClassTypeTest extends ATypeCheckerReferenceTest
                     },
                     //aliases for same namespace
                     {
-                        "/* 8 */ new z(); use z as y; class z{} new y();"
+                        "/* 8 */ z $a; use z as y; class z{} y $b;"
                     },
                     {
-                        "/* 8.1 */ namespace {new z(); use z as y; class z{} new y();}"
+                        "/* 8.1 */ namespace {z $a; use z as y; class z{} y $b;}"
                     },
                     {
-                        "/* 8.2 */ namespace b; new z(); use b\\z as y; class z{} new y();"
+                        "/* 8.2 */ namespace b; z $a; use b\\z as y; class z{} y $b;"
                     },
                     {
-                        "/* 8.3 */ namespace b {new z(); use b\\z as y; class z{} new y();}"
+                        "/* 8.3 */ namespace b {z $a; use b\\z as y; class z{} y $b;}"
                     },
                     {
-                        "/* 8.4 */ namespace b\\c {new z(); use b\\c\\z as y; class z{} new y();}"
+                        "/* 8.4 */ namespace b\\c {z $a; use b\\c\\z as y; class z{} y $b;}"
                     },
                     //aliases for absolute types
                     {
@@ -161,18 +161,4 @@ public class ResolveClassTypeTest extends ATypeCheckerReferenceTest
                     }
                 });
     }
-//    @Test
-//    public void testAliasNamespaceNotFound() {
-//        INamespaceScope scope = symbolTable.defineNamespace("\\");
-//        ITSPHPAst typeAst = AstTestHelper.getAstWithTokenText("MyClass", scope);
-//        ITSPHPAst alias = AstTestHelper.getAstWithTokenText("test", scope);
-//
-//        symbolTable.defineUse(scope, typeAst, alias);
-//
-//        ITSPHPAst ast2 = AstTestHelper.getAstWithTokenText("test\\MyClass", scope);
-//        ITypeSymbol typeSymbol = symbolTable.resolveType(ast2);
-//        Assert.assertTrue(typeSymbol instanceof TSPHPErroneusTypeSymbol);
-//        TSPHPErroneusTypeSymbol errorSymbol = (TSPHPErroneusTypeSymbol) typeSymbol;
-//        Assert.assertEquals(ast2, errorSymbol.getDefinitionAst());
-//    }
 }

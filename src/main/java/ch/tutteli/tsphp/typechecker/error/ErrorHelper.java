@@ -18,12 +18,10 @@ package ch.tutteli.tsphp.typechecker.error;
 
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.common.TSPHPAst;
 import ch.tutteli.tsphp.common.exceptions.DefinitionException;
-import ch.tutteli.tsphp.common.exceptions.ReferenceException;
+import ch.tutteli.tsphp.common.exceptions.UnresolvedReferenceException;
 import java.util.ArrayList;
 import java.util.List;
-import org.antlr.runtime.Token;
 
 /**
  *
@@ -75,9 +73,9 @@ public class ErrorHelper implements IErrorHelper
 
 
         String errorMessage = errorMessageProvider.getErrorDefinitionMessage("alreadyDefined",
-                new DefinitionErrorDto(newDefinition.getText(),
-                existingDefintion.getLine(), existingDefintion.getCharPositionInLine(),
-                newDefinition.getLine(), newDefinition.getCharPositionInLine()));
+                new DefinitionErrorDto(
+                existingDefintion.getText(), existingDefintion.getLine(), existingDefintion.getCharPositionInLine(),
+                newDefinition.getText(), newDefinition.getLine(), newDefinition.getCharPositionInLine()));
 
         exceptions.add(new DefinitionException(errorMessage, existingDefintion, newDefinition));
     }
@@ -85,10 +83,10 @@ public class ErrorHelper implements IErrorHelper
     @Override
     public DefinitionException addAndGetUseForwardReferenceException(ITSPHPAst typeAst, ITSPHPAst useDefinition) {
 
-        String errorMessage = errorMessageProvider.getErrorDefinitionMessage("",
-                new DefinitionErrorDto(typeAst.getText(),
-                useDefinition.getLine(), useDefinition.getCharPositionInLine(),
-                typeAst.getLine(), typeAst.getCharPositionInLine()));
+        String errorMessage = errorMessageProvider.getErrorDefinitionMessage("aliasForwardReference",
+                new DefinitionErrorDto(
+                typeAst.getText(), typeAst.getLine(), typeAst.getCharPositionInLine(),
+                useDefinition.getText(), useDefinition.getLine(), useDefinition.getCharPositionInLine()));
 
         DefinitionException exception = new DefinitionException(errorMessage, typeAst, useDefinition);
         exceptions.add(exception);
@@ -96,10 +94,10 @@ public class ErrorHelper implements IErrorHelper
     }
 
     @Override
-    public ReferenceException addAndGetUnkownTypeException(ITSPHPAst typeAst) {
+    public UnresolvedReferenceException addAndGetUnkownTypeException(ITSPHPAst typeAst) {
         String errorMessage = errorMessageProvider.getErrorReferenceMessage("unkownType",
-                new ReferenceErrorDto(typeAst.getText(), typeAst.getLine(), typeAst.getCharPositionInLine()));
-        ReferenceException exception = new ReferenceException(errorMessage, typeAst);
+                new UnresolvedReferenceErrorDto(typeAst.getText(), typeAst.getLine(), typeAst.getCharPositionInLine()));
+        UnresolvedReferenceException exception = new UnresolvedReferenceException(errorMessage, typeAst);
         exceptions.add(exception);
         return exception;
     }

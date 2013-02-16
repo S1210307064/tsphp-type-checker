@@ -16,6 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker;
 
+import ch.tutteli.tsphp.common.ILowerCaseStringMap;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
@@ -25,7 +26,6 @@ import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IInterfaceTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
-import java.util.Map;
 
 /**
  *
@@ -34,7 +34,7 @@ import java.util.Map;
 public interface ISymbolTable
 {
 
-    Map<String, IScope> getGlobalNamespaceScopes();
+    ILowerCaseStringMap<IScope> getGlobalNamespaceScopes();
 
     INamespaceScope defineNamespace(String name);
 

@@ -18,7 +18,7 @@ package ch.tutteli.tsphp.typechecker.test.reference;
 
 import ch.tutteli.tsphp.typechecker.scopes.GlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.symbols.ScalarTypeSymbol;
-import ch.tutteli.tsphp.typechecker.test.testutils.ATypeCheckerTest;
+import ch.tutteli.tsphp.typechecker.test.testutils.ATest;
 import ch.tutteli.tsphp.typechecker.test.testutils.AstTestHelper;
 import org.junit.Assert;
 import org.junit.Test;
@@ -27,7 +27,7 @@ import org.junit.Test;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class GlobalNamespaceTest extends ATypeCheckerTest
+public class GlobalNamespaceTest extends ATest
 {    
     @Test
     public void testResolveTypeLenghtLessThanNamespace() {

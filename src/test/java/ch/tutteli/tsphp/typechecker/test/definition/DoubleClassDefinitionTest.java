@@ -16,7 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker.test.definition;
 
-import ch.tutteli.tsphp.typechecker.test.testutils.ATypeCheckerDoubleDefinitionTest;
+import ch.tutteli.tsphp.typechecker.test.testutils.ADoubleDefinitionTest;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -30,7 +30,7 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class DoubleClassDefinitionTest extends ATypeCheckerDoubleDefinitionTest
+public class DoubleClassDefinitionTest extends ADoubleDefinitionTest
 {
 
     public DoubleClassDefinitionTest(String testString, String theNamespace, String theIdentifier, int howMany) {
@@ -47,10 +47,11 @@ public class DoubleClassDefinitionTest extends ATypeCheckerDoubleDefinitionTest
         List<Object[]> collection = new ArrayList<>();
         String a = "class a{}";
         String A = "class A{}";
+        collection.addAll(getDifferentNamespaces(a + "", "a", 1));
         collection.addAll(getDifferentNamespaces(A + "", "A", 1));
-        collection.addAll(getDifferentNamespaces(a + " " + A + "", "A", 1));
+        collection.addAll(getDifferentNamespaces(a + " " + A + "", "A", 2));
         collection.addAll(getDifferentNamespaces(a + " " + a + "", "a", 2));
-        collection.addAll(getDifferentNamespaces(a + " " + A + " " + a + "", "a", 2));
+        collection.addAll(getDifferentNamespaces(a + " " + A + " " + a + "", "a", 3));
         return collection;
     }
 }

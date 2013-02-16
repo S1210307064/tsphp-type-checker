@@ -14,28 +14,15 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.scopes;
+package ch.tutteli.tsphp.typechecker.symbols;
 
-import ch.tutteli.tsphp.common.ILowerCaseStringMap;
-import ch.tutteli.tsphp.common.IScope;
-import ch.tutteli.tsphp.common.ISymbol;
-import ch.tutteli.tsphp.common.ITSPHPAst;
-import java.util.Map;
+import ch.tutteli.tsphp.common.ITypeSymbol;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public interface IScopeHelper
+public interface IAliasTypeSymbol extends ITypeSymbol
 {
-
-    void define(IScope definitionScope, ISymbol symbol);
-
-    void definitionCheck(IScope definitionScope, ISymbol symbol);
-
-    void definitionCheck(ISymbol firstDefinition, ISymbol symbolToCheck);
-
-    IScope getCorrespondingGlobalNamespace(ILowerCaseStringMap<IScope> globalNamespaceScopes, String typeName);
-
-    ISymbol resolve(IScope scope, ITSPHPAst typeAst);
+    
 }

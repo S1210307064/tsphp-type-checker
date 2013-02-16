@@ -16,19 +16,23 @@
  */
 package ch.tutteli.tsphp.typechecker;
 
-import ch.tutteli.tsphp.typechecker.symbols.ErroneusTypeSymbol;
+import ch.tutteli.tsphp.common.ILowerCaseStringMap;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
-import ch.tutteli.tsphp.common.exceptions.ReferenceException;
+import ch.tutteli.tsphp.common.LowerCaseStringMap;
+import ch.tutteli.tsphp.common.exceptions.UnresolvedReferenceException;
 import ch.tutteli.tsphp.typechecker.error.ErrorHelperRegistry;
 import ch.tutteli.tsphp.typechecker.scopes.GlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.IConditionalScope;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.IScopeFactory;
 import ch.tutteli.tsphp.typechecker.scopes.ScopeHelperRegistry;
+import ch.tutteli.tsphp.typechecker.symbols.AliasTypeSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.ErroneusTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IAliasTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IErroneusTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IInterfaceTypeSymbol;
@@ -36,6 +40,7 @@ import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -48,7 +53,7 @@ public class SymbolTable implements ISymbolTable
     public static String[] compoundTypes = new String[]{"array", "resource", "object"};
     private ISymbolFactory symbolFactory;
     private IScopeFactory scopeFactory;
-    private Map<String, IScope> globalNamespaceScopes = new HashMap<>();
+    private ILowerCaseStringMap<IScope> globalNamespaceScopes = new LowerCaseStringMap<>();
     private IScope globalDefaultNamespace;
 
     public SymbolTable(ISymbolFactory aSymbolFactory, IScopeFactory aScopeFactory) {
@@ -75,7 +80,7 @@ public class SymbolTable implements ISymbolTable
     }
 
     @Override
-    public Map<String, IScope> getGlobalNamespaceScopes() {
+    public ILowerCaseStringMap<IScope> getGlobalNamespaceScopes() {
         return globalNamespaceScopes;
     }
 
@@ -208,7 +213,7 @@ public class SymbolTable implements ISymbolTable
 
         ITypeSymbol typeSymbol = resolveTypeOrReturnNull(typeAst);
         if (typeSymbol == null) {
-            typeSymbol =  new ErroneusTypeSymbol(typeAst);
+            typeSymbol =  new AliasTypeSymbol(typeAst,typeAst.getText());
         }
         return typeSymbol;
 
@@ -238,12 +243,12 @@ public class SymbolTable implements ISymbolTable
             if (!isFullTypeName(typeName)) {
                 typeAst.setText(getEnclosingGlobalNamespaceScope(typeAst.getScope()).getScopeName() + typeName);
             }
-            ReferenceException ex = ErrorHelperRegistry.get().addAndGetUnkownTypeException(typeAst);
+            UnresolvedReferenceException ex = ErrorHelperRegistry.get().addAndGetUnkownTypeException(typeAst);
             typeSymbol = new ErroneusTypeSymbol(typeAst, ex);
-        }else if(typeSymbol instanceof IErroneusTypeSymbol){
+        }else if(typeSymbol instanceof IAliasTypeSymbol){
             typeAst.setText(typeSymbol.getName());
-            ReferenceException ex = ErrorHelperRegistry.get().addAndGetUnkownTypeException(typeAst);
-            ((IErroneusTypeSymbol) typeSymbol).setException(ex);
+            UnresolvedReferenceException ex = ErrorHelperRegistry.get().addAndGetUnkownTypeException(typeAst);
+            typeSymbol = new ErroneusTypeSymbol(typeSymbol.getDefinitionAst(), ex);
         }
         return typeSymbol;
     }

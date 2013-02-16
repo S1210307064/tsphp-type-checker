@@ -16,13 +16,13 @@
  */
 package ch.tutteli.tsphp.typechecker.scopes;
 
+import ch.tutteli.tsphp.common.ILowerCaseStringMap;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
-import java.util.LinkedHashMap;
+import ch.tutteli.tsphp.common.LowerCaseStringMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -35,7 +35,7 @@ public abstract class AScope implements IScope
 
     protected String scopeName;
     protected IScope enclosingScope;
-    protected Map<String, List<ISymbol>> symbols = new LinkedHashMap<>();
+    protected ILowerCaseStringMap<List<ISymbol>> symbols = new LowerCaseStringMap<>();
 
     public AScope(String theScopeName, IScope theEnclosingScope) {
         scopeName = theScopeName;
@@ -53,7 +53,7 @@ public abstract class AScope implements IScope
     }
 
     @Override
-    public ISymbol resolve(ITSPHPAst typeAst){
+    public ISymbol resolve(ITSPHPAst typeAst) {
         return ScopeHelperRegistry.get().resolve(this, typeAst);
     }
 
@@ -79,12 +79,12 @@ public abstract class AScope implements IScope
     }
 
     @Override
-    public Map<String, List<ISymbol>> getSymbols() {
+    public ILowerCaseStringMap<List<ISymbol>> getSymbols() {
         return symbols;
     }
 
     @Override
     public String toString() {
-        return scopeName+":"+symbols.keySet().toString();
+        return scopeName + ":" + symbols.keySet().toString();
     }
 }

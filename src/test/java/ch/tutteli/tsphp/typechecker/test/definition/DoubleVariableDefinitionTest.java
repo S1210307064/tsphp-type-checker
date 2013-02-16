@@ -16,8 +16,8 @@
  */
 package ch.tutteli.tsphp.typechecker.test.definition;
 
-import ch.tutteli.tsphp.typechecker.test.testutils.ATypeCheckerDefinitionScopeTest;
-import ch.tutteli.tsphp.typechecker.test.testutils.ATypeCheckerDoubleDefinitionTest;
+import ch.tutteli.tsphp.typechecker.test.testutils.ADefinitionScopeTest;
+import ch.tutteli.tsphp.typechecker.test.testutils.ADoubleDefinitionTest;
 import ch.tutteli.tsphp.typechecker.test.testutils.ScopeTestHelper;
 import ch.tutteli.tsphp.typechecker.test.testutils.ScopeTestStruct;
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class DoubleVariableDefinitionTest extends ATypeCheckerDoubleDefinitionTest
+public class DoubleVariableDefinitionTest extends ADoubleDefinitionTest
 {
 
     public DoubleVariableDefinitionTest(String testString, String theNamespace, String theIdentifier, int howMany) {

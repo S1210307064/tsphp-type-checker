@@ -18,7 +18,7 @@ package ch.tutteli.tsphp.typechecker.test.definition;
 
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
 import ch.tutteli.tsphp.typechecker.symbols.ModifierHelper;
-import ch.tutteli.tsphp.typechecker.test.testutils.ATypeCheckerDefinitionSymbolTest;
+import ch.tutteli.tsphp.typechecker.test.testutils.ADefinitionSymbolTest;
 import ch.tutteli.tsphp.typechecker.test.testutils.IAdder;
 import ch.tutteli.tsphp.typechecker.test.testutils.ParameterListHelper;
 import ch.tutteli.tsphp.typechecker.test.testutils.TypeHelper;
@@ -38,7 +38,7 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class MethodTest extends ATypeCheckerDefinitionSymbolTest
+public class MethodTest extends ADefinitionSymbolTest
 {
 
     private static String prefix = "namespace a{ class b{";

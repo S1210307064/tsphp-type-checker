@@ -16,11 +16,11 @@
  */
 package ch.tutteli.tsphp.typechecker.test.definition;
 
+import ch.tutteli.tsphp.common.ILowerCaseStringMap;
 import ch.tutteli.tsphp.common.IScope;
-import ch.tutteli.tsphp.typechecker.test.testutils.ATypeCheckerDefinitionTest;
+import ch.tutteli.tsphp.typechecker.test.testutils.ADefinitionTest;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Map;
 import junit.framework.Assert;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
@@ -32,7 +32,7 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class GlobalNamespaceTest extends ATypeCheckerDefinitionTest
+public class GlobalNamespaceTest extends ADefinitionTest
 {
 
     String[] namespaces;
@@ -49,7 +49,7 @@ public class GlobalNamespaceTest extends ATypeCheckerDefinitionTest
 
     @Override
     protected void verifyDefinitions() {
-        Map<String, IScope> globalNamespaceScopes = symbolTable.getGlobalNamespaceScopes();
+         ILowerCaseStringMap<IScope> globalNamespaceScopes = symbolTable.getGlobalNamespaceScopes();
         Assert.assertEquals(testString + " failed. size wrong ", namespaces.length, globalNamespaceScopes.size());
 
         for (String namespace : namespaces) {
