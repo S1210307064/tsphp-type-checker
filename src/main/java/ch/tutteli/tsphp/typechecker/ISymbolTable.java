@@ -58,6 +58,10 @@ public interface ISymbolTable
 
     void defineVariable(IScope currentScope, ITSPHPAst modifier, ITSPHPAst type, ITSPHPAst variableId);
 
+    boolean checkIfInterface(ITSPHPAst typeAst, ITypeSymbol symbol);
+
+    boolean checkIfClass(ITSPHPAst typeAst, ITypeSymbol symbol);
+
     ISymbol resolve(ITSPHPAst ast);
 
     ISymbol resolveWithFallBack(ITSPHPAst ast);

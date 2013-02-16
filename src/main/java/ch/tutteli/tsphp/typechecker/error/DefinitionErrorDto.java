@@ -20,7 +20,7 @@ package ch.tutteli.tsphp.typechecker.error;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class DefinitionErrorDto extends UnresolvedReferenceErrorDto
+public class DefinitionErrorDto extends ReferenceErrorDto
 {
 
     public String identifierNewDefinition;

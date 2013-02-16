@@ -114,23 +114,23 @@ public class ClassInterfaceDoubleDefinitionErrorTest extends AReferenceDefinitio
                     {prefix + "class b{} class \n a extends b{} " + kind + " \n a{}" + appendix, errorDto},
                     {prefix + "interface b{} class \n a implements b{} " + kind + " \n a{}" + appendix, errorDto},
                     {prefix + "class b{} class c{} " + kind + " \n a{} class \n a extends b,c{}" + appendix, errorDto},
-                    {prefix + "interface b{} class c{} " + kind + " \n a{}class \n a implements b,c{}" + appendix, errorDto},
-                    {prefix + "class b{} class c{}  " + kind + " \n a extends b,c{} class \n a{}" + appendix, errorDto},
+                    {prefix + "interface b{} interface c{} " + kind + " \n a{}class \n a implements b,c{}" + appendix, errorDto},
+                    {prefix + kind + "  b{} " + kind + "  c{}  " + kind + " \n a extends b,c{} class \n a{}" + appendix, errorDto},
                     {prefix + "interface b{} interface c{} class \n a implements b,c{} " + kind + " \n a{}" + appendix, errorDto},
-                    {prefix + "class b{} class c{}  " + kind + " \n a extends b,c{} class \n a{}" + appendix, errorDto},
-                    {prefix + "interface b{} class c{} " + kind + " \n a extends c{}  class \n a implements b{}" + appendix, errorDto},
-                    {prefix + "interface b{} class c{} class \n a implements b{} " + kind + " \n a extends c{}" + appendix, errorDto},
+                    {prefix + kind + "  b{} " + kind + " c{}  " + kind + " \n a extends b,c{} class \n a{}" + appendix, errorDto},
+                    {prefix + "interface b{} " + kind + " c{} " + kind + " \n a extends c{}  class \n a implements b{}" + appendix, errorDto},
+                    {prefix + "interface b{} " + kind + "  c{} class \n a implements b{} " + kind + " \n a extends c{}" + appendix, errorDto},
                     //
                     {prefix + kind + " \n a{}class \n a{} class \n a{}" + appendix, errorDtoTwo},
-                    {prefix + "class b{} " + kind + " \n a{}class \n a extends b{} class \n a implements b{}" + appendix,
+                    {prefix + "class b{} interface c{}" + kind + " \n a{}class \n a extends b{} class \n a implements c{}" + appendix,
                         errorDtoTwo
                     },
                     //
                     {prefix + kind + " \n a{} interface \n a{}" + appendix, errorDto},
                     {prefix + "interface b{} " + kind + " \n a{}interface \n a extends b{}" + appendix, errorDto},
-                    {prefix + "interface b{} " + kind + " \n a extends b{} interface \n a{}" + appendix, errorDto},
+                    {prefix + kind + " b{} " + kind + " \n a extends b{} interface \n a{}" + appendix, errorDto},
                     {prefix + "interface b{} interface c{} " + kind + " \n a{} interface \n a extends b,c{}" + appendix, errorDto},
-                    {prefix + "interface b{} interface c{}  " + kind + " \n a extends b,c{} interface \n a{}" + appendix, errorDto},
+                    {prefix + "interface b{} interface c{} interface \n a extends b,c{} " + kind + " \n a{} " + appendix, errorDto},
                     //
                     {prefix + kind + " \n a{}interface \n a{} interface \n a{}" + appendix,
                         errorDtoTwo

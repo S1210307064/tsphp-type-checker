@@ -17,9 +17,9 @@
 package ch.tutteli.tsphp.typechecker.test.testutils;
 
 import ch.tutteli.tsphp.common.IErrorReporter;
-import ch.tutteli.tsphp.common.exceptions.UnresolvedReferenceException;
-import ch.tutteli.tsphp.typechecker.error.ErrorHelperRegistry;
-import ch.tutteli.tsphp.typechecker.error.UnresolvedReferenceErrorDto;
+import ch.tutteli.tsphp.common.exceptions.ReferenceException;
+import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
+import ch.tutteli.tsphp.typechecker.error.ReferenceErrorDto;
 import java.util.List;
 import junit.framework.Assert;
 import org.junit.Ignore;
@@ -29,12 +29,12 @@ import org.junit.Ignore;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @Ignore
-public abstract class AUnresolvedReferenceErrorTest extends AReferenceTest
+public abstract class AReferenceErrorTest extends AReferenceTest
 {
 
-    protected UnresolvedReferenceErrorDto[] errorDtos;
+    protected ReferenceErrorDto[] errorDtos;
 
-    public AUnresolvedReferenceErrorTest(String testString, UnresolvedReferenceErrorDto[] theErrorDtos) {
+    public AReferenceErrorTest(String testString, ReferenceErrorDto[] theErrorDtos) {
         super(testString);
         errorDtos = theErrorDtos;
     }
@@ -46,24 +46,23 @@ public abstract class AUnresolvedReferenceErrorTest extends AReferenceTest
 
     @Override
     public void verifyReferences() {
-        String test = testString.replaceAll("\n", "");
-        IErrorReporter errorReporter = ErrorHelperRegistry.get();
-        Assert.assertTrue(testString + " failed. No exception occured.", errorReporter.hasFoundError());
+        IErrorReporter errorReporter = ErrorReporterRegistry.get();
+        Assert.assertTrue(errorMessagePrefix + " failed. No exception occured.", errorReporter.hasFoundError());
 
         List<Exception> exceptions = errorReporter.getExceptions();
-        Assert.assertEquals(test + " failed. More or less exceptions occured." + exceptions.toString(), errorDtos.length,
+        Assert.assertEquals(errorMessagePrefix + " failed. More or less exceptions occured." + exceptions.toString(), errorDtos.length,
                 exceptions.size());
 
         for (int i = 0; i < errorDtos.length; ++i) {
-            UnresolvedReferenceException exception = (UnresolvedReferenceException) exceptions.get(i);
-            
-            Assert.assertEquals(test + " failed. wrong identifier.",
+            ReferenceException exception = (ReferenceException) exceptions.get(i);
+
+            Assert.assertEquals(errorMessagePrefix + " failed. wrong identifier.",
                     errorDtos[i].identifier, exception.getDefinition().getText());
 
-            Assert.assertEquals(test + " failed. wrong new line.",
+            Assert.assertEquals(errorMessagePrefix + " failed. wrong line.",
                     errorDtos[i].line, exception.getDefinition().getLine());
-            
-            Assert.assertEquals(test + " failed. wrong new position.",
+
+            Assert.assertEquals(errorMessagePrefix + " failed. wrong position.",
                     errorDtos[i].position, exception.getDefinition().getCharPositionInLine());
         }
     }

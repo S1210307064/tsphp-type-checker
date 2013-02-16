@@ -22,8 +22,8 @@ import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.LowerCaseStringMap;
-import ch.tutteli.tsphp.common.exceptions.UnresolvedReferenceException;
-import ch.tutteli.tsphp.typechecker.error.ErrorHelperRegistry;
+import ch.tutteli.tsphp.common.exceptions.ReferenceException;
+import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.scopes.GlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.IConditionalScope;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
@@ -34,6 +34,7 @@ import ch.tutteli.tsphp.typechecker.symbols.ErroneusTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IErroneusTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IInterfaceTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
@@ -168,6 +169,24 @@ public class SymbolTable implements ISymbolTable
         define(currentScope, variableId, variableSymbol);
     }
 
+    @Override
+    public boolean checkIfInterface(ITSPHPAst typeAst, ITypeSymbol symbol) {
+        boolean isInterface = symbol instanceof IInterfaceTypeSymbol || symbol instanceof IErroneusTypeSymbol;
+        if (!isInterface) {
+            ErrorReporterRegistry.get().interfaceExpected(typeAst);
+        }
+        return isInterface;
+    }
+
+    @Override
+    public boolean checkIfClass(ITSPHPAst typeAst, ITypeSymbol symbol) {
+        boolean isClass = symbol instanceof IClassTypeSymbol || symbol instanceof IErroneusTypeSymbol;
+        if (!isClass) {
+            ErrorReporterRegistry.get().classExpected(typeAst);
+        }
+        return isClass;
+    }
+
     private void assignScopeToIdentifiers(IScope currentScope, ITSPHPAst identifierList) {
         int lenght = identifierList.getChildCount();
         for (int i = 0; i < lenght; ++i) {
@@ -209,7 +228,7 @@ public class SymbolTable implements ISymbolTable
 
         ITypeSymbol typeSymbol = resolveTypeOrReturnNull(typeAst);
         if (typeSymbol == null) {
-            typeSymbol =  new AliasTypeSymbol(typeAst,typeAst.getText());
+            typeSymbol = new AliasTypeSymbol(typeAst, typeAst.getText());
         }
         return typeSymbol;
 
@@ -239,11 +258,13 @@ public class SymbolTable implements ISymbolTable
             if (!isFullTypeName(typeName)) {
                 typeAst.setText(getEnclosingGlobalNamespaceScope(typeAst.getScope()).getScopeName() + typeName);
             }
-            UnresolvedReferenceException ex = ErrorHelperRegistry.get().addAndGetUnkownTypeException(typeAst);
+            ReferenceException ex = ErrorReporterRegistry.get().unkownType(typeAst);
             typeSymbol = new ErroneusTypeSymbol(typeAst, ex);
-        }else if(typeSymbol instanceof IAliasTypeSymbol){
+
+        } else if (typeSymbol instanceof IAliasTypeSymbol) {
+
             typeAst.setText(typeSymbol.getName());
-            UnresolvedReferenceException ex = ErrorHelperRegistry.get().addAndGetUnkownTypeException(typeAst);
+            ReferenceException ex = ErrorReporterRegistry.get().unkownType(typeAst);
             typeSymbol = new ErroneusTypeSymbol(typeSymbol.getDefinitionAst(), ex);
         }
         return typeSymbol;

@@ -20,7 +20,7 @@ import ch.tutteli.tsphp.common.ILowerCaseStringMap;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.typechecker.error.ErrorHelperRegistry;
+import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.utils.MapHelper;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +47,7 @@ public class ScopeHelper implements IScopeHelper
     public boolean definitionCheck(ISymbol firstDefinition, ISymbol symbolToCheck) {
         boolean isFirst = firstDefinition.equals(symbolToCheck);
         if (!isFirst) {
-            ErrorHelperRegistry.get().addAlreadyDefinedException(firstDefinition, symbolToCheck);
+            ErrorReporterRegistry.get().alreadyDefined(firstDefinition, symbolToCheck);
         }
         return isFirst;
     }

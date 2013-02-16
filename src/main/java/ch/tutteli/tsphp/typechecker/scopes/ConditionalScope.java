@@ -19,9 +19,7 @@ package ch.tutteli.tsphp.typechecker.scopes;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.typechecker.error.ErrorHelperRegistry;
-import java.util.ArrayList;
-import java.util.List;
+import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
 
 /**
  *
@@ -42,7 +40,7 @@ public class ConditionalScope extends AScope implements IConditionalScope
         ISymbol symbolEnclosingScope = enclosingScope.resolve(symbol.getDefinitionAst());
         if (symbolEnclosingScope != null) {
             ok = false;
-            ErrorHelperRegistry.get().determineAlreadyDefinedException(symbolEnclosingScope, symbol);
+            ErrorReporterRegistry.get().determineAlreadyDefined(symbolEnclosingScope, symbol);
         }
         return ok;
     }

@@ -16,16 +16,13 @@
  */
 package ch.tutteli.tsphp.typechecker.test.error;
 
+import ch.tutteli.tsphp.common.IErrorReporter;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.TSPHPAst;
 import ch.tutteli.tsphp.common.exceptions.DefinitionException;
-import ch.tutteli.tsphp.typechecker.error.ErrorHelper;
-import ch.tutteli.tsphp.typechecker.error.ErrorHelperRegistry;
-import ch.tutteli.tsphp.typechecker.error.ErrorMessageProvider;
-import ch.tutteli.tsphp.typechecker.error.IErrorHelper;
+import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.symbols.VariableSymbol;
 import ch.tutteli.tsphp.typechecker.test.testutils.ATest;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -42,7 +39,7 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class ErrorHelperTest extends ATest
+public class ErrorReporterTest extends ATest
 {
 
     private String identifier;
@@ -52,7 +49,7 @@ public class ErrorHelperTest extends ATest
     private int positionNew;
     String failed;
 
-    public ErrorHelperTest(String theIdentifier, int theLineExisting, int thePositionExisting,
+    public ErrorReporterTest(String theIdentifier, int theLineExisting, int thePositionExisting,
             int theLineNew, int thePositionNew) {
         super();
         identifier = theIdentifier;
@@ -70,7 +67,7 @@ public class ErrorHelperTest extends ATest
         ITSPHPAst ast1 = createAst(identifier, lineExisting, positionExisting);
         ITSPHPAst ast2 = createAst(identifier, lineNew, positionNew);
 
-        ErrorHelperRegistry.get().addAlreadyDefinedException(ast1, ast2);
+        ErrorReporterRegistry.get().alreadyDefined(ast1, ast2);
         check(ast1, ast2, ast1, ast2);
     }
 
@@ -80,7 +77,7 @@ public class ErrorHelperTest extends ATest
         ITSPHPAst ast2 = createAst(identifier, lineNew, positionNew);
         ast1.setSymbol(new VariableSymbol(ast1, new HashSet<Integer>(), "$a"));
         ast2.setSymbol(new VariableSymbol(ast2, new HashSet<Integer>(), "$a"));
-        ErrorHelperRegistry.get().addAlreadyDefinedException(ast1.getSymbol(), ast2.getSymbol());
+        ErrorReporterRegistry.get().alreadyDefined(ast1.getSymbol(), ast2.getSymbol());
         check(ast1, ast2, ast1, ast2);
     }
 
@@ -90,7 +87,7 @@ public class ErrorHelperTest extends ATest
 
     protected void check(ITSPHPAst ast1, ITSPHPAst ast2,
             ITSPHPAst[][] expectedExceptions) {
-        IErrorHelper errorHelper = ErrorHelperRegistry.get();
+        IErrorReporter errorHelper = ErrorReporterRegistry.get();
         Assert.assertTrue(failed + ", exceptions was empty.", errorHelper.hasFoundError());
         List<Exception> exceptions = errorHelper.getExceptions();
 

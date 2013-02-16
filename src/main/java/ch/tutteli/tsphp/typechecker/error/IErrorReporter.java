@@ -16,34 +16,37 @@
  */
 package ch.tutteli.tsphp.typechecker.error;
 
-import ch.tutteli.tsphp.common.IErrorReporter;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.exceptions.DefinitionException;
-import ch.tutteli.tsphp.common.exceptions.UnresolvedReferenceException;
+import ch.tutteli.tsphp.common.exceptions.ReferenceException;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public interface IErrorHelper extends IErrorReporter
+public interface IErrorReporter extends ch.tutteli.tsphp.common.IErrorReporter
 {
 
     /**
      * Determine which AST was defined earlier and call the method addAlreadyefinedException correspondingly.
      */
-    void determineAlreadyDefinedException(ITSPHPAst ast1, ITSPHPAst ast2);
+    DefinitionException determineAlreadyDefined(ITSPHPAst ast1, ITSPHPAst ast2);
 
     /**
      * Determine which symbol was defined earlier and call the method addAlreadyefinedException correspondingly.
      */
-    void determineAlreadyDefinedException(ISymbol symbolEnclosingScope, ISymbol symbol);
+    DefinitionException determineAlreadyDefined(ISymbol symbolEnclosingScope, ISymbol symbol);
 
-    void addAlreadyDefinedException(ISymbol existingSymbol, ISymbol newSymbol);
+    DefinitionException alreadyDefined(ISymbol existingSymbol, ISymbol newSymbol);
 
-    void addAlreadyDefinedException(ITSPHPAst existingDefintion, ITSPHPAst newDefinition);
+    DefinitionException alreadyDefined(ITSPHPAst existingDefintion, ITSPHPAst newDefinition);
 
-    DefinitionException addAndGetUseForwardReferenceException(ITSPHPAst typeAst, ITSPHPAst useDefinition);
+    DefinitionException forwardReferenceException(ITSPHPAst typeAst, ITSPHPAst useDefinition);
 
-    public UnresolvedReferenceException addAndGetUnkownTypeException(ITSPHPAst typeAst);
+    ReferenceException unkownType(ITSPHPAst typeAst);
+
+    ReferenceException interfaceExpected(ITSPHPAst typeAst);
+
+    ReferenceException classExpected(ITSPHPAst typeAst);
 }

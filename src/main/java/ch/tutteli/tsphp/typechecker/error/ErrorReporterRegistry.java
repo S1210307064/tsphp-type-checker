@@ -20,15 +20,15 @@ package ch.tutteli.tsphp.typechecker.error;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class ErrorHelperRegistry
+public class ErrorReporterRegistry
 {
-    private static IErrorHelper errorHelper;
-    private ErrorHelperRegistry(){}
+    private static IErrorReporter errorHelper;
+    private ErrorReporterRegistry(){}
     
-    public static IErrorHelper get(){
+    public static IErrorReporter get(){
         return errorHelper;
     }
-    public static void set(IErrorHelper newErrorHelper){
+    public static void set(IErrorReporter newErrorHelper){
         errorHelper = newErrorHelper;
     }
 }

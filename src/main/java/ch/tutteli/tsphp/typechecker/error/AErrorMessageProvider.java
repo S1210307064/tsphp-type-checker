@@ -32,9 +32,9 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
 
     protected abstract void loadReferenceErrorMessages();
 
-    protected abstract String getStandardErrorDefinitionMessage(DefinitionErrorDto dto);
+    protected abstract String getStandardErrorDefinitionMessage(String key, DefinitionErrorDto dto);
 
-    protected abstract String getStandardErrorReferenceMessage(UnresolvedReferenceErrorDto dto);
+    protected abstract String getStandardErrorReferenceMessage(String key, ReferenceErrorDto dto);
 
     @Override
     public String getErrorDefinitionMessage(String key, DefinitionErrorDto dto) {
@@ -44,19 +44,27 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
         }
         if (definitionErrors.containsKey(key)) {
             message = definitionErrors.get(key);
-            message = message.replace("%id%", "" + dto.identifier);
-            message = message.replace("%line%", "" + dto.lineNewDefinition);
-            message = message.replace("%pos%", "" + dto.positionNewDefinition);
-            message = message.replace("%lineE%", "" + dto.line);
-            message = message.replace("%posE%", "" + dto.position);
+            if (dto.identifier.equals(dto.identifier)) {
+                message = message.replace("%id%", "");
+            } else {
+                message = message.replace("%id%", "(" + dto.identifier + ")");
+            }
+
+            message = message.replace("%line%", "" + dto.line);
+            message = message.replace("%pos%", "" + dto.position);
+
+            message = message.replace("%idN%", dto.identifierNewDefinition);
+            message = message.replace("%lineN%", "" + dto.lineNewDefinition);
+            message = message.replace("%posN%", "" + dto.positionNewDefinition);
+
         } else {
-            message = getStandardErrorDefinitionMessage(dto);
+            message = getStandardErrorDefinitionMessage(key, dto);
         }
         return message;
     }
 
     @Override
-    public String getErrorReferenceMessage(String key, UnresolvedReferenceErrorDto dto) {
+    public String getErrorReferenceMessage(String key, ReferenceErrorDto dto) {
         String message;
         if (referenceErrors == null) {
             loadReferenceErrorMessages();
@@ -67,7 +75,7 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
             message = message.replace("%line%", "" + dto.line);
             message = message.replace("%pos%", "" + dto.position);
         } else {
-            message = getStandardErrorReferenceMessage(dto);
+            message = getStandardErrorReferenceMessage(key, dto);
         }
         return message;
     }

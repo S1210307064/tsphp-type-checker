@@ -19,7 +19,7 @@ package ch.tutteli.tsphp.typechecker.test.testutils;
 import ch.tutteli.tsphp.common.IErrorReporter;
 import ch.tutteli.tsphp.common.exceptions.DefinitionException;
 import ch.tutteli.tsphp.typechecker.error.DefinitionErrorDto;
-import ch.tutteli.tsphp.typechecker.error.ErrorHelperRegistry;
+import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
 import java.util.List;
 import junit.framework.Assert;
 import org.junit.Ignore;
@@ -47,7 +47,7 @@ public abstract class AReferenceDefinitionErrorTest extends AReferenceTest
     @Override
     public void verifyReferences() {
 
-        IErrorReporter errorReporter = ErrorHelperRegistry.get();
+        IErrorReporter errorReporter = ErrorReporterRegistry.get();
         Assert.assertTrue(errorMessagePrefix + " failed. No exception occured.", errorReporter.hasFoundError());
 
         List<Exception> exceptions = errorReporter.getExceptions();

@@ -23,7 +23,7 @@ import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.LowerCaseStringMap;
 import ch.tutteli.tsphp.common.exceptions.DefinitionException;
-import ch.tutteli.tsphp.typechecker.error.ErrorHelperRegistry;
+import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.symbols.ErroneusTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
@@ -133,9 +133,9 @@ public class NamespaceScope extends AScope implements INamespaceScope
         if (hasTypeNameClash(useDefinition, typeSymbol)) {
             ITSPHPAst typeDefinition = typeSymbol.getDefinitionAst();
             if (useDefinition.isDefinedEarlierThan(typeDefinition)) {
-                ErrorHelperRegistry.get().addAlreadyDefinedException(useDefinition, typeDefinition);
+                ErrorReporterRegistry.get().alreadyDefined(useDefinition, typeDefinition);
             } else {
-                ErrorHelperRegistry.get().addAlreadyDefinedException(typeDefinition, useDefinition);
+                ErrorReporterRegistry.get().alreadyDefined(typeDefinition, useDefinition);
                 //we do not use the alias if it was defined later than typeSymbol
                 useDefinition = null;
             }
@@ -167,7 +167,7 @@ public class NamespaceScope extends AScope implements INamespaceScope
                 typeSymbol = globalNamespaceScope.resolveType(typeAst);
             }
         } else {
-            DefinitionException ex = ErrorHelperRegistry.get().addAndGetUseForwardReferenceException(typeAst, useDefinition);
+            DefinitionException ex = ErrorReporterRegistry.get().forwardReferenceException(typeAst, useDefinition);
             typeSymbol = new ErroneusTypeSymbol(typeAst, ex);
         }
         return typeSymbol;

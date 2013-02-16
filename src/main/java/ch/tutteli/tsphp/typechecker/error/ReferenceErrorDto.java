@@ -20,14 +20,14 @@ package ch.tutteli.tsphp.typechecker.error;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class UnresolvedReferenceErrorDto
+public class ReferenceErrorDto
 {
 
     public String identifier;
     public int line;
     public int position;
 
-    public UnresolvedReferenceErrorDto(String theIdentifier, int theLine, int thePosition) {
+    public ReferenceErrorDto(String theIdentifier, int theLine, int thePosition) {
         identifier = theIdentifier;
         line = theLine;
         position = thePosition;

@@ -17,8 +17,8 @@
 package ch.tutteli.tsphp.typechecker.test.testutils;
 
 import ch.tutteli.tsphp.typechecker.error.ErrorHelper;
-import ch.tutteli.tsphp.typechecker.error.ErrorHelperRegistry;
 import ch.tutteli.tsphp.typechecker.error.ErrorMessageProvider;
+import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.scopes.ScopeHelper;
 import ch.tutteli.tsphp.typechecker.scopes.ScopeHelperRegistry;
 import org.junit.Ignore;
@@ -33,6 +33,6 @@ public class ATest
 
     public ATest() {
         ScopeHelperRegistry.set(new ScopeHelper());
-        ErrorHelperRegistry.set(new ErrorHelper(new ErrorMessageProvider()));
+        ErrorReporterRegistry.set(new ErrorHelper(new ErrorMessageProvider()));
     }
 }

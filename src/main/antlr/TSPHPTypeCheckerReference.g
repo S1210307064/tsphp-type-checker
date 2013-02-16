@@ -89,17 +89,17 @@ useDeclaration
 	;
 
 interfaceDeclaration
-	:	^('interface' iMod=. identifier=Identifier extIds=extendsDeclaration .)
+	:	^('interface' iMod=. identifier=Identifier extIds=interfaceExtendsDeclaration .)
 		{
 			INamespaceScope namespaceScope = (INamespaceScope) $identifier.getScope();
 			namespaceScope.definitionCheckCaseInsensitive($identifier.getSymbol());
 		}
 	;
-
-extendsDeclaration	
-	:	^('extends' allTypes+)
+interfaceExtendsDeclaration
+	:	^('extends' (allTypes{symbolTable.checkIfInterface($allTypes.start, $allTypes.type);})+) 
 	|	'extends'
 	;
+
 	
 classDeclaration
 	:	^('class' cMod=. identifier=Identifier extIds=extendsDeclaration implIds=implementsDeclaration .) 
@@ -108,9 +108,14 @@ classDeclaration
 			namespaceScope.definitionCheckCaseInsensitive($identifier.getSymbol());
 		}
 	;
-	
+
+extendsDeclaration	
+	:	^('extends' (allTypes{symbolTable.checkIfClass($allTypes.start, $allTypes.type);})+)
+	|	'extends'
+	;
+
 implementsDeclaration
-	:	^('implements' allTypes+)
+	:	^('implements' (allTypes{symbolTable.checkIfInterface($allTypes.start, $allTypes.type);})+)
 	|	'implements'
 	;
 

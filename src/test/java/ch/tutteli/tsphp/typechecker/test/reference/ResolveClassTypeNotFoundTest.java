@@ -16,8 +16,8 @@
  */
 package ch.tutteli.tsphp.typechecker.test.reference;
 
-import ch.tutteli.tsphp.typechecker.error.UnresolvedReferenceErrorDto;
-import ch.tutteli.tsphp.typechecker.test.testutils.AUnresolvedReferenceErrorTest;
+import ch.tutteli.tsphp.typechecker.error.ReferenceErrorDto;
+import ch.tutteli.tsphp.typechecker.test.testutils.AReferenceErrorTest;
 import ch.tutteli.tsphp.typechecker.test.testutils.TypeHelper;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,10 +33,10 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class ResolveClassTypeNotFoundTest extends AUnresolvedReferenceErrorTest
+public class ResolveClassTypeNotFoundTest extends AReferenceErrorTest
 {
 
-    public ResolveClassTypeNotFoundTest(String testString, UnresolvedReferenceErrorDto[] theErrorDtos) {
+    public ResolveClassTypeNotFoundTest(String testString, ReferenceErrorDto[] theErrorDtos) {
         super(testString, theErrorDtos);
     }
 
@@ -58,15 +58,15 @@ public class ResolveClassTypeNotFoundTest extends AUnresolvedReferenceErrorTest
                     //aliases are always absolute        
                     {
                         "namespace b  {class a{} use a as b;\n b $b;} ",
-                        new UnresolvedReferenceErrorDto[]{new UnresolvedReferenceErrorDto("\\a", 2, 1)}
+                        new ReferenceErrorDto[]{new ReferenceErrorDto("\\a", 2, 1)}
                     },
                     {
                         "namespace b\\c  {class a{} use a as b;\n b $b;} ",
-                        new UnresolvedReferenceErrorDto[]{new UnresolvedReferenceErrorDto("\\a", 2, 1)}
+                        new ReferenceErrorDto[]{new ReferenceErrorDto("\\a", 2, 1)}
                     },
                     {
                         "namespace b\\c\\d  {class a{} use a as b;\n b $b;} ",
-                        new UnresolvedReferenceErrorDto[]{new UnresolvedReferenceErrorDto("\\a", 2, 1)}
+                        new ReferenceErrorDto[]{new ReferenceErrorDto("\\a", 2, 1)}
                     }
                 }));
 
@@ -81,14 +81,14 @@ public class ResolveClassTypeNotFoundTest extends AUnresolvedReferenceErrorTest
             String fullType = getFullName(namespace, type);
             collection.add(new Object[]{
                         prefix + "\n " + type + "$a;" + appendix,
-                        new UnresolvedReferenceErrorDto[]{new UnresolvedReferenceErrorDto(fullType, 2, 1)}
+                        new ReferenceErrorDto[]{new ReferenceErrorDto(fullType, 2, 1)}
                     });
 
             //Alias
             String aliasFullType = getAliasFullType(type);
             collection.add(new Object[]{
                         prefix + "use " + type + " as test;\n test $a;" + appendix,
-                        new UnresolvedReferenceErrorDto[]{new UnresolvedReferenceErrorDto(aliasFullType, 2, 1)}
+                        new ReferenceErrorDto[]{new ReferenceErrorDto(aliasFullType, 2, 1)}
                     });
         }
         return collection;

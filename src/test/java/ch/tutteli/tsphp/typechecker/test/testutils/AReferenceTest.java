@@ -16,9 +16,9 @@
  */
 package ch.tutteli.tsphp.typechecker.test.testutils;
 
+import ch.tutteli.tsphp.common.IErrorReporter;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerReference;
-import ch.tutteli.tsphp.typechecker.error.ErrorHelperRegistry;
-import ch.tutteli.tsphp.typechecker.error.IErrorHelper;
+import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
 import junit.framework.Assert;
 import org.junit.Ignore;
 
@@ -39,7 +39,7 @@ public abstract class AReferenceTest extends ADefinitionTest
     protected abstract void verifyReferences();
 
     protected void checkReferences() {
-        IErrorHelper errorHelper = ErrorHelperRegistry.get();
+        IErrorReporter errorHelper = ErrorReporterRegistry.get();
         Assert.assertFalse(testString + " failed. Exceptions occured." + errorHelper.getExceptions(),
                 errorHelper.hasFoundError());
 

@@ -18,8 +18,9 @@ package ch.tutteli.tsphp.typechecker.error;
 
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
+import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.exceptions.DefinitionException;
-import ch.tutteli.tsphp.common.exceptions.UnresolvedReferenceException;
+import ch.tutteli.tsphp.common.exceptions.ReferenceException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +28,7 @@ import java.util.List;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class ErrorHelper implements IErrorHelper
+public class ErrorHelper implements IErrorReporter
 {
 
     List<Exception> exceptions = new ArrayList<>();
@@ -48,56 +49,67 @@ public class ErrorHelper implements IErrorHelper
     }
 
     @Override
-    public void determineAlreadyDefinedException(ISymbol symbol1, ISymbol symbol2) {
-        determineAlreadyDefinedException(symbol1.getDefinitionAst(), symbol2.getDefinitionAst());
+    public DefinitionException determineAlreadyDefined(ISymbol symbol1, ISymbol symbol2) {
+        return determineAlreadyDefined(symbol1.getDefinitionAst(), symbol2.getDefinitionAst());
 
     }
 
     @Override
-    public void determineAlreadyDefinedException(ITSPHPAst ast1, ITSPHPAst ast2) {
-        if (ast1.isDefinedEarlierThan(ast2)) {
-            addAlreadyDefinedException(ast1, ast2);
-        } else {
-            addAlreadyDefinedException(ast2, ast1);
-        }
+    public DefinitionException determineAlreadyDefined(ITSPHPAst ast1, ITSPHPAst ast2) {
+        return ast1.isDefinedEarlierThan(ast2)
+                ? alreadyDefined(ast1, ast2)
+                : alreadyDefined(ast2, ast1);
 
     }
 
     @Override
-    public void addAlreadyDefinedException(ISymbol existingSymbol, ISymbol newSymbol) {
-        addAlreadyDefinedException(existingSymbol.getDefinitionAst(), newSymbol.getDefinitionAst());
+    public DefinitionException alreadyDefined(ISymbol existingSymbol, ISymbol newSymbol) {
+        return alreadyDefined(existingSymbol.getDefinitionAst(), newSymbol.getDefinitionAst());
     }
 
     @Override
-    public void addAlreadyDefinedException(ITSPHPAst existingDefintion, ITSPHPAst newDefinition) {
+    public DefinitionException alreadyDefined(ITSPHPAst existingDefintion, ITSPHPAst newDefinition) {
+        return addAndGetDefinitionException("alreadyDefined", existingDefintion, newDefinition);
+    }
 
+    @Override
+    public DefinitionException forwardReferenceException(ITSPHPAst typeAst, ITSPHPAst useDefinition) {
+        return addAndGetDefinitionException("aliasForwardReference", typeAst, useDefinition);
+    }
 
-        String errorMessage = errorMessageProvider.getErrorDefinitionMessage("alreadyDefined",
+    private DefinitionException addAndGetDefinitionException(String key,
+            ITSPHPAst existingDefintion, ITSPHPAst newDefinition) {
+
+        String errorMessage = errorMessageProvider.getErrorDefinitionMessage(key,
                 new DefinitionErrorDto(
                 existingDefintion.getText(), existingDefintion.getLine(), existingDefintion.getCharPositionInLine(),
                 newDefinition.getText(), newDefinition.getLine(), newDefinition.getCharPositionInLine()));
 
-        exceptions.add(new DefinitionException(errorMessage, existingDefintion, newDefinition));
-    }
-
-    @Override
-    public DefinitionException addAndGetUseForwardReferenceException(ITSPHPAst typeAst, ITSPHPAst useDefinition) {
-
-        String errorMessage = errorMessageProvider.getErrorDefinitionMessage("aliasForwardReference",
-                new DefinitionErrorDto(
-                typeAst.getText(), typeAst.getLine(), typeAst.getCharPositionInLine(),
-                useDefinition.getText(), useDefinition.getLine(), useDefinition.getCharPositionInLine()));
-
-        DefinitionException exception = new DefinitionException(errorMessage, typeAst, useDefinition);
+        DefinitionException exception = new DefinitionException(errorMessage, existingDefintion, newDefinition);
         exceptions.add(exception);
         return exception;
     }
 
     @Override
-    public UnresolvedReferenceException addAndGetUnkownTypeException(ITSPHPAst typeAst) {
-        String errorMessage = errorMessageProvider.getErrorReferenceMessage("unkownType",
-                new UnresolvedReferenceErrorDto(typeAst.getText(), typeAst.getLine(), typeAst.getCharPositionInLine()));
-        UnresolvedReferenceException exception = new UnresolvedReferenceException(errorMessage, typeAst);
+    public ReferenceException unkownType(ITSPHPAst typeAst) {
+        return addAndGetReferenceException("unkownType", typeAst);
+    }
+
+    @Override
+    public ReferenceException interfaceExpected(ITSPHPAst typeAst) {
+        return addAndGetReferenceException("interfaceExpected", typeAst);
+    }
+
+    @Override
+    public ReferenceException classExpected(ITSPHPAst typeAst) {
+        return addAndGetReferenceException("classExpected", typeAst);
+    }
+
+    private ReferenceException addAndGetReferenceException(String key,
+            ITSPHPAst typeAst) {
+        String errorMessage = errorMessageProvider.getErrorReferenceMessage(key,
+                new ReferenceErrorDto(typeAst.getText(), typeAst.getLine(), typeAst.getCharPositionInLine()));
+        ReferenceException exception = new ReferenceException(errorMessage, typeAst);
         exceptions.add(exception);
         return exception;
     }

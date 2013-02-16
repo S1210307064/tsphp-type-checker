@@ -28,23 +28,26 @@ public class ErrorMessageProvider extends AErrorMessageProvider
     @Override
     protected void loadDefinitionErrorMessages() {
         definitionErrors = new HashMap<>();
-        definitionErrors.put("alreadyDefined", "Line %line%|%pos% - %id% was already defined in line %lineE%|%posE%");
+        definitionErrors.put("alreadyDefined", "Line %lineN%|%posN% - %idN% was already defined in "
+                + "line %line%|%pos% %id%");
         definitionErrors.put("definedInOuterScope",
-                "Line %line%|%pos% - %id% was already defined in outerscope in line %lineE%|%posE%");
+                "Line %lineN%|%posN% - %idN% was already defined in outerscope in line %line%|%pos% %id%");
         definitionErrors.put("aliasForwardReference",
-                "Line %line%|%pos% - alias is used before its use declaration. Corresponding use declaration is "
-                + "in line %lineE%|%posE%");
+                "Line %lineN%|%posN% - alias is used before its use declaration. Corresponding use declaration is "
+                + "in line %line%|%pos%");
     }
 
     @Override
     protected void loadReferenceErrorMessages() {
         referenceErrors = new HashMap<>();
         referenceErrors.put("unkownType", "Line %line%|%pos% - The type \"%id%\" could not be resolved.");
+        referenceErrors.put("interfaceExpected", "Line %line%|%pos% - Interface expected, \"%id%\" is not an interface.");
+        referenceErrors.put("classExpected", "Line %line%|%pos% - class expected, \"%id%\" is not a class.");
     }
 
     @Override
-    protected String getStandardErrorDefinitionMessage(DefinitionErrorDto dto) {
-        return "DefinitionException occured, corresponding error message is not defined. "
+    protected String getStandardErrorDefinitionMessage(String key, DefinitionErrorDto dto) {
+        return "DefinitionException occured, corresponding error message for \"" + key + "\" not defined. "
                 + "Please report bug to http://tsphp.tutteli.ch\n"
                 + "However, the following information was gathered.\n"
                 + "Line " + dto.line + "|" + dto.position + " - " + dto.identifier + " was already defined in line "
@@ -52,8 +55,8 @@ public class ErrorMessageProvider extends AErrorMessageProvider
     }
 
     @Override
-    protected String getStandardErrorReferenceMessage(UnresolvedReferenceErrorDto dto) {
-        return "UnresolvedReferenceException occured, corresponding error message is not defined. "
+    protected String getStandardErrorReferenceMessage(String key, ReferenceErrorDto dto) {
+        return "ReferenceException occured, corresponding error message for \"" + key + "\" is not defined. "
                 + "Please report bug to http://tsphp.tutteli.ch\n"
                 + "However, the following information was gathered.\n"
                 + "Line " + dto.line + "|" + dto.position + " - " + dto.identifier + " could not been resolved to its"
