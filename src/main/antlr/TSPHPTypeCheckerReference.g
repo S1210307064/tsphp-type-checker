@@ -64,7 +64,10 @@ topdown
 	:  	useDeclarationList
     	|	interfaceDeclaration
    	|	classDeclaration
+   	|	constructDeclaration
    	|	methodFunctionDeclaration
+   	|	constantDeclarationList
+   	|	parameterDeclarationList
     	|	variableDeclarationList
     	;
    
@@ -86,18 +89,37 @@ useDeclaration
 	;
 
 interfaceDeclaration
-	:	^('interface' iMod=. identifier=Identifier extIds=. .)
+	:	^('interface' iMod=. identifier=Identifier extIds=extendsDeclaration .)
+		{
+			INamespaceScope namespaceScope = (INamespaceScope) $identifier.getScope();
+			namespaceScope.definitionCheckCaseInsensitive($identifier.getSymbol());
+		}
+	;
+
+extendsDeclaration	
+	:	^('extends' allTypes+)
+	|	'extends'
+	;
+	
+classDeclaration
+	:	^('class' cMod=. identifier=Identifier extIds=extendsDeclaration implIds=implementsDeclaration .) 
 		{
 			INamespaceScope namespaceScope = (INamespaceScope) $identifier.getScope();
 			namespaceScope.definitionCheckCaseInsensitive($identifier.getSymbol());
 		}
 	;
 	
-classDeclaration
-	:	^('class' cMod=. identifier=Identifier extIds=. implIds=. .) 
+implementsDeclaration
+	:	^('implements' allTypes+)
+	|	'implements'
+	;
+
+constructDeclaration
+	:	^(identifier='__construct' .  ^(TYPE rtMod=. voidType) . .)
 		{
-			INamespaceScope namespaceScope = (INamespaceScope) $identifier.getScope();
-			namespaceScope.definitionCheckCaseInsensitive($identifier.getSymbol());
+			$identifier.getSymbol().setType($voidType.type); 
+			ICaseInsensitiveScope scope = (ICaseInsensitiveScope) $identifier.getScope();
+			scope.definitionCheckCaseInsensitive($identifier.getSymbol());
 		}
 	;
 		
@@ -105,16 +127,39 @@ methodFunctionDeclaration
 	:	^( 	(	METHOD_DECLARATION
 			|	Function
 			) 
-			mMod=. ^(TYPE rtMod=. returnType=.) identifier=. . .
+			. ^(TYPE rtMod=. returnTypes) identifier=. . .
 		)
 		{
+			$identifier.getSymbol().setType($returnTypes.type); 
 			ICaseInsensitiveScope scope = (ICaseInsensitiveScope) $identifier.getScope();
 			scope.definitionCheckCaseInsensitive($identifier.getSymbol());
 		}
 	;
+	
+constantDeclarationList
+	:	^(CONSTANT_DECLARATION_LIST ^(TYPE tMod=. scalarTypes) constantDeclaration[$scalarTypes.type]+)
+	;
+
+constantDeclaration[ITypeSymbol type]
+	:	^(identifier=Identifier .)
+		{ 
+			$identifier.getSymbol().setType(type); 
+			$identifier.getScope().definitionCheck($identifier.getSymbol()); 
+		}
+	;
+
+parameterDeclarationList
+	:	^(PARAMETER_LIST parameterDeclaration+)
+	;
+
+parameterDeclaration
+	:	^(PARAMETER_DECLARATION 
+			^(TYPE tMod=. allTypes) variableDeclaration[$allTypes.type]
+		)
+	;
 
 variableDeclarationList 
-	:	^(VARIABLE_DECLARATION_LIST ^(TYPE . allTypes) variableDeclaration[$allTypes.type]+ )
+	:	^(VARIABLE_DECLARATION_LIST ^(TYPE tMod=. allTypes) variableDeclaration[$allTypes.type]+ )
         ;
         
 variableDeclaration[ITypeSymbol type]
@@ -127,7 +172,19 @@ variableDeclaration[ITypeSymbol type]
 			$variableId.getScope().definitionCheck($variableId.getSymbol());
 		}
 	;
+
+returnTypes returns [ITypeSymbol type]
+	:	allTypes {$type = $allTypes.type;}
+	|	voidType {$type = $voidType.type;}
+	;
 	
+voidType returns [ITypeSymbol type]
+ 	:	'void'
+		{
+			$type = symbolTable.resolvePrimitiveType($start);
+			$start.setSymbol($type);
+		}
+ 	;
 allTypes returns [ITypeSymbol type]
 	:	(	'bool'
 		|	'int'
@@ -144,6 +201,18 @@ allTypes returns [ITypeSymbol type]
 	|	TYPE_NAME
 		{
 			$type = symbolTable.resolveType($start);
+			$start.setSymbol($type);
+		}
+	;
+	
+scalarTypes returns [ITypeSymbol type]
+	:	(	'bool'
+		|	'int'
+		|	'float'
+		|	'string'
+		)
+		{
+			$type = symbolTable.resolvePrimitiveType($start);
 			$start.setSymbol($type);
 		}
 	;

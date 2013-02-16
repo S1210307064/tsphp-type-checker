@@ -18,14 +18,11 @@ package ch.tutteli.tsphp.typechecker.test.reference;
 
 import ch.tutteli.tsphp.typechecker.error.DefinitionErrorDto;
 import ch.tutteli.tsphp.typechecker.test.testutils.AReferenceDefinitionErrorTest;
-import ch.tutteli.tsphp.typechecker.test.testutils.IAdder;
-import ch.tutteli.tsphp.typechecker.test.testutils.ParameterListHelper;
 import ch.tutteli.tsphp.typechecker.test.testutils.TypeHelper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.SortedSet;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -62,7 +59,7 @@ public class FunctionDoubleDefinitionErrorTest extends AReferenceDefinitionError
         addVariations("namespace a\\b\\z{", "}");
 
         DefinitionErrorDto[] errorDto = new DefinitionErrorDto[]{new DefinitionErrorDto("foo()", 2, 1, "foo()", 3, 1)};
-        //case insensitive
+        
         collection.addAll(Arrays.asList(new Object[][]{
                     {
                         "namespace{function void\n foo(){}} namespace{function void\n foo(){}}",
@@ -100,32 +97,27 @@ public class FunctionDoubleDefinitionErrorTest extends AReferenceDefinitionError
             new DefinitionErrorDto("foo()", 2, 1, "foo()", 4, 1)
         };
 
-        //it does not matter if return values are different
-        TypeHelper.getAllTypesInclModifier(new IAdder()
-        {
-            @Override
-            public void add(String type, String typeExpected, SortedSet<Integer> modifiers) {
-                collection.add(new Object[]{
-                            prefix + "function " + type + "\n foo(){} function " + type + "\n foo(){}" + appendix,
-                            errorDto
-                        });
-                collection.add(new Object[]{
-                            prefix + "function " + type + "\n foo(){} function " + type + "\n foo(){} "
-                            + "function " + type + "\n foo(){}" + appendix,
-                            errorDtoTwo
-                        });
-            }
-        });
-
-        //And since PHP does not support method overloading, also the parameter do not matter
-        Collection<Object[]> functions = ParameterListHelper.getTestStrings("function void \n foo(", "){}", "", "", false);
-        for (Object[] function : functions) {
+         List<String> types = TypeHelper.getPrimitiveTypes();
+        for (String type : types) {
+             //it does not matter if return values are different
             collection.add(new Object[]{
-                        prefix + " " + function[0] + function[0] + appendix,
+                        prefix + "function " + type + "\n foo(){} function void \n foo(){}" + appendix,
                         errorDto
                     });
             collection.add(new Object[]{
-                        prefix + function[0] + function[0] + function[0] + appendix,
+                        prefix + "function " + type + "\n foo(){} function void \n foo(){} "
+                        + "function int \n foo(){}" + appendix,
+                        errorDtoTwo
+                    });
+            
+            //And since PHP does not support method overloading, also the parameter do not matter
+            collection.add(new Object[]{
+                        prefix + " function void \n foo("+type+" $b){} function void \n foo(){}" + appendix,
+                        errorDto
+                    });
+            collection.add(new Object[]{
+                        prefix + " function void \n foo("+type+" $b){} function void \n foo(){}"
+                    + "function void \n foo(int $a){}" + appendix,
                         errorDtoTwo
                     });
         }

@@ -72,20 +72,6 @@ public class ResolveClassTypeNotFoundTest extends AUnresolvedReferenceErrorTest
 
         return collection;
     }
-//    @Test
-//    public void testAliasNamespaceNotFound() {
-//        INamespaceScope scope = symbolTable.defineNamespace("\\");
-//        ITSPHPAst typeAst = AstTestHelper.getAstWithTokenText("MyClass", scope);
-//        ITSPHPAst alias = AstTestHelper.getAstWithTokenText("test", scope);
-//
-//        symbolTable.defineUse(scope, typeAst, alias);
-//
-//        ITSPHPAst ast2 = AstTestHelper.getAstWithTokenText("test\\MyClass", scope);
-//        ITypeSymbol typeSymbol = symbolTable.resolveType(ast2);
-//        Assert.assertTrue(typeSymbol instanceof TSPHPErroneusTypeSymbol);
-//        TSPHPErroneusTypeSymbol errorSymbol = (TSPHPErroneusTypeSymbol) typeSymbol;
-//        Assert.assertEquals(ast2, errorSymbol.getDefinitionAst());
-//    }
     
     public static Collection<Object[]> getVariations(String prefix, String appendix, String namespace) {
         List<Object[]> collection = new ArrayList<>();
