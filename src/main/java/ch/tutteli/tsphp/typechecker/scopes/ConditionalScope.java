@@ -35,15 +35,16 @@ public class ConditionalScope extends AScope implements IConditionalScope
     }
 
     @Override
-    public void definitionCheck(ISymbol symbol) {
-        super.definitionCheck(symbol);
+    public boolean definitionCheck(ISymbol symbol) {
+        boolean ok = super.definitionCheck(symbol);
 
         //Check if already defined in enclosing scope
         ISymbol symbolEnclosingScope = enclosingScope.resolve(symbol.getDefinitionAst());
         if (symbolEnclosingScope != null) {
-            
-             ErrorHelperRegistry.get().determineAlreadyDefinedException(symbolEnclosingScope, symbol);
+            ok = false;
+            ErrorHelperRegistry.get().determineAlreadyDefinedException(symbolEnclosingScope, symbol);
         }
+        return ok;
     }
 
     @Override

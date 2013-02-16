@@ -53,7 +53,7 @@ public abstract class ADoubleDefinitionTest extends ADefinitionTest
         Assert.assertNotNull(errorMessagePrefix + " failed, global namespace " + namespace + " could not be found.",
                 globalNamespace);
 
-        ILowerCaseStringMap<List<ISymbol>> symbols = globalNamespace.getSymbols();
+        Map<String, List<ISymbol>> symbols = globalNamespace.getSymbols();
         Assert.assertNotNull(errorMessagePrefix + " failed, symbols was null.", symbols);
         Assert.assertTrue(errorMessagePrefix + " failed. " + identifier + " not found.", symbols.containsKey(identifier));
         Assert.assertEquals(errorMessagePrefix + " failed. size was wrong", occurence, symbols.get(identifier).size());

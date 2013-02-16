@@ -16,13 +16,13 @@
  */
 package ch.tutteli.tsphp.typechecker.scopes;
 
-import ch.tutteli.tsphp.common.ILowerCaseStringMap;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
-import ch.tutteli.tsphp.common.LowerCaseStringMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -35,7 +35,7 @@ public abstract class AScope implements IScope
 
     protected String scopeName;
     protected IScope enclosingScope;
-    protected ILowerCaseStringMap<List<ISymbol>> symbols = new LowerCaseStringMap<>();
+    protected Map<String, List<ISymbol>> symbols = new LinkedHashMap<>();
 
     public AScope(String theScopeName, IScope theEnclosingScope) {
         scopeName = theScopeName;
@@ -48,8 +48,8 @@ public abstract class AScope implements IScope
     }
 
     @Override
-    public void definitionCheck(ISymbol symbol) {
-        ScopeHelperRegistry.get().definitionCheck(this, symbol);
+    public boolean definitionCheck(ISymbol symbol) {
+       return ScopeHelperRegistry.get().definitionCheck(symbols, symbol);
     }
 
     @Override
@@ -79,7 +79,7 @@ public abstract class AScope implements IScope
     }
 
     @Override
-    public ILowerCaseStringMap<List<ISymbol>> getSymbols() {
+    public Map<String, List<ISymbol>> getSymbols() {
         return symbols;
     }
 

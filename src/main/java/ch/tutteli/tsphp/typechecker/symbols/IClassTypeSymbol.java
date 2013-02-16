@@ -16,14 +16,14 @@
  */
 package ch.tutteli.tsphp.typechecker.symbols;
 
-import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ITypeSymbol;
+import ch.tutteli.tsphp.typechecker.scopes.ICaseInsensitiveScope;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public interface IClassTypeSymbol extends ITypeSymbol, IScope
+public interface IClassTypeSymbol extends ITypeSymbol, ICaseInsensitiveScope
 {
 
     void setConstruct(IMethodSymbol construct);

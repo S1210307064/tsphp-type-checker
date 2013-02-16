@@ -65,7 +65,7 @@ public abstract class AReferenceDefinitionErrorTest extends AReferenceTest
             Assert.assertEquals(errorMessagePrefix + " failed. wrong existing position.",
                     errorDtos[i].position, exception.getExistingDefinition().getCharPositionInLine());
 
-               Assert.assertEquals(errorMessagePrefix + " failed. wrong existing identifier.",
+               Assert.assertEquals(errorMessagePrefix + " failed. wrong new identifier.",
                     errorDtos[i].identifierNewDefinition, exception.getNewDefinition().getText());
             Assert.assertEquals(errorMessagePrefix + " failed. wrong new line. ",
                     errorDtos[i].lineNewDefinition, exception.getNewDefinition().getLine());

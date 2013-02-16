@@ -44,6 +44,7 @@ import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.typechecker.ISymbolTable;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
+import ch.tutteli.tsphp.typechecker.scopes.ICaseInsensitiveScope;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IInterfaceTypeSymbol;
@@ -63,6 +64,7 @@ topdown
 	:  	useDeclarationList
     	|	interfaceDeclaration
    	|	classDeclaration
+   	|	methodFunctionDeclaration
     	|	variableDeclarationList
     	;
    
@@ -87,7 +89,7 @@ interfaceDeclaration
 	:	^('interface' iMod=. identifier=Identifier extIds=. .)
 		{
 			INamespaceScope namespaceScope = (INamespaceScope) $identifier.getScope();
-			namespaceScope.interfaceDefinitionCheck((IInterfaceTypeSymbol) $identifier.getSymbol());
+			namespaceScope.definitionCheckCaseInsensitive($identifier.getSymbol());
 		}
 	;
 	
@@ -95,27 +97,25 @@ classDeclaration
 	:	^('class' cMod=. identifier=Identifier extIds=. implIds=. .) 
 		{
 			INamespaceScope namespaceScope = (INamespaceScope) $identifier.getScope();
-			namespaceScope.classDefinitionCheck((IClassTypeSymbol) $identifier.getSymbol());
+			namespaceScope.definitionCheckCaseInsensitive($identifier.getSymbol());
 		}
 	;
-
-variableDeclarationList 
-	:	^(VARIABLE_DECLARATION_LIST ^(TYPE . allTypes) variableDeclaration[$allTypes.type]+ )
-        ;
-        
-constructDeclaration
-	:	^(identifier='__construct' mMod=. . .)
-	
-	;
-
+		
 methodFunctionDeclaration
 	:	^( 	(	METHOD_DECLARATION
 			|	Function
 			) 
 			mMod=. ^(TYPE rtMod=. returnType=.) identifier=. . .
 		)
-	
+		{
+			ICaseInsensitiveScope scope = (ICaseInsensitiveScope) $identifier.getScope();
+			scope.definitionCheckCaseInsensitive($identifier.getSymbol());
+		}
 	;
+
+variableDeclarationList 
+	:	^(VARIABLE_DECLARATION_LIST ^(TYPE . allTypes) variableDeclaration[$allTypes.type]+ )
+        ;
         
 variableDeclaration[ITypeSymbol type]
 	:

@@ -34,14 +34,10 @@ import ch.tutteli.tsphp.typechecker.symbols.ErroneusTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
-import ch.tutteli.tsphp.typechecker.symbols.IErroneusTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IInterfaceTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  *

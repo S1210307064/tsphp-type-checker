@@ -16,27 +16,15 @@
  */
 package ch.tutteli.tsphp.typechecker.scopes;
 
-import ch.tutteli.tsphp.common.ILowerCaseStringMap;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
-import ch.tutteli.tsphp.common.ITSPHPAst;
-import java.util.List;
-import java.util.Map;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public interface IScopeHelper
+public interface ICaseInsensitiveScope extends IScope
 {
 
-    void define(IScope definitionScope, ISymbol symbol);
-
-    boolean definitionCheck(Map<String, List<ISymbol>> symbols, ISymbol symbol);
-
-    boolean definitionCheck(ISymbol firstDefinition, ISymbol symbolToCheck);
-
-    IScope getCorrespondingGlobalNamespace(ILowerCaseStringMap<IScope> globalNamespaceScopes, String typeName);
-
-    ISymbol resolve(IScope scope, ITSPHPAst typeAst);
+    boolean definitionCheckCaseInsensitive(ISymbol symbol);
 }

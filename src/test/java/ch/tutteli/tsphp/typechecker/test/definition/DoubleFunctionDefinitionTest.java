@@ -50,9 +50,9 @@ public class DoubleFunctionDefinitionTest extends ADoubleDefinitionTest
         String A = "function void A(){}";
         collection.addAll(getDifferentNamespaces(a + "", "a()", 1));
         collection.addAll(getDifferentNamespaces(A + "", "A()", 1));
-        collection.addAll(getDifferentNamespaces(a + " " + A + "", "A()", 2));
+        collection.addAll(getDifferentNamespaces(a + " " + A + "", "A()", 1));
         collection.addAll(getDifferentNamespaces(a + " " + a + "", "a()", 2));
-        collection.addAll(getDifferentNamespaces(a + " " + A + " " + a + "", "a()", 3));
+        collection.addAll(getDifferentNamespaces(a + " " + A + " " + a + "", "a()", 2));
         //doesn't matter if parameter list is different
         collection.addAll(getDifferentNamespaces(a + " " + a2 + " " + a + "", "a()", 3));
         return collection;

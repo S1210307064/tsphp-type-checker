@@ -29,7 +29,9 @@ import ch.tutteli.tsphp.typechecker.symbols.IAliasSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IInterfaceTypeSymbol;
 import ch.tutteli.tsphp.typechecker.utils.MapHelper;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -38,7 +40,8 @@ import java.util.List;
 public class NamespaceScope extends AScope implements INamespaceScope
 {
 
-    private ILowerCaseStringMap<List<IAliasSymbol>> uses = new LowerCaseStringMap<>();
+    private ILowerCaseStringMap<List<IAliasSymbol>> usesCaseInsensitive = new LowerCaseStringMap<>();
+    private Map<String, List<IAliasSymbol>> uses = new LinkedHashMap<>();
 
     public NamespaceScope(String scopeName, IScope globalNamespaceScope) {
         super(scopeName, globalNamespaceScope);
@@ -54,37 +57,44 @@ public class NamespaceScope extends AScope implements INamespaceScope
     }
 
     @Override
-    public void definitionCheck(ISymbol symbol) {
+    public boolean definitionCheck(ISymbol symbol) {
         //check in global namespace scope, because they have been defined there
-        enclosingScope.definitionCheck(symbol);
+        return enclosingScope.definitionCheck(symbol);
+    }
+
+    @Override
+    public boolean definitionCheckCaseInsensitive(ISymbol symbol) {
+        //check in global namespace scope, because they have been defined there
+        return ((ICaseInsensitiveScope) enclosingScope).definitionCheckCaseInsensitive(symbol);
     }
 
     @Override
     public void defineUse(IAliasSymbol symbol) {
+        MapHelper.addToListMap(usesCaseInsensitive, symbol.getName(), symbol);
         MapHelper.addToListMap(uses, symbol.getName(), symbol);
         symbol.setDefinitionScope(this);
     }
 
     @Override
-    public void useDefinitionCheck(IAliasSymbol symbol) {
-        ScopeHelperRegistry.get().definitionCheck(uses.get(symbol.getName()).get(0), symbol);
+    public boolean useDefinitionCheck(IAliasSymbol symbol) {
+        return ScopeHelperRegistry.get().definitionCheck(usesCaseInsensitive.get(symbol.getName()).get(0), symbol);
     }
 
     @Override
-    public void interfaceDefinitionCheck(IInterfaceTypeSymbol symbol) {
+    public boolean interfaceDefinitionCheck(IInterfaceTypeSymbol symbol) {
         //check in global namespace scope, because they have been defined there
-        enclosingScope.definitionCheck(symbol);
+        return true;
     }
 
     @Override
-    public void classDefinitionCheck(IClassTypeSymbol symbol) {
+    public boolean classDefinitionCheck(IClassTypeSymbol symbol) {
         //check in global namespace scope, because they have been defined there
-        enclosingScope.definitionCheck(symbol);
+       return true;
     }
 
     @Override
     public List<IAliasSymbol> getUse(String alias) {
-        return uses.get(alias);
+        return usesCaseInsensitive.get(alias);
     }
 
     @Override
@@ -116,7 +126,7 @@ public class NamespaceScope extends AScope implements INamespaceScope
     }
 
     private ITSPHPAst getFirstUseDefinitionAst(String alias) {
-        return uses.containsKey(alias) ? uses.get(alias).get(0).getDefinitionAst() : null;
+        return usesCaseInsensitive.containsKey(alias) ? usesCaseInsensitive.get(alias).get(0).getDefinitionAst() : null;
     }
 
     private ITSPHPAst checkTypeNameClashAndRecoverIfNecessary(ITSPHPAst useDefinition, ITypeSymbol typeSymbol) {

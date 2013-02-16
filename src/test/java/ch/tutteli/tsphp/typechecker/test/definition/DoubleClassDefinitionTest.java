@@ -49,9 +49,9 @@ public class DoubleClassDefinitionTest extends ADoubleDefinitionTest
         String A = "class A{}";
         collection.addAll(getDifferentNamespaces(a + "", "a", 1));
         collection.addAll(getDifferentNamespaces(A + "", "A", 1));
-        collection.addAll(getDifferentNamespaces(a + " " + A + "", "A", 2));
+        collection.addAll(getDifferentNamespaces(a + " " + A + "", "A", 1));
         collection.addAll(getDifferentNamespaces(a + " " + a + "", "a", 2));
-        collection.addAll(getDifferentNamespaces(a + " " + A + " " + a + "", "a", 3));
+        collection.addAll(getDifferentNamespaces(a + " " + A + " " + a + "", "a", 2));
         return collection;
     }
 }

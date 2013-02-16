@@ -16,8 +16,14 @@
  */
 package ch.tutteli.tsphp.typechecker.symbols;
 
+import ch.tutteli.tsphp.common.ILowerCaseStringMap;
 import ch.tutteli.tsphp.common.IScope;
+import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
+import ch.tutteli.tsphp.common.LowerCaseStringMap;
+import ch.tutteli.tsphp.typechecker.scopes.ScopeHelperRegistry;
+import ch.tutteli.tsphp.typechecker.utils.MapHelper;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -30,9 +36,21 @@ public class ClassSymbol extends AScopedSymbol implements IClassTypeSymbol
 {
 
     private IMethodSymbol construct;
+    private ILowerCaseStringMap<List<ISymbol>> symbolsCaseInsensitive = new LowerCaseStringMap<>();
 
     public ClassSymbol(ITSPHPAst definitionAst, Set<Integer> modifiers, String name, IScope enclosingScope) {
         super(definitionAst, modifiers, name, enclosingScope);
+    }
+
+    @Override
+    public void define(ISymbol symbol) {
+        super.define(symbol);
+        MapHelper.addToListMap(symbolsCaseInsensitive, symbol.getName(), symbol);
+    }
+
+    @Override
+    public boolean definitionCheckCaseInsensitive(ISymbol symbol) {
+        return ScopeHelperRegistry.get().definitionCheck(symbolsCaseInsensitive, symbol);
     }
 
     @Override

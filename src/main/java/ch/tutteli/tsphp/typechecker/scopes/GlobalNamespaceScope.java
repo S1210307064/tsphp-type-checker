@@ -16,20 +16,36 @@
  */
 package ch.tutteli.tsphp.typechecker.scopes;
 
-import ch.tutteli.tsphp.common.IScope;
+import ch.tutteli.tsphp.common.ILowerCaseStringMap;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
+import ch.tutteli.tsphp.common.LowerCaseStringMap;
+import ch.tutteli.tsphp.typechecker.utils.MapHelper;
+import java.util.List;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class GlobalNamespaceScope extends AScope implements IScope
+public class GlobalNamespaceScope extends AScope implements ICaseInsensitiveScope
 {
+
+    private ILowerCaseStringMap<List<ISymbol>> symbolsCaseInsensitive = new LowerCaseStringMap<>();
 
     public GlobalNamespaceScope(String scopeName) {
         super(scopeName, null);
+    }
+
+    @Override
+    public void define(ISymbol symbol) {
+        super.define(symbol);
+        MapHelper.addToListMap(symbolsCaseInsensitive, symbol.getName(), symbol);
+    }
+
+    @Override
+    public boolean definitionCheckCaseInsensitive(ISymbol symbol) {
+        return ScopeHelperRegistry.get().definitionCheck(symbolsCaseInsensitive, symbol);
     }
 
     @Override

@@ -23,6 +23,7 @@ import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.typechecker.error.ErrorHelperRegistry;
 import ch.tutteli.tsphp.typechecker.utils.MapHelper;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -38,15 +39,17 @@ public class ScopeHelper implements IScopeHelper
     }
 
     @Override
-    public void definitionCheck(IScope definitionScope, ISymbol symbol) {
-        definitionCheck(definitionScope.getSymbols().get(symbol.getName()).get(0), symbol);
+    public boolean definitionCheck(Map<String, List<ISymbol>> symbols, ISymbol symbol) {
+        return definitionCheck(symbols.get(symbol.getName()).get(0), symbol);
     }
 
     @Override
-    public void definitionCheck(ISymbol firstDefinition, ISymbol symbolToCheck) {
-        if (!firstDefinition.equals(symbolToCheck)) {
+    public boolean definitionCheck(ISymbol firstDefinition, ISymbol symbolToCheck) {
+        boolean isFirst = firstDefinition.equals(symbolToCheck);
+        if (!isFirst) {
             ErrorHelperRegistry.get().addAlreadyDefinedException(firstDefinition, symbolToCheck);
         }
+        return isFirst;
     }
 
     @Override
@@ -59,7 +62,7 @@ public class ScopeHelper implements IScopeHelper
     @Override
     public ISymbol resolve(IScope scope, ITSPHPAst ast) {
         ISymbol symbol = null;
-        ILowerCaseStringMap<List<ISymbol>> symbols = scope.getSymbols();
+        Map<String, List<ISymbol>> symbols = scope.getSymbols();
         if (symbols.containsKey(ast.getText())) {
             symbol = symbols.get(ast.getText()).get(0);
         }
