@@ -32,12 +32,12 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class ClassConstantDoubleDefinitionErrorTest extends AReferenceDefinitionErrorTest
+public class ConstantDoubleDefinitionErrorTest extends AReferenceDefinitionErrorTest
 {
 
     private static List<Object[]> collection;
 
-    public ClassConstantDoubleDefinitionErrorTest(String testString, DefinitionErrorDto[] expectedLinesAndPositions) {
+    public ConstantDoubleDefinitionErrorTest(String testString, DefinitionErrorDto[] expectedLinesAndPositions) {
         super(testString, expectedLinesAndPositions);
     }
 
@@ -50,12 +50,21 @@ public class ClassConstantDoubleDefinitionErrorTest extends AReferenceDefinition
     public static Collection<Object[]> testStrings() {
         collection = new ArrayList<>();
 
+        //global constants
         addVariations("", "");
         addVariations("namespace{", "}");
         addVariations("namespace a;", "");
         addVariations("namespace a{", "}");
         addVariations("namespace a\\b;", "");
         addVariations("namespace a\\b\\z{", "}");
+        //class constants
+        addVariations("class a{ ", "}");
+        addVariations("namespace{ class a{", "}}");
+        addVariations("namespace a; class a{", "}");
+        addVariations("namespace a{ class a{", "}}");
+        addVariations("namespace a\\b; class a{", "}");
+        addVariations("namespace a\\b\\z{ class a{", "}}");
+        
         //does not matter if it is a comma initialisation
         collection.add(new Object[]{
                     "class a{ const int\n a=1,\n a=1;}",
@@ -73,11 +82,8 @@ public class ClassConstantDoubleDefinitionErrorTest extends AReferenceDefinition
 
     public static void addVariations(String prefix, String appendix) {
 
-        final String newPrefix = prefix + "class a{ ";
-        final String newAppendix = appendix + "}";
-
-        final DefinitionErrorDto[] errorDto = new DefinitionErrorDto[]{new DefinitionErrorDto("#a", 2, 1, "#a", 3, 1)};
-        final DefinitionErrorDto[] errorDtoTwo = new DefinitionErrorDto[]{
+        DefinitionErrorDto[] errorDto = new DefinitionErrorDto[]{new DefinitionErrorDto("#a", 2, 1, "#a", 3, 1)};
+        DefinitionErrorDto[] errorDtoTwo = new DefinitionErrorDto[]{
             new DefinitionErrorDto("#a", 2, 1, "#a", 3, 1),
             new DefinitionErrorDto("#a", 2, 1, "#a", 4, 1)
         };
@@ -87,11 +93,11 @@ public class ClassConstantDoubleDefinitionErrorTest extends AReferenceDefinition
         for (String type : types) {
             //it does not matter if type differs
             collection.add(new Object[]{
-                        newPrefix + "const " + type + "\n a=1; const int\n a=1;" + newAppendix,
+                        prefix + "const " + type + "\n a=1; const int\n a=1;" + appendix,
                         errorDto
                     });
             collection.add(new Object[]{
-                        newPrefix + "const " + type + "\n a=1; const int\n a=1; const float\n a=3;" + newAppendix,
+                        prefix + "const " + type + "\n a=1; const int\n a=1; const float\n a=3;" + appendix,
                         errorDtoTwo
                     });
 

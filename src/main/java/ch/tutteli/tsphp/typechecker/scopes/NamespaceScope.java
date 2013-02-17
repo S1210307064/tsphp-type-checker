@@ -167,7 +167,7 @@ public class NamespaceScope extends AScope implements INamespaceScope
                 typeSymbol = globalNamespaceScope.resolveType(typeAst);
             }
         } else {
-            DefinitionException ex = ErrorReporterRegistry.get().forwardReferenceException(typeAst, useDefinition);
+            DefinitionException ex = ErrorReporterRegistry.get().aliasForwardReference(typeAst, useDefinition);
             typeSymbol = new ErroneusTypeSymbol(typeAst, ex);
         }
         return typeSymbol;

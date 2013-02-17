@@ -95,9 +95,6 @@ public class UseForwardReferenceErrorTest extends AReferenceDefinitionErrorTest
             collection.addAll(Arrays.asList(new Object[][]{
                         {newPrefix + "\n B $a; use \n " + type + ";" + appendix, errorDto},
                         {newPrefix + "\n B $a; use " + type + " as \n B;" + appendix, errorDto},
-                        //                    {
-                        //                        "/* 8.5 */ namespace b; z $a; use b\\z; class z{} z $b;"
-                        //                    },
                         //More than one
                         {newPrefix + "\n B $a; \n B $b; use \n " + type + ";" + appendix, twoErrorDto},
                         {newPrefix + "\n B $a;\n B $b;  use " + type + " as \n B;" + appendix, twoErrorDto},}));

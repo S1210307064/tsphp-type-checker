@@ -187,6 +187,16 @@ public class SymbolTable implements ISymbolTable
         return isClass;
     }
 
+    @Override
+    public boolean checkForwardReference(ITSPHPAst ast) {
+        ITSPHPAst definitionAst = ast.getSymbol().getDefinitionAst();
+        boolean isNotUsedBefore = definitionAst.isDefinedEarlierThan(ast);
+        if (!isNotUsedBefore) {
+            ErrorReporterRegistry.get().forwardReference(ast, definitionAst);
+        }
+        return isNotUsedBefore;
+    }
+
     private void assignScopeToIdentifiers(IScope currentScope, ITSPHPAst identifierList) {
         int lenght = identifierList.getChildCount();
         for (int i = 0; i < lenght; ++i) {
@@ -196,14 +206,8 @@ public class SymbolTable implements ISymbolTable
     }
 
     @Override
-    public ISymbol resolve(ITSPHPAst ast) {
-        IScope scope = getResolvingScope(ast);
-        return scope.resolve(ast);
-    }
-
-    @Override
-    public ISymbol resolveWithFallBack(ITSPHPAst ast) {
-        IScope scope = getResolvingScope(ast);
+    public ISymbol resolveWithFallback(ITSPHPAst ast) {
+        IScope scope = ast.getScope();
         ISymbol symbol = scope.resolve(ast);
 
         if (symbol == null && !scope.equals(globalDefaultNamespace)) {
@@ -213,6 +217,7 @@ public class SymbolTable implements ISymbolTable
         ast.setSymbol(symbol);
         return symbol;
     }
+      
 
     @Override
     public ITypeSymbol resolveUseType(ITSPHPAst typeAst, ITSPHPAst alias) {

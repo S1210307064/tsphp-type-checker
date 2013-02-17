@@ -26,7 +26,7 @@ import java.util.List;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class ScopeTestHelper  
+public class ScopeTestHelper
 {
 
     public static String getEnclosingScopeNames(IScope scope) {
@@ -50,13 +50,11 @@ public class ScopeTestHelper
         List<Object[]> collection = new ArrayList<>();
 
         String[][] variableIds = new String[][]{
-            {"$b", "$b", "$b"},
+            {"$b", "$b"},
             {"$this", "$this"},
             {"self::$b", "(sMemAccess self $b)"},
             {"parent::$b", "(sMemAccess parent $b)"},
             {"foo()", "(fCall foo args)"},
-            {"$a->foo()", "(mCall $a foo args)"},
-            {"$this->foo()", "(mCall $this foo args)"},
             {"self::foo()", "(smCall self foo args)"},
             {"parent::foo()", "(smCall parent foo args)"},};
 
@@ -66,7 +64,20 @@ public class ScopeTestHelper
             collection.addAll(getAccessVariations(prefix, appendix, variableId[0], variableId[1],
                     fullScopeName, accessToScope));
         }
-        collection.addAll(getVariations(prefix, appendix, "b", "b",
+
+        variableIds = new String[][]{
+            {"$a->foo()", "$a"},
+            {"$this->foo()", "$this"}
+        };
+
+        for (String[] variableId : variableIds) {
+            collection.addAll(getVariations(prefix, appendix, variableId[0], variableId[1],
+                    fullScopeName, accessToScope, 0));
+            collection.addAll(getAccessVariations(prefix, appendix, variableId[0], variableId[1],
+                    fullScopeName, accessToScope, 0));
+        }
+
+        collection.addAll(getVariations(prefix, appendix, "b", "#b",
                 fullScopeName, accessToScope));
         collection.addAll(getVariations(prefix, appendix, "self::b", "(sMemAccess self b)",
                 fullScopeName, accessToScope));
@@ -91,16 +102,21 @@ public class ScopeTestHelper
 
     private static Collection<Object[]> getVariations(String prefix, String appendix, String variableId, String astText,
             String fullScopeName, Integer[] accessToScope) {
+        return getVariations(prefix, appendix, variableId, astText, fullScopeName, accessToScope, null);
+    }
+
+    private static Collection<Object[]> getVariations(String prefix, String appendix, String variableId, String astText,
+            String fullScopeName, Integer[] accessToScope, Integer stepIn) {
 
         return Arrays.asList(new Object[][]{
                     {prefix + "int $a = " + variableId + ";" + appendix, new ScopeTestStruct[]{
                             // vars $a $b
-                            new ScopeTestStruct(astText, fullScopeName, getAstAccessOrder(accessToScope, 0, 1, 0))
+                            new ScopeTestStruct(astText, fullScopeName, getAstAccessOrder(accessToScope, 0, 1, 0, stepIn))
                         }
                     },
                     {prefix + "int $a = " + variableId + " + $c;" + appendix, new ScopeTestStruct[]{
                             //vars $a + variableId
-                            new ScopeTestStruct(astText, fullScopeName, getAstAccessOrder(accessToScope, 0, 1, 0, 0)),
+                            new ScopeTestStruct(astText, fullScopeName, getAstAccessOrder(accessToScope, 0, 1, 0, 0, stepIn)),
                             //vars $a + $c
                             new ScopeTestStruct("$c", fullScopeName, getAstAccessOrder(accessToScope, 0, 1, 0, 1))
                         }
@@ -109,19 +125,19 @@ public class ScopeTestHelper
                             //vars $a + $c
                             new ScopeTestStruct("$c", fullScopeName, getAstAccessOrder(accessToScope, 0, 1, 0, 0)),
                             //vars $a + variableId
-                            new ScopeTestStruct(astText, fullScopeName, getAstAccessOrder(accessToScope, 0, 1, 0, 1))
+                            new ScopeTestStruct(astText, fullScopeName, getAstAccessOrder(accessToScope, 0, 1, 0, 1, stepIn))
                         }
                     },
                     {prefix + "int $a = 1 + " + variableId + " + $c;" + appendix, new ScopeTestStruct[]{
                             //vars $a + + variableId
-                            new ScopeTestStruct(astText, fullScopeName, getAstAccessOrder(accessToScope, 0, 1, 0, 0, 1)),
+                            new ScopeTestStruct(astText, fullScopeName, getAstAccessOrder(accessToScope, 0, 1, 0, 0, 1, stepIn)),
                             //vars $a + $c
                             new ScopeTestStruct("$c", fullScopeName, getAstAccessOrder(accessToScope, 0, 1, 0, 1))
                         }
                     },
                     {prefix + variableId + " = $a;" + appendix, new ScopeTestStruct[]{
                             //= variableId
-                            new ScopeTestStruct(astText, fullScopeName, getAstAccessOrder(accessToScope, 0, 0)),
+                            new ScopeTestStruct(astText, fullScopeName, getAstAccessOrder(accessToScope, 0, 0, stepIn)),
                             //= $a
                             new ScopeTestStruct("$a", fullScopeName, getAstAccessOrder(accessToScope, 0, 1))
                         }
@@ -129,7 +145,7 @@ public class ScopeTestHelper
                     //there are no nested local scopes
                     {prefix + " { " + variableId + " = $a; } " + appendix, new ScopeTestStruct[]{
                             //= variableId
-                            new ScopeTestStruct(astText, fullScopeName, getAstAccessOrder(accessToScope, 0, 0)),
+                            new ScopeTestStruct(astText, fullScopeName, getAstAccessOrder(accessToScope, 0, 0, stepIn)),
                             //= $a
                             new ScopeTestStruct("$a", fullScopeName, getAstAccessOrder(accessToScope, 0, 1))
                         }
@@ -138,9 +154,9 @@ public class ScopeTestHelper
                     {prefix + " { { $a = " + variableId + ";} int $a = $c; } " + appendix, new ScopeTestStruct[]{
                             //= $a
                             new ScopeTestStruct("$a", fullScopeName, getAstAccessOrder(accessToScope, 0, 0)),
-                            //= "+variableId+"
-                            new ScopeTestStruct(astText, fullScopeName, getAstAccessOrder(accessToScope, 0, 1)),
-                            //vars $a "+variableId+"
+                            //= variableId
+                            new ScopeTestStruct(astText, fullScopeName, getAstAccessOrder(accessToScope, 0, 1, stepIn)),
+                            //vars $a $c
                             new ScopeTestStruct("$c", fullScopeName, getAstAccessOrder(accessToScope, 1, 1, 0))
                         }
                     }
@@ -149,26 +165,31 @@ public class ScopeTestHelper
 
     private static Collection<Object[]> getAccessVariations(String prefix, String appendix, String variableId,
             String astText, String fullScopeName, Integer[] accessToScope) {
+        return getAccessVariations(prefix, appendix, variableId, astText, fullScopeName, accessToScope, null);
+    }
+
+    private static Collection<Object[]> getAccessVariations(String prefix, String appendix, String variableId,
+            String astText, String fullScopeName, Integer[] accessToScope, Integer stepIn) {
 
         return Arrays.asList(new Object[][]{
                     {prefix + variableId + "[0];" + appendix, new ScopeTestStruct[]{
                             //arrAccess variableId
-                            new ScopeTestStruct(astText, fullScopeName, getAstAccessOrder(accessToScope, 0, 0))
+                            new ScopeTestStruct(astText, fullScopeName, getAstAccessOrder(accessToScope, 0, 0, stepIn))
                         }
                     },
                     {prefix + variableId + "[1+1][0];" + appendix, new ScopeTestStruct[]{
                             //arrAccess arrAccess variableId
-                            new ScopeTestStruct(astText, fullScopeName, getAstAccessOrder(accessToScope, 0, 0, 0))
+                            new ScopeTestStruct(astText, fullScopeName, getAstAccessOrder(accessToScope, 0, 0, 0, stepIn))
                         }
                     },
                     {prefix + variableId + "->foo();" + appendix, new ScopeTestStruct[]{
                             //smCall/mCall/fCall variableId
-                            new ScopeTestStruct(astText, fullScopeName, getAstAccessOrder(accessToScope, 0, 0))
+                            new ScopeTestStruct(astText, fullScopeName, getAstAccessOrder(accessToScope, 0, 0, stepIn))
                         }
                     },
                     {prefix + variableId + "->foo()->bar();" + appendix, new ScopeTestStruct[]{
                             //smCall/mCall/fCall smCall/mCall/fCall variableId
-                            new ScopeTestStruct(astText, fullScopeName, getAstAccessOrder(accessToScope, 0, 0, 0))
+                            new ScopeTestStruct(astText, fullScopeName, getAstAccessOrder(accessToScope, 0, 0, 0, stepIn))
                         }
                     }
                 });

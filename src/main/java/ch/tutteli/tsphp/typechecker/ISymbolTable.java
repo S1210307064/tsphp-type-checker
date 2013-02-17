@@ -62,9 +62,9 @@ public interface ISymbolTable
 
     boolean checkIfClass(ITSPHPAst typeAst, ITypeSymbol symbol);
 
-    ISymbol resolve(ITSPHPAst ast);
-
-    ISymbol resolveWithFallBack(ITSPHPAst ast);
+    boolean checkForwardReference(ITSPHPAst ast);
+    
+    ISymbol resolveWithFallback(ITSPHPAst ast);  
 
     ITypeSymbol resolveUseType(ITSPHPAst typeAst, ITSPHPAst alias);
 

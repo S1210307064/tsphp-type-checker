@@ -41,7 +41,7 @@ public abstract class ADefinitionScopeTest extends ADefinitionTest
         for (int i = 0; i < testStructs.length; ++i) {
             ScopeTestStruct testStruct = testStructs[i];
             ITSPHPAst testCandidate = getAst(testStruct.astAccessOrder);
-
+            Assert.assertNotNull(testString + " failed. testCandidate is null. should be "+testStruct.astText, testCandidate);
             Assert.assertEquals(testString + " failed. wrong ast text,", testStruct.astText,
                     testCandidate.toStringTree());
 
@@ -54,7 +54,9 @@ public abstract class ADefinitionScopeTest extends ADefinitionTest
     private ITSPHPAst getAst(List<Integer> astAccessOrder) {
         ITSPHPAst tmp = ast;
         for (Integer index : astAccessOrder) {
-            tmp = tmp.getChild(index);
+            if (index != null) {
+                tmp = tmp.getChild(index);
+            }
         }
         return tmp;
     }

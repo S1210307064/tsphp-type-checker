@@ -73,8 +73,13 @@ public class ErrorHelper implements IErrorReporter
     }
 
     @Override
-    public DefinitionException forwardReferenceException(ITSPHPAst typeAst, ITSPHPAst useDefinition) {
+    public DefinitionException aliasForwardReference(ITSPHPAst typeAst, ITSPHPAst useDefinition) {
         return addAndGetDefinitionException("aliasForwardReference", typeAst, useDefinition);
+    }
+    
+     @Override
+    public DefinitionException forwardReference(ITSPHPAst typeAst, ITSPHPAst useDefinition) {
+        return addAndGetDefinitionException("forwardReference", typeAst, useDefinition);
     }
 
     private DefinitionException addAndGetDefinitionException(String key,

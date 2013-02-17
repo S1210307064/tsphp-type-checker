@@ -42,7 +42,9 @@ public interface IErrorReporter extends ch.tutteli.tsphp.common.IErrorReporter
 
     DefinitionException alreadyDefined(ITSPHPAst existingDefintion, ITSPHPAst newDefinition);
 
-    DefinitionException forwardReferenceException(ITSPHPAst typeAst, ITSPHPAst useDefinition);
+    DefinitionException aliasForwardReference(ITSPHPAst typeAst, ITSPHPAst useDefinition);
+
+    DefinitionException forwardReference(ITSPHPAst typeAst, ITSPHPAst useDefinition);
 
     ReferenceException unkownType(ITSPHPAst typeAst);
 

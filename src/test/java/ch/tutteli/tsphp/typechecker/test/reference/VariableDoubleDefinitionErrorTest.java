@@ -48,12 +48,30 @@ public class VariableDoubleDefinitionErrorTest extends AReferenceDefinitionError
     public static Collection<Object[]> testStrings() {
         List<Object[]> collection = new ArrayList<>();
 
+        //global variables
         collection.addAll(getVariationsInclConditionalScopes("", ""));
         collection.addAll(getVariationsInclConditionalScopes("namespace{", "}"));
         collection.addAll(getVariationsInclConditionalScopes("namespace a;", ""));
         collection.addAll(getVariationsInclConditionalScopes("namespace a{", "}"));
         collection.addAll(getVariationsInclConditionalScopes("namespace a\\b;", ""));
         collection.addAll(getVariationsInclConditionalScopes("namespace a\\b\\z{", "}"));
+
+        //functions
+        collection.addAll(getVariationsInclConditionalScopes("function void foo(){", "}"));
+        collection.addAll(getVariationsInclConditionalScopes("namespace{function void foo(){", "}}"));
+        collection.addAll(getVariationsInclConditionalScopes("namespace a;function void foo(){", "}"));
+        collection.addAll(getVariationsInclConditionalScopes("namespace a{function void foo(){", "}}"));
+        collection.addAll(getVariationsInclConditionalScopes("namespace a\\b;function void foo(){", "}"));
+        collection.addAll(getVariationsInclConditionalScopes("namespace a\\b\\z{function void foo(){", "}}"));
+
+        //methods
+        collection.addAll(getVariationsInclConditionalScopes("class a{ function void foo(){", "}}"));
+        collection.addAll(getVariationsInclConditionalScopes("namespace{class a{ function void foo(){", "}}}"));
+        collection.addAll(getVariationsInclConditionalScopes("namespace a;class a{ function void foo(){", "}}"));
+        collection.addAll(getVariationsInclConditionalScopes("namespace a{class a{ function void foo(){", "}}}"));
+        collection.addAll(getVariationsInclConditionalScopes("namespace a\\b;class a{ function void foo(){", "}}"));
+        collection.addAll(getVariationsInclConditionalScopes("namespace a\\b\\z{class a{ function void foo(){", "}}}"));
+
         collection.addAll(Arrays.asList(new Object[][]{
                     {
                         "namespace{\n int $a=1;} namespace{\n int $a=1;}",
@@ -81,8 +99,8 @@ public class VariableDoubleDefinitionErrorTest extends AReferenceDefinitionError
                     {prefix + "\n int $a; if(true){\n int $a=1;}" + appendix, errorDto},
                     {prefix + "\n int $a; if(true);else \n int $a;" + appendix, errorDto},
                     {prefix + "if(true){}else{\n int $a=1;} \n int $a; " + appendix, errorDto},
-                    {prefix + "\n int $a; switch($a){case 1: \n int $a=1;}" + appendix, errorDto},
-                    {prefix + "switch($a){case 1: \n int $a=1;} \n int $a=1;" + appendix, errorDto},
+                    {prefix + "\n int $a; int $b; switch($b){case 1: \n int $a=1;}" + appendix, errorDto},
+                    {prefix + "int $b; switch($b){case 1: \n int $a=1;} \n int $a=1;" + appendix, errorDto},
                     {prefix + "\n int $a=1; for(\n int $a;;){}" + appendix, errorDto},
                     {prefix + "for(;;){\n int $a;} \n int $a; " + appendix, errorDto},
                     {prefix + "for(;;)\n int $a; \n int $a; " + appendix, errorDto},

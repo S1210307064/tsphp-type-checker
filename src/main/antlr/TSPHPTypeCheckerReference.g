@@ -69,9 +69,10 @@ topdown
    	|	constantDeclarationList
    	|	parameterDeclarationList
     	|	variableDeclarationList
+ 	|	atom
+ 	|	constant
     	;
-   
-    
+
 useDeclarationList
 	:	^('use'	useDeclaration+)
 	;
@@ -219,6 +220,28 @@ scalarTypes returns [ITypeSymbol type]
 		{
 			$type = symbolTable.resolvePrimitiveType($start);
 			$start.setSymbol($type);
+		}
+	;
+
+atom	
+@init { int tokenType = $start.getParent().getType();}
+	: 	(	'$this'
+		|	{
+				tokenType!=VARIABLE_DECLARATION_LIST 
+				&& tokenType!=PARAMETER_DECLARATION 
+			}? VariableId
+    		)
+       		{
+       			$start.setSymbol($start.getScope().resolve($start));
+			symbolTable.checkForwardReference($start);
+       		}
+	;
+
+constant
+	:	cst=CONSTANT
+		{
+			$cst.setSymbol(symbolTable.resolveWithFallback($cst));
+			symbolTable.checkForwardReference($cst);
 		}
 	;
 

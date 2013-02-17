@@ -77,6 +77,7 @@ topdown
 	|	parameterDeclarationList
 	|	variableDeclarationList
 	|	atom
+	|	constant
     	;
 
 bottomup
@@ -177,14 +178,21 @@ variableDeclaration[ITSPHPAst tMod, ITSPHPAst type]
 		{ symbolTable.defineVariable(currentScope, $tMod, $type, $variableId); }
 	;
 
+
 atom	
 	: 	variableId=	(	'$this'
 		    		|	VariableId
-		    		|	CONSTANT
 		    		|	CLASS_STATIC_ACCESS
-		    		|	METHOD_CALL
 		    		|	METHOD_CALL_STATIC
 		    		|	FUNCTION_CALL
     				)
        		{variableId.setScope(currentScope);}
+	;
+
+constant
+	:	cst=CONSTANT
+		{
+			$cst.setText("#"+ $cst.text);
+			$cst.setScope(currentScope);
+		}
 	;
