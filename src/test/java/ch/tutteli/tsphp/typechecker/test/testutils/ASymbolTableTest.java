@@ -16,6 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker.test.testutils;
 
+import ch.tutteli.tsphp.common.TSPHPAstAdaptor;
 import ch.tutteli.tsphp.typechecker.ISymbolTable;
 import ch.tutteli.tsphp.typechecker.SymbolTable;
 import ch.tutteli.tsphp.typechecker.scopes.IScopeFactory;
@@ -37,6 +38,6 @@ public class ASymbolTableTest extends ATest
     public ASymbolTableTest() {
         super();
         scopeFactory = new ScopeFactory();
-        symbolTable = new SymbolTable(new SymbolFactory(), scopeFactory);
+        symbolTable = new SymbolTable(new SymbolFactory(), scopeFactory, new TSPHPAstAdaptor());
     }
 }

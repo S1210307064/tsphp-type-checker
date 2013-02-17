@@ -18,11 +18,10 @@ package ch.tutteli.tsphp.typechecker.test.testutils;
 
 import ch.tutteli.tsphp.common.IParser;
 import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.common.TSPHPAstAdaptorRegistry;
+import ch.tutteli.tsphp.common.ITSPHPAstAdaptor;
+import ch.tutteli.tsphp.common.TSPHPAstAdaptor;
 import ch.tutteli.tsphp.parser.ParserFacade;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
-import ch.tutteli.tsphp.typechecker.error.ErrorHelper;
-import ch.tutteli.tsphp.typechecker.scopes.ScopeFactory;
 import org.antlr.runtime.tree.CommonTreeNodeStream;
 
 /**
@@ -33,15 +32,16 @@ public class RemoteTreeGrammarDebugger
 {
 
     public static void main(String[] args) throws Exception {
-
-        IParser parser = new ParserFacade();
+        
+        ITSPHPAstAdaptor adaptor = new TSPHPAstAdaptor();
+        IParser parser = new ParserFacade(adaptor);
         ITSPHPAst ast = parser.parse("$a=1, $b, $c;");
-        CommonTreeNodeStream commonTreeNodeStream = new CommonTreeNodeStream(TSPHPAstAdaptorRegistry.get(), ast);
+        CommonTreeNodeStream commonTreeNodeStream = new CommonTreeNodeStream(adaptor, ast);
         commonTreeNodeStream.setTokenStream(parser.getTokenStream());
 
         TestSymbolFactory testSymbolFactory = new TestSymbolFactory();
         TSPHPTypeCheckerDefinition definition = new TSPHPTypeCheckerDefinition(
-                commonTreeNodeStream, new TestSymbolTable(testSymbolFactory, new TestScopeFactory()));
+                commonTreeNodeStream, new TestSymbolTable(testSymbolFactory, new TestScopeFactory(), new TSPHPAstAdaptor()));
 
         definition.downup(ast);
         System.exit(0);

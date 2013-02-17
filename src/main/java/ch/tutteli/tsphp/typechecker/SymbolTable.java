@@ -20,9 +20,9 @@ import ch.tutteli.tsphp.common.ILowerCaseStringMap;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
+import ch.tutteli.tsphp.common.ITSPHPAstAdaptor;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.LowerCaseStringMap;
-import ch.tutteli.tsphp.common.TSPHPAstAdaptorRegistry;
 import ch.tutteli.tsphp.common.exceptions.ReferenceException;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
@@ -53,12 +53,14 @@ public class SymbolTable implements ISymbolTable
     public static String[] compoundTypes = new String[]{"array", "resource", "object"};
     private ISymbolFactory symbolFactory;
     private IScopeFactory scopeFactory;
+    private ITSPHPAstAdaptor astAdaptor;
     private ILowerCaseStringMap<IScope> globalNamespaceScopes = new LowerCaseStringMap<>();
     private IScope globalDefaultNamespace;
 
-    public SymbolTable(ISymbolFactory aSymbolFactory, IScopeFactory aScopeFactory) {
+    public SymbolTable(ISymbolFactory aSymbolFactory, IScopeFactory aScopeFactory, ITSPHPAstAdaptor theAstAdaptor) {
         symbolFactory = aSymbolFactory;
         scopeFactory = aScopeFactory;
+        astAdaptor = theAstAdaptor;
 
         initTypeSystem();
     }
@@ -81,13 +83,11 @@ public class SymbolTable implements ISymbolTable
         //predefiend classes
         ITSPHPAst classModifier = createAst(TSPHPTypeCheckerDefinition.CLASS_MODIFIER, "cMod");
         ITSPHPAst identifier = createAst(TSPHPTypeCheckerDefinition.TYPE_NAME, "Exception");
-        ITSPHPAst ext = createAst(TSPHPTypeCheckerDefinition.Extends, "extends");
-        ITSPHPAst impl = createAst(TSPHPTypeCheckerDefinition.Implements, "extends");
         globalDefaultNamespace.define(symbolFactory.createClassTypeSymbol(classModifier, identifier, globalDefaultNamespace));
     }
 
     private ITSPHPAst createAst(int tokenType, String name) {
-        return (ITSPHPAst) TSPHPAstAdaptorRegistry.get().create(0, new CommonToken(tokenType, name));
+        return (ITSPHPAst) astAdaptor.create(0, new CommonToken(tokenType, name));
     }
 
     @Override

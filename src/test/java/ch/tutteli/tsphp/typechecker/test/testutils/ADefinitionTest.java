@@ -16,10 +16,9 @@
  */
 package ch.tutteli.tsphp.typechecker.test.testutils;
 
-import ch.tutteli.tsphp.common.IParser;
 import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.common.TSPHPAstAdaptorRegistry;
-import ch.tutteli.tsphp.parser.ParserFacade;
+import ch.tutteli.tsphp.common.ITSPHPAstAdaptor;
+import ch.tutteli.tsphp.common.TSPHPAstAdaptor;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.CommonTreeNodeStream;
@@ -40,6 +39,7 @@ public abstract class ADefinitionTest extends ATest
     protected TestScopeFactory scopeFactory;
     protected ITSPHPAst ast;
     public static CommonTreeNodeStream commonTreeNodeStream;
+    private ITSPHPAstAdaptor adaptor;
 
     protected abstract void verifyDefinitions();
 
@@ -51,8 +51,9 @@ public abstract class ADefinitionTest extends ATest
     }
 
     private void init() {
+        adaptor = new TSPHPAstAdaptor();
         scopeFactory = new TestScopeFactory();
-        symbolTable = new TestSymbolTable(new TestSymbolFactory(), scopeFactory);
+        symbolTable = new TestSymbolTable(new TestSymbolFactory(), scopeFactory, adaptor);
     }
 
     public void check() throws RecognitionException {
@@ -60,9 +61,9 @@ public abstract class ADefinitionTest extends ATest
 
         Assert.assertFalse(testString.replaceAll("\n", " ") + " failed - parser throw exception", parser.hasFoundError());
 
-        commonTreeNodeStream = new CommonTreeNodeStream(TSPHPAstAdaptorRegistry.get(), ast);
+        commonTreeNodeStream = new CommonTreeNodeStream(adaptor, ast);
         commonTreeNodeStream.setTokenStream(parser.getTokenStream());
-        commonTreeNodeStream.reset();
+
         TSPHPTypeCheckerDefinition definition = new TSPHPTypeCheckerDefinition(commonTreeNodeStream, symbolTable);
         definition.downup(ast);
 

@@ -50,6 +50,7 @@
     <property name="antlr" location="${src}/main/antlr" />
     <property name="antlr.output" location="${src}/main/antlr/output" />
     <property name="antlr.copyLocation" location="${src.main}/ch/tutteli/tsphp/typechecker/antlr" />
+    <property name="common.jar" location="${basedir}/../TSPHP-common/build/lib" />
     <property name="parser" location="${basedir}/../TSPHP-parser"/>
     <property name="parser.tokens" location="${parser}/src/main/antlr/output"/>
     <property name="parser.jar" location="${parser}/build/lib"/>
@@ -155,7 +156,7 @@
         </java>
     </target>
     
-    <property name="common.jar" location="${basedir}/../TSPHP-common/build/lib" />
+    
     
     <target name="copyParser" depends="" description="copy parser jar and token file to lib/dev folder, src/main/antlr respectively">
         <delete>

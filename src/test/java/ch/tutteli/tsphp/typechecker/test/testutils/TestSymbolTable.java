@@ -20,6 +20,7 @@ import ch.tutteli.tsphp.common.AstHelperRegistry;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
+import ch.tutteli.tsphp.common.ITSPHPAstAdaptor;
 import ch.tutteli.tsphp.common.TSPHPAst;
 import ch.tutteli.tsphp.typechecker.ISymbolTable;
 import ch.tutteli.tsphp.typechecker.SymbolTable;
@@ -46,8 +47,9 @@ public class TestSymbolTable extends SymbolTable implements ISymbolTable, ICreat
     private List<Entry<ISymbol, ITSPHPAst>> symbols = new ArrayList<>();
     private ISymbol newlyCreatedSymbol;
 
-    public TestSymbolTable(TestSymbolFactory testSymbolFactory, TestScopeFactory testScopeFactory) {
-        super(testSymbolFactory, testScopeFactory);
+    public TestSymbolTable(TestSymbolFactory testSymbolFactory, TestScopeFactory testScopeFactory,
+            ITSPHPAstAdaptor astAdaptor) {
+        super(testSymbolFactory, testScopeFactory, astAdaptor);
         symbolFactory = testSymbolFactory;
         symbolFactory.registerListener(this);
     }
