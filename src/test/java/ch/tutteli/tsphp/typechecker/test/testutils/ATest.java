@@ -16,6 +16,8 @@
  */
 package ch.tutteli.tsphp.typechecker.test.testutils;
 
+import ch.tutteli.tsphp.common.IParser;
+import ch.tutteli.tsphp.parser.ParserFacade;
 import ch.tutteli.tsphp.typechecker.error.ErrorHelper;
 import ch.tutteli.tsphp.typechecker.error.ErrorMessageProvider;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
@@ -30,8 +32,9 @@ import org.junit.Ignore;
 @Ignore
 public class ATest
 {
-
+    protected IParser parser ;
     public ATest() {
+        parser = new ParserFacade();
         ScopeHelperRegistry.set(new ScopeHelper());
         ErrorReporterRegistry.set(new ErrorHelper(new ErrorMessageProvider()));
     }

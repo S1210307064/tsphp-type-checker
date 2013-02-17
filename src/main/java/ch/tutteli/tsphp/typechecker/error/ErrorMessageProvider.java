@@ -33,7 +33,10 @@ public class ErrorMessageProvider extends AErrorMessageProvider
         definitionErrors.put("definedInOuterScope",
                 "Line %lineN%|%posN% - %idN% was already defined in outerscope in line %line%|%pos% %id%");
         definitionErrors.put("aliasForwardReference",
-                "Line %lineN%|%posN% - alias is used before its use declaration. Corresponding use declaration is "
+                "Line %lineN%|%posN% - alias %idN% is used before its use declaration. Corresponding use declaration is "
+                + "in line %line%|%pos%");
+        definitionErrors.put("forwardReference",
+                "Line %lineN%|%posN% - %idN% is used before its declaration. Corresponding declaration is "
                 + "in line %line%|%pos%");
     }
 

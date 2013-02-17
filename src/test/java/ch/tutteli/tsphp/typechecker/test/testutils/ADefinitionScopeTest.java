@@ -55,6 +55,7 @@ public abstract class ADefinitionScopeTest extends ADefinitionTest
         ITSPHPAst tmp = ast;
         for (Integer index : astAccessOrder) {
             if (index != null) {
+                Assert.assertNotNull(testString + " failed. Could not reach path.",tmp);
                 tmp = tmp.getChild(index);
             }
         }

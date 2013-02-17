@@ -32,10 +32,10 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class AtomTest extends ADefinitionScopeTest
+public class AtomConstantTest extends ADefinitionScopeTest
 {
 
-    public AtomTest(String testString, ScopeTestStruct[] theTestStructs) {
+    public AtomConstantTest(String testString, ScopeTestStruct[] theTestStructs) {
         super(testString, theTestStructs);
     }
 

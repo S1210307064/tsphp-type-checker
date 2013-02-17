@@ -78,6 +78,8 @@ topdown
 	|	variableDeclarationList
 	|	atom
 	|	constant
+	|	casting
+	|	instanceofOperator
     	;
 
 bottomup
@@ -195,4 +197,18 @@ constant
 			$cst.setText("#"+ $cst.text);
 			$cst.setScope(currentScope);
 		}
+	;
+
+casting
+	:	^(CASTING ^(TYPE . type=.) .)
+		{$type.setScope(currentScope);}
+	;
+	
+instanceofOperator
+	:	^('instanceof' 
+			.
+	 		(	VariableId
+			|	type=TYPE_NAME {$type.setScope(currentScope);}
+			)
+		)
 	;

@@ -17,12 +17,16 @@
 package ch.tutteli.tsphp.typechecker.test.definition;
 
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
+import ch.tutteli.tsphp.typechecker.symbols.ModifierHelper;
 import ch.tutteli.tsphp.typechecker.test.testutils.ADefinitionSymbolTest;
+import ch.tutteli.tsphp.typechecker.test.testutils.IAdder;
+import ch.tutteli.tsphp.typechecker.test.testutils.TypeHelper;
 import ch.tutteli.tsphp.typechecker.test.testutils.VariableDeclarationListHelper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.SortedSet;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,10 +37,10 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class VariableDefinitionTest extends ADefinitionSymbolTest
+public class VariableDefinitionGlobalTest extends ADefinitionSymbolTest
 {
 
-    public VariableDefinitionTest(String testString, String expectedResult) {
+    public VariableDefinitionGlobalTest(String testString, String expectedResult) {
         super(testString, expectedResult);
     }
 
@@ -47,58 +51,16 @@ public class VariableDefinitionTest extends ADefinitionSymbolTest
 
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
-        List<Object[]> collection = new ArrayList<>();
+        final List<Object[]> collection = new ArrayList<>();
 
-        String defaultNamespace = "\\.\\.";
+        final String defaultNamespace = "\\.\\.";
+        final String aNamespace = "\\a\\.\\a\\.";
 
         collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase("", ";", "", defaultNamespace, null));
         collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
-                "namespace a{", ";}", "", "\\a\\.\\a\\.", null));
+                "namespace a{", ";}", "", aNamespace, null));
         collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
                 "namespace a\\b{", ";}", "", "\\a\\b\\.\\a\\b\\.", null));
-
-        //variable declaration in methods
-        collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
-                "class a{ function void foo(){", ";}}",
-                "\\.\\.a "
-                + defaultNamespace + "a.void " + defaultNamespace + "a.foo()|" + TSPHPTypeCheckerDefinition.Public + " ",
-                defaultNamespace + "a.foo().", null));
-
-        collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
-                "namespace t; class a{ function void foo(){", ";}}",
-                "\\t\\.\\t\\.a \\t\\.\\t\\.a.void \\t\\.\\t\\.a.foo()|" + TSPHPTypeCheckerDefinition.Public + " ",
-                "\\t\\.\\t\\.a.foo().", null));
-
-        //variable declaration in functions
-        collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
-                "function void foo(){", ";}",
-                defaultNamespace + "void \\.\\.foo() ",
-                defaultNamespace + "foo().", null));
-
-        collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
-                "namespace t; function void foo(){", ";}",
-                "\\t\\.\\t\\.void \\t\\.\\t\\.foo() ", "\\t\\.\\t\\.foo().", null));
-
-        //variable declaration in conditional blocks
-        String[][] conditions = new String[][]{
-            {"if(true)", ";"},
-            {"if(true){", ";}"},
-            {"switch($a){case 1:", ";}"},
-            {"for(;;)", ";"},
-            {"for(;;){", ";}"},
-            {"foreach($a as object $v)", ";"},
-            {"foreach($a as object $v){", ";}"},
-            {"while(true)", ";"},
-            {"while(true){", ";}"},
-            {"do ", ";while(true);"},
-            {"do{ ", ";}while(true);"}
-        };
-        for (String[] condition : conditions) {
-            collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
-                    condition[0], condition[1], "", defaultNamespace + "cScope.", null));
-            collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase("namespace a{" + condition[0],
-                    condition[1] + "}", "", "\\a\\.\\a\\.cScope.", null));
-        }
 
 
         //Different namespaces
@@ -136,25 +98,7 @@ public class VariableDefinitionTest extends ADefinitionSymbolTest
                         + "\\c\\e\\.\\c\\e\\.float \\c\\e\\.\\c\\e\\.$c "
                         + "\\c\\e\\.\\c\\e\\.float \\c\\e\\.\\c\\e\\.$d"
                     },
-                    {
-                        "namespace t\\r; class a{ function void foo(){ int $a=1; bool $b=true,$c=false;}}",
-                        "\\t\\r\\.\\t\\r\\.a "
-                        + "\\t\\r\\.\\t\\r\\.a.void "
-                        + "\\t\\r\\.\\t\\r\\.a.foo()|" + TSPHPTypeCheckerDefinition.Public + " "
-                        + "\\t\\r\\.\\t\\r\\.a.foo().int \\t\\r\\.\\t\\r\\.a.foo().$a "
-                        + "\\t\\r\\.\\t\\r\\.a.foo().bool \\t\\r\\.\\t\\r\\.a.foo().$b "
-                        + "\\t\\r\\.\\t\\r\\.a.foo().bool \\t\\r\\.\\t\\r\\.a.foo().$c"
-                    },
-                    {
-                        "namespace{ function void foo(){ int $a=1; bool $b=true, $c=false;}}"
-                        + "namespace b{ function void bar(){float $d;}}",
-                        "\\.\\.void \\.\\.foo() "
-                        + "\\.\\.foo().int \\.\\.foo().$a "
-                        + "\\.\\.foo().bool \\.\\.foo().$b "
-                        + "\\.\\.foo().bool \\.\\.foo().$c "
-                        + "\\b\\.\\b\\.void \\b\\.\\b\\.bar() "
-                        + "\\b\\.\\b\\.bar().float \\b\\.\\b\\.bar().$d"
-                    },}));
+                  }));
         return collection;
     }
 }

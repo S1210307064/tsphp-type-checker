@@ -56,7 +56,6 @@ public abstract class ADefinitionTest extends ATest
     }
 
     public void check() throws RecognitionException {
-        IParser parser = new ParserFacade();
         ast = parser.parse(testString);
 
         Assert.assertFalse(testString.replaceAll("\n", " ") + " failed - parser throw exception", parser.hasFoundError());

@@ -22,7 +22,9 @@ import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.LowerCaseStringMap;
+import ch.tutteli.tsphp.common.TSPHPAstAdaptorRegistry;
 import ch.tutteli.tsphp.common.exceptions.ReferenceException;
+import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.scopes.GlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.IConditionalScope;
@@ -39,6 +41,7 @@ import ch.tutteli.tsphp.typechecker.symbols.IInterfaceTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
+import org.antlr.runtime.CommonToken;
 
 /**
  *
@@ -74,6 +77,17 @@ public class SymbolTable implements ISymbolTable
         globalDefaultNamespace.define(symbolFactory.createPseudoTypeSymbol("resource"));
         globalDefaultNamespace.define(object);
         globalDefaultNamespace.define(symbolFactory.createPseudoTypeSymbol("void"));
+
+        //predefiend classes
+        ITSPHPAst classModifier = createAst(TSPHPTypeCheckerDefinition.CLASS_MODIFIER, "cMod");
+        ITSPHPAst identifier = createAst(TSPHPTypeCheckerDefinition.TYPE_NAME, "Exception");
+        ITSPHPAst ext = createAst(TSPHPTypeCheckerDefinition.Extends, "extends");
+        ITSPHPAst impl = createAst(TSPHPTypeCheckerDefinition.Implements, "extends");
+        globalDefaultNamespace.define(symbolFactory.createClassTypeSymbol(classModifier, identifier, globalDefaultNamespace));
+    }
+
+    private ITSPHPAst createAst(int tokenType, String name) {
+        return (ITSPHPAst) TSPHPAstAdaptorRegistry.get().create(0, new CommonToken(tokenType, name));
     }
 
     @Override
@@ -217,7 +231,6 @@ public class SymbolTable implements ISymbolTable
         ast.setSymbol(symbol);
         return symbol;
     }
-      
 
     @Override
     public ITypeSymbol resolveUseType(ITSPHPAst typeAst, ITSPHPAst alias) {
