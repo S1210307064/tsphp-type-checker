@@ -413,7 +413,7 @@
     <!--          werden, wenn Fehler vorhanden sind (compile, test etc.) -->
     <!-- ================================================================== -->
     <target name="dist"
-            depends="clean,antlr, jar,javadoc, build"
+            depends="clean,antlr,report, jar,javadoc, build"
             description="create distributions">
         <mkdir dir="${target}/dist" />
         <zip destfile="${target}/dist/${distname}-bin.zip">
