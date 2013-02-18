@@ -30,7 +30,7 @@ import org.junit.Ignore;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @Ignore
-public class ATest
+public abstract class ATest
 {
     protected IParser parser ;
     public ATest() {

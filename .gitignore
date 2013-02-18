@@ -1,15 +1,9 @@
 build/*
 nbproject/*
 /src/main/antlr/output
-/lib/dev/pmd
-/lib/dev/checkstyle
-/lib/dev/classycle
-/lib/dev/findbugs
-
-/src/main/java/ch/tutteli/tsphp/typechecker/TSPHPTypeCheckerDefinition.java
-/src/main/java/ch/tutteli/tsphp/typechecker/TSPHPTypeCheckerDefinition.tokens
 
 /src/main/java/ch/tutteli/tsphp/typechecker/antlr/TSPHPTypeCheckerDefinition.java
 /src/main/java/ch/tutteli/tsphp/typechecker/antlr/TSPHPTypeCheckerDefinition.tokens
 /src/main/java/ch/tutteli/tsphp/typechecker/antlr/TSPHPTypeCheckerReference.java
 /src/main/java/ch/tutteli/tsphp/typechecker/antlr/TSPHPTypeCheckerReference.tokens
+

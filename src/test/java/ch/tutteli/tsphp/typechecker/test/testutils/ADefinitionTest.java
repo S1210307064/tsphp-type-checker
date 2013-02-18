@@ -38,7 +38,7 @@ public abstract class ADefinitionTest extends ATest
     protected TestSymbolTable symbolTable;
     protected TestScopeFactory scopeFactory;
     protected ITSPHPAst ast;
-    public static CommonTreeNodeStream commonTreeNodeStream;
+    protected CommonTreeNodeStream commonTreeNodeStream;
     private ITSPHPAstAdaptor adaptor;
 
     protected abstract void verifyDefinitions();

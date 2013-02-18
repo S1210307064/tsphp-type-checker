@@ -61,7 +61,6 @@
     <property name="test-classes" location="${target}/classes-test" />
     <property name="dist" location="${target}/dist" />
     <property name="generated" location="${target}/generated" />
-    <property name="classycle" location="${target}/classycle" /> 
     <property name="javadoc" location="${target}/javadoc" />
     <property name="junit" location="${target}/junit" />
     <property name="coverage" location="${target}/coverage" />
@@ -129,7 +128,7 @@
     <target name="antlr">
         <java classname="org.antlr.Tool" fork="true" failonerror="true">
             <arg value="-verbose"/>
-             <arg value="-lib"/>
+            <arg value="-lib"/>
             <arg path="${antlr}"/>
             <arg value="-o"/>
             <arg path="${antlr.copyLocation}"/>
@@ -317,30 +316,13 @@
         <taskdef resource="checkstyletask.properties" classpathref="libsetdev" />
         <mkdir dir="${checkstyle}" />
         <checkstyle config="${checkstyle.config.file}" failonviolation="false">
-            <fileset dir="${src.main}" includes="**/*.java" />
+            <fileset dir="${src.main}" includes="**/*.java" excludes="**/antlr/*" />
             <formatter type="xml" toFile="${checkstyle}/checkstyle.xml" />
         </checkstyle>
         <xslt in="${checkstyle}/checkstyle.xml"
               out="${checkstyle}/index.html"
               style="${libdev}/checkstyle/style/checkstyle-noframes-severity-sorted.xsl" />
     </target>
-
-    <!-- ================================================================== -->
-    <!-- Target: classycle -->
-    <!-- ================================================================== -->
-    <target name="classycle" depends="jar" description="classycle report">
-        <taskdef name="classycleReport" classname="classycle.ant.ReportTask" classpathref="libsetdev" />
-        <mkdir dir="${classycle}" />
-        <classycleReport reportFile="${classycle}/classycle.xml">
-            <fileset dir="${target}/lib/">
-                <include name="${distname}.jar" />
-            </fileset>
-        </classycleReport>
-        <xslt in="${classycle}/classycle.xml" out="${classycle}/index.html" style="${libdev}/classycle/style/reportXMLtoHTML.xsl" />
-        <copy todir="${classycle}/images">
-            <fileset dir="${libdev}/classycle/images" includes="*.png" />
-        </copy>
-    </target> 
    
     <!-- ================================================================== -->
     <!-- Target: pmd -->
@@ -356,6 +338,7 @@
                        linkPrefix="../java2html/" />
             <fileset dir="${src.main}">
                 <include name="**/*.java" />
+                <exclude name="**/antlr/*" />
             </fileset>
         </pmd>
         <xslt in="${pmd}/pmd.xml"
@@ -371,6 +354,7 @@
         <cpd minimumTokenCount="100" outputFile="${cpd}/cpd.xml" format="xml">
             <fileset dir="${src.main}">
                 <include name="**/*.java"/>
+                <exclude name="**/antlr/*" />
             </fileset>
         </cpd>
         <xslt in="${cpd}/cpd.xml" out="${cpd}/index.html" style="${libdev}/pmd/style/cpdhtml.xslt" />
@@ -478,7 +462,6 @@
     <!-- ================================================================== -->
     <target name="clean" description="clean up">
         <delete includeemptydirs="true" quiet="true">
-            <fileset dir="${basedir}/.sonar" />
             <fileset dir="${target}" excludes="eclipse/**/*" />
         </delete>
     </target>
@@ -488,7 +471,7 @@
     <!-- Target: reports -->
     <!-- ================================================================== -->
     <target name="report"
-            depends="checkstyle,pmd,cpd,javadoc,classycle"
+            depends="checkstyle,pmd,cpd,javadoc"
             description="complete reports">
     </target>
 
@@ -496,27 +479,7 @@
     <!-- Target: build -->
     <!-- ================================================================== -->
     <target name="build" depends="antlr, jar, test" description="complete build">
-    </target>
-   
-    <!-- ================================================================== -->
-    <!-- Target: sonar -->
-    <!-- ================================================================== -->
-    <target name="sonar" depends="dist" description="sonar, only for use on buildserver">
-        <property name="sonar.dynamicAnalysis" value="reuseReports" />
-        <property name="sonar.surefire.reportsPath" value="${junit}" />
-        <property name="sonar.jacoco.reportPath" value="${coverage}/jacoco.exec" />
-        <property name="sonar.projectName" value="${proj.modul}-${proj.group}-${proj.name}" />
-        <property name="sonar.java.source" value="${proj.java.version}" />
-        <property name="sonar.sources" value="${src.main}" />
-        <property name="sonar.tests" value="${src.test}" />
-        <property name="sonar.binaries" value="${classes}"/>
-        <pathconvert property="sonar.libraries" refid="libsetdev" pathsep="," />      
-        <property name="sonar.verbose" value="false" />
-        <taskdef uri="antlib:org.sonar.ant" resource="org/sonar/ant/antlib.xml">
-            <classpath path="${libdev}/sonar/sonar-ant-task-1.3.jar" />
-        </taskdef>
-        <sonar:sonar key="ch.tutteli.tsphp.grammar:${proj.modul}-${proj.group}-${proj.name}" version="${proj.version}" xmlns:sonar="antlib:org.sonar.ant" />
-    </target>
+    </target>  
 
     <!-- ****************************************************************** -->
     <!-- * MACROS  -->
