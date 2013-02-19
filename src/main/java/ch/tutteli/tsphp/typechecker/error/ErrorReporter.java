@@ -72,6 +72,12 @@ public class ErrorReporter implements IErrorReporter
     }
 
     @Override
+    public DefinitionException definedInOuterScope(ISymbol firstDefinition, ISymbol symbolToCheck) {
+        return addAndGetDefinitionException("definedInOuterScope", firstDefinition.getDefinitionAst(),
+                symbolToCheck.getDefinitionAst());
+    }
+
+    @Override
     public DefinitionException aliasForwardReference(ITSPHPAst typeAst, ITSPHPAst useDefinition) {
         return addAndGetDefinitionException("aliasForwardReference", typeAst, useDefinition);
     }

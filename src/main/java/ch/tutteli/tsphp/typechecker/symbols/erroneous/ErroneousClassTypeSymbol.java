@@ -62,7 +62,7 @@ public class ErroneousClassTypeSymbol extends AErroneousScopedSymbol implements 
     }
 
     @Override
-    public boolean definitionCheckCaseInsensitive(ISymbol symbol) {
+    public boolean doubleDefinitionCheckCaseInsensitive(ISymbol symbol) {
         throw new UnsupportedOperationException("ErroneousClassSymbol is not a real class.");
     }
 }

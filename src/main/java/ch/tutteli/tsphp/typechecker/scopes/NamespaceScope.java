@@ -55,15 +55,15 @@ public class NamespaceScope extends AScope implements INamespaceScope
     }
 
     @Override
-    public boolean definitionCheck(ISymbol symbol) {
+    public boolean doubleDefinitionCheck(ISymbol symbol) {
         //check in global namespace scope, because they have been defined there
-        return enclosingScope.definitionCheck(symbol);
+        return enclosingScope.doubleDefinitionCheck(symbol);
     }
 
     @Override
-    public boolean definitionCheckCaseInsensitive(ISymbol symbol) {
+    public boolean doubleDefinitionCheckCaseInsensitive(ISymbol symbol) {
         //check in global namespace scope, because they have been defined there
-        return ((ICaseInsensitiveScope) enclosingScope).definitionCheckCaseInsensitive(symbol);
+        return ((ICaseInsensitiveScope) enclosingScope).doubleDefinitionCheckCaseInsensitive(symbol);
     }
 
     @Override

@@ -44,10 +44,22 @@ public class ScopeHelper implements IScopeHelper
     }
 
     @Override
+    public boolean doubleDefinitionCheck(Map<String, List<ISymbol>> symbols, ISymbol symbol,
+            IAlreadyDefinedMethodCaller errorMethodCaller) {
+        return doubleDefinitionCheck(symbols.get(symbol.getName()).get(0), symbol, errorMethodCaller);
+    }
+
+    @Override
     public boolean doubleDefinitionCheck(ISymbol firstDefinition, ISymbol symbolToCheck) {
+        return doubleDefinitionCheck(firstDefinition, symbolToCheck, new StandardAlreadyDefinedMethodCaller());
+    }
+
+    @Override
+    public boolean doubleDefinitionCheck(ISymbol firstDefinition, ISymbol symbolToCheck,
+            IAlreadyDefinedMethodCaller errorMethodCaller) {
         boolean isFirst = firstDefinition.equals(symbolToCheck);
         if (!isFirst) {
-            ErrorReporterRegistry.get().alreadyDefined(firstDefinition, symbolToCheck);
+            errorMethodCaller.callAccordingAlreadyDefinedMethod(firstDefinition, symbolToCheck);
         }
         return isFirst;
     }
@@ -67,5 +79,14 @@ public class ScopeHelper implements IScopeHelper
             symbol = symbols.get(ast.getText()).get(0);
         }
         return symbol;
+    }
+
+    private class StandardAlreadyDefinedMethodCaller implements IAlreadyDefinedMethodCaller
+    {
+
+        @Override
+        public void callAccordingAlreadyDefinedMethod(ISymbol firstDefinition, ISymbol symbolToCheck) {
+            ErrorReporterRegistry.get().alreadyDefined(firstDefinition, symbolToCheck);
+        }
     }
 }

@@ -16,15 +16,13 @@
  */
 package ch.tutteli.tsphp.typechecker.scopes;
 
-import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public interface ICaseInsensitiveScope extends IScope
+public interface IAlreadyDefinedMethodCaller
 {
-
-    boolean doubleDefinitionCheckCaseInsensitive(ISymbol symbol);
+    void callAccordingAlreadyDefinedMethod(ISymbol firstDefinition, ISymbol symbolToCheck);
 }

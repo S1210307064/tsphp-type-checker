@@ -49,7 +49,7 @@ public class ClassSymbol extends AScopedSymbol implements IClassTypeSymbol
     }
 
     @Override
-    public boolean definitionCheckCaseInsensitive(ISymbol symbol) {
+    public boolean doubleDefinitionCheckCaseInsensitive(ISymbol symbol) {
         return ScopeHelperRegistry.get().doubleDefinitionCheck(symbolsCaseInsensitive, symbol);
     }
 

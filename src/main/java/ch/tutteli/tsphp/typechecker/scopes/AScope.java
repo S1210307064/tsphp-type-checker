@@ -48,7 +48,7 @@ public abstract class AScope implements IScope
     }
 
     @Override
-    public boolean definitionCheck(ISymbol symbol) {
+    public boolean doubleDefinitionCheck(ISymbol symbol) {
        return ScopeHelperRegistry.get().doubleDefinitionCheck(symbols, symbol);
     }
 

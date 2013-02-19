@@ -19,7 +19,6 @@ package ch.tutteli.tsphp.typechecker.symbols;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.LowerCaseStringMap;
 import ch.tutteli.tsphp.typechecker.scopes.ScopeHelperRegistry;
 import java.util.List;
@@ -54,7 +53,7 @@ public abstract class AScopedSymbol extends ASymbolWithModifier implements IScop
     }
 
     @Override
-    public boolean definitionCheck(ISymbol symbol) {
+    public boolean doubleDefinitionCheck(ISymbol symbol) {
         return ScopeHelperRegistry.get().doubleDefinitionCheck(members, symbol);
     }
 

@@ -33,24 +33,33 @@ public class ConditionalScope extends AScope implements IConditionalScope
     }
 
     @Override
-    public boolean definitionCheck(ISymbol symbol) {
-        boolean ok = super.definitionCheck(symbol);
+    public void define(ISymbol symbol) {
+        enclosingScope.define(symbol);
+        symbol.setDefinitionScope(this);
+    }
 
-        //Check if already defined in enclosing scope
-        ISymbol symbolEnclosingScope = enclosingScope.resolve(symbol.getDefinitionAst());
-        if (symbolEnclosingScope != null) {
-            ok = false;
-            ErrorReporterRegistry.get().determineAlreadyDefined(symbolEnclosingScope, symbol);
-        }
-        return ok;
+    @Override
+    public boolean doubleDefinitionCheck(ISymbol symbol) {
+        IScope scope = getEnclosingNonConditionalScope(symbol);
+        return ScopeHelperRegistry.get().doubleDefinitionCheck(scope.getSymbols(), symbol, new IAlreadyDefinedMethodCaller()
+        {
+            @Override
+            public void callAccordingAlreadyDefinedMethod(ISymbol firstDefinition, ISymbol symbolToCheck) {
+                ErrorReporterRegistry.get().definedInOuterScope(firstDefinition, symbolToCheck);
+            }
+        });
     }
 
     @Override
     public ISymbol resolve(ITSPHPAst ast) {
-        ISymbol symbol = super.resolve(ast);
-        if (symbol == null) {
-            symbol = enclosingScope.resolve(ast);
+        return enclosingScope.resolve(ast);
+    }
+
+    private IScope getEnclosingNonConditionalScope(ISymbol symbol) {
+        IScope scope = symbol.getDefinitionAst().getScope();
+        while (scope != null && scope instanceof IConditionalScope) {
+            scope = scope.getEnclosingScope();
         }
-        return symbol;
+        return scope;
     }
 }

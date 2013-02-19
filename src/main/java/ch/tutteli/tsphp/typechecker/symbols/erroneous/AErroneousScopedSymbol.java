@@ -20,7 +20,6 @@ import ch.tutteli.tsphp.common.ASymbol;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
 import java.util.List;
 import java.util.Map;
@@ -59,7 +58,7 @@ public abstract class AErroneousScopedSymbol extends ASymbol implements IErroneo
     }
 
     @Override
-    public boolean definitionCheck(ISymbol is) {
+    public boolean doubleDefinitionCheck(ISymbol is) {
         throw new UnsupportedOperationException("AErroneousScopedSymbol is not a real scope.");
     }
 

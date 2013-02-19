@@ -34,7 +34,13 @@ public interface IScopeHelper
 
     boolean doubleDefinitionCheck(Map<String, List<ISymbol>> symbols, ISymbol symbol);
 
+    boolean doubleDefinitionCheck(Map<String, List<ISymbol>> symbols, ISymbol symbol,
+            IAlreadyDefinedMethodCaller errorMethodCaller);
+
     boolean doubleDefinitionCheck(ISymbol firstDefinition, ISymbol symbolToCheck);
+
+    boolean doubleDefinitionCheck(ISymbol firstDefinition, ISymbol symbolToCheck,
+            IAlreadyDefinedMethodCaller errorMethodCaller);
 
     IGlobalNamespaceScope getCorrespondingGlobalNamespace(ILowerCaseStringMap<IGlobalNamespaceScope> globalNamespaceScopes, String typeName);
 

@@ -99,6 +99,7 @@ public class VariableDoubleDefinitionErrorTest extends AReferenceDefinitionError
                     {prefix + "\n int $a; if(true){\n int $a=1;}" + appendix, errorDto},
                     {prefix + "\n int $a; if(true);else \n int $a;" + appendix, errorDto},
                     {prefix + "if(true){}else{\n int $a=1;} \n int $a; " + appendix, errorDto},
+                    {prefix + "if(true){\n int $a;}else{\n int $a=1;}" + appendix, errorDto},
                     {prefix + "\n int $a; int $b; switch($b){case 1: \n int $a=1;}" + appendix, errorDto},
                     {prefix + "int $b; switch($b){case 1: \n int $a=1;} \n int $a=1;" + appendix, errorDto},
                     {prefix + "\n int $a=1; for(\n int $a;;){}" + appendix, errorDto},
@@ -110,6 +111,7 @@ public class VariableDoubleDefinitionErrorTest extends AReferenceDefinitionError
                     {prefix + "while(true) \n int $a=1; \n int $a;" + appendix, errorDto},
                     {prefix + "do \n int $a; while(true); \n int $a;" + appendix, errorDto},
                     {prefix + "\n int $a=1+1; do{ \n int $a;}while(true); " + appendix, errorDto},
+                    {prefix + "if(true){\n int $a=1+1;} do{ \n int $a;}while(true); " + appendix, errorDto},
                     //
                     {prefix + "\n int $a=1+1; do{ \n int $a;}while(true); \n int $a=1;" + appendix,
                         new DefinitionErrorDto[]{

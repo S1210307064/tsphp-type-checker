@@ -92,7 +92,7 @@ interfaceDeclaration
 	:	^('interface' iMod=. identifier=Identifier extIds=interfaceExtendsDeclaration .)
 		{
 			INamespaceScope namespaceScope = (INamespaceScope) $identifier.getScope();
-			namespaceScope.definitionCheckCaseInsensitive($identifier.getSymbol());
+			namespaceScope.doubleDefinitionCheckCaseInsensitive($identifier.getSymbol());
 		}
 	;
 interfaceExtendsDeclaration
@@ -105,7 +105,7 @@ classDeclaration
 	:	^('class' cMod=. identifier=Identifier extId=extendsDeclaration implIds=implementsDeclaration .) 
 		{
 			INamespaceScope namespaceScope = (INamespaceScope) $identifier.getScope();
-			namespaceScope.definitionCheckCaseInsensitive($identifier.getSymbol());
+			namespaceScope.doubleDefinitionCheckCaseInsensitive($identifier.getSymbol());
 		}
 	;
 
@@ -124,7 +124,7 @@ constructDeclaration
 		{
 			$identifier.getSymbol().setType($voidType.type); 
 			ICaseInsensitiveScope scope = (ICaseInsensitiveScope) $identifier.getScope();
-			scope.definitionCheckCaseInsensitive($identifier.getSymbol());
+			scope.doubleDefinitionCheckCaseInsensitive($identifier.getSymbol());
 		}
 	;
 		
@@ -137,7 +137,7 @@ methodFunctionDeclaration
 		{
 			$identifier.getSymbol().setType($returnTypes.type); 
 			ICaseInsensitiveScope scope = (ICaseInsensitiveScope) $identifier.getScope();
-			scope.definitionCheckCaseInsensitive($identifier.getSymbol());
+			scope.doubleDefinitionCheckCaseInsensitive($identifier.getSymbol());
 		}
 	;
 	
@@ -149,7 +149,7 @@ constantDeclaration[ITypeSymbol type]
 	:	^(identifier=Identifier .)
 		{ 
 			$identifier.getSymbol().setType(type); 
-			$identifier.getScope().definitionCheck($identifier.getSymbol()); 
+			$identifier.getScope().doubleDefinitionCheck($identifier.getSymbol()); 
 		}
 	;
 
@@ -174,7 +174,7 @@ variableDeclaration[ITypeSymbol type]
 		)
 		{ 
 			$variableId.getSymbol().setType(type); 
-			$variableId.getScope().definitionCheck($variableId.getSymbol());
+			$variableId.getScope().doubleDefinitionCheck($variableId.getSymbol());
 		}
 	;
 
