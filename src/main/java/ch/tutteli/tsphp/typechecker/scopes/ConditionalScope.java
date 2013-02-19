@@ -41,6 +41,9 @@ public class ConditionalScope extends AScope implements IConditionalScope
     @Override
     public boolean doubleDefinitionCheck(ISymbol symbol) {
         IScope scope = getEnclosingNonConditionalScope(symbol);
+        if(scope instanceof INamespaceScope){
+            scope = scope.getEnclosingScope();
+        }
         return ScopeHelperRegistry.get().doubleDefinitionCheck(scope.getSymbols(), symbol, new IAlreadyDefinedMethodCaller()
         {
             @Override
