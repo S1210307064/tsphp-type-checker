@@ -54,9 +54,8 @@ public class ScopeTestHelper
             {"$this", "$this"},
             {"self::$b", "(sMemAccess self $b)"},
             {"parent::$b", "(sMemAccess parent $b)"},
-            {"foo()", "(fCall foo args)"},
-            {"self::foo()", "(smCall self foo args)"},
-            {"parent::foo()", "(smCall parent foo args)"},};
+            {"foo()", "(fCall foo args)"}
+        };
 
         for (String[] variableId : variableIds) {
             collection.addAll(getVariations(prefix, appendix, variableId[0], variableId[1],
@@ -67,7 +66,9 @@ public class ScopeTestHelper
 
         variableIds = new String[][]{
             {"$a->foo()", "$a"},
-            {"$this->foo()", "$this"}
+            {"$this->foo()", "$this"},
+            {"self::foo()", "self"},
+            {"parent::foo()", "parent"}
         };
 
         for (String[] variableId : variableIds) {

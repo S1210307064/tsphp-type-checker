@@ -39,12 +39,12 @@ public class ScopeHelper implements IScopeHelper
     }
 
     @Override
-    public boolean definitionCheck(Map<String, List<ISymbol>> symbols, ISymbol symbol) {
-        return definitionCheck(symbols.get(symbol.getName()).get(0), symbol);
+    public boolean doubleDefinitionCheck(Map<String, List<ISymbol>> symbols, ISymbol symbol) {
+        return doubleDefinitionCheck(symbols.get(symbol.getName()).get(0), symbol);
     }
 
     @Override
-    public boolean definitionCheck(ISymbol firstDefinition, ISymbol symbolToCheck) {
+    public boolean doubleDefinitionCheck(ISymbol firstDefinition, ISymbol symbolToCheck) {
         boolean isFirst = firstDefinition.equals(symbolToCheck);
         if (!isFirst) {
             ErrorReporterRegistry.get().alreadyDefined(firstDefinition, symbolToCheck);
@@ -53,7 +53,7 @@ public class ScopeHelper implements IScopeHelper
     }
 
     @Override
-    public IScope getCorrespondingGlobalNamespace(ILowerCaseStringMap<IScope> globalNamespaceScopes, String typeName) {
+    public IGlobalNamespaceScope getCorrespondingGlobalNamespace(ILowerCaseStringMap<IGlobalNamespaceScope> globalNamespaceScopes, String typeName) {
         int lastBackslashPosition = typeName.lastIndexOf("\\") + 1;
         String namespaceName = typeName.substring(0, lastBackslashPosition);
         return globalNamespaceScopes.get(namespaceName);

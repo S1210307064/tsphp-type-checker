@@ -17,16 +17,11 @@
 package ch.tutteli.tsphp.typechecker.test.definition;
 
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
-import ch.tutteli.tsphp.typechecker.symbols.ModifierHelper;
 import ch.tutteli.tsphp.typechecker.test.testutils.ADefinitionSymbolTest;
-import ch.tutteli.tsphp.typechecker.test.testutils.IAdder;
-import ch.tutteli.tsphp.typechecker.test.testutils.TypeHelper;
 import ch.tutteli.tsphp.typechecker.test.testutils.VariableDeclarationListHelper;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.SortedSet;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -59,11 +54,11 @@ public class VariableDefinitionMethodTest extends ADefinitionSymbolTest
                 "class a{ function void foo(){", ";}}",
                 "\\.\\.a "
                 + defaultNamespace + "a.void " + defaultNamespace + "a.foo()|" + TSPHPTypeCheckerDefinition.Public + " ",
-                defaultNamespace + "a.foo().", null));
+                "", defaultNamespace + "a.foo().", null));
 
         collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
                 "namespace t; class a{ function void foo(){", ";}}",
-                "\\t\\.\\t\\.a \\t\\.\\t\\.a.void \\t\\.\\t\\.a.foo()|" + TSPHPTypeCheckerDefinition.Public + " ",
+                "\\t\\.\\t\\.a \\t\\.\\t\\.a.void \\t\\.\\t\\.a.foo()|" + TSPHPTypeCheckerDefinition.Public + " ","",
                 "\\t\\.\\t\\.a.foo().", null));
 
 

@@ -46,6 +46,9 @@ public class ErrorMessageProvider extends AErrorMessageProvider
         referenceErrors.put("unkownType", "Line %line%|%pos% - The type \"%id%\" could not be resolved.");
         referenceErrors.put("interfaceExpected", "Line %line%|%pos% - Interface expected, \"%id%\" is not an interface.");
         referenceErrors.put("classExpected", "Line %line%|%pos% - class expected, \"%id%\" is not a class.");
+        referenceErrors.put("notInClass", "Line %line%|%pos% - %id% is used outside a class.");
+        referenceErrors.put("noParent", "Line %line%|%pos% - %id% has no parent class.");
+        referenceErrors.put("notDefined", "Line %line%|%pos% - %id% was never defined.");
     }
 
     @Override

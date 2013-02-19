@@ -113,7 +113,7 @@ useDeclarationList
 	;
 	
 useDeclaration
-	:	^(USE_DECLRATARION type=TYPE_NAME alias=Identifier)
+	:	^(USE_DECLARATION type=TYPE_NAME alias=Identifier)
 		{symbolTable.defineUse((INamespaceScope) currentScope, $type, $alias);}
 	;
 	
@@ -123,8 +123,8 @@ interfaceDeclaration
 	;
 	
 classDeclaration
-	:	^('class' cMod=. identifier=Identifier extIds=. implIds=. .) 
-		{currentScope = symbolTable.defineClass(currentScope, $cMod, $identifier, $extIds, $implIds); }	
+	:	^('class' cMod=. identifier=Identifier extId=. implIds=. .) 
+		{currentScope = symbolTable.defineClass(currentScope, $cMod, $identifier, $extId, $implIds); }	
 	;
 	
 constructDeclaration
@@ -184,6 +184,8 @@ variableDeclaration[ITSPHPAst tMod, ITSPHPAst type]
 atom	
 	: 	variableId=	(	'$this'
 		    		|	VariableId
+		    		|	'parent'
+		    		|	'self'
 		    		|	CLASS_STATIC_ACCESS
 		    		|	METHOD_CALL_STATIC
 		    		|	FUNCTION_CALL
@@ -205,8 +207,7 @@ casting
 	;
 	
 instanceofOperator
-	:	^('instanceof' 
-			.
+	:	^('instanceof' .
 	 		(	VariableId
 			|	type=TYPE_NAME {$type.setScope(currentScope);}
 			)

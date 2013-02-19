@@ -19,6 +19,7 @@ package ch.tutteli.tsphp.typechecker.test.testutils;
 import ch.tutteli.tsphp.common.ILowerCaseStringMap;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
+import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -48,7 +49,7 @@ public abstract class ADoubleDefinitionTest extends ADefinitionTest
 
     @Override
     protected void verifyDefinitions() {
-        ILowerCaseStringMap<IScope> globalNamespaces = symbolTable.getGlobalNamespaceScopes();
+        ILowerCaseStringMap<IGlobalNamespaceScope> globalNamespaces = symbolTable.getGlobalNamespaceScopes();
         IScope globalNamespace = globalNamespaces.get(namespace);
         Assert.assertNotNull(errorMessagePrefix + " failed, global namespace " + namespace + " could not be found.",
                 globalNamespace);

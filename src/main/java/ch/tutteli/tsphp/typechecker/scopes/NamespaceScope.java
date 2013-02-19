@@ -22,9 +22,7 @@ import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.LowerCaseStringMap;
-import ch.tutteli.tsphp.common.exceptions.DefinitionException;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
-import ch.tutteli.tsphp.typechecker.symbols.ErroneusTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IInterfaceTypeSymbol;
@@ -77,24 +75,44 @@ public class NamespaceScope extends AScope implements INamespaceScope
 
     @Override
     public boolean useDefinitionCheck(IAliasSymbol symbol) {
-        return ScopeHelperRegistry.get().definitionCheck(usesCaseInsensitive.get(symbol.getName()).get(0), symbol);
+        boolean isNotDoubleDefined = ScopeHelperRegistry.get().doubleDefinitionCheck(usesCaseInsensitive.get(symbol.getName()).get(0), symbol);
+        return isNotDoubleDefined && isNotAlreadyDefinedAsType(symbol);
+
+    }
+
+    private boolean isNotAlreadyDefinedAsType(IAliasSymbol symbol) {
+        ITypeSymbol typeSymbol = resolveType(symbol.getDefinitionAst());
+        boolean ok = hasNoTypeNameClash(symbol.getDefinitionAst(), typeSymbol);
+        if (!ok) {
+            ErrorReporterRegistry.get().determineAlreadyDefined(symbol, typeSymbol);
+        }
+        return ok;
+    }
+
+    private boolean hasNoTypeNameClash(ITSPHPAst useDefinition, ITypeSymbol typeSymbol) {
+        boolean hasNoTypeNameClash = typeSymbol == null;
+        if (!hasNoTypeNameClash) {
+            boolean isUseDefinedEarlier = useDefinition.isDefinedEarlierThan(typeSymbol.getDefinitionAst());
+            boolean isUseInDifferentNamespaceStatement = !typeSymbol.getDefinitionScope().equals(this);
+
+            //There is no type name clash in the following situation: namespace{use a as b;} namespace{ class b{}}
+            //because: use is defined earlier and the use statement is in a different namespace statement
+            hasNoTypeNameClash = isUseDefinedEarlier && isUseInDifferentNamespaceStatement;
+        }
+        return hasNoTypeNameClash;
+
     }
 
     @Override
     public boolean interfaceDefinitionCheck(IInterfaceTypeSymbol symbol) {
-        //check in global namespace scope, because they have been defined there
+        //TODO 
         return true;
     }
 
     @Override
     public boolean classDefinitionCheck(IClassTypeSymbol symbol) {
-        //check in global namespace scope, because they have been defined there
-       return true;
-    }
-
-    @Override
-    public List<IAliasSymbol> getUse(String alias) {
-        return usesCaseInsensitive.get(alias);
+        //TODO check
+        return true;
     }
 
     @Override
@@ -105,79 +123,17 @@ public class NamespaceScope extends AScope implements INamespaceScope
 
     @Override
     public ITypeSymbol resolveType(ITSPHPAst typeAst) {
-        ITypeSymbol typeSymbol = enclosingScope.resolveType(typeAst);
-
-        String alias = getPotentialAlias(typeAst.getText());
-        ITSPHPAst useDefinition = getFirstUseDefinitionAst(alias);
-        useDefinition = checkTypeNameClashAndRecoverIfNecessary(useDefinition, typeSymbol);
-
-        if (useDefinition != null) {
-            typeSymbol = resolveAlias(useDefinition, alias, typeAst);
-        }
-        return typeSymbol;
+        ///check in global namespace scope, because they have been defined there
+        return ((IGlobalNamespaceScope) enclosingScope).resolveType(typeAst);
     }
 
-    private String getPotentialAlias(String typeName) {
-        int backslashPosition = typeName.indexOf("\\");
-        if (backslashPosition != -1) {
-            typeName = typeName.substring(0, backslashPosition);
-        }
-        return typeName;
+    @Override
+    public List<IAliasSymbol> getUse(String alias) {
+        return usesCaseInsensitive.get(alias);
     }
 
-    private ITSPHPAst getFirstUseDefinitionAst(String alias) {
-        return usesCaseInsensitive.containsKey(alias) ? usesCaseInsensitive.get(alias).get(0).getDefinitionAst() : null;
-    }
-
-    private ITSPHPAst checkTypeNameClashAndRecoverIfNecessary(ITSPHPAst useDefinition, ITypeSymbol typeSymbol) {
-        if (hasTypeNameClash(useDefinition, typeSymbol)) {
-            ITSPHPAst typeDefinition = typeSymbol.getDefinitionAst();
-            if (useDefinition.isDefinedEarlierThan(typeDefinition)) {
-                ErrorReporterRegistry.get().alreadyDefined(useDefinition, typeDefinition);
-            } else {
-                ErrorReporterRegistry.get().alreadyDefined(typeDefinition, useDefinition);
-                //we do not use the alias if it was defined later than typeSymbol
-                useDefinition = null;
-            }
-        }
-        return useDefinition;
-    }
-
-    private boolean hasTypeNameClash(ITSPHPAst useDefinition, ITypeSymbol typeSymbol) {
-        return useDefinition != null && typeSymbol != null && typeSymbol.getDefinitionScope().equals(this);
-    }
-
-    private ITypeSymbol resolveAlias(ITSPHPAst useDefinition, String alias, ITSPHPAst typeAst) {
-        ITypeSymbol typeSymbol;
-
-        if (useDefinition.isDefinedEarlierThan(typeAst)) {
-            typeSymbol = useDefinition.getSymbol().getType();
-            String typeName = typeAst.getText();
-            if (isUsedAsNamespace(alias, typeName)) {
-                String fullTypeName = getFullName(typeSymbol);
-                if (!fullTypeName.substring(fullTypeName.length() - 1).equals("\\")) {
-                    fullTypeName += "\\";
-                }
-                typeName = fullTypeName + typeName.substring(alias.length() + 1);
-                typeAst.setText(typeName);
-
-                IAliasSymbol aliasSymbol = (IAliasSymbol) useDefinition.getSymbol();
-                IScope globalNamespaceScope = ScopeHelperRegistry.get().
-                        getCorrespondingGlobalNamespace(aliasSymbol.getGlobalNamespaceScopes(), typeName);
-                typeSymbol = globalNamespaceScope.resolveType(typeAst);
-            }
-        } else {
-            DefinitionException ex = ErrorReporterRegistry.get().aliasForwardReference(typeAst, useDefinition);
-            typeSymbol = new ErroneusTypeSymbol(typeAst, ex);
-        }
-        return typeSymbol;
-    }
-
-    private String getFullName(ITypeSymbol typeSymbol) {
-        return typeSymbol.getDefinitionScope().getScopeName() + typeSymbol.getName();
-    }
-
-    private boolean isUsedAsNamespace(String alias, String typeName) {
-        return !alias.equals(typeName);
+    @Override
+    public ITSPHPAst getFirstUseDefinitionAst(String alias) {
+        return uses.containsKey(alias) ? uses.get(alias).get(0).getDefinitionAst() : null;
     }
 }

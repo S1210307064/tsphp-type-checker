@@ -20,7 +20,6 @@ import ch.tutteli.tsphp.typechecker.test.testutils.ADefinitionScopeTest;
 import ch.tutteli.tsphp.typechecker.test.testutils.ScopeTestHelper;
 import ch.tutteli.tsphp.typechecker.test.testutils.ScopeTestStruct;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import org.antlr.runtime.RecognitionException;

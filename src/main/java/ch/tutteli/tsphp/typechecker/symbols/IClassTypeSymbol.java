@@ -16,6 +16,8 @@
  */
 package ch.tutteli.tsphp.typechecker.symbols;
 
+import ch.tutteli.tsphp.common.ISymbol;
+import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.typechecker.scopes.ICaseInsensitiveScope;
 
@@ -26,7 +28,13 @@ import ch.tutteli.tsphp.typechecker.scopes.ICaseInsensitiveScope;
 public interface IClassTypeSymbol extends ITypeSymbol, ICaseInsensitiveScope
 {
 
-    void setConstruct(IMethodSymbol construct);
+    ISymbol resolveWithFallbackToParent(ITSPHPAst ast);
 
     IMethodSymbol getConstruct();
+
+    void setConstruct(IMethodSymbol construct);
+
+    IClassTypeSymbol getParent();
+
+    void setParent(IClassTypeSymbol newParent);
 }

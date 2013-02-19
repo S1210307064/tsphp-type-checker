@@ -14,9 +14,8 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.symbols;
+package ch.tutteli.tsphp.typechecker.symbols.erroneous;
 
-import ch.tutteli.tsphp.common.ASymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
 
@@ -24,18 +23,10 @@ import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class ErroneusTypeSymbol extends ASymbol implements IErroneusTypeSymbol
+public class ErroneousAccessSymbol extends AErroneousSymbol implements IErroneousAccessSymbol
 {
 
-    private TypeCheckerException exception;
-
-    public ErroneusTypeSymbol(ITSPHPAst type, TypeCheckerException theException) {
-        super(type, type.getText());
-        exception = theException;
-    }
-
-    @Override
-    public TypeCheckerException getException() {
-        return exception;
+    public ErroneousAccessSymbol(ITSPHPAst ast, TypeCheckerException exception) {
+        super(ast, exception);
     }
 }

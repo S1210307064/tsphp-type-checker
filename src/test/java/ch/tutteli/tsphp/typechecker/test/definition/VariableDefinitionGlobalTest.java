@@ -16,17 +16,12 @@
  */
 package ch.tutteli.tsphp.typechecker.test.definition;
 
-import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
-import ch.tutteli.tsphp.typechecker.symbols.ModifierHelper;
 import ch.tutteli.tsphp.typechecker.test.testutils.ADefinitionSymbolTest;
-import ch.tutteli.tsphp.typechecker.test.testutils.IAdder;
-import ch.tutteli.tsphp.typechecker.test.testutils.TypeHelper;
 import ch.tutteli.tsphp.typechecker.test.testutils.VariableDeclarationListHelper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.SortedSet;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -56,11 +51,11 @@ public class VariableDefinitionGlobalTest extends ADefinitionSymbolTest
         final String defaultNamespace = "\\.\\.";
         final String aNamespace = "\\a\\.\\a\\.";
 
-        collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase("", ";", "", defaultNamespace, null));
+        collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase("", ";", "","", defaultNamespace, null));
         collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
-                "namespace a{", ";}", "", aNamespace, null));
+                "namespace a{", ";}", "","", aNamespace, null));
         collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
-                "namespace a\\b{", ";}", "", "\\a\\b\\.\\a\\b\\.", null));
+                "namespace a\\b{", ";}", "","", "\\a\\b\\.\\a\\b\\.", null));
 
 
         //Different namespaces

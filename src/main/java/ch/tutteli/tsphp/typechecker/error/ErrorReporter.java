@@ -18,7 +18,6 @@ package ch.tutteli.tsphp.typechecker.error;
 
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.exceptions.DefinitionException;
 import ch.tutteli.tsphp.common.exceptions.ReferenceException;
 import java.util.ArrayList;
@@ -28,13 +27,13 @@ import java.util.List;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class ErrorHelper implements IErrorReporter
+public class ErrorReporter implements IErrorReporter
 {
 
     List<Exception> exceptions = new ArrayList<>();
     IErrorMessageProvider errorMessageProvider;
 
-    public ErrorHelper(IErrorMessageProvider anErrorMessageProvider) {
+    public ErrorReporter(IErrorMessageProvider anErrorMessageProvider) {
         errorMessageProvider = anErrorMessageProvider;
     }
 
@@ -76,8 +75,8 @@ public class ErrorHelper implements IErrorReporter
     public DefinitionException aliasForwardReference(ITSPHPAst typeAst, ITSPHPAst useDefinition) {
         return addAndGetDefinitionException("aliasForwardReference", typeAst, useDefinition);
     }
-    
-     @Override
+
+    @Override
     public DefinitionException forwardReference(ITSPHPAst typeAst, ITSPHPAst useDefinition) {
         return addAndGetDefinitionException("forwardReference", typeAst, useDefinition);
     }
@@ -108,6 +107,21 @@ public class ErrorHelper implements IErrorReporter
     @Override
     public ReferenceException classExpected(ITSPHPAst typeAst) {
         return addAndGetReferenceException("classExpected", typeAst);
+    }
+
+    @Override
+    public ReferenceException noParentClass(ITSPHPAst ast) {
+        return addAndGetReferenceException("noParentClass", ast);
+    }
+
+    @Override
+    public ReferenceException notInClass(ITSPHPAst ast) {
+        return addAndGetReferenceException("notInClass", ast);
+    }
+
+    @Override
+    public ReferenceException notDefined(ITSPHPAst ast) {
+        return addAndGetReferenceException("notDefined", ast);
     }
 
     private ReferenceException addAndGetReferenceException(String key,

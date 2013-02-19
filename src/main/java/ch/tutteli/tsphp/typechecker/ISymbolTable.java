@@ -22,6 +22,7 @@ import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.typechecker.scopes.IConditionalScope;
+import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IInterfaceTypeSymbol;
@@ -34,7 +35,7 @@ import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 public interface ISymbolTable
 {
 
-    ILowerCaseStringMap<IScope> getGlobalNamespaceScopes();
+    ILowerCaseStringMap<IGlobalNamespaceScope> getGlobalNamespaceScopes();
 
     INamespaceScope defineNamespace(String name);
 
@@ -46,7 +47,7 @@ public interface ISymbolTable
             ITSPHPAst extendsIds);
 
     IClassTypeSymbol defineClass(IScope currentScope, ITSPHPAst modifier, ITSPHPAst identifier,
-            ITSPHPAst extendsIds, ITSPHPAst implementsIds);
+            ITSPHPAst extendsId, ITSPHPAst implementsIds);
 
     IMethodSymbol defineConstruct(IScope currentScope, ITSPHPAst methodModifier,
             ITSPHPAst returnTypeModifier, ITSPHPAst returnType, ITSPHPAst identifier);
@@ -63,8 +64,16 @@ public interface ISymbolTable
     boolean checkIfClass(ITSPHPAst typeAst, ITypeSymbol symbol);
 
     boolean checkForwardReference(ITSPHPAst ast);
-    
-    ISymbol resolveWithFallback(ITSPHPAst ast);  
+
+    ISymbol resolve(ITSPHPAst ast);
+
+    ISymbol resolveWithFallbackToDefaultNamespace(ITSPHPAst ast);
+
+    IClassTypeSymbol getEnclosingClass(ITSPHPAst ast);
+
+    IClassTypeSymbol getParentClass(ITSPHPAst ast);
+
+    ISymbol resolveClassMember(ITSPHPAst ast);
 
     ITypeSymbol resolveUseType(ITSPHPAst typeAst, ITSPHPAst alias);
 

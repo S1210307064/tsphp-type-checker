@@ -21,7 +21,7 @@ import ch.tutteli.tsphp.common.ITSPHPAstAdaptor;
 import ch.tutteli.tsphp.common.ITypeChecker;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerReference;
-import ch.tutteli.tsphp.typechecker.error.ErrorHelper;
+import ch.tutteli.tsphp.typechecker.error.ErrorReporter;
 import ch.tutteli.tsphp.typechecker.error.ErrorMessageProvider;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.scopes.ScopeFactory;
@@ -42,7 +42,7 @@ public class TypeChecker implements ITypeChecker
 
     public TypeChecker(ITSPHPAstAdaptor astAdaptor) {
         ScopeHelperRegistry.set(new ScopeHelper());
-        ErrorReporterRegistry.set(new ErrorHelper(new ErrorMessageProvider()));
+        ErrorReporterRegistry.set(new ErrorReporter(new ErrorMessageProvider()));
         symbolTable = new SymbolTable(new SymbolFactory(), new ScopeFactory(), astAdaptor);
     }
 

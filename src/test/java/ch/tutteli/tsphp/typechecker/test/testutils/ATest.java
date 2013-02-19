@@ -18,8 +18,8 @@ package ch.tutteli.tsphp.typechecker.test.testutils;
 
 import ch.tutteli.tsphp.common.IParser;
 import ch.tutteli.tsphp.parser.ParserFacade;
-import ch.tutteli.tsphp.typechecker.error.ErrorHelper;
 import ch.tutteli.tsphp.typechecker.error.ErrorMessageProvider;
+import ch.tutteli.tsphp.typechecker.error.ErrorReporter;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.scopes.ScopeHelper;
 import ch.tutteli.tsphp.typechecker.scopes.ScopeHelperRegistry;
@@ -36,6 +36,6 @@ public abstract class ATest
     public ATest() {
         parser = new ParserFacade();
         ScopeHelperRegistry.set(new ScopeHelper());
-        ErrorReporterRegistry.set(new ErrorHelper(new ErrorMessageProvider()));
+        ErrorReporterRegistry.set(new ErrorReporter(new ErrorMessageProvider()));
     }
 }

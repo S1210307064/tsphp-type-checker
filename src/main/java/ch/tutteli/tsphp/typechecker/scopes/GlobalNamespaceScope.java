@@ -28,7 +28,7 @@ import java.util.List;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class GlobalNamespaceScope extends AScope implements ICaseInsensitiveScope
+public class GlobalNamespaceScope extends AScope implements IGlobalNamespaceScope
 {
 
     private ILowerCaseStringMap<List<ISymbol>> symbolsCaseInsensitive = new LowerCaseStringMap<>();
@@ -45,13 +45,13 @@ public class GlobalNamespaceScope extends AScope implements ICaseInsensitiveScop
 
     @Override
     public boolean definitionCheckCaseInsensitive(ISymbol symbol) {
-        return ScopeHelperRegistry.get().definitionCheck(symbolsCaseInsensitive, symbol);
+        return ScopeHelperRegistry.get().doubleDefinitionCheck(symbolsCaseInsensitive, symbol);
     }
 
     @Override
     public ITypeSymbol resolveType(ITSPHPAst typeAst) {
         ITypeSymbol typeSymbol = null;
-        String typeName = withoutNamespacePrefix(typeAst.getText());
+        String typeName = getTypeNameWithoutNamespacePrefix(typeAst.getText());
         if (symbols.containsKey(typeName)) {
             ISymbol symbol = symbols.get(typeName).get(0);
             if (symbol instanceof ITypeSymbol) {
@@ -61,7 +61,8 @@ public class GlobalNamespaceScope extends AScope implements ICaseInsensitiveScop
         return typeSymbol;
     }
 
-    private String withoutNamespacePrefix(String typeName) {
+    @Override
+    public String getTypeNameWithoutNamespacePrefix(String typeName) {
         int scopeNameLenght = scopeName.length();
         if (typeName.length() > scopeNameLenght && typeName.substring(0, scopeNameLenght).equals(scopeName)) {
             typeName = typeName.substring(scopeNameLenght);

@@ -30,11 +30,11 @@ import java.util.Set;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  *
- * Adopted from the book Language Implementation Patterns by Terence Parr
  */
 public class ClassSymbol extends AScopedSymbol implements IClassTypeSymbol
 {
 
+    private IClassTypeSymbol parent;
     private IMethodSymbol construct;
     private ILowerCaseStringMap<List<ISymbol>> symbolsCaseInsensitive = new LowerCaseStringMap<>();
 
@@ -50,7 +50,26 @@ public class ClassSymbol extends AScopedSymbol implements IClassTypeSymbol
 
     @Override
     public boolean definitionCheckCaseInsensitive(ISymbol symbol) {
-        return ScopeHelperRegistry.get().definitionCheck(symbolsCaseInsensitive, symbol);
+        return ScopeHelperRegistry.get().doubleDefinitionCheck(symbolsCaseInsensitive, symbol);
+    }
+
+    @Override
+    public ISymbol resolveWithFallbackToParent(ITSPHPAst ast) {
+        ISymbol symbol = ScopeHelperRegistry.get().resolve(this, ast);
+        if (symbol == null) {
+            symbol = parent.resolveWithFallbackToParent(ast);
+        }
+        return symbol;
+    }
+
+    @Override
+    public IClassTypeSymbol getParent() {
+        return parent;
+    }
+
+    @Override
+    public void setParent(IClassTypeSymbol newParent) {
+        parent = newParent;
     }
 
     @Override

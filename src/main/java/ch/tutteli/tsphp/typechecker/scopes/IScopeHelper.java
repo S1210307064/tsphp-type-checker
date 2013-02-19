@@ -32,11 +32,11 @@ public interface IScopeHelper
 
     void define(IScope definitionScope, ISymbol symbol);
 
-    boolean definitionCheck(Map<String, List<ISymbol>> symbols, ISymbol symbol);
+    boolean doubleDefinitionCheck(Map<String, List<ISymbol>> symbols, ISymbol symbol);
 
-    boolean definitionCheck(ISymbol firstDefinition, ISymbol symbolToCheck);
+    boolean doubleDefinitionCheck(ISymbol firstDefinition, ISymbol symbolToCheck);
 
-    IScope getCorrespondingGlobalNamespace(ILowerCaseStringMap<IScope> globalNamespaceScopes, String typeName);
+    IGlobalNamespaceScope getCorrespondingGlobalNamespace(ILowerCaseStringMap<IGlobalNamespaceScope> globalNamespaceScopes, String typeName);
 
     ISymbol resolve(IScope scope, ITSPHPAst typeAst);
 }

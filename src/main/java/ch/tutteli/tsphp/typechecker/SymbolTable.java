@@ -23,24 +23,28 @@ import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITSPHPAstAdaptor;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.LowerCaseStringMap;
+import ch.tutteli.tsphp.common.exceptions.DefinitionException;
 import ch.tutteli.tsphp.common.exceptions.ReferenceException;
+import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.scopes.GlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.IConditionalScope;
+import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.IScopeFactory;
 import ch.tutteli.tsphp.typechecker.scopes.ScopeHelperRegistry;
 import ch.tutteli.tsphp.typechecker.symbols.AliasTypeSymbol;
-import ch.tutteli.tsphp.typechecker.symbols.ErroneusTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
-import ch.tutteli.tsphp.typechecker.symbols.IErroneusTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IInterfaceTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.MethodSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.erroneous.ErroneusTypeSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousTypeSymbol;
 import org.antlr.runtime.CommonToken;
 
 /**
@@ -54,8 +58,8 @@ public class SymbolTable implements ISymbolTable
     private ISymbolFactory symbolFactory;
     private IScopeFactory scopeFactory;
     private ITSPHPAstAdaptor astAdaptor;
-    private ILowerCaseStringMap<IScope> globalNamespaceScopes = new LowerCaseStringMap<>();
-    private IScope globalDefaultNamespace;
+    private ILowerCaseStringMap<IGlobalNamespaceScope> globalNamespaceScopes = new LowerCaseStringMap<>();
+    private IGlobalNamespaceScope globalDefaultNamespace;
 
     public SymbolTable(ISymbolFactory aSymbolFactory, IScopeFactory aScopeFactory, ITSPHPAstAdaptor theAstAdaptor) {
         symbolFactory = aSymbolFactory;
@@ -91,7 +95,7 @@ public class SymbolTable implements ISymbolTable
     }
 
     @Override
-    public ILowerCaseStringMap<IScope> getGlobalNamespaceScopes() {
+    public ILowerCaseStringMap<IGlobalNamespaceScope> getGlobalNamespaceScopes() {
         return globalNamespaceScopes;
     }
 
@@ -100,8 +104,8 @@ public class SymbolTable implements ISymbolTable
         return scopeFactory.createNamespace(name, getOrCreateGlobalNamespace(name));
     }
 
-    private IScope getOrCreateGlobalNamespace(String name) {
-        IScope scope;
+    private IGlobalNamespaceScope getOrCreateGlobalNamespace(String name) {
+        IGlobalNamespaceScope scope;
         if (globalNamespaceScopes.containsKey(name)) {
             scope = globalNamespaceScopes.get(name);
         } else {
@@ -185,7 +189,7 @@ public class SymbolTable implements ISymbolTable
 
     @Override
     public boolean checkIfInterface(ITSPHPAst typeAst, ITypeSymbol symbol) {
-        boolean isInterface = symbol instanceof IInterfaceTypeSymbol || symbol instanceof IErroneusTypeSymbol;
+        boolean isInterface = symbol instanceof IInterfaceTypeSymbol || symbol instanceof IErroneousTypeSymbol;
         if (!isInterface) {
             ErrorReporterRegistry.get().interfaceExpected(typeAst);
         }
@@ -194,7 +198,7 @@ public class SymbolTable implements ISymbolTable
 
     @Override
     public boolean checkIfClass(ITSPHPAst typeAst, ITypeSymbol symbol) {
-        boolean isClass = symbol instanceof IClassTypeSymbol || symbol instanceof IErroneusTypeSymbol;
+        boolean isClass = symbol instanceof IClassTypeSymbol || symbol instanceof IErroneousTypeSymbol;
         if (!isClass) {
             ErrorReporterRegistry.get().classExpected(typeAst);
         }
@@ -203,10 +207,15 @@ public class SymbolTable implements ISymbolTable
 
     @Override
     public boolean checkForwardReference(ITSPHPAst ast) {
-        ITSPHPAst definitionAst = ast.getSymbol().getDefinitionAst();
-        boolean isNotUsedBefore = definitionAst.isDefinedEarlierThan(ast);
-        if (!isNotUsedBefore) {
-            ErrorReporterRegistry.get().forwardReference(ast, definitionAst);
+        ISymbol symbol = ast.getSymbol();
+        boolean isNotUsedBefore = true;
+        //only check if not already an error occured in conjunction with this ast (for instance missing declaration)
+        if (!(symbol instanceof IErroneousTypeSymbol)) {
+            ITSPHPAst definitionAst = symbol.getDefinitionAst();
+            isNotUsedBefore = definitionAst.isDefinedEarlierThan(ast);
+            if (!isNotUsedBefore) {
+                ErrorReporterRegistry.get().forwardReference(ast, definitionAst);
+            }
         }
         return isNotUsedBefore;
     }
@@ -220,8 +229,8 @@ public class SymbolTable implements ISymbolTable
     }
 
     @Override
-    public ISymbol resolveWithFallback(ITSPHPAst ast) {
-        IScope scope = ast.getScope();
+    public ISymbol resolveWithFallbackToDefaultNamespace(ITSPHPAst ast) {
+        IScope scope = getResolvingScope(ast);
         ISymbol symbol = scope.resolve(ast);
 
         if (symbol == null && !scope.equals(globalDefaultNamespace)) {
@@ -233,8 +242,49 @@ public class SymbolTable implements ISymbolTable
     }
 
     @Override
-    public ITypeSymbol resolveUseType(ITSPHPAst typeAst, ITSPHPAst alias) {
+    public IClassTypeSymbol getEnclosingClass(ITSPHPAst ast) {
+        IClassTypeSymbol classTypeSymbol;
+        IScope scope = ast.getScope();
+        while (scope != null && !(scope instanceof IClassTypeSymbol)) {
+            scope = scope.getEnclosingScope();
+        }
+        if (scope != null) {
+            classTypeSymbol = (IClassTypeSymbol) scope;
+        } else {
+            ReferenceException ex = ErrorReporterRegistry.get().notInClass(ast);
+            classTypeSymbol = symbolFactory.createErroneusClassSymbol(ast, ex);
+        }
+        return classTypeSymbol;
+    }
 
+    @Override
+    public IClassTypeSymbol getParentClass(ITSPHPAst ast) {
+        IClassTypeSymbol classTypeSymbol = getEnclosingClass(ast);
+        IClassTypeSymbol parent = classTypeSymbol.getParent();
+        if (parent == null) {
+            TypeCheckerException ex = ErrorReporterRegistry.get().noParentClass(classTypeSymbol.getDefinitionAst());
+            classTypeSymbol = symbolFactory.createErroneusClassSymbol(ast, ex);
+        }
+        return classTypeSymbol;
+    }
+
+    @Override
+    public ISymbol resolveClassMember(ITSPHPAst ast) {
+        IScope scope = ast.getScope();
+        ISymbol symbol = null;
+        if ((scope instanceof MethodSymbol)) {
+            IClassTypeSymbol classTypeSymbol = (IClassTypeSymbol) scope.getEnclosingScope();
+            symbol = classTypeSymbol.resolveWithFallbackToParent(ast);
+        }
+        if (symbol == null) {
+            symbol = symbolFactory.createErroneusAccessSymbol(ast, null);
+        }
+        ast.setSymbol(symbol);
+        return symbol;
+    }
+
+    @Override
+    public ITypeSymbol resolveUseType(ITSPHPAst typeAst, ITSPHPAst alias) {
         ((IAliasSymbol) alias.getSymbol()).setGlobalNamespaceScopes(globalNamespaceScopes);
 
         //Alias is always pointing to a full type name. If user has omitted \ at the beginning, then we add it here
@@ -244,27 +294,126 @@ public class SymbolTable implements ISymbolTable
             typeAst.setText(typeName);
         }
 
-        ITypeSymbol typeSymbol = resolveTypeOrReturnNull(typeAst);
-        if (typeSymbol == null) {
-            typeSymbol = new AliasTypeSymbol(typeAst, typeAst.getText());
+        ITypeSymbol aliasType = resolveTypeOrReturnNull(typeAst);
+        if (aliasType == null) {
+            aliasType = new AliasTypeSymbol(typeAst, typeAst.getText());
         }
-        return typeSymbol;
 
+        return aliasType;
     }
 
     private ITypeSymbol resolveTypeOrReturnNull(ITSPHPAst typeAst) {
         ITypeSymbol typeSymbol = null;
 
-        IScope scope = getResolvingScope(typeAst);
-        if (scope != null) {
-            typeSymbol = scope.resolveType(typeAst);
+        String typeName = typeAst.getText();
+        if (isFullTypeName(typeName)) {
+            IGlobalNamespaceScope scope = ScopeHelperRegistry.get()
+                    .getCorrespondingGlobalNamespace(globalNamespaceScopes, typeName);
+            if (scope != null) {
+                typeSymbol = scope.resolveType(typeAst);
+            }
+        } else {
+            INamespaceScope scope = getEnclosingNamespaceScope(typeAst);
+            if (scope != null) {
+                typeSymbol = scope.resolveType(typeAst);
+
+                INamespaceScope namespaceScope = (INamespaceScope) scope;
+
+                String alias = getPotentialAlias(typeAst.getText());
+                ITSPHPAst useDefinition = namespaceScope.getFirstUseDefinitionAst(alias);
+                useDefinition = checkTypeNameClashAndRecoverIfNecessary(useDefinition, typeSymbol);
+
+                if (useDefinition != null) {
+                    typeSymbol = resolveAlias(useDefinition, alias, typeAst);
+                }
+            }
         }
-
-
         if (typeSymbol == null && isRelativeType(typeAst.getText())) {
             typeSymbol = resolveRelativeType(typeAst);
         }
         return typeSymbol;
+    }
+
+    private INamespaceScope getEnclosingNamespaceScope(ITSPHPAst ast) {
+        INamespaceScope namespaceScope = null;
+
+        IScope scope = ast.getScope();
+        while (scope != null && !(scope instanceof INamespaceScope)) {
+            scope = scope.getEnclosingScope();
+        }
+        if (scope != null) {
+            namespaceScope = (INamespaceScope) scope;
+        }
+        return namespaceScope;
+    }
+
+    private IScope getResolvingScope(ITSPHPAst typeAst) {
+        String typeName = typeAst.getText();
+        IScope scope = typeAst.getScope();
+        if (isFullTypeName(typeName)) {
+            scope = ScopeHelperRegistry.get().getCorrespondingGlobalNamespace(globalNamespaceScopes, typeName);
+        }
+        return scope;
+    }
+
+    private String getPotentialAlias(String typeName) {
+        int backslashPosition = typeName.indexOf("\\");
+        if (backslashPosition != -1) {
+            typeName = typeName.substring(0, backslashPosition);
+        }
+        return typeName;
+    }
+
+    private ITSPHPAst checkTypeNameClashAndRecoverIfNecessary(ITSPHPAst useDefinition, ITypeSymbol typeSymbol) {
+        if (hasTypeNameClash(useDefinition, typeSymbol)) {
+            ITSPHPAst typeDefinition = typeSymbol.getDefinitionAst();
+            if (useDefinition.isDefinedEarlierThan(typeDefinition)) {
+                ErrorReporterRegistry.get().alreadyDefined(useDefinition, typeDefinition);
+            } else {
+                ErrorReporterRegistry.get().alreadyDefined(typeDefinition, useDefinition);
+                //we do not use the alias if it was defined later than typeSymbol
+                useDefinition = null;
+            }
+        }
+        return useDefinition;
+    }
+
+    private boolean hasTypeNameClash(ITSPHPAst useDefinition, ITypeSymbol typeSymbol) {
+        return useDefinition != null && typeSymbol != null && typeSymbol.getDefinitionScope().equals(this);
+    }
+
+    private ITypeSymbol resolveAlias(ITSPHPAst useDefinition, String alias, ITSPHPAst typeAst) {
+        ITypeSymbol typeSymbol;
+
+        if (useDefinition.isDefinedEarlierThan(typeAst)) {
+            typeSymbol = useDefinition.getSymbol().getType();
+            String typeName = typeAst.getText();
+            if (isUsedAsNamespace(alias, typeName)) {
+                String fullTypeName = getFullName(typeSymbol);
+                if (!fullTypeName.substring(fullTypeName.length() - 1).equals("\\")) {
+                    fullTypeName += "\\";
+                }
+                typeName = fullTypeName + typeName.substring(alias.length() + 1);
+                typeAst.setText(typeName);
+
+                IAliasSymbol aliasSymbol = (IAliasSymbol) useDefinition.getSymbol();
+                IGlobalNamespaceScope globalNamespaceScope = ScopeHelperRegistry.get().
+                        getCorrespondingGlobalNamespace(aliasSymbol.getGlobalNamespaceScopes(), typeName);
+                typeSymbol = globalNamespaceScope.resolveType(typeAst);
+            }
+        } else {
+            DefinitionException ex = ErrorReporterRegistry.get().aliasForwardReference(typeAst, useDefinition);
+            typeSymbol = symbolFactory.createErroneusTypeSymbol(typeAst, ex);
+        }
+        return typeSymbol;
+    }
+
+    private String getFullName(ITypeSymbol typeSymbol) {
+        return typeSymbol.getDefinitionScope().getScopeName() + typeSymbol.getName();
+    }
+
+    private boolean isUsedAsNamespace(String alias, String typeName) {
+        return !alias.equals(typeName);
     }
 
     @Override
@@ -288,15 +437,6 @@ public class SymbolTable implements ISymbolTable
         return typeSymbol;
     }
 
-    private IScope getResolvingScope(ITSPHPAst typeAst) {
-        String typeName = typeAst.getText();
-        IScope scope = typeAst.getScope();
-        if (isFullTypeName(typeName)) {
-            scope = ScopeHelperRegistry.get().getCorrespondingGlobalNamespace(globalNamespaceScopes, typeName);
-        }
-        return scope;
-    }
-
     private boolean isFullTypeName(String typeName) {
         return typeName.substring(0, 1).equals("\\");
     }
@@ -309,7 +449,7 @@ public class SymbolTable implements ISymbolTable
         IScope enclosingGlobalNamespaceScope = getEnclosingGlobalNamespaceScope(typeAst.getScope());
         String typeName = enclosingGlobalNamespaceScope.getScopeName() + typeAst.getText();
         typeAst.setText(typeName);
-        IScope scope = ScopeHelperRegistry.get().getCorrespondingGlobalNamespace(globalNamespaceScopes, typeName);
+        IGlobalNamespaceScope scope = ScopeHelperRegistry.get().getCorrespondingGlobalNamespace(globalNamespaceScopes, typeName);
 
         ITypeSymbol typeSymbol = null;
         if (scope != null) {
@@ -337,5 +477,15 @@ public class SymbolTable implements ISymbolTable
             tmp = tmp.getEnclosingScope();
         }
         return globalNamespaceScope;
+    }
+
+    @Override
+    public ISymbol resolve(ITSPHPAst ast) {
+        ISymbol symbol = ast.getScope().resolve(ast);
+        if (symbol == null) {
+            ReferenceException exception = ErrorReporterRegistry.get().notDefined(ast);
+            symbol = symbolFactory.createErroneusTypeSymbol(ast, exception);
+        }
+        return symbol;
     }
 }

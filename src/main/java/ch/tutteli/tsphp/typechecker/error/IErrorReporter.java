@@ -51,4 +51,10 @@ public interface IErrorReporter extends ch.tutteli.tsphp.common.IErrorReporter
     ReferenceException interfaceExpected(ITSPHPAst typeAst);
 
     ReferenceException classExpected(ITSPHPAst typeAst);
+
+    ReferenceException noParentClass(ITSPHPAst ast);
+
+    ReferenceException notInClass(ITSPHPAst ast);
+
+    ReferenceException notDefined(ITSPHPAst ast);
 }

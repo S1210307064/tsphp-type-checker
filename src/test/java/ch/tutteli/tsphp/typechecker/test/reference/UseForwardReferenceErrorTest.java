@@ -74,10 +74,10 @@ public class UseForwardReferenceErrorTest extends AReferenceDefinitionErrorTest
     public static Collection<Object[]> getVariations(String prefix, String appendix, String[] types) {
         List<Object[]> collection = new ArrayList<>();
 
-        DefinitionErrorDto[] errorDto = new DefinitionErrorDto[]{new DefinitionErrorDto("B", 2, 1,"B", 3, 1)};
+        DefinitionErrorDto[] errorDto = new DefinitionErrorDto[]{new DefinitionErrorDto("B", 2, 1, "B", 3, 1)};
         DefinitionErrorDto[] twoErrorDto = new DefinitionErrorDto[]{
-            new DefinitionErrorDto("B", 2, 1,"B", 4, 1),
-            new DefinitionErrorDto("B", 3, 1,"B", 4, 1)
+            new DefinitionErrorDto("B", 2, 1, "B", 4, 1),
+            new DefinitionErrorDto("B", 3, 1, "B", 4, 1)
         };
 
         for (String type : types) {
@@ -90,14 +90,14 @@ public class UseForwardReferenceErrorTest extends AReferenceDefinitionErrorTest
                     namespaceName = namespaceName.substring(1);
                 }
             }
-            String newPrefix = "namespace " + namespaceName + "{ class B{}} " + prefix;
+            String newAppendix = appendix + "namespace " + namespaceName + "{ class B{}} ";
 
             collection.addAll(Arrays.asList(new Object[][]{
-                        {newPrefix + "\n B $a; use \n " + type + ";" + appendix, errorDto},
-                        {newPrefix + "\n B $a; use " + type + " as \n B;" + appendix, errorDto},
+                        {prefix + "\n B $a; use \n " + type + ";" + newAppendix, errorDto},
+                        {prefix + "\n B $a; use " + type + " as \n B;" + newAppendix, errorDto},
                         //More than one
-                        {newPrefix + "\n B $a; \n B $b; use \n " + type + ";" + appendix, twoErrorDto},
-                        {newPrefix + "\n B $a;\n B $b;  use " + type + " as \n B;" + appendix, twoErrorDto},}));
+                        {prefix + "\n B $a; \n B $b; use \n " + type + ";" + newAppendix, twoErrorDto},
+                        {prefix + "\n B $a;\n B $b;  use " + type + " as \n B;" + newAppendix, twoErrorDto},}));
         }
 
         return collection;

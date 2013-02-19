@@ -16,9 +16,13 @@
  */
 package ch.tutteli.tsphp.typechecker.symbols;
 
+import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousTypeSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousAccessSymbol;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
+import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
+import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousMethodSymbol;
 
 /**
  *
@@ -43,4 +47,12 @@ public interface ISymbolFactory
             IScope currentScope);
 
     IVariableSymbol createVariableSymbol(ITSPHPAst typeModifier, ITSPHPAst variableId);
+
+    IErroneousTypeSymbol createErroneusTypeSymbol(ITSPHPAst ast, TypeCheckerException exception);
+
+    IErroneousAccessSymbol createErroneusAccessSymbol(ITSPHPAst ast, TypeCheckerException exception);
+
+    IClassTypeSymbol createErroneusClassSymbol(ITSPHPAst ast, TypeCheckerException ex);
+
+    IErroneousMethodSymbol createErroneusMethodSymbol(ITSPHPAst ast, TypeCheckerException ex);
 }

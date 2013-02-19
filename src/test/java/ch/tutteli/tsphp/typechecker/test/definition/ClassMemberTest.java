@@ -69,7 +69,7 @@ public class ClassMemberTest extends ADefinitionSymbolTest
         
         for (Object[] variation : variations) {
             collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
-                    "class a{ " + variation[0] + " ", ";}", "\\.\\.a ", "\\.\\.a.",  (SortedSet<Integer>) variation[1]));
+                    "class a{ " + variation[0] + " ", ";}", "\\.\\.a ","", "\\.\\.a.",  (SortedSet<Integer>) variation[1]));
         }
 
         return collection;

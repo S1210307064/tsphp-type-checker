@@ -16,17 +16,11 @@
  */
 package ch.tutteli.tsphp.typechecker.test.definition;
 
-import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
-import ch.tutteli.tsphp.typechecker.symbols.ModifierHelper;
 import ch.tutteli.tsphp.typechecker.test.testutils.ADefinitionSymbolTest;
-import ch.tutteli.tsphp.typechecker.test.testutils.IAdder;
-import ch.tutteli.tsphp.typechecker.test.testutils.TypeHelper;
 import ch.tutteli.tsphp.typechecker.test.testutils.VariableDeclarationListHelper;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.SortedSet;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,12 +51,12 @@ public class VariableDefinitionFunctionTest extends ADefinitionSymbolTest
 
         collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
                 "function void foo(){", ";}",
-                defaultNamespace + "void \\.\\.foo() ",
+                defaultNamespace + "void \\.\\.foo() ", "",
                 defaultNamespace + "foo().", null));
 
         collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
                 "namespace t; function void foo(){", ";}",
-                "\\t\\.\\t\\.void \\t\\.\\t\\.foo() ", "\\t\\.\\t\\.foo().", null));
+                "\\t\\.\\t\\.void \\t\\.\\t\\.foo() ", "", "\\t\\.\\t\\.foo().", null));
 
         collection.add(new Object[]{
                     "namespace{ function void foo(){ int $a=1; bool $b=true, $c=false;}}"

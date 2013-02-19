@@ -55,23 +55,12 @@ public abstract class AScopedSymbol extends ASymbolWithModifier implements IScop
 
     @Override
     public boolean definitionCheck(ISymbol symbol) {
-        return ScopeHelperRegistry.get().definitionCheck(members, symbol);
+        return ScopeHelperRegistry.get().doubleDefinitionCheck(members, symbol);
     }
 
     @Override
     public ISymbol resolve(ITSPHPAst ast) {
         return ScopeHelperRegistry.get().resolve(this, ast);
-    }
-
-    @Override
-    public ITypeSymbol resolveType(ITSPHPAst typeAst) {
-        //only INamespaceScope define types.
-        return enclosingScope.resolveType(typeAst);
-    }
-
-    @Override
-    public IScope getParentScope() {
-        return getEnclosingScope();
     }
 
     @Override

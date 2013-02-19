@@ -19,6 +19,15 @@ package ch.tutteli.tsphp.typechecker.symbols;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
+import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
+import ch.tutteli.tsphp.typechecker.symbols.erroneous.ErroneousAccessSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.erroneous.ErroneousClassTypeSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.erroneous.ErroneousMethodSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.erroneous.ErroneusTypeSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousAccessSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousClassTypeSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousMethodSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousTypeSymbol;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -70,6 +79,27 @@ public class SymbolFactory implements ISymbolFactory
     @Override
     public IVariableSymbol createVariableSymbol(ITSPHPAst typeModifier, ITSPHPAst variableId) {
         return new VariableSymbol(variableId, getModifiers(typeModifier), variableId.getText());
+    }
+
+    @Override
+    public IErroneousTypeSymbol createErroneusTypeSymbol(ITSPHPAst ast, TypeCheckerException exception) {
+        return new ErroneusTypeSymbol(ast, exception);
+    }
+
+    @Override
+    public IErroneousAccessSymbol createErroneusAccessSymbol(ITSPHPAst ast, TypeCheckerException exception) {
+        return new ErroneousAccessSymbol(ast, exception);
+    }
+
+    @Override
+    public IErroneousClassTypeSymbol createErroneusClassSymbol(ITSPHPAst ast, TypeCheckerException ex) {
+        IMethodSymbol methodSymbol = createErroneusMethodSymbol(ast, ex);
+        return new ErroneousClassTypeSymbol(ast, ex, methodSymbol);
+    }
+
+    @Override
+    public IErroneousMethodSymbol createErroneusMethodSymbol(ITSPHPAst ast, TypeCheckerException ex) {
+        return new ErroneousMethodSymbol(ast, ex);
     }
 
     private Set<Integer> getModifiers(ITSPHPAst modifierAst) {

@@ -74,14 +74,6 @@ public class ClassTest extends ADefinitionSymbolTest
                         "namespace b; class a extends " + type + "{}",
                         "\\b\\.\\b\\." + type + " \\b\\.\\b\\.a"
                     });
-            collection.add(new Object[]{
-                        "final class a extends " + type + "," + type + "{}",
-                        "\\.\\." + type + " \\.\\." + type + " \\.\\.a|" + fin
-                    });
-            collection.add(new Object[]{
-                        "abstract class a extends " + type + "," + type + "," + type + "{}",
-                        "\\.\\." + type + " \\.\\." + type + " \\.\\." + type + " \\.\\.a|" + abstr
-                    });
 
             collection.add(new Object[]{
                         "abstract class a implements " + type + "{}",

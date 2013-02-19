@@ -49,23 +49,12 @@ public abstract class AScope implements IScope
 
     @Override
     public boolean definitionCheck(ISymbol symbol) {
-       return ScopeHelperRegistry.get().definitionCheck(symbols, symbol);
+       return ScopeHelperRegistry.get().doubleDefinitionCheck(symbols, symbol);
     }
 
     @Override
     public ISymbol resolve(ITSPHPAst typeAst) {
         return ScopeHelperRegistry.get().resolve(this, typeAst);
-    }
-
-    @Override
-    public ITypeSymbol resolveType(ITSPHPAst typeAst) {
-        //only INamespaceScope define types.
-        return enclosingScope.resolveType(typeAst);
-    }
-
-    @Override
-    public IScope getParentScope() {
-        return getEnclosingScope();
     }
 
     @Override

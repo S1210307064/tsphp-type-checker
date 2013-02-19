@@ -151,13 +151,14 @@ public class ResolveClassTypeTest extends AReferenceTest
                         //def
                         "/* 16 */ namespace x{ class c{}}"
                         + "namespace x\\c{class B{}} "
-                        + "namespace x{class z{}} "
                         //ref
                         + "namespace x{ \n "
                         + "use x\\c as z; \n"
                         + "z\\B $a; \n"
                         + "z $b; \n"
                         + "}"
+                        //z has to be later and in different namespace, otherwise use x\\c as z; is a double definition
+                        + "namespace x{class z{}} "
                     }
                 });
     }

@@ -69,8 +69,7 @@ topdown
    	|	constantDeclarationList
    	|	parameterDeclarationList
     	|	variableDeclarationList
- 	|	atom
- 	|	constant
+    	|	atom
     	;
 
 useDeclarationList
@@ -78,7 +77,7 @@ useDeclarationList
 	;
 	
 useDeclaration
-	:	^(USE_DECLRATARION type=TYPE_NAME alias=.)
+	:	^(USE_DECLARATION type=TYPE_NAME alias=.)
 		{
 			ITypeSymbol typeSymbol = symbolTable.resolveUseType($type, $alias);
 			type.setSymbol(typeSymbol);
@@ -103,7 +102,7 @@ interfaceExtendsDeclaration
 
 	
 classDeclaration
-	:	^('class' cMod=. identifier=Identifier extIds=extendsDeclaration implIds=implementsDeclaration .) 
+	:	^('class' cMod=. identifier=Identifier extId=extendsDeclaration implIds=implementsDeclaration .) 
 		{
 			INamespaceScope namespaceScope = (INamespaceScope) $identifier.getScope();
 			namespaceScope.definitionCheckCaseInsensitive($identifier.getSymbol());
@@ -111,7 +110,7 @@ classDeclaration
 	;
 
 extendsDeclaration	
-	:	^('extends' (allTypes{symbolTable.checkIfClass($allTypes.start, $allTypes.type);})+)
+	:	^('extends' allTypes{symbolTable.checkIfClass($allTypes.start, $allTypes.type);} )
 	|	'extends'
 	;
 
@@ -223,24 +222,39 @@ scalarTypes returns [ITypeSymbol type]
 		}
 	;
 
-atom	
+atom	:	variable
+ 	|	thisOrSelf
+ 	|	parent
+ 	|	constant	
+	;
+
+variable	
 @init { int tokenType = $start.getParent().getType();}
-	: 	(	'$this'
-		|	{
-				tokenType!=VARIABLE_DECLARATION_LIST 
-				&& tokenType!=PARAMETER_DECLARATION 
-			}? VariableId
-    		)
-       		{
-       			$start.setSymbol($start.getScope().resolve($start));
+	: 	
+		{
+			tokenType!=VARIABLE_DECLARATION_LIST 
+			&& tokenType!=PARAMETER_DECLARATION 
+		}? VariableId
+		{
+      			$start.setSymbol(symbolTable.resolve($start));
 			symbolTable.checkForwardReference($start);
-       		}
+      		}
+	;
+thisOrSelf
+	:	(	'$this'
+		|	'self'
+		)	
+		{$start.setSymbol(symbolTable.getEnclosingClass($start)); }
+	;
+	
+parent	:	par='parent'
+		{$par.setSymbol(symbolTable.getParentClass($par));}	
 	;
 
 constant
 	:	cst=CONSTANT
 		{
-			$cst.setSymbol(symbolTable.resolveWithFallback($cst));
+			$cst.setSymbol(symbolTable.resolveWithFallbackToDefaultNamespace($cst));
 			symbolTable.checkForwardReference($cst);
 		}
 	;

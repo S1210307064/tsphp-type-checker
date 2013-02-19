@@ -14,20 +14,15 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.symbols;
+package ch.tutteli.tsphp.typechecker.symbols.erroneous;
 
-import ch.tutteli.tsphp.common.ILowerCaseStringMap;
-import ch.tutteli.tsphp.common.ISymbol;
-import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
+import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public interface IAliasSymbol extends ISymbol
+public interface IErroneousMethodSymbol extends IErroneousSymbol, IMethodSymbol
 {
-
-    ILowerCaseStringMap<IGlobalNamespaceScope> getGlobalNamespaceScopes();
-
-    void setGlobalNamespaceScopes(ILowerCaseStringMap<IGlobalNamespaceScope> globalNamespaceScopes);
+    
 }

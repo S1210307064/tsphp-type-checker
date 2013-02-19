@@ -25,5 +25,4 @@ import ch.tutteli.tsphp.common.ISymbol;
  */
 public interface IMethodSymbol extends ISymbol, IScope
 {
-    
 }

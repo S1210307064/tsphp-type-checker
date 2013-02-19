@@ -59,18 +59,6 @@ public class ClassInterfaceExtendsImplementsErrorTest extends AReferenceErrorTes
 
     public static Collection<Object[]> getVariations(String prefix, String appendix) {
         List<Object[]> collection = new ArrayList<>();
-        collection.addAll(getVariations(prefix, appendix, true));
-        collection.addAll(getVariations(prefix, appendix, false));
-        ReferenceErrorDto[] errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto("a", 2, 1)};
-        collection.addAll(Arrays.asList(new Object[][]{
-                    {prefix + "class a{} class b implements\n a{}" + appendix, errorDto},
-                    {prefix + " class b implements\n a{} class a{}" + appendix, errorDto},}));
-        return collection;
-    }
-
-    public static Collection<Object[]> getVariations(String prefix, String appendix, boolean testClass) {
-        String kind = testClass ? "class" : "interface";
-        String falseKind = testClass ? "interface" : "class";
         ReferenceErrorDto[] errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto("a", 2, 1)};
         ReferenceErrorDto[] errorDtoTwo = new ReferenceErrorDto[]{
             new ReferenceErrorDto("a", 2, 1),
@@ -82,10 +70,15 @@ public class ClassInterfaceExtendsImplementsErrorTest extends AReferenceErrorTes
             new ReferenceErrorDto("c", 4, 1)
         };
 
-
-        return Arrays.asList(new Object[][]{
+        String kind = "interface";
+        String falseKind = "class";
+        collection.addAll(Arrays.asList(new Object[][]{
+                    {prefix + "class a{} class b implements\n a{}" + appendix, errorDto},
+                    {prefix + " class b implements\n a{} class a{}" + appendix, errorDto},
+                    {prefix + "interface a{} class b extends\n a{}" + appendix, errorDto},
+                    {prefix + "class b extends\n a{} interface \n a{}" + appendix, errorDto},
                     {prefix + falseKind + " a{} " + kind + " b extends\n a{}" + appendix, errorDto},
-                    {prefix + "" + kind + " b extends\n a{}" + falseKind + " \n a{}" + appendix, errorDto},
+                    {prefix + kind + " b extends\n a{} " + falseKind + " \n a{}" + appendix, errorDto},
                     {
                         prefix + falseKind + " a{}{} " + falseKind + " b{} "
                         + kind + " c extends\n a,\n b{}" + appendix, errorDtoTwo
@@ -102,6 +95,7 @@ public class ClassInterfaceExtendsImplementsErrorTest extends AReferenceErrorTes
                         prefix + falseKind + " a{}{} " + kind + " d extends\n a,\n b,\n c{}"
                         + falseKind + " c{} " + falseKind + " b{} " + appendix, errorDtoThree
                     }
-                });
+                }));
+        return collection;
     }
 }

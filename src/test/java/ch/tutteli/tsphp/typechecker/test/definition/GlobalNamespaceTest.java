@@ -18,6 +18,7 @@ package ch.tutteli.tsphp.typechecker.test.definition;
 
 import ch.tutteli.tsphp.common.ILowerCaseStringMap;
 import ch.tutteli.tsphp.common.IScope;
+import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.test.testutils.ADefinitionTest;
 import java.util.Arrays;
 import java.util.Collection;
@@ -49,7 +50,7 @@ public class GlobalNamespaceTest extends ADefinitionTest
 
     @Override
     protected void verifyDefinitions() {
-         ILowerCaseStringMap<IScope> globalNamespaceScopes = symbolTable.getGlobalNamespaceScopes();
+         ILowerCaseStringMap<IGlobalNamespaceScope> globalNamespaceScopes = symbolTable.getGlobalNamespaceScopes();
         Assert.assertEquals(testString + " failed. size wrong ", namespaces.length, globalNamespaceScopes.size());
 
         for (String namespace : namespaces) {

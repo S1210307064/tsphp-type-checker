@@ -14,16 +14,12 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.symbols;
-
-import ch.tutteli.tsphp.common.ITypeSymbol;
-import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
+package ch.tutteli.tsphp.typechecker.symbols.erroneous;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public interface IErroneusTypeSymbol extends ITypeSymbol
+public interface IErroneousAccessSymbol extends IErroneousSymbol
 {
-    TypeCheckerException getException();
 }

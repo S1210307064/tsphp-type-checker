@@ -16,14 +16,12 @@
  */
 package ch.tutteli.tsphp.typechecker.test.definition;
 
-import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
 import ch.tutteli.tsphp.typechecker.symbols.ModifierHelper;
 import ch.tutteli.tsphp.typechecker.test.testutils.ADefinitionSymbolTest;
 import ch.tutteli.tsphp.typechecker.test.testutils.IAdder;
 import ch.tutteli.tsphp.typechecker.test.testutils.TypeHelper;
 import ch.tutteli.tsphp.typechecker.test.testutils.VariableDeclarationListHelper;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.SortedSet;
@@ -66,44 +64,58 @@ public class VariableDefinitionConditionalScopesTest extends ADefinitionSymbolTe
             {"while(true)", ";"},
             {"while(true){", ";}"},
             {"do ", ";while(true);"},
-            {"do{ ", ";}while(true);"}
-        };
+            {"do{ ", ";}while(true);"},};
         for (String[] condition : conditions) {
             collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
-                    condition[0], condition[1], "", defaultNamespace + "cScope.", null));
+                    condition[0], condition[1], "", "", defaultNamespace + "cScope.", null));
             collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase("namespace a{" + condition[0],
-                    condition[1] + "}", "", "\\a\\.\\a\\.cScope.", null));
+                    condition[1] + "}", "", "", "\\a\\.\\a\\.cScope.", null));
         }
+
+        collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
+                "try{ ", ";}catch(\\Exception $e){}", "", " \\.\\.\\Exception \\.\\.$e", 
+                defaultNamespace + "cScope.", null));
+        collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase("namespace a{try{ ",
+                ";}catch(\\Exception $e){}}", ""," \\a\\.\\a\\.\\Exception \\a\\.\\a\\.$e", 
+                "\\a\\.\\a\\.cScope.", null));
+        
+        collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
+                "try{}catch(\\Exception $e){", ";}", "\\.\\.\\Exception \\.\\.$e ","", defaultNamespace + "cScope.", null));
+        collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase("namespace a{" + "try{}catch(\\Exception $e){",
+               ";}}", "\\a\\.\\a\\.\\Exception \\a\\.\\a\\.$e ","",  "\\a\\.\\a\\.cScope.", null));
 
         //definition in for  header
         collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
-                "for(", ";;){}", "", defaultNamespace, null));
+                "for(", ";;){}", "", "", defaultNamespace, null));
         collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase("namespace a{for(",
-                ";;){}}", "", aNamespace, null));
+                ";;){}}", "", "", aNamespace, null));
 
 
         //definition in foreach header
-        TypeHelper.getAllTypesInclModifier(new IAdder()
-        {
-            @Override
-            public void add(String type, String typeExpected, SortedSet<Integer> modifiers) {
-                String typeModifiers = ModifierHelper.getModifiers(modifiers);
-                collection.add(new Object[]{
-                            "foreach($a as " + type + " $v);",
-                            defaultNamespace + typeExpected + " " + defaultNamespace + "$v" + typeModifiers
-                        });
-                collection.add(new Object[]{
-                            "namespace a{foreach($a as " + type + " $v){}}",
-                            aNamespace + typeExpected + " " + aNamespace + "$v" + typeModifiers
-                        });
-            }
-        });
-        collection.add(new Object[]{
+        TypeHelper.getAllTypesInclModifier(
+                new IAdder()
+                {
+                    @Override
+                    public void add(String type, String typeExpected, SortedSet<Integer> modifiers) {
+                        String typeModifiers = ModifierHelper.getModifiers(modifiers);
+                        collection.add(new Object[]{
+                                    "foreach($a as " + type + " $v);",
+                                    defaultNamespace + typeExpected + " " + defaultNamespace + "$v" + typeModifiers
+                                });
+                        collection.add(new Object[]{
+                                    "namespace a{foreach($a as " + type + " $v){}}",
+                                    aNamespace + typeExpected + " " + aNamespace + "$v" + typeModifiers
+                                });
+                    }
+                });
+        collection.add(
+                new Object[]{
                     "foreach($a as string $k => object $v){}",
                     defaultNamespace + "string " + defaultNamespace + "$k "
                     + defaultNamespace + "object " + defaultNamespace + "$v"
                 });
-        collection.add(new Object[]{
+        collection.add(
+                new Object[]{
                     "namespace a{foreach($a as string $k => object $v);}",
                     aNamespace + "string " + aNamespace + "$k "
                     + aNamespace + "object " + aNamespace + "$v"
@@ -121,7 +133,6 @@ public class VariableDefinitionConditionalScopesTest extends ADefinitionSymbolTe
                         aNamespace + type + " " + aNamespace + "$e"
                     });
         }
-
         return collection;
     }
 }
