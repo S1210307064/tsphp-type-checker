@@ -18,7 +18,6 @@ package ch.tutteli.tsphp.typechecker;
 
 import ch.tutteli.tsphp.common.ILowerCaseStringMap;
 import ch.tutteli.tsphp.common.IScope;
-import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.typechecker.scopes.IConditionalScope;
@@ -27,6 +26,7 @@ import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IInterfaceTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 
 /**
  *
@@ -65,15 +65,22 @@ public interface ISymbolTable
 
     boolean checkForwardReference(ITSPHPAst ast);
 
-    ISymbol resolve(ITSPHPAst ast);
+    IVariableSymbol resolveConstant(ITSPHPAst ast);
 
-    ISymbol resolveWithFallbackToDefaultNamespace(ITSPHPAst ast);
+    IMethodSymbol resolveFunction(ITSPHPAst ast);
+
+
+    IVariableSymbol resolveClassConstant(ITSPHPAst ast);
+
+    IVariableSymbol resolveClassMember(ITSPHPAst ast);
+
+    IMethodSymbol resolveMethod(ITSPHPAst ast);
+
+    IVariableSymbol resolveVariable(ITSPHPAst ast);
 
     IClassTypeSymbol getEnclosingClass(ITSPHPAst ast);
 
     IClassTypeSymbol getParentClass(ITSPHPAst ast);
-
-    ISymbol resolveClassMember(ITSPHPAst ast);
 
     ITypeSymbol resolveUseType(ITSPHPAst typeAst, ITSPHPAst alias);
 

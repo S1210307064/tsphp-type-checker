@@ -16,17 +16,12 @@
  */
 package ch.tutteli.tsphp.typechecker.scopes;
 
-import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.common.ITypeSymbol;
-
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 public interface IGlobalNamespaceScope extends ICaseInsensitiveScope
 {
-
-    ITypeSymbol resolveType(ITSPHPAst typeAst);
 
     String getTypeNameWithoutNamespacePrefix(String typeName);
 }

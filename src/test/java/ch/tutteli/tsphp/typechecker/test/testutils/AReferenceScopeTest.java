@@ -17,7 +17,6 @@
 package ch.tutteli.tsphp.typechecker.test.testutils;
 
 import ch.tutteli.tsphp.common.ITSPHPAst;
-import java.util.List;
 import org.junit.Assert;
 import org.junit.Ignore;
 
@@ -26,29 +25,27 @@ import org.junit.Ignore;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @Ignore
-public abstract class ADefinitionScopeTest extends ADefinitionTest
+public abstract class AReferenceScopeTest extends AReferenceTest
 {
 
     protected ScopeTestStruct[] testStructs;
 
-    public ADefinitionScopeTest(String testString, ScopeTestStruct[] theTestStructs) {
+    public AReferenceScopeTest(String testString, ScopeTestStruct[] theTestStructs) {
         super(testString);
         testStructs = theTestStructs;
     }
 
     @Override
-    protected void verifyDefinitions() {
+    protected void verifyReferences() {
         for (int i = 0; i < testStructs.length; ++i) {
             ScopeTestStruct testStruct = testStructs[i];
             ITSPHPAst testCandidate = ScopeTestHelper.getAst(ast,testString,testStruct.astAccessOrder);
-            Assert.assertNotNull(testString + " failed. testCandidate is null. should be "+testStruct.astText, testCandidate);
+            Assert.assertNotNull(testString + " failed. testCandidate is null. should be " + testStruct.astText, testCandidate);
             Assert.assertEquals(testString + " failed. wrong ast text,", testStruct.astText,
                     testCandidate.toStringTree());
 
             Assert.assertEquals(testString + " failed. wrong scope,", testStruct.astScope,
-                    ScopeTestHelper.getEnclosingScopeNames(testCandidate.getScope()));
+                    ScopeTestHelper.getEnclosingScopeNames(testCandidate.getSymbol().getDefinitionScope()));
         }
-
     }
-
 }

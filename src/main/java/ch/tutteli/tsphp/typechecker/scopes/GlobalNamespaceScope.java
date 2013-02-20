@@ -19,7 +19,6 @@ package ch.tutteli.tsphp.typechecker.scopes;
 import ch.tutteli.tsphp.common.ILowerCaseStringMap;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.LowerCaseStringMap;
 import ch.tutteli.tsphp.typechecker.utils.MapHelper;
 import java.util.List;
@@ -49,16 +48,13 @@ public class GlobalNamespaceScope extends AScope implements IGlobalNamespaceScop
     }
 
     @Override
-    public ITypeSymbol resolveType(ITSPHPAst typeAst) {
-        ITypeSymbol typeSymbol = null;
+    public ISymbol resolve(ITSPHPAst typeAst) {
+        ISymbol symbol = null;
         String typeName = getTypeNameWithoutNamespacePrefix(typeAst.getText());
         if (symbols.containsKey(typeName)) {
-            ISymbol symbol = symbols.get(typeName).get(0);
-            if (symbol instanceof ITypeSymbol) {
-                typeSymbol = (ITypeSymbol) symbol;
-            }
+            symbol = symbols.get(typeName).get(0);
         }
-        return typeSymbol;
+        return symbol;
     }
 
     @Override

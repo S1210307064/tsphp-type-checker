@@ -38,8 +38,6 @@ public interface INamespaceScope extends ICaseInsensitiveScope
 
     boolean classDefinitionCheck(IClassTypeSymbol classTypeSymbol);
 
-    ITypeSymbol resolveType(ITSPHPAst typeAst);
-
     /**
      * Return one or more AST which contains the use declaration for the alias or null if the alias could not be found.
      *

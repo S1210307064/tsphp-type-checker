@@ -17,10 +17,12 @@
 package ch.tutteli.tsphp.typechecker.test.testutils;
 
 import ch.tutteli.tsphp.common.IScope;
+import ch.tutteli.tsphp.common.ITSPHPAst;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import org.junit.Assert;
 
 /**
  *
@@ -51,10 +53,7 @@ public class ScopeTestHelper
 
         String[][] variableIds = new String[][]{
             {"$b", "$b"},
-            {"$this", "$this"},
-            {"self::$b", "(sMemAccess self $b)"},
-            {"parent::$b", "(sMemAccess parent $b)"},
-            {"foo()", "(fCall foo args)"}
+            {"$this", "$this"}
         };
 
         for (String[] variableId : variableIds) {
@@ -65,6 +64,9 @@ public class ScopeTestHelper
         }
 
         variableIds = new String[][]{
+            {"self::$b", "self"},
+            {"parent::$b", "parent"},
+            {"foo()", "foo()"},
             {"$a->foo()", "$a"},
             {"$this->foo()", "$this"},
             {"self::foo()", "self"},
@@ -80,21 +82,21 @@ public class ScopeTestHelper
 
         collection.addAll(getVariations(prefix, appendix, "b", "#b",
                 fullScopeName, accessToScope));
-        collection.addAll(getVariations(prefix, appendix, "self::b", "(sMemAccess self b)",
-                fullScopeName, accessToScope));
-        collection.addAll(getVariations(prefix, appendix, "parent::b", "(sMemAccess parent b)",
-                fullScopeName, accessToScope));
+        collection.addAll(getVariations(prefix, appendix, "self::b", "self",
+                fullScopeName, accessToScope, new Integer[]{0}));
+        collection.addAll(getVariations(prefix, appendix, "parent::b", "parent",
+                fullScopeName, accessToScope, new Integer[]{0}));
 
         String[] types = TypeHelper.getClassInterfaceTypes();
         for (String type : types) {
-            collection.addAll(getVariations(prefix, appendix, type + "::b", "(sMemAccess " + type + " b)",
-                    fullScopeName, accessToScope));
-            collection.addAll(getVariations(prefix, appendix, type + "::$b", "(sMemAccess " + type + " $b)",
-                    fullScopeName, accessToScope));
-            collection.addAll(getAccessVariations(prefix, appendix, type + "::$b", "(sMemAccess " + type + " $b)",
-                    fullScopeName, accessToScope));
-            collection.addAll(getAccessVariations(prefix, appendix, type + "::foo()", "(smCall " + type + " foo args)",
-                    fullScopeName, accessToScope));
+            collection.addAll(getVariations(prefix, appendix, type + "::b", type,
+                    fullScopeName, accessToScope, new Integer[]{0}));
+            collection.addAll(getVariations(prefix, appendix, type + "::$b", type,
+                    fullScopeName, accessToScope, new Integer[]{0}));
+            collection.addAll(getAccessVariations(prefix, appendix, type + "::$b", type,
+                    fullScopeName, accessToScope, new Integer[]{0}));
+            collection.addAll(getAccessVariations(prefix, appendix, type + "::foo()", type,
+                    fullScopeName, accessToScope, new Integer[]{0}));
         }
 
 
@@ -203,5 +205,16 @@ public class ScopeTestHelper
         accessOrder.addAll(Arrays.asList(accessToTestCandidate));
         accessOrder.addAll(Arrays.asList(stepIn));
         return accessOrder;
+    }
+
+    public static ITSPHPAst getAst(ITSPHPAst ast, String testString, List<Integer> astAccessOrder) {
+        ITSPHPAst tmp = ast;
+        for (Integer index : astAccessOrder) {
+            if (index != null) {
+                org.junit.Assert.assertNotNull(testString + " failed. Could not reach path.", tmp);
+                tmp = tmp.getChild(index);
+            }
+        }
+        return tmp;
     }
 }

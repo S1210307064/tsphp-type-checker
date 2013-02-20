@@ -18,6 +18,7 @@ package ch.tutteli.tsphp.typechecker.symbols;
 
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
+import java.util.List;
 
 /**
  *
@@ -25,4 +26,8 @@ import ch.tutteli.tsphp.common.ISymbol;
  */
 public interface IMethodSymbol extends ISymbol, IScope
 {
+
+    void addParameter(IVariableSymbol variableSymbol);
+
+    List<IVariableSymbol> getParameters();
 }

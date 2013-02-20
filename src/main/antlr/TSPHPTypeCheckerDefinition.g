@@ -76,6 +76,7 @@ topdown
 	|	constantDeclarationList
 	|	parameterDeclarationList
 	|	variableDeclarationList
+	|	methodFunctionCall
 	|	atom
 	|	constant
 	|	casting
@@ -179,19 +180,33 @@ variableDeclaration[ITSPHPAst tMod, ITSPHPAst type]
 		)
 		{ symbolTable.defineVariable(currentScope, $tMod, $type, $variableId); }
 	;
-
+methodFunctionCall
+	:	(	^(METHOD_CALL callee=. identifier=Identifier .)
+			{$callee.setScope(currentScope);}
+		|	^(METHOD_CALL_STATIC callee=. identifier=Identifier ACTUAL_PARAMETERS)
+			{$callee.setScope(currentScope);}
+		|	^(METHOD_CALL_POSTFIX identifier=Identifier ACTUAL_PARAMETERS)
+		|	^(FUNCTION_CALL identifier=TYPE_NAME ACTUAL_PARAMETERS)
+			{$identifier.setScope(currentScope);}
+		)
+		{
+			$identifier.setText($identifier.text+"()");
+		}
+	;
 
 atom	
-	: 	variableId=	(	'$this'
-		    		|	VariableId
-		    		|	'parent'
-		    		|	'self'
-		    		|	CLASS_STATIC_ACCESS
-		    		|	METHOD_CALL_STATIC
-		    		|	FUNCTION_CALL
-    				)
-       		{variableId.setScope(currentScope);}
+	: 	(	identifier='$this'
+		|	identifier=VariableId
+    		|	identifier='parent'
+    		|	identifier='self'
+    			//self and parent are already covered above
+    		|	^(CLASS_STATIC_ACCESS identifier=TYPE_NAME .)
+	    	)
+       		{$identifier.setScope(currentScope);}
 	;
+
+
+
 
 constant
 	:	cst=CONSTANT

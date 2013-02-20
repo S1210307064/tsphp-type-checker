@@ -39,6 +39,7 @@ import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.MethodSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousTypeSymbol;
 import org.antlr.runtime.CommonToken;
 
@@ -55,13 +56,13 @@ public class SymbolTable implements ISymbolTable
     private ITSPHPAstAdaptor astAdaptor;
     private ILowerCaseStringMap<IGlobalNamespaceScope> globalNamespaceScopes = new LowerCaseStringMap<>();
     private IGlobalNamespaceScope globalDefaultNamespace;
-    private TypeResolver typeResolver;
+    private Resolver resolver;
 
     public SymbolTable(ISymbolFactory aSymbolFactory, IScopeFactory aScopeFactory, ITSPHPAstAdaptor theAstAdaptor) {
         symbolFactory = aSymbolFactory;
         scopeFactory = aScopeFactory;
         astAdaptor = theAstAdaptor;
-        typeResolver = new TypeResolver(aSymbolFactory, globalNamespaceScopes);
+        resolver = new Resolver(aSymbolFactory, globalNamespaceScopes);
 
         initTypeSystem();
     }
@@ -213,7 +214,7 @@ public class SymbolTable implements ISymbolTable
         ISymbol symbol = ast.getSymbol();
         boolean isNotUsedBefore = true;
         //only check if not already an error occured in conjunction with this ast (for instance missing declaration)
-        if (!(symbol instanceof IErroneousTypeSymbol)) {
+        if (!(symbol instanceof IErroneousSymbol)) {
             ITSPHPAst definitionAst = symbol.getDefinitionAst();
             isNotUsedBefore = definitionAst.isDefinedEarlierThan(ast);
             if (!isNotUsedBefore) {
@@ -231,17 +232,94 @@ public class SymbolTable implements ISymbolTable
         }
     }
 
-    @Override
-    public ISymbol resolveWithFallbackToDefaultNamespace(ITSPHPAst ast) {
-        IScope scope = typeResolver.getResolvingScope(ast);
-        ISymbol symbol = scope.resolve(ast);
-
-        if (symbol == null && !scope.equals(globalDefaultNamespace)) {
+    private ISymbol resolveGlobalIdentifierWithFallback(ITSPHPAst ast) {
+        ISymbol symbol = resolver.resolveGlobalIdentifierOrReturnNull(ast);
+        if (symbol == null) {
             symbol = globalDefaultNamespace.resolve(ast);
         }
-
-        ast.setSymbol(symbol);
         return symbol;
+    }
+
+    @Override
+    public IVariableSymbol resolveConstant(ITSPHPAst ast) {
+        ISymbol symbol = resolveGlobalIdentifierWithFallback(ast);
+        if (symbol == null) {
+            ReferenceException exception = ErrorReporterRegistry.get().notDefined(ast);
+            symbol = symbolFactory.createErroneusVariableSymbol(ast, exception);
+        }
+        return (IVariableSymbol) symbol;
+    }
+
+    @Override
+    public IMethodSymbol resolveFunction(ITSPHPAst ast) {
+        ISymbol symbol = resolveGlobalIdentifierWithFallback(ast);
+        if (symbol == null) {
+            ReferenceException exception = ErrorReporterRegistry.get().notDefined(ast);
+            symbol = symbolFactory.createErroneusMethodSymbol(ast, exception);
+        }
+        return (IMethodSymbol) symbol;
+    }
+
+    @Override
+    public IVariableSymbol resolveClassConstant(ITSPHPAst ast) {
+        return resolveClassMember(ast);
+    }
+
+    private ISymbol resolveInClassSymbol(ITSPHPAst ast) {
+        ISymbol symbol;
+        IClassTypeSymbol classTypeSymbol = getEnclosingClass(ast);
+        if (classTypeSymbol != null) {
+            symbol = classTypeSymbol.resolveWithFallbackToParent(ast);
+        } else {
+            ReferenceException exception = ErrorReporterRegistry.get().notInClass(ast);
+            symbol = symbolFactory.createErroneusAccessSymbol(ast, exception);
+        }
+        return symbol;
+    }
+
+    @Override
+    public IVariableSymbol resolveClassMember(ITSPHPAst ast) {
+        ISymbol symbol = resolveInClassSymbol(ast);
+        if (symbol == null) {
+            ReferenceException exception = ErrorReporterRegistry.get().notDefined(ast);
+            symbol = symbolFactory.createErroneusVariableSymbol(ast, exception);
+        }
+        return (IVariableSymbol) symbol;
+    }
+
+    @Override
+    public IMethodSymbol resolveMethod(ITSPHPAst ast) {
+        ISymbol symbol = resolveInClassSymbol(ast);
+        if (symbol == null) {
+            ReferenceException exception = ErrorReporterRegistry.get().notDefined(ast);
+            symbol = symbolFactory.createErroneusMethodSymbol(ast, exception);
+        }
+        return (IMethodSymbol) symbol;
+    }
+
+    @Override
+    public IVariableSymbol resolveVariable(ITSPHPAst ast) {
+        ISymbol symbol = ast.getScope().resolve(ast);
+        if (symbol == null) {
+            ReferenceException exception = ErrorReporterRegistry.get().notDefined(ast);
+            symbol = symbolFactory.createErroneusVariableSymbol(ast, exception);
+        }
+        return (IVariableSymbol) symbol;
+    }
+
+    @Override
+    public ITypeSymbol resolveUseType(ITSPHPAst typeAst, ITSPHPAst alias) {
+        return resolver.resolveUseType(typeAst, alias);
+    }
+
+    @Override
+    public ITypeSymbol resolveType(ITSPHPAst typeAst) {
+        return resolver.resolveType(typeAst);
+    }
+
+    @Override
+    public ITypeSymbol resolvePrimitiveType(ITSPHPAst typeASt) {
+        return (ITypeSymbol) globalDefaultNamespace.resolve(typeASt);
     }
 
     @Override
@@ -269,45 +347,5 @@ public class SymbolTable implements ISymbolTable
             classTypeSymbol = symbolFactory.createErroneusClassSymbol(ast, ex);
         }
         return classTypeSymbol;
-    }
-
-    @Override
-    public ISymbol resolveClassMember(ITSPHPAst ast) {
-        IScope scope = ast.getScope();
-        ISymbol symbol = null;
-        if ((scope instanceof MethodSymbol)) {
-            IClassTypeSymbol classTypeSymbol = (IClassTypeSymbol) scope.getEnclosingScope();
-            symbol = classTypeSymbol.resolveWithFallbackToParent(ast);
-        }
-        if (symbol == null) {
-            symbol = symbolFactory.createErroneusAccessSymbol(ast, null);
-        }
-        ast.setSymbol(symbol);
-        return symbol;
-    }
-
-    @Override
-    public ITypeSymbol resolveUseType(ITSPHPAst typeAst, ITSPHPAst alias) {
-        return typeResolver.resolveUseType(typeAst, alias);
-    }
-
-    @Override
-    public ITypeSymbol resolveType(ITSPHPAst typeAst) {
-        return typeResolver.resolveType(typeAst);
-    }
-
-    @Override
-    public ITypeSymbol resolvePrimitiveType(ITSPHPAst typeASt) {
-        return (ITypeSymbol) globalDefaultNamespace.resolveType(typeASt);
-    }
-
-    @Override
-    public ISymbol resolve(ITSPHPAst ast) {
-        ISymbol symbol = ast.getScope().resolve(ast);
-        if (symbol == null) {
-            ReferenceException exception = ErrorReporterRegistry.get().notDefined(ast);
-            symbol = symbolFactory.createErroneusTypeSymbol(ast, exception);
-        }
-        return symbol;
     }
 }

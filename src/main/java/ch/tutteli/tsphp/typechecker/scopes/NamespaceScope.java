@@ -81,7 +81,7 @@ public class NamespaceScope extends AScope implements INamespaceScope
     }
 
     private boolean isNotAlreadyDefinedAsType(IAliasSymbol symbol) {
-        ITypeSymbol typeSymbol = resolveType(symbol.getDefinitionAst());
+        ITypeSymbol typeSymbol = (ITypeSymbol) resolve(symbol.getDefinitionAst());
         boolean ok = hasNoTypeNameClash(symbol.getDefinitionAst(), typeSymbol);
         if (!ok) {
             ErrorReporterRegistry.get().determineAlreadyDefined(symbol, typeSymbol);
@@ -119,12 +119,6 @@ public class NamespaceScope extends AScope implements INamespaceScope
     public ISymbol resolve(ITSPHPAst ast) {
         //we resolve from the corresponding global namespace scope 
         return enclosingScope.resolve(ast);
-    }
-
-    @Override
-    public ITypeSymbol resolveType(ITSPHPAst typeAst) {
-        ///check in global namespace scope, because they have been defined there
-        return ((IGlobalNamespaceScope) enclosingScope).resolveType(typeAst);
     }
 
     @Override

@@ -14,16 +14,30 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.symbols;
+package ch.tutteli.tsphp.typechecker.symbols.erroneous;
 
-import ch.tutteli.tsphp.common.IScope;
-import ch.tutteli.tsphp.common.ITypeSymbol;
+import ch.tutteli.tsphp.common.ITSPHPAst;
+import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public interface IAliasTypeSymbol extends ITypeSymbol
+public class ErroneusVariableSymbol extends AErroneousSymbol implements IErroneousVariableSymbol
 {
+
+     public ErroneusVariableSymbol(ITSPHPAst ast, TypeCheckerException exception) {
+        super(ast, exception);
+    }
+    
+    @Override
+    public boolean doesAlwaysCast() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean isNullable() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
     
 }

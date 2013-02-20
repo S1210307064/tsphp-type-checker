@@ -48,6 +48,8 @@ import ch.tutteli.tsphp.typechecker.scopes.ICaseInsensitiveScope;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IInterfaceTypeSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 
 }
 
@@ -161,19 +163,25 @@ parameterDeclaration
 	:	^(PARAMETER_DECLARATION 
 			^(TYPE tMod=. allTypes) variableDeclaration[$allTypes.type]
 		)
+		{
+		    IVariableSymbol parameter = $variableDeclaration.variableSymbol;
+		    IMethodSymbol methodSymbol = (IMethodSymbol) parameter.getDefinitionScope();
+		    methodSymbol.addParameter(parameter);
+		}
 	;
 
 variableDeclarationList 
 	:	^(VARIABLE_DECLARATION_LIST ^(TYPE tMod=. allTypes) variableDeclaration[$allTypes.type]+ )
         ;
         
-variableDeclaration[ITypeSymbol type]
+variableDeclaration[ITypeSymbol type] returns [IVariableSymbol variableSymbol]
 	:
 		(	^(variableId=VariableId .)
 		|	variableId=VariableId	
 		)
 		{ 
-			$variableId.getSymbol().setType(type); 
+			$variableSymbol = (IVariableSymbol) $variableId.getSymbol();
+			$variableSymbol.setType(type); 
 			$variableId.getScope().doubleDefinitionCheck($variableId.getSymbol());
 		}
 	;
@@ -225,7 +233,8 @@ scalarTypes returns [ITypeSymbol type]
 atom	:	variable
  	|	thisOrSelf
  	|	parent
- 	|	constant	
+ 	|	constant
+ 	|	functionCall
 	;
 
 variable	
@@ -236,7 +245,7 @@ variable
 			&& tokenType!=PARAMETER_DECLARATION 
 		}? VariableId
 		{
-      			$start.setSymbol(symbolTable.resolve($start));
+      			$start.setSymbol(symbolTable.resolveVariable($start));
 			symbolTable.checkForwardReference($start);
       		}
 	;
@@ -254,8 +263,14 @@ parent	:	par='parent'
 constant
 	:	cst=CONSTANT
 		{
-			$cst.setSymbol(symbolTable.resolveWithFallbackToDefaultNamespace($cst));
+			$cst.setSymbol(symbolTable.resolveConstant($cst));
 			symbolTable.checkForwardReference($cst);
 		}
 	;
 
+functionCall
+	:	^(FUNCTION_CALL	id=TYPE_NAME args=.)
+		{
+			$id.setSymbol(symbolTable.resolveFunction($id));
+		}
+	;

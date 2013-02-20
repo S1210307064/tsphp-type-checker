@@ -26,7 +26,7 @@ import ch.tutteli.tsphp.common.ITSPHPAst;
 public class AliasTypeSymbol extends ASymbol implements IAliasTypeSymbol
 {
 
-    public AliasTypeSymbol(ITSPHPAst theDefinitionAst, String theName) {
-        super(theDefinitionAst, theName);
+    public AliasTypeSymbol(ITSPHPAst definitionAst, String name) {
+        super(definitionAst, name);
     }
 }

@@ -24,6 +24,7 @@ import ch.tutteli.tsphp.typechecker.symbols.erroneous.ErroneousAccessSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.ErroneousClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.ErroneousMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.ErroneusTypeSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.erroneous.ErroneusVariableSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousAccessSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousMethodSymbol;
@@ -59,6 +60,10 @@ public class SymbolFactory implements ISymbolFactory
         return new AliasSymbol(useDefinition, alias);
     }
 
+    public IAliasTypeSymbol createAliasTypeSymbol(ITSPHPAst definitionAst, String name) {
+        return new AliasTypeSymbol(definitionAst, name);
+    }
+
     @Override
     public IInterfaceTypeSymbol createInterfaceTypeSymbol(ITSPHPAst modifier, ITSPHPAst identifier, IScope currentScope) {
         return new InterfaceTypeSymbol(identifier, getModifiers(modifier), identifier.getText(), currentScope);
@@ -87,11 +92,6 @@ public class SymbolFactory implements ISymbolFactory
     }
 
     @Override
-    public IErroneousAccessSymbol createErroneusAccessSymbol(ITSPHPAst ast, TypeCheckerException exception) {
-        return new ErroneousAccessSymbol(ast, exception);
-    }
-
-    @Override
     public IErroneousClassTypeSymbol createErroneusClassSymbol(ITSPHPAst ast, TypeCheckerException ex) {
         IMethodSymbol methodSymbol = createErroneusMethodSymbol(ast, ex);
         return new ErroneousClassTypeSymbol(ast, ex, methodSymbol);
@@ -100,6 +100,16 @@ public class SymbolFactory implements ISymbolFactory
     @Override
     public IErroneousMethodSymbol createErroneusMethodSymbol(ITSPHPAst ast, TypeCheckerException ex) {
         return new ErroneousMethodSymbol(ast, ex);
+    }
+
+    @Override
+    public IVariableSymbol createErroneusVariableSymbol(ITSPHPAst ast, TypeCheckerException exception) {
+        return new ErroneusVariableSymbol(ast, exception);
+    }
+
+    @Override
+    public IErroneousAccessSymbol createErroneusAccessSymbol(ITSPHPAst ast, TypeCheckerException exception) {
+        return new ErroneousAccessSymbol(ast, exception);
     }
 
     private Set<Integer> getModifiers(ITSPHPAst modifierAst) {

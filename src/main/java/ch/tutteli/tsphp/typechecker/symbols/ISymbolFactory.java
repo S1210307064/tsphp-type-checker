@@ -16,13 +16,14 @@
  */
 package ch.tutteli.tsphp.typechecker.symbols;
 
-import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousTypeSymbol;
-import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousAccessSymbol;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
+import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousAccessSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousMethodSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousTypeSymbol;
 
 /**
  *
@@ -39,6 +40,8 @@ public interface ISymbolFactory
 
     IAliasSymbol createAliasSymbol(ITSPHPAst useDefinition, String alias);
 
+    IAliasTypeSymbol createAliasTypeSymbol(ITSPHPAst definitionAst, String name);
+
     IInterfaceTypeSymbol createInterfaceTypeSymbol(ITSPHPAst modifier, ITSPHPAst identifier, IScope currentScope);
 
     IClassTypeSymbol createClassTypeSymbol(ITSPHPAst classModifier, ITSPHPAst identifier, IScope currentScope);
@@ -52,7 +55,9 @@ public interface ISymbolFactory
 
     IErroneousAccessSymbol createErroneusAccessSymbol(ITSPHPAst ast, TypeCheckerException exception);
 
-    IClassTypeSymbol createErroneusClassSymbol(ITSPHPAst ast, TypeCheckerException ex);
+    IErroneousClassTypeSymbol createErroneusClassSymbol(ITSPHPAst ast, TypeCheckerException ex);
 
     IErroneousMethodSymbol createErroneusMethodSymbol(ITSPHPAst ast, TypeCheckerException ex);
+
+    IVariableSymbol createErroneusVariableSymbol(ITSPHPAst ast, TypeCheckerException exception);
 }

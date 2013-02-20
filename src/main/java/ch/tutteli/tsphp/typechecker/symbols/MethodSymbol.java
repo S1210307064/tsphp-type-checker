@@ -18,6 +18,9 @@ package ch.tutteli.tsphp.typechecker.symbols;
 
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ITSPHPAst;
+import ch.tutteli.tsphp.common.ITypeSymbol;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -28,12 +31,23 @@ import java.util.TreeSet;
 public class MethodSymbol extends AScopedSymbol implements IMethodSymbol
 {
 
+    private List<IVariableSymbol> parameters = new ArrayList<>();
     private Set<Integer> returnTypeModifier;
 
     public MethodSymbol(ITSPHPAst definitionAst, Set<Integer> methodModifiers, Set<Integer> theReturnTypeModifier,
             String name, IScope enclosingScope) {
         super(definitionAst, methodModifiers, name, enclosingScope);
         returnTypeModifier = theReturnTypeModifier;
+    }
+
+    @Override
+    public void addParameter(IVariableSymbol typeSymbol) {
+        parameters.add(typeSymbol);
+    }
+
+    @Override
+    public List<IVariableSymbol>  getParameters() {
+        return parameters;
     }
 
     @Override

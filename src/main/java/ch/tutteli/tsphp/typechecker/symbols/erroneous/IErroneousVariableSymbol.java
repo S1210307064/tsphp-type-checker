@@ -14,16 +14,15 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.symbols;
+package ch.tutteli.tsphp.typechecker.symbols.erroneous;
 
-import ch.tutteli.tsphp.common.IScope;
-import ch.tutteli.tsphp.common.ITypeSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public interface IAliasTypeSymbol extends ITypeSymbol
+public interface IErroneousVariableSymbol extends IErroneousSymbol, IVariableSymbol
 {
     
 }

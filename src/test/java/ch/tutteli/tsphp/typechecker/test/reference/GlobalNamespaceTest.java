@@ -30,44 +30,44 @@ import org.junit.Test;
 public class GlobalNamespaceTest extends ATest
 {    
     @Test
-    public void testResolveTypeLenghtLessThanNamespace() {
+    public void testResolveLenghtLessThanNamespace() {
         GlobalNamespaceScope globalNamespace = new GlobalNamespaceScope("\\a\\b\\c");
         ScalarTypeSymbol symbol = new ScalarTypeSymbol("int");
         globalNamespace.define(symbol);
-        Assert.assertEquals(symbol, globalNamespace.resolveType(AstTestHelper.getAstWithTokenText("int")));
+        Assert.assertEquals(symbol, globalNamespace.resolve(AstTestHelper.getAstWithTokenText("int")));
     }
 
     @Test
-    public void testResolveTypeLenghtEqualToNamespace() {
+    public void testResolveLenghtEqualToNamespace() {
         GlobalNamespaceScope globalNamespace = new GlobalNamespaceScope("\\a\\b\\");
          ScalarTypeSymbol symbol = new ScalarTypeSymbol("float");
         globalNamespace.define(symbol);
-        Assert.assertEquals(symbol,globalNamespace.resolveType(AstTestHelper.getAstWithTokenText("float")));
+        Assert.assertEquals(symbol,globalNamespace.resolve(AstTestHelper.getAstWithTokenText("float")));
     }
     
     
     @Test
-    public void testResolveTypeLenghtGreaterThanNamespace() {
+    public void testResolveLenghtGreaterThanNamespace() {
         GlobalNamespaceScope globalNamespace = new GlobalNamespaceScope("\\");
          ScalarTypeSymbol symbol = new ScalarTypeSymbol("float");
         globalNamespace.define(symbol);
-        Assert.assertEquals(symbol,globalNamespace.resolveType(AstTestHelper.getAstWithTokenText("float")));
+        Assert.assertEquals(symbol,globalNamespace.resolve(AstTestHelper.getAstWithTokenText("float")));
     }
     
     @Test
-    public void testResolveAbsoluteType() {
+    public void testResolveAbsolute() {
         GlobalNamespaceScope globalNamespace = new GlobalNamespaceScope("\\a\\b\\");
          ScalarTypeSymbol symbol = new ScalarTypeSymbol("float");
         globalNamespace.define(symbol);
-        Assert.assertEquals(symbol,globalNamespace.resolveType(AstTestHelper.getAstWithTokenText("\\a\\b\\float")));
+        Assert.assertEquals(symbol,globalNamespace.resolve(AstTestHelper.getAstWithTokenText("\\a\\b\\float")));
     }
     
     
     @Test
-    public void testResolveTypeNotFound() {
+    public void testResolveNotFound() {
         GlobalNamespaceScope globalNamespace = new GlobalNamespaceScope("\\a\\b\\");
          ScalarTypeSymbol symbol = new ScalarTypeSymbol("float");
         globalNamespace.define(symbol);
-        Assert.assertNull(globalNamespace.resolveType(AstTestHelper.getAstWithTokenText("float2")));
+        Assert.assertNull(globalNamespace.resolve(AstTestHelper.getAstWithTokenText("float2")));
     }
 }
