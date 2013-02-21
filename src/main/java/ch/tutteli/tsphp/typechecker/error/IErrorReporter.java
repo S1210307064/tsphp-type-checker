@@ -20,6 +20,7 @@ import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.exceptions.DefinitionException;
 import ch.tutteli.tsphp.common.exceptions.ReferenceException;
+import org.omg.CORBA.IDLTypeHelper;
 
 /**
  *
@@ -47,6 +48,10 @@ public interface IErrorReporter extends ch.tutteli.tsphp.common.IErrorReporter
     DefinitionException aliasForwardReference(ITSPHPAst typeAst, ITSPHPAst useDefinition);
 
     DefinitionException forwardReference(ITSPHPAst typeAst, ITSPHPAst useDefinition);
+
+    DefinitionException methodNotDefined(ITSPHPAst callee, ITSPHPAst id);
+
+    DefinitionException memberNotDefined(ITSPHPAst callee, ITSPHPAst id);
 
     ReferenceException unkownType(ITSPHPAst typeAst);
 

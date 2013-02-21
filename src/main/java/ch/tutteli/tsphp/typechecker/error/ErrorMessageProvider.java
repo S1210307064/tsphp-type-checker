@@ -41,6 +41,8 @@ public class ErrorMessageProvider extends AErrorMessageProvider
         definitionErrors.put("forwardReference",
                 "Line %lineN%|%posN% - %idN% is used before its declaration. Corresponding declaration is "
                 + "on line %line%|%pos%");
+        definitionErrors.put("methodNotDefined", "Line %lineN%|%posN% - method %idN% is not defined in %id%");
+        definitionErrors.put("memberNotDefined", "Line %lineN%|%posN% - class member %idN% is not defined in %id%");
     }
 
     @Override

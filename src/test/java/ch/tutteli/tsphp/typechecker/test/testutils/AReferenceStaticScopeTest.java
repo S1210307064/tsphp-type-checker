@@ -27,12 +27,12 @@ import org.junit.Ignore;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @Ignore
-public abstract class AReferenceScopeTest extends AReferenceTest
+public abstract class AReferenceStaticScopeTest extends AReferenceTest
 {
 
-    protected ReferenceScopeTestStruct[] testStructs;
+    protected ScopeTestStruct[] testStructs;
 
-    public AReferenceScopeTest(String testString, ReferenceScopeTestStruct[] theTestStructs) {
+    public AReferenceStaticScopeTest(String testString, ScopeTestStruct[] theTestStructs) {
         super(testString);
         testStructs = theTestStructs;
     }
@@ -40,7 +40,7 @@ public abstract class AReferenceScopeTest extends AReferenceTest
     @Override
     protected void verifyReferences() {
         for (int i = 0; i < testStructs.length; ++i) {
-            ReferenceScopeTestStruct testStruct = testStructs[i];
+            ScopeTestStruct testStruct = testStructs[i];
             ITSPHPAst testCandidate = ScopeTestHelper.getAst(ast, testString, testStruct.astAccessOrder);
             Assert.assertNotNull(testString + " failed. testCandidate is null. should be " + testStruct.astText, testCandidate);
             Assert.assertEquals(testString + " failed. wrong ast text,", testStruct.astText,
@@ -50,11 +50,6 @@ public abstract class AReferenceScopeTest extends AReferenceTest
             Assert.assertNotNull(testString + " -- " + testStruct.astText + " failed. symbol was null", symbol);
             Assert.assertEquals(testString + " -- " + testStruct.astText + " failed. wrong scope,",
                     testStruct.astScope, ScopeTestHelper.getEnclosingScopeNames(symbol.getDefinitionScope()));
-
-            ITypeSymbol typeSymbol = symbol.getType();
-            Assert.assertNotNull(testString + " -- " + testStruct.astText + " failed. type was null", typeSymbol);
-            Assert.assertEquals(testString + " -- " + testStruct.astText + " failed. wrong type scope,",
-                    testStruct.typeScope, ScopeTestHelper.getEnclosingScopeNames(typeSymbol.getDefinitionScope()));
         }
     }
 }

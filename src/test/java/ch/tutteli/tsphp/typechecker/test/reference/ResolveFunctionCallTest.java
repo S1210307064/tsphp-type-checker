@@ -17,7 +17,7 @@
 package ch.tutteli.tsphp.typechecker.test.reference;
 
 import ch.tutteli.tsphp.typechecker.test.testutils.AReferenceScopeTest;
-import ch.tutteli.tsphp.typechecker.test.testutils.ScopeTestStruct;
+import ch.tutteli.tsphp.typechecker.test.testutils.ReferenceScopeTestStruct;
 import java.util.Arrays;
 import java.util.Collection;
 import org.antlr.runtime.RecognitionException;
@@ -33,7 +33,7 @@ import org.junit.runners.Parameterized;
 public class ResolveFunctionCallTest extends AReferenceScopeTest
 {
 
-    public ResolveFunctionCallTest(String testString, ScopeTestStruct[] testStructs) {
+    public ResolveFunctionCallTest(String testString, ReferenceScopeTestStruct[] testStructs) {
         super(testString, testStructs);
     }
 
@@ -45,39 +45,39 @@ public class ResolveFunctionCallTest extends AReferenceScopeTest
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
         return Arrays.asList(new Object[][]{
-//                    {"function void foo(){} foo();", structDefault("", 1, 1, 0)},
-//                    {"namespace{function void foo(){} foo();}", structDefault("", 1, 1, 0)},
-//                    {"namespace{function void foo(){}} namespace{ foo();}", structDefault("", 1, 1, 0, 0)},
-//                    {"namespace{ foo();} namespace{function void foo(){}} ", structDefault("", 0, 1, 0, 0)},
-//                    {"namespace a{function void foo(){}} namespace a{ foo();}", struct("", "\\a\\.\\a\\.", 1, 1, 0, 0)},
-//                    {"namespace a{ foo();} namespace a{function void foo(){}} ", struct("", "\\a\\.\\a\\.", 0, 1, 0, 0)},
-//                    //absolute path
-//                    {
-//                        "namespace{function void foo(){}} namespace a{ \\foo();}",
-//                        structDefault("\\", 1, 1, 0, 0)
-//                    },
-//                    {
-//                        "namespace a\\b{function void foo(){}} namespace x{ \\a\\b\\foo();}",
-//                        struct("\\a\\b\\", "\\a\\b\\.\\a\\b\\.", 1, 1, 0, 0)
-//                    },
-//                    //relative
-//                    {
-//                        "namespace a\\b{function void foo(){}} namespace a{ b\\foo();}",
-//                        struct("\\a\\b\\", "\\a\\b\\.\\a\\b\\.", 1, 1, 0, 0)
-//                    },
-//                    {
-//                        "namespace a\\b{function void foo(){}} namespace { a\\b\\foo();}",
-//                        struct("\\a\\b\\", "\\a\\b\\.\\a\\b\\.", 1, 1, 0, 0)
-//                    },
-//                    //using an alias
-//                    {
-//                        "namespace a{function void foo(){}} namespace a\\a\\c{ use a as b; b\\foo();}",
-//                        struct("\\a\\", "\\a\\.\\a\\.", 1, 1, 1, 0)
-//                    },
-//                    {
-//                        "namespace a{function void foo(){}} namespace a\\a\\c{ use a as b; b\\foo();}",
-//                        struct("\\a\\", "\\a\\.\\a\\.", 1, 1, 1, 0)
-//                    },
+                    {"function void foo(){} foo();", structDefault("", 1, 1, 0)},
+                    {"namespace{function void foo(){} foo();}", structDefault("", 1, 1, 0)},
+                    {"namespace{function void foo(){}} namespace{ foo();}", structDefault("", 1, 1, 0, 0)},
+                    {"namespace{ foo();} namespace{function void foo(){}} ", structDefault("", 0, 1, 0, 0)},
+                    {"namespace a{function void foo(){}} namespace a{ foo();}", struct("", "\\a\\.\\a\\.", 1, 1, 0, 0)},
+                    {"namespace a{ foo();} namespace a{function void foo(){}} ", struct("", "\\a\\.\\a\\.", 0, 1, 0, 0)},
+                    //absolute path
+                    {
+                        "namespace{function void foo(){}} namespace a{ \\foo();}",
+                        structDefault("\\", 1, 1, 0, 0)
+                    },
+                    {
+                        "namespace a\\b{function void foo(){}} namespace x{ \\a\\b\\foo();}",
+                        struct("\\a\\b\\", "\\a\\b\\.\\a\\b\\.", 1, 1, 0, 0)
+                    },
+                    //relative
+                    {
+                        "namespace a\\b{function void foo(){}} namespace a{ b\\foo();}",
+                        struct("\\a\\b\\", "\\a\\b\\.\\a\\b\\.", 1, 1, 0, 0)
+                    },
+                    {
+                        "namespace a\\b{function void foo(){}} namespace { a\\b\\foo();}",
+                        struct("\\a\\b\\", "\\a\\b\\.\\a\\b\\.", 1, 1, 0, 0)
+                    },
+                    //using an alias
+                    {
+                        "namespace a{function void foo(){}} namespace a\\a\\c{ use a as b; b\\foo();}",
+                        struct("\\a\\", "\\a\\.\\a\\.", 1, 1, 1, 0)
+                    },
+                    {
+                        "namespace a{function void foo(){}} namespace a\\a\\c{ use a as b; b\\foo();}",
+                        struct("\\a\\", "\\a\\.\\a\\.", 1, 1, 1, 0)
+                    },
                     //fallback to global
                     {
                         "namespace{function void foo(){}} namespace a{ foo();}",
@@ -94,13 +94,13 @@ public class ResolveFunctionCallTest extends AReferenceScopeTest
                 });
     }
 
-    private static ScopeTestStruct[] structDefault(String prefix, Integer... accessToScope) {
+    private static ReferenceScopeTestStruct[] structDefault(String prefix, Integer... accessToScope) {
         return struct(prefix, "\\.\\.", accessToScope);
     }
 
-    private static ScopeTestStruct[] struct(String prefix, String scope, Integer... accessToScope) {
-        return new ScopeTestStruct[]{
-                    new ScopeTestStruct(prefix + "foo()", scope, Arrays.asList(accessToScope))
+    private static ReferenceScopeTestStruct[] struct(String prefix, String scope, Integer... accessToScope) {
+        return new ReferenceScopeTestStruct[]{
+                    new ReferenceScopeTestStruct(prefix + "foo()", scope, Arrays.asList(accessToScope), "void", "\\.")
                 };
     }
 }

@@ -87,6 +87,16 @@ public class ErrorReporter implements IErrorReporter
         return addAndGetDefinitionException("forwardReference", typeAst, useDefinition);
     }
 
+     @Override
+    public DefinitionException methodNotDefined(ITSPHPAst callee, ITSPHPAst id) {
+        return addAndGetDefinitionException("methodNotDefined", callee.getSymbol().getDefinitionAst(), id);
+    }
+    
+    @Override
+    public DefinitionException memberNotDefined(ITSPHPAst callee, ITSPHPAst id) {
+        return addAndGetDefinitionException("memberNotDefined", callee.getSymbol().getDefinitionAst(), id);
+    }
+
     private DefinitionException addAndGetDefinitionException(String key,
             ITSPHPAst existingDefintion, ITSPHPAst newDefinition) {
 

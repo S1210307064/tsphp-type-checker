@@ -190,7 +190,7 @@ public class Resolver implements IResolver
             }
         } else {
             DefinitionException ex = ErrorReporterRegistry.get().aliasForwardReference(typeAst, useDefinition);
-            symbol = symbolFactory.createErroneusTypeSymbol(typeAst, ex);
+            symbol = symbolFactory.createErroneousTypeSymbol(typeAst, ex);
         }
         return symbol;
     }

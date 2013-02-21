@@ -17,7 +17,7 @@
 package ch.tutteli.tsphp.typechecker.test.reference;
 
 import ch.tutteli.tsphp.typechecker.test.testutils.AReferenceScopeTest;
-import ch.tutteli.tsphp.typechecker.test.testutils.ScopeTestStruct;
+import ch.tutteli.tsphp.typechecker.test.testutils.ReferenceScopeTestStruct;
 import java.util.Arrays;
 import java.util.Collection;
 import org.antlr.runtime.RecognitionException;
@@ -33,7 +33,7 @@ import org.junit.runners.Parameterized;
 public class ResolveConstantTest extends AReferenceScopeTest
 {
 
-    public ResolveConstantTest(String testString, ScopeTestStruct[] testStructs) {
+    public ResolveConstantTest(String testString, ReferenceScopeTestStruct[] testStructs) {
         super(testString, testStructs);
     }
 
@@ -70,13 +70,19 @@ public class ResolveConstantTest extends AReferenceScopeTest
                     //in expression (ok a; is also an expression but at the top of the AST)
                     {
                         "const int a=1; !(1+a-a/a*a && a) || a;",
-                        new ScopeTestStruct[]{
-                            new ScopeTestStruct("a#", "\\.\\.", Arrays.asList(new Integer[]{1, 1, 1})),
-                            new ScopeTestStruct("a#", "\\.\\.", Arrays.asList(new Integer[]{1, 1, 0, 0, 1})),
-                            new ScopeTestStruct("a#", "\\.\\.", Arrays.asList(new Integer[]{1, 1, 0, 0, 0, 0, 1})),
-                            new ScopeTestStruct("a#", "\\.\\.", Arrays.asList(new Integer[]{1, 1, 0, 0, 0, 1, 1})),
-                            new ScopeTestStruct("a#", "\\.\\.", Arrays.asList(new Integer[]{1, 1, 0, 0, 0, 1, 0, 0})),
-                            new ScopeTestStruct("a#", "\\.\\.", Arrays.asList(new Integer[]{1, 1, 0, 0, 0, 1, 0, 1}))
+                        new ReferenceScopeTestStruct[]{
+                            new ReferenceScopeTestStruct("a#", "\\.\\.", Arrays.asList(new Integer[]{
+                                1, 1, 1}), "int", "\\."),
+                            new ReferenceScopeTestStruct("a#", "\\.\\.", Arrays.asList(new Integer[]{
+                                1, 1, 0, 0, 1}), "int", "\\."),
+                            new ReferenceScopeTestStruct("a#", "\\.\\.", Arrays.asList(new Integer[]{
+                                1, 1, 0, 0, 0, 0, 1}), "int", "\\."),
+                            new ReferenceScopeTestStruct("a#", "\\.\\.", Arrays.asList(new Integer[]{
+                                1, 1, 0, 0, 0, 1, 1}), "int", "\\."),
+                            new ReferenceScopeTestStruct("a#", "\\.\\.", Arrays.asList(new Integer[]{
+                                1, 1, 0, 0, 0, 1, 0, 0}), "int", "\\."),
+                            new ReferenceScopeTestStruct("a#", "\\.\\.", Arrays.asList(new Integer[]{
+                                1, 1, 0, 0, 0, 1, 0, 1}), "int", "\\.")
                         }
                     },
                     //const are global
@@ -127,13 +133,13 @@ public class ResolveConstantTest extends AReferenceScopeTest
                 });
     }
 
-    private static ScopeTestStruct[] structDefault(String prefix, Integer... accessToScope) {
+    private static ReferenceScopeTestStruct[] structDefault(String prefix, Integer... accessToScope) {
         return struct(prefix, "\\.\\.", accessToScope);
     }
 
-    private static ScopeTestStruct[] struct(String prefix, String scope, Integer... accessToScope) {
-        return new ScopeTestStruct[]{
-                    new ScopeTestStruct(prefix + "a#", scope, Arrays.asList(accessToScope))
+    private static ReferenceScopeTestStruct[] struct(String prefix, String scope, Integer... accessToScope) {
+        return new ReferenceScopeTestStruct[]{
+                    new ReferenceScopeTestStruct(prefix + "a#", scope, Arrays.asList(accessToScope), "int", "\\.")
                 };
     }
 }

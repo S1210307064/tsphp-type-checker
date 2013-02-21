@@ -51,13 +51,13 @@ public interface ISymbolFactory
 
     IVariableSymbol createVariableSymbol(ITSPHPAst typeModifier, ITSPHPAst variableId);
 
-    IErroneousTypeSymbol createErroneusTypeSymbol(ITSPHPAst ast, TypeCheckerException exception);
+    IErroneousTypeSymbol createErroneousTypeSymbol(ITSPHPAst ast, TypeCheckerException exception);
 
-    IErroneousAccessSymbol createErroneusAccessSymbol(ITSPHPAst ast, TypeCheckerException exception);
+    IErroneousAccessSymbol createErroneousAccessSymbol(ITSPHPAst ast, TypeCheckerException exception);
 
-    IErroneousClassTypeSymbol createErroneusClassSymbol(ITSPHPAst ast, TypeCheckerException ex);
+    IErroneousClassTypeSymbol createErroneousClassSymbol(ITSPHPAst ast, TypeCheckerException ex);
 
-    IErroneousMethodSymbol createErroneusMethodSymbol(ITSPHPAst ast, TypeCheckerException ex);
+    IErroneousMethodSymbol createErroneousMethodSymbol(ITSPHPAst ast, TypeCheckerException ex);
 
-    IVariableSymbol createErroneusVariableSymbol(ITSPHPAst ast, TypeCheckerException exception);
+    IVariableSymbol createErroneousVariableSymbol(ITSPHPAst ast, TypeCheckerException exception);
 }

@@ -71,6 +71,9 @@ topdown
    	|	constantDeclarationList
    	|	parameterDeclarationList
     	|	variableDeclarationList
+ 	|	functionCall
+ 	|	methodCallStatic
+ 	|	methodCall
     	|	atom
     	;
 
@@ -79,10 +82,10 @@ useDeclarationList
 	;
 	
 useDeclaration
-	:	^(USE_DECLARATION type=TYPE_NAME alias=.)
+	:	^(USE_DECLARATION typeName=TYPE_NAME alias=.)
 		{
-			ITypeSymbol typeSymbol = symbolTable.resolveUseType($type, $alias);
-			type.setSymbol(typeSymbol);
+			ITypeSymbol typeSymbol = symbolTable.resolveUseType($typeName, $alias);
+			$typeName.setSymbol(typeSymbol);
 			$alias.getSymbol().setType(typeSymbol);
 			
 			INamespaceScope namespaceScope = (INamespaceScope) $alias.getScope();
@@ -124,9 +127,10 @@ implementsDeclaration
 constructDeclaration
 	:	^(identifier='__construct' .  ^(TYPE rtMod=. voidType) . .)
 		{
-			$identifier.getSymbol().setType($voidType.type); 
+			IMethodSymbol methodSymbol = (IMethodSymbol) $identifier.getSymbol();
+			methodSymbol.setType($voidType.type); 
 			ICaseInsensitiveScope scope = (ICaseInsensitiveScope) $identifier.getScope();
-			scope.doubleDefinitionCheckCaseInsensitive($identifier.getSymbol());
+			scope.doubleDefinitionCheckCaseInsensitive(methodSymbol);
 		}
 	;
 		
@@ -137,9 +141,10 @@ methodFunctionDeclaration
 			. ^(TYPE rtMod=. returnTypes) identifier=. . .
 		)
 		{
-			$identifier.getSymbol().setType($returnTypes.type); 
+			IMethodSymbol methodSymbol = (IMethodSymbol) $identifier.getSymbol();
+			methodSymbol.setType($returnTypes.type); 
 			ICaseInsensitiveScope scope = (ICaseInsensitiveScope) $identifier.getScope();
-			scope.doubleDefinitionCheckCaseInsensitive($identifier.getSymbol());
+			scope.doubleDefinitionCheckCaseInsensitive(methodSymbol);
 		}
 	;
 	
@@ -150,8 +155,9 @@ constantDeclarationList
 constantDeclaration[ITypeSymbol type]
 	:	^(identifier=Identifier .)
 		{ 
-			$identifier.getSymbol().setType(type); 
-			$identifier.getScope().doubleDefinitionCheck($identifier.getSymbol()); 
+			IVariableSymbol variableSymbol = (IVariableSymbol) $identifier.getSymbol();
+			variableSymbol.setType(type); 
+			$identifier.getScope().doubleDefinitionCheck(variableSymbol); 
 		}
 	;
 
@@ -186,6 +192,85 @@ variableDeclaration[ITypeSymbol type] returns [IVariableSymbol variableSymbol]
 		}
 	;
 
+atom	:	
+	|	thisVariable
+	|	variable
+ 	|	constant
+	;
+
+variable	
+@init { int tokenType = $start.getParent().getType();}
+	: 	
+		{
+			tokenType!=VARIABLE_DECLARATION_LIST 
+			&& tokenType!=PARAMETER_DECLARATION 
+		}? varId=VariableId
+		{
+      			$varId.setSymbol(symbolTable.resolveVariable($varId));
+			symbolTable.checkForwardReference($varId);
+      		}
+	;
+	
+thisVariable
+	:	t='$this'	
+		{
+			IClassTypeSymbol classSymbol = symbolTable.getEnclosingClass($t);
+			$t.setSymbol(classSymbol);
+		 }
+	;
+
+
+constant
+	:	cnst=CONSTANT
+		{
+			IVariableSymbol variableSymbol = symbolTable.resolveConstant($cnst);
+			$cnst.setSymbol(variableSymbol);
+			symbolTable.checkForwardReference($cnst);
+		}
+	;
+
+functionCall
+	:	^(FUNCTION_CALL	id=TYPE_NAME .)
+		{
+			IMethodSymbol methodSymbol = symbolTable.resolveFunction($id);
+			$id.setSymbol(methodSymbol);
+		}
+	;
+
+methodCallStatic
+	:	^(METHOD_CALL_STATIC callee=TYPE_NAME id=Identifier .)	
+		{
+			ITypeSymbol typeSymbol = symbolTable.resolveType($callee);
+			$callee.setSymbol(typeSymbol);
+			$id.setSymbol(symbolTable.resolveStaticMethod($callee, $id));
+		}
+	;
+	
+methodCall
+	:	^(METHOD_CALL callee=methodCallee id=Identifier .)	
+		{
+			//callee's symbol is set in methodCallee
+			$id.setSymbol( symbolTable.resolveMethod($callee.start, $id));
+		}
+	;
+methodCallee
+	:	t='$this'
+		{$t.setSymbol(symbolTable.getEnclosingClass($t));}
+	
+	|	varId=VariableId
+		{
+      			$varId.setSymbol(symbolTable.resolveVariable($varId));
+			symbolTable.checkForwardReference($varId);
+		}
+	
+	|	slf='self'
+		{$slf.setSymbol(symbolTable.getEnclosingClass($slf));}
+		
+	|	par='parent'
+		{$par.setSymbol(symbolTable.getParentClass($par));}
+	;
+
+
 returnTypes returns [ITypeSymbol type]
 	:	allTypes {$type = $allTypes.type;}
 	|	voidType {$type = $voidType.type;}
@@ -211,6 +296,7 @@ allTypes returns [ITypeSymbol type]
 			$type = symbolTable.resolvePrimitiveType($start);
 			$start.setSymbol($type);
 		}
+		
 	|	TYPE_NAME
 		{
 			$type = symbolTable.resolveType($start);
@@ -229,62 +315,3 @@ scalarTypes returns [ITypeSymbol type]
 			$start.setSymbol($type);
 		}
 	;
-
-atom	:	thisVariable
-	|	variable
- 	|	constant
- 	|	functionCall
- 	|	methodCallStatic
-	;
-
-variable	
-@init { int tokenType = $start.getParent().getType();}
-	: 	
-		{
-			tokenType!=VARIABLE_DECLARATION_LIST 
-			&& tokenType!=PARAMETER_DECLARATION 
-		}? VariableId
-		{
-      			$start.setSymbol(symbolTable.resolveVariable($start));
-			symbolTable.checkForwardReference($start);
-      		}
-	;
-	
-thisVariable
-	:	'$this'	
-		{$start.setSymbol(symbolTable.getEnclosingClass($start)); }
-	;
-
-
-constant
-	:	cst=CONSTANT
-		{
-			$cst.setSymbol(symbolTable.resolveConstant($cst));
-			symbolTable.checkForwardReference($cst);
-		}
-	;
-
-functionCall
-	:	^(FUNCTION_CALL	id=TYPE_NAME .)
-		{$id.setSymbol(symbolTable.resolveFunction($id));}
-	;
-
-methodCallStatic
-	:	^(METHOD_CALL_STATIC callee=staticAccess id=Identifier .)	
-		{
-			
-			$id.setSymbol(symbolTable.resolveStaticMethod($callee.start, $id));
-		}
-	;
-staticAccess
-	:	slf='self'
-		{$slf.setSymbol(symbolTable.getEnclosingClass($slf)); }
-		
-	|	par='parent'
-		{$par.setSymbol(symbolTable.getParentClass($par));}	
-		
-	|	type=TYPE_NAME
-		{$type.setSymbol(symbolTable.resolveType($type));}
-	;
-
-

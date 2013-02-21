@@ -87,28 +87,28 @@ public class SymbolFactory implements ISymbolFactory
     }
 
     @Override
-    public IErroneousTypeSymbol createErroneusTypeSymbol(ITSPHPAst ast, TypeCheckerException exception) {
+    public IErroneousTypeSymbol createErroneousTypeSymbol(ITSPHPAst ast, TypeCheckerException exception) {
         return new ErroneusTypeSymbol(ast, exception);
     }
 
     @Override
-    public IErroneousClassTypeSymbol createErroneusClassSymbol(ITSPHPAst ast, TypeCheckerException ex) {
-        IMethodSymbol methodSymbol = createErroneusMethodSymbol(ast, ex);
+    public IErroneousClassTypeSymbol createErroneousClassSymbol(ITSPHPAst ast, TypeCheckerException ex) {
+        IMethodSymbol methodSymbol = createErroneousMethodSymbol(ast, ex);
         return new ErroneousClassTypeSymbol(ast, ex, methodSymbol);
     }
 
     @Override
-    public IErroneousMethodSymbol createErroneusMethodSymbol(ITSPHPAst ast, TypeCheckerException ex) {
+    public IErroneousMethodSymbol createErroneousMethodSymbol(ITSPHPAst ast, TypeCheckerException ex) {
         return new ErroneousMethodSymbol(ast, ex);
     }
 
     @Override
-    public IVariableSymbol createErroneusVariableSymbol(ITSPHPAst ast, TypeCheckerException exception) {
+    public IVariableSymbol createErroneousVariableSymbol(ITSPHPAst ast, TypeCheckerException exception) {
         return new ErroneusVariableSymbol(ast, exception);
     }
 
     @Override
-    public IErroneousAccessSymbol createErroneusAccessSymbol(ITSPHPAst ast, TypeCheckerException exception) {
+    public IErroneousAccessSymbol createErroneousAccessSymbol(ITSPHPAst ast, TypeCheckerException exception) {
         return new ErroneousAccessSymbol(ast, exception);
     }
 

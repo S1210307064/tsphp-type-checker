@@ -79,7 +79,7 @@ public interface ISymbolTable
 
     IVariableSymbol resolveClassMember(ITSPHPAst ast);
 
-    IMethodSymbol resolveMethod(ITSPHPAst ast);
+    IMethodSymbol resolveMethod(ITSPHPAst callee, ITSPHPAst id);
 
     IVariableSymbol resolveVariable(ITSPHPAst ast);
 
