@@ -33,6 +33,7 @@ import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.IScopeFactory;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IAliasTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ICanBeStatic;
 import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IInterfaceTypeSymbol;
@@ -56,15 +57,15 @@ public class SymbolTable implements ISymbolTable
     private ITSPHPAstAdaptor astAdaptor;
     private ILowerCaseStringMap<IGlobalNamespaceScope> globalNamespaceScopes = new LowerCaseStringMap<>();
     private IGlobalNamespaceScope globalDefaultNamespace;
-    private Resolver resolver;
+    private IResolver resolver;
 
     public SymbolTable(ISymbolFactory aSymbolFactory, IScopeFactory aScopeFactory, ITSPHPAstAdaptor theAstAdaptor) {
         symbolFactory = aSymbolFactory;
         scopeFactory = aScopeFactory;
         astAdaptor = theAstAdaptor;
-        resolver = new Resolver(aSymbolFactory, globalNamespaceScopes);
-
         initTypeSystem();
+        
+        resolver = new Resolver(aSymbolFactory, globalNamespaceScopes, globalDefaultNamespace);        
     }
 
     private void initTypeSystem() {
@@ -232,17 +233,9 @@ public class SymbolTable implements ISymbolTable
         }
     }
 
-    private ISymbol resolveGlobalIdentifierWithFallback(ITSPHPAst ast) {
-        ISymbol symbol = resolver.resolveGlobalIdentifierOrReturnNull(ast);
-        if (symbol == null) {
-            symbol = globalDefaultNamespace.resolve(ast);
-        }
-        return symbol;
-    }
-
     @Override
     public IVariableSymbol resolveConstant(ITSPHPAst ast) {
-        ISymbol symbol = resolveGlobalIdentifierWithFallback(ast);
+        ISymbol symbol = resolver.resolveGlobalIdentifierWithFallback(ast);
         if (symbol == null) {
             ReferenceException exception = ErrorReporterRegistry.get().notDefined(ast);
             symbol = symbolFactory.createErroneusVariableSymbol(ast, exception);
@@ -278,7 +271,6 @@ public class SymbolTable implements ISymbolTable
         if (symbol != null && !symbol.isStatic()) {
             ErrorReporterRegistry.get().notStatic(callee);
         }
-
         return symbol;
     }
 
@@ -301,7 +293,7 @@ public class SymbolTable implements ISymbolTable
 
     @Override
     public IMethodSymbol resolveFunction(ITSPHPAst ast) {
-        ISymbol symbol = resolveGlobalIdentifierWithFallback(ast);
+        ISymbol symbol = resolver.resolveGlobalIdentifierWithFallback(ast);
         if (symbol == null) {
             ReferenceException exception = ErrorReporterRegistry.get().notDefined(ast);
             symbol = symbolFactory.createErroneusMethodSymbol(ast, exception);
@@ -363,7 +355,23 @@ public class SymbolTable implements ISymbolTable
 
     @Override
     public ITypeSymbol resolveType(ITSPHPAst typeAst) {
-        return resolver.resolveType(typeAst);
+        ITypeSymbol symbol = (ITypeSymbol) resolver.resolveGlobalIdentifier(typeAst);
+
+        if (symbol == null) {
+            String typeName = typeAst.getText();
+            if (!resolver.isAbsolute(typeName)) {
+                typeAst.setText(resolver.getEnclosingGlobalNamespaceScope(typeAst.getScope()).getScopeName() + typeName);
+            }
+            ReferenceException ex = ErrorReporterRegistry.get().unkownType(typeAst);
+            symbol = symbolFactory.createErroneusTypeSymbol(typeAst, ex);
+
+        } else if (symbol instanceof IAliasTypeSymbol) {
+
+            typeAst.setText(symbol.getName());
+            ReferenceException ex = ErrorReporterRegistry.get().unkownType(typeAst);
+            symbol = symbolFactory.createErroneusTypeSymbol(symbol.getDefinitionAst(), ex);
+        }
+        return symbol;        
     }
 
     @Override
@@ -373,14 +381,8 @@ public class SymbolTable implements ISymbolTable
 
     @Override
     public IClassTypeSymbol getEnclosingClass(ITSPHPAst ast) {
-        IClassTypeSymbol classTypeSymbol;
-        IScope scope = ast.getScope();
-        while (scope != null && !(scope instanceof IClassTypeSymbol)) {
-            scope = scope.getEnclosingScope();
-        }
-        if (scope != null) {
-            classTypeSymbol = (IClassTypeSymbol) scope;
-        } else {
+        IClassTypeSymbol classTypeSymbol = resolver.getEnclosingClass(ast);
+        if (classTypeSymbol == null) {
             ReferenceException ex = ErrorReporterRegistry.get().notInClass(ast);
             classTypeSymbol = symbolFactory.createErroneusClassSymbol(ast, ex);
         }
@@ -393,8 +395,8 @@ public class SymbolTable implements ISymbolTable
         IClassTypeSymbol parent = classTypeSymbol.getParent();
         if (parent == null) {
             TypeCheckerException ex = ErrorReporterRegistry.get().noParentClass(classTypeSymbol.getDefinitionAst());
-            classTypeSymbol = symbolFactory.createErroneusClassSymbol(ast, ex);
+            parent = symbolFactory.createErroneusClassSymbol(ast, ex);
         }
-        return classTypeSymbol;
+        return parent;
     }
 }

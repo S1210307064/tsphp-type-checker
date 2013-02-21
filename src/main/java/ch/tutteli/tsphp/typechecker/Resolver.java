@@ -24,30 +24,37 @@ import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.LowerCaseStringMap;
 import ch.tutteli.tsphp.common.exceptions.DefinitionException;
 import ch.tutteli.tsphp.common.exceptions.ReferenceException;
+import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.ScopeHelperRegistry;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasTypeSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class Resolver
+public class Resolver implements IResolver
 {
 
     private ISymbolFactory symbolFactory;
     private ILowerCaseStringMap<IGlobalNamespaceScope> globalNamespaceScopes = new LowerCaseStringMap<>();
+    private IGlobalNamespaceScope globalDefaultNamespace;
 
     public Resolver(ISymbolFactory theSymbolFactory,
-            ILowerCaseStringMap<IGlobalNamespaceScope> theGlobalNamespaceScopes) {
+            ILowerCaseStringMap<IGlobalNamespaceScope> theGlobalNamespaceScopes,
+            IGlobalNamespaceScope theGlobalDefaultNamespace) {
+
         symbolFactory = theSymbolFactory;
         globalNamespaceScopes = theGlobalNamespaceScopes;
+        globalDefaultNamespace = theGlobalDefaultNamespace;
     }
 
+    @Override
     public ITypeSymbol resolveUseType(ITSPHPAst typeAst, ITSPHPAst alias) {
         ((IAliasSymbol) alias.getSymbol()).setGlobalNamespaceScopes(globalNamespaceScopes);
 
@@ -58,7 +65,7 @@ public class Resolver
             typeAst.setText(typeName);
         }
 
-        ITypeSymbol aliasType = (ITypeSymbol) resolveGlobalIdentifierOrReturnNull(typeAst);
+        ITypeSymbol aliasType = (ITypeSymbol) resolveGlobalIdentifier(typeAst);
         if (aliasType == null) {
             aliasType = symbolFactory.createAliasTypeSymbol(typeAst, typeAst.getText());
         }
@@ -66,7 +73,22 @@ public class Resolver
         return aliasType;
     }
 
-    public ISymbol resolveGlobalIdentifierOrReturnNull(ITSPHPAst typeAst) {
+    @Override
+    public boolean isAbsolute(String typeName) {
+        return typeName.substring(0, 1).equals("\\");
+    }
+
+    @Override
+    public ISymbol resolveGlobalIdentifierWithFallback(ITSPHPAst ast) {
+        ISymbol symbol = resolveGlobalIdentifier(ast);
+        if (symbol == null) {
+            symbol = globalDefaultNamespace.resolve(ast);
+        }
+        return symbol;
+    }
+
+    @Override
+    public ISymbol resolveGlobalIdentifier(ITSPHPAst typeAst) {
         ISymbol symbol = null;
 
         String identifier = typeAst.getText();
@@ -109,6 +131,7 @@ public class Resolver
         return namespaceScope;
     }
 
+    @Override
     public IScope getResolvingScope(ITSPHPAst typeAst) {
         String typeName = typeAst.getText();
         IScope scope = typeAst.getScope();
@@ -172,39 +195,12 @@ public class Resolver
         return symbol;
     }
 
-    private String getFullName(ITypeSymbol typeSymbol) {
-        return typeSymbol.getDefinitionScope().getScopeName() + typeSymbol.getName();
-    }
-
     private boolean isUsedAsNamespace(String alias, String typeName) {
         return !alias.equals(typeName);
     }
 
-    public ITypeSymbol resolveType(ITSPHPAst typeAst) {
-        ITypeSymbol symbol = (ITypeSymbol) resolveGlobalIdentifierOrReturnNull(typeAst);
-
-        if (symbol == null) {
-            String typeName = typeAst.getText();
-            if (!isAbsolute(typeName)) {
-                typeAst.setText(getEnclosingGlobalNamespaceScope(typeAst.getScope()).getScopeName() + typeName);
-            }
-            ReferenceException ex = ErrorReporterRegistry.get().unkownType(typeAst);
-            symbol = symbolFactory.createErroneusTypeSymbol(typeAst, ex);
-
-        } else if (symbol instanceof IAliasTypeSymbol) {
-
-            typeAst.setText(symbol.getName());
-            ReferenceException ex = ErrorReporterRegistry.get().unkownType(typeAst);
-            symbol = symbolFactory.createErroneusTypeSymbol(symbol.getDefinitionAst(), ex);
-        }
-        return symbol;
-    }
-
-    public boolean isAbsolute(String typeName) {
-        return typeName.substring(0, 1).equals("\\");
-    }
-
-    private IScope getEnclosingGlobalNamespaceScope(IScope scope) {
+    @Override
+    public IScope getEnclosingGlobalNamespaceScope(IScope scope) {
         IScope globalNamespaceScope = scope;
         IScope tmp = scope.getEnclosingScope();
         while (tmp != null) {
@@ -229,5 +225,28 @@ public class Resolver
             typeSymbol = scope.resolve(typeAst);
         }
         return typeSymbol;
+    }
+
+    @Override
+    public ISymbol resolveInClassSymbol(ITSPHPAst ast) {
+        ISymbol symbol = null;
+        IClassTypeSymbol classTypeSymbol = getEnclosingClass(ast);
+        if (classTypeSymbol != null) {
+            symbol = classTypeSymbol.resolveWithFallbackToParent(ast);
+        }
+        return symbol;
+    }
+
+    @Override
+    public IClassTypeSymbol getEnclosingClass(ITSPHPAst ast) {
+        IClassTypeSymbol classTypeSymbol = null;
+        IScope scope = ast.getScope();
+        while (scope != null && !(scope instanceof IClassTypeSymbol)) {
+            scope = scope.getEnclosingScope();
+        }
+        if (scope != null) {
+            classTypeSymbol = (IClassTypeSymbol) scope;
+        }
+        return classTypeSymbol;
     }
 }
