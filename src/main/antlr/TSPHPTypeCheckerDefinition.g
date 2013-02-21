@@ -79,8 +79,6 @@ topdown
 	|	methodFunctionCall
 	|	atom
 	|	constant
-	|	casting
-	|	instanceofOperator
     	;
 
 bottomup
@@ -180,6 +178,7 @@ variableDeclaration[ITSPHPAst tMod, ITSPHPAst type]
 		)
 		{ symbolTable.defineVariable(currentScope, $tMod, $type, $variableId); }
 	;
+	
 methodFunctionCall
 	:	(	^(METHOD_CALL callee=. identifier=Identifier .)
 			{$callee.setScope(currentScope);}
@@ -201,30 +200,30 @@ atom
     		|	identifier='self'
     			//self and parent are already covered above
     		|	^(CLASS_STATIC_ACCESS identifier=TYPE_NAME .)
+    		|	^(CASTING ^(TYPE . type=allTypesWithoutObjectAndResource) .) {$identifier=$type.start;}
+    		|	^('instanceof' . (identifier=VariableId | identifier=TYPE_NAME))
+    		|	^('new' identifier=TYPE_NAME .)
 	    	)
        		{$identifier.setScope(currentScope);}
 	;
 
-
+allTypesWithoutObjectAndResource
+	:	'bool'
+	|	'int'
+	|	'float'
+	|	'string'
+	|	'array'
+	|	TYPE_NAME	
+	;
 
 
 constant
 	:	cst=CONSTANT
 		{
-			$cst.setText("#"+ $cst.text);
+			$cst.setText($cst.text+"#");
 			$cst.setScope(currentScope);
 		}
 	;
 
-casting
-	:	^(CASTING ^(TYPE . type=.) .)
-		{$type.setScope(currentScope);}
-	;
-	
-instanceofOperator
-	:	^('instanceof' .
-	 		(	VariableId
-			|	type=TYPE_NAME {$type.setScope(currentScope);}
-			)
-		)
-	;
+
+

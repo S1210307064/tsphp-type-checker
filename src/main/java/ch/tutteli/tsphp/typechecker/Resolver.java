@@ -28,11 +28,9 @@ import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.ScopeHelperRegistry;
-import ch.tutteli.tsphp.typechecker.symbols.AliasTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
-import ch.tutteli.tsphp.typechecker.symbols.erroneous.ErroneusTypeSymbol;
 
 /**
  *
@@ -91,9 +89,9 @@ public class Resolver
                     symbol = resolveAlias(useDefinition, alias, typeAst);
                 }
             }
-        }
-        if (symbol == null && isRelative(typeAst.getText())) {
-            symbol = resolveRelative(typeAst);
+            if (symbol == null && isRelative(typeAst.getText())) {
+                symbol = resolveRelative(typeAst);
+            }
         }
         return symbol;
     }

@@ -39,12 +39,12 @@ public abstract class AReferenceScopeTest extends AReferenceTest
     protected void verifyReferences() {
         for (int i = 0; i < testStructs.length; ++i) {
             ScopeTestStruct testStruct = testStructs[i];
-            ITSPHPAst testCandidate = ScopeTestHelper.getAst(ast,testString,testStruct.astAccessOrder);
+            ITSPHPAst testCandidate = ScopeTestHelper.getAst(ast, testString, testStruct.astAccessOrder);
             Assert.assertNotNull(testString + " failed. testCandidate is null. should be " + testStruct.astText, testCandidate);
             Assert.assertEquals(testString + " failed. wrong ast text,", testStruct.astText,
                     testCandidate.toStringTree());
 
-            Assert.assertEquals(testString + " failed. wrong scope,", testStruct.astScope,
+            Assert.assertEquals(testString + " -- " + testStruct.astText + " failed. wrong scope,", testStruct.astScope,
                     ScopeTestHelper.getEnclosingScopeNames(testCandidate.getSymbol().getDefinitionScope()));
         }
     }

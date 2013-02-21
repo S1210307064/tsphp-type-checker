@@ -33,12 +33,17 @@ public class VariableSymbol extends ASymbolWithModifier implements IVariableSymb
     }
 
     @Override
-    public boolean doesAlwaysCast() {
-        return modifiers.contains(TSPHPTypeCheckerDefinition.Cast);
+    public boolean isStatic() {
+        return modifiers.contains(TSPHPTypeCheckerDefinition.QuestionMark);
     }
 
     @Override
     public boolean isNullable() {
         return modifiers.contains(TSPHPTypeCheckerDefinition.QuestionMark);
+    }
+
+    @Override
+    public boolean isAlwaysCasting() {
+        return modifiers.contains(TSPHPTypeCheckerDefinition.Cast);
     }
 }

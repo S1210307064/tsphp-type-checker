@@ -28,19 +28,19 @@ public class ErrorMessageProvider extends AErrorMessageProvider
     @Override
     protected void loadDefinitionErrorMessages() {
         definitionErrors = new HashMap<>();
-        definitionErrors.put("alreadyDefined", "Line %lineN%|%posN% - %idN% was already defined in "
+        definitionErrors.put("alreadyDefined", "Line %lineN%|%posN% - %idN% was already defined on "
                 + "line %line%|%pos% %id%");
         definitionErrors.put("definedInOuterScope",
                 "Line %lineN%|%posN% - %idN% was either already defined in outer scope or in another conditional scope."
-                + " First definition was in  line %line%|%pos% %id%\n"
+                + " First definition was on line %line%|%pos% %id%\n"
                 + "Please be aware, that conditional scopes are not real scopes, they do not actually create a new "
                 + "scope");
         definitionErrors.put("aliasForwardReference",
                 "Line %lineN%|%posN% - alias %idN% is used before its use declaration. Corresponding use declaration is"
-                + " in line %line%|%pos%");
+                + " on line %line%|%pos%");
         definitionErrors.put("forwardReference",
                 "Line %lineN%|%posN% - %idN% is used before its declaration. Corresponding declaration is "
-                + "in line %line%|%pos%");
+                + "on line %line%|%pos%");
     }
 
     @Override
@@ -52,6 +52,7 @@ public class ErrorMessageProvider extends AErrorMessageProvider
         referenceErrors.put("notInClass", "Line %line%|%pos% - %id% is used outside a class.");
         referenceErrors.put("noParent", "Line %line%|%pos% - %id% has no parent class.");
         referenceErrors.put("notDefined", "Line %line%|%pos% - %id% was never defined.");
+        referenceErrors.put("notStatic", "Line %line%|%pos% - %id% is not static.");
     }
 
     @Override
@@ -59,7 +60,7 @@ public class ErrorMessageProvider extends AErrorMessageProvider
         return "DefinitionException occured, corresponding error message for \"" + key + "\" not defined. "
                 + "Please report bug to http://tsphp.tutteli.ch\n"
                 + "However, the following information was gathered.\n"
-                + "Line " + dto.line + "|" + dto.position + " - " + dto.identifier + " was already defined in line "
+                + "Line " + dto.line + "|" + dto.position + " - " + dto.identifier + " was already defined on line "
                 + dto.lineNewDefinition + "|" + dto.positionNewDefinition + ".";
     }
 

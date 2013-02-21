@@ -41,4 +41,19 @@ public class ErroneousMethodSymbol extends AErroneousScopedSymbol implements IEr
     public List<IVariableSymbol> getParameters() {
         throw new UnsupportedOperationException("ErroneousMethodSymbol is not a real method.");
     }
+
+    @Override
+    public boolean isStatic() {
+        return true;
+    }
+
+    @Override
+    public boolean isNullable() {
+        return true;
+    }
+
+    @Override
+    public boolean isAlwaysCasting() {
+        return true;
+    }
 }

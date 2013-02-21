@@ -18,7 +18,7 @@ package ch.tutteli.tsphp.typechecker.symbols;
 
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.common.ITypeSymbol;
+import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -46,8 +46,23 @@ public class MethodSymbol extends AScopedSymbol implements IMethodSymbol
     }
 
     @Override
-    public List<IVariableSymbol>  getParameters() {
+    public List<IVariableSymbol> getParameters() {
         return parameters;
+    }
+
+    @Override
+    public boolean isStatic() {
+        return modifiers.contains(TSPHPTypeCheckerDefinition.Static);
+    }
+
+    @Override
+    public boolean isNullable() {
+        return modifiers.contains(TSPHPTypeCheckerDefinition.QuestionMark);
+    }
+
+    @Override
+    public boolean isAlwaysCasting() {
+        return modifiers.contains(TSPHPTypeCheckerDefinition.Cast);
     }
 
     @Override

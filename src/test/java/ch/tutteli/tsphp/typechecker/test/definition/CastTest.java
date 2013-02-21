@@ -51,14 +51,20 @@ public class CastTest extends ADefinitionScopeTest
         collection.addAll(ScopeTestHelper.getVariations("", "", "(int) $a", "int", "\\.\\.",
                 new Integer[]{1}, new Integer[]{0, 1}));
 
-        collection.addAll(ScopeTestHelper.getVariations("namespace a;", "", "(float) $a", "float",
+        collection.addAll(ScopeTestHelper.getVariations("namespace a;", "", "(float?) $a", "float",
                 "\\a\\.\\a\\.", new Integer[]{1}, new Integer[]{0, 1}));
-
+        collection.addAll(ScopeTestHelper.getVariations("namespace a;", "", "(cast float) $a", "float",
+                "\\a\\.\\a\\.", new Integer[]{1}, new Integer[]{0, 1}));
+        collection.addAll(ScopeTestHelper.getVariations("namespace a;", "", "(cast float?) $a", "float",
+                "\\a\\.\\a\\.", new Integer[]{1}, new Integer[]{0, 1}));
+        
         collection.addAll(ScopeTestHelper.getVariations("namespace a\\b{", "}", "(MyClass) $a", "MyClass",
+                "\\a\\b\\.\\a\\b\\.", new Integer[]{1}, new Integer[]{0, 1}));
+        collection.addAll(ScopeTestHelper.getVariations("namespace a\\b{", "}", "(cast MyClass) $a", "MyClass",
                 "\\a\\b\\.\\a\\b\\.", new Integer[]{1}, new Integer[]{0, 1}));
 
         //nBody function block
-        collection.addAll(ScopeTestHelper.getVariations("function void foo(){", "}", "(string) $a", "string",
+        collection.addAll(ScopeTestHelper.getVariations("function void foo(){", "}", "(cast string?) $a", "string",
                 "\\.\\.foo().", new Integer[]{1, 0, 4}, new Integer[]{0, 1}));
 
         //nBody class classBody mDecl block

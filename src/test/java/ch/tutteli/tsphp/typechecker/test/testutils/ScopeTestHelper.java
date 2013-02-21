@@ -80,7 +80,7 @@ public class ScopeTestHelper
                     fullScopeName, accessToScope, new Integer[]{0}));
         }
 
-        collection.addAll(getVariations(prefix, appendix, "b", "#b",
+        collection.addAll(getVariations(prefix, appendix, "b", "b#",
                 fullScopeName, accessToScope));
         collection.addAll(getVariations(prefix, appendix, "self::b", "self",
                 fullScopeName, accessToScope, new Integer[]{0}));

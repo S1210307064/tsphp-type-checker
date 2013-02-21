@@ -26,18 +26,22 @@ import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
 public class ErroneusVariableSymbol extends AErroneousSymbol implements IErroneousVariableSymbol
 {
 
-     public ErroneusVariableSymbol(ITSPHPAst ast, TypeCheckerException exception) {
+    public ErroneusVariableSymbol(ITSPHPAst ast, TypeCheckerException exception) {
         super(ast, exception);
     }
-    
+
     @Override
-    public boolean doesAlwaysCast() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public boolean isStatic() {
+        return true;
     }
 
     @Override
     public boolean isNullable() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return true;
     }
-    
+
+    @Override
+    public boolean isAlwaysCasting() {
+        return true;
+    }
 }

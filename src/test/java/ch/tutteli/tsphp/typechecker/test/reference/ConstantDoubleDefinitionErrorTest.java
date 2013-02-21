@@ -68,13 +68,13 @@ public class ConstantDoubleDefinitionErrorTest extends AReferenceDefinitionError
         //does not matter if it is a comma initialisation
         collection.add(new Object[]{
                     "class a{ const int\n a=1,\n a=1;}",
-                    new DefinitionErrorDto[]{new DefinitionErrorDto("#a", 2, 1, "#a", 3, 1)}
+                    new DefinitionErrorDto[]{new DefinitionErrorDto("a#", 2, 1, "a#", 3, 1)}
                 });
         collection.add(new Object[]{
                     "class a{ const int\n a=1,\n a=1,\n a=2;}",
                     new DefinitionErrorDto[]{
-                        new DefinitionErrorDto("#a", 2, 1, "#a", 3, 1),
-                        new DefinitionErrorDto("#a", 2, 1, "#a", 4, 1)
+                        new DefinitionErrorDto("a#", 2, 1, "a#", 3, 1),
+                        new DefinitionErrorDto("a#", 2, 1, "a#", 4, 1)
                     }
                 });
         return collection;
@@ -82,10 +82,10 @@ public class ConstantDoubleDefinitionErrorTest extends AReferenceDefinitionError
 
     public static void addVariations(String prefix, String appendix) {
 
-        DefinitionErrorDto[] errorDto = new DefinitionErrorDto[]{new DefinitionErrorDto("#a", 2, 1, "#a", 3, 1)};
+        DefinitionErrorDto[] errorDto = new DefinitionErrorDto[]{new DefinitionErrorDto("a#", 2, 1, "a#", 3, 1)};
         DefinitionErrorDto[] errorDtoTwo = new DefinitionErrorDto[]{
-            new DefinitionErrorDto("#a", 2, 1, "#a", 3, 1),
-            new DefinitionErrorDto("#a", 2, 1, "#a", 4, 1)
+            new DefinitionErrorDto("a#", 2, 1, "a#", 3, 1),
+            new DefinitionErrorDto("a#", 2, 1, "a#", 4, 1)
         };
 
 

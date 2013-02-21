@@ -38,30 +38,30 @@ public class ConstantHelper
             String typeExpected = isDefinitionPhase ? "" : type;
             collection.add(new Object[]{
                         prefix + "const " + type + " a=true;" + appendix,
-                        prefixExpected + scopeName + type + " " + scopeName + "#a" + typeExpected + "|" + fin
+                        prefixExpected + scopeName + type + " " + scopeName + "a#" + typeExpected + "|" + fin
                     });
             collection.add(new Object[]{
                         prefix + "const " + type + " a=true, b=false;" + appendix,
-                        prefixExpected + scopeName + type + " " + scopeName + "#a" + typeExpected + "|" + fin + " "
-                        + scopeName + type + " " + scopeName + "#b" + typeExpected + "|" + fin
+                        prefixExpected + scopeName + type + " " + scopeName + "a#" + typeExpected + "|" + fin + " "
+                        + scopeName + type + " " + scopeName + "b#" + typeExpected + "|" + fin
                     });
             collection.add(new Object[]{
                         prefix + "const " + type + " a=1,b=2;" + appendix,
-                        prefixExpected + scopeName + type + " " + scopeName + "#a" + typeExpected + "|" + fin + " "
-                        + scopeName + type + " " + scopeName + "#b" + typeExpected + "|" + fin
+                        prefixExpected + scopeName + type + " " + scopeName + "a#" + typeExpected + "|" + fin + " "
+                        + scopeName + type + " " + scopeName + "b#" + typeExpected + "|" + fin
                     });
             collection.add(new Object[]{
                         prefix + "const " + type + " a=1.0,b=2.0,c=null;" + appendix,
-                        prefixExpected + scopeName + type + " " + scopeName + "#a" + typeExpected + "|" + fin + " "
-                        + scopeName + type + " " + scopeName + "#b" + typeExpected + "|" + fin + " "
-                        + scopeName + type + " " + scopeName + "#c" + typeExpected + "|" + fin
+                        prefixExpected + scopeName + type + " " + scopeName + "a#" + typeExpected + "|" + fin + " "
+                        + scopeName + type + " " + scopeName + "b#" + typeExpected + "|" + fin + " "
+                        + scopeName + type + " " + scopeName + "c#" + typeExpected + "|" + fin
                     });
             collection.add(new Object[]{
                         prefix + "const " + type + " a=1,b=\"2\",c=null,d='2';" + appendix,
-                        prefixExpected + scopeName + type + " " + scopeName + "#a" + typeExpected + "|" + fin + " "
-                        + scopeName + type + " " + scopeName + "#b" + typeExpected + "|" + fin + " "
-                        + scopeName + type + " " + scopeName + "#c" + typeExpected + "|" + fin + " "
-                        + scopeName + type + " " + scopeName + "#d" + typeExpected + "|" + fin
+                        prefixExpected + scopeName + type + " " + scopeName + "a#" + typeExpected + "|" + fin + " "
+                        + scopeName + type + " " + scopeName + "b#" + typeExpected + "|" + fin + " "
+                        + scopeName + type + " " + scopeName + "c#" + typeExpected + "|" + fin + " "
+                        + scopeName + type + " " + scopeName + "d#" + typeExpected + "|" + fin
                     });
         }
         return collection;

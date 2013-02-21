@@ -230,11 +230,11 @@ scalarTypes returns [ITypeSymbol type]
 		}
 	;
 
-atom	:	variable
- 	|	thisOrSelf
- 	|	parent
+atom	:	thisVariable
+	|	variable
  	|	constant
  	|	functionCall
+ 	|	methodCallStatic
 	;
 
 variable	
@@ -249,16 +249,12 @@ variable
 			symbolTable.checkForwardReference($start);
       		}
 	;
-thisOrSelf
-	:	(	'$this'
-		|	'self'
-		)	
+	
+thisVariable
+	:	'$this'	
 		{$start.setSymbol(symbolTable.getEnclosingClass($start)); }
 	;
-	
-parent	:	par='parent'
-		{$par.setSymbol(symbolTable.getParentClass($par));}	
-	;
+
 
 constant
 	:	cst=CONSTANT
@@ -269,8 +265,26 @@ constant
 	;
 
 functionCall
-	:	^(FUNCTION_CALL	id=TYPE_NAME args=.)
+	:	^(FUNCTION_CALL	id=TYPE_NAME .)
+		{$id.setSymbol(symbolTable.resolveFunction($id));}
+	;
+
+methodCallStatic
+	:	^(METHOD_CALL_STATIC callee=staticAccess id=Identifier .)	
 		{
-			$id.setSymbol(symbolTable.resolveFunction($id));
+			
+			$id.setSymbol(symbolTable.resolveStaticMethod($callee.start, $id));
 		}
 	;
+staticAccess
+	:	slf='self'
+		{$slf.setSymbol(symbolTable.getEnclosingClass($slf)); }
+		
+	|	par='parent'
+		{$par.setSymbol(symbolTable.getParentClass($par));}	
+		
+	|	type=TYPE_NAME
+		{$type.setSymbol(symbolTable.resolveType($type));}
+	;
+
+

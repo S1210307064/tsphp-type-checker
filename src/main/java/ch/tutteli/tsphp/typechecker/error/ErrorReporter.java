@@ -130,6 +130,11 @@ public class ErrorReporter implements IErrorReporter
         return addAndGetReferenceException("notDefined", ast);
     }
 
+    @Override
+    public ReferenceException notStatic(ITSPHPAst callee) {
+        return addAndGetReferenceException("notStatic", (ITSPHPAst) callee.getParent());
+    }
+
     private ReferenceException addAndGetReferenceException(String key,
             ITSPHPAst typeAst) {
         String errorMessage = errorMessageProvider.getErrorReferenceMessage(key,

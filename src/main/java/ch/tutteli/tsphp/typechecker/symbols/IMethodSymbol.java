@@ -24,7 +24,7 @@ import java.util.List;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public interface IMethodSymbol extends ISymbol, IScope
+public interface IMethodSymbol extends ISymbol, IScope, ICanBeStatic, ICanBeNullable, ICanAlwaysCast
 {
 
     void addParameter(IVariableSymbol variableSymbol);

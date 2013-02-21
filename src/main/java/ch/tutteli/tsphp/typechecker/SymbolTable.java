@@ -33,12 +33,12 @@ import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.IScopeFactory;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.ICanBeStatic;
 import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IInterfaceTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
-import ch.tutteli.tsphp.typechecker.symbols.MethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousTypeSymbol;
 import org.antlr.runtime.CommonToken;
@@ -125,7 +125,7 @@ public class SymbolTable implements ISymbolTable
     @Override
     public void defineConstant(IScope currentScope, ITSPHPAst modifier, ITSPHPAst type, ITSPHPAst identifier) {
         // # prevent clashes with class and const identifier
-        identifier.getToken().setText("#" + identifier.getText());
+        identifier.getToken().setText(identifier.getText() + "#");
 
         defineVariable(currentScope, modifier, type, identifier);
     }
@@ -248,6 +248,55 @@ public class SymbolTable implements ISymbolTable
             symbol = symbolFactory.createErroneusVariableSymbol(ast, exception);
         }
         return (IVariableSymbol) symbol;
+    }
+
+    @Override
+    public IVariableSymbol resolveStaticConstant(ITSPHPAst callee, ITSPHPAst id) {
+        return resolveStaticVariable(callee, id);
+    }
+
+    @Override
+    public IMethodSymbol resolveStaticMethod(ITSPHPAst callee, ITSPHPAst id) {
+        IMethodSymbol symbol;
+        ISymbol calleeSymbol = callee.getSymbol();
+        if (!(calleeSymbol instanceof IErroneousSymbol)) {
+            symbol = (IMethodSymbol) resolveStatic(callee, id);
+        } else {
+            IErroneousSymbol erroneousSymbol = (IErroneousSymbol) calleeSymbol;
+            symbol = symbolFactory.createErroneusMethodSymbol(id, erroneousSymbol.getException());
+        }
+        if (symbol == null) {
+            ReferenceException exception = ErrorReporterRegistry.get().notDefined(id);
+            symbol = symbolFactory.createErroneusMethodSymbol(id, exception);
+        }
+        return symbol;
+    }
+
+    private ICanBeStatic resolveStatic(ITSPHPAst callee, ITSPHPAst id) {
+        IClassTypeSymbol classTypeSymbol = (IClassTypeSymbol) callee.getSymbol();
+        ICanBeStatic symbol = (ICanBeStatic) classTypeSymbol.resolve(id);
+        if (symbol != null && !symbol.isStatic()) {
+            ErrorReporterRegistry.get().notStatic(callee);
+        }
+
+        return symbol;
+    }
+
+    @Override
+    public IVariableSymbol resolveStaticVariable(ITSPHPAst callee, ITSPHPAst id) {
+        IVariableSymbol symbol;
+        ISymbol calleeSymbol = callee.getSymbol();
+        if (!(calleeSymbol instanceof IErroneousSymbol)) {
+            symbol = (IVariableSymbol) resolveStatic(callee, id);
+        } else {
+            IErroneousSymbol erroneousSymbol = (IErroneousSymbol) calleeSymbol;
+            symbol = symbolFactory.createErroneusVariableSymbol(id, erroneousSymbol.getException());
+        }
+        if (symbol == null) {
+            ReferenceException exception = ErrorReporterRegistry.get().notDefined(id);
+            symbol = symbolFactory.createErroneusVariableSymbol(id, exception);
+        }
+        return symbol;
     }
 
     @Override

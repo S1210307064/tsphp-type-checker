@@ -59,4 +59,6 @@ public interface IErrorReporter extends ch.tutteli.tsphp.common.IErrorReporter
     ReferenceException notInClass(ITSPHPAst ast);
 
     ReferenceException notDefined(ITSPHPAst ast);
+
+    ReferenceException notStatic(ITSPHPAst callee);
 }
