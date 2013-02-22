@@ -14,7 +14,7 @@
  * limitations under the License.
  * 
  */
-tree grammar TSPHPTypeCheckerReference;
+tree grammar TSPHPReferenceWalker;
 options {
 	tokenVocab = TSPHP;
 	ASTLabelType = ITSPHPAst;
@@ -57,7 +57,7 @@ import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 @members {
 ISymbolTable symbolTable;
 
-public TSPHPTypeCheckerReference(TreeNodeStream input, ISymbolTable theSymbolTable) {
+public TSPHPReferenceWalker(TreeNodeStream input, ISymbolTable theSymbolTable) {
     this(input);
     symbolTable = theSymbolTable;
 }

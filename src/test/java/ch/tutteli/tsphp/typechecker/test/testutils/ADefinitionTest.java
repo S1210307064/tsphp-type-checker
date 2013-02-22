@@ -19,7 +19,7 @@ package ch.tutteli.tsphp.typechecker.test.testutils;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITSPHPAstAdaptor;
 import ch.tutteli.tsphp.common.TSPHPAstAdaptor;
-import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
+import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.CommonTreeNodeStream;
 import org.junit.Assert;
@@ -64,7 +64,7 @@ public abstract class ADefinitionTest extends ATest
         commonTreeNodeStream = new CommonTreeNodeStream(adaptor, ast);
         commonTreeNodeStream.setTokenStream(parser.getTokenStream());
 
-        TSPHPTypeCheckerDefinition definition = new TSPHPTypeCheckerDefinition(commonTreeNodeStream, symbolTable);
+        TSPHPDefinitionWalker definition = new TSPHPDefinitionWalker(commonTreeNodeStream, symbolTable);
         definition.downup(ast);
 
         verifyDefinitions();

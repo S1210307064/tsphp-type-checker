@@ -16,7 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker.test.testutils;
 
-import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
+import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tutteli.tsphp.typechecker.symbols.ModifierHelper;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,8 +72,8 @@ public class ParameterListHelper
             }
         });
 
-        int qMark = TSPHPTypeCheckerDefinition.QuestionMark;
-        int cast = TSPHPTypeCheckerDefinition.Cast;
+        int qMark = TSPHPDefinitionWalker.QuestionMark;
+        int cast = TSPHPDefinitionWalker.Cast;
 
         //all types can have the ? modifier not only scalars for parameters
         List<String> types = TypeHelper.getAllTypesWithoutScalar();
@@ -177,8 +177,8 @@ public class ParameterListHelper
     private static Collection<Object[]> getVariationsForOptional() {
 
         String typeExpected = isDefinitionPhase ? "" : "int";
-        int qMark = TSPHPTypeCheckerDefinition.QuestionMark;
-        int cast = TSPHPTypeCheckerDefinition.Cast;
+        int qMark = TSPHPDefinitionWalker.QuestionMark;
+        int cast = TSPHPDefinitionWalker.Cast;
 
         String a = prefixExpected + scopeName + "int " + scopeName + "$a" + typeExpected;
         String b = scopeName + "int " + scopeName + "$b" + typeExpected;

@@ -19,8 +19,8 @@ package ch.tutteli.tsphp.typechecker;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITSPHPAstAdaptor;
 import ch.tutteli.tsphp.common.ITypeChecker;
-import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
-import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerReference;
+import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
+import ch.tutteli.tsphp.typechecker.antlr.TSPHPReferenceWalker;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporter;
 import ch.tutteli.tsphp.typechecker.error.ErrorMessageProvider;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
@@ -48,14 +48,14 @@ public class TypeChecker implements ITypeChecker
 
     @Override
     public void enrichWithDefinitions(ITSPHPAst ast, TreeNodeStream treeNodeStream) {
-        TSPHPTypeCheckerDefinition definition = new TSPHPTypeCheckerDefinition(treeNodeStream, symbolTable);
+        TSPHPDefinitionWalker definition = new TSPHPDefinitionWalker(treeNodeStream, symbolTable);
         definition.downup(ast);
     }
 
     @Override
     public void enrichWithReferences(ITSPHPAst ast, TreeNodeStream treeNodeStream) {
         treeNodeStream.reset();
-        TSPHPTypeCheckerReference reference = new TSPHPTypeCheckerReference(treeNodeStream, symbolTable);
+        TSPHPReferenceWalker reference = new TSPHPReferenceWalker(treeNodeStream, symbolTable);
         reference.downup(ast);
     }
 

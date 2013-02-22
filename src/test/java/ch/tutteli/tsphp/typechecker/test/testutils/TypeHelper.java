@@ -16,7 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker.test.testutils;
 
-import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
+import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -84,8 +84,8 @@ public class TypeHelper
 
     public static void getAllTypesInclModifier(IAdder adder) {
         String[] types = getScalarTypes();
-        int cast = TSPHPTypeCheckerDefinition.Cast;
-        int questionMark = TSPHPTypeCheckerDefinition.QuestionMark;
+        int cast = TSPHPDefinitionWalker.Cast;
+        int questionMark = TSPHPDefinitionWalker.QuestionMark;
 
         for (String type : types) {
             adder.add(type, type, new TreeSet());

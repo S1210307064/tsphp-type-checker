@@ -21,7 +21,7 @@ import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITSPHPAstAdaptor;
 import ch.tutteli.tsphp.common.TSPHPAstAdaptor;
 import ch.tutteli.tsphp.parser.ParserFacade;
-import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
+import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import org.antlr.runtime.tree.CommonTreeNodeStream;
 
 /**
@@ -40,7 +40,7 @@ public class RemoteTreeGrammarDebugger
         commonTreeNodeStream.setTokenStream(parser.getTokenStream());
 
         TestSymbolFactory testSymbolFactory = new TestSymbolFactory();
-        TSPHPTypeCheckerDefinition definition = new TSPHPTypeCheckerDefinition(
+        TSPHPDefinitionWalker definition = new TSPHPDefinitionWalker(
                 commonTreeNodeStream, new TestSymbolTable(testSymbolFactory, new TestScopeFactory(), new TSPHPAstAdaptor()));
 
         definition.downup(ast);

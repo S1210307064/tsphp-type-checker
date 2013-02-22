@@ -14,7 +14,7 @@
  * limitations under the License.
  * 
  */
-tree grammar TSPHPTypeCheckerDefinition;
+tree grammar TSPHPDefinitionWalker;
 options {
 	tokenVocab = TSPHP;
 	ASTLabelType = ITSPHPAst;
@@ -55,7 +55,7 @@ protected IScope currentScope;
 protected IScopeFactory scopeFactory;
 
 
-public TSPHPTypeCheckerDefinition(TreeNodeStream input, ISymbolTable theSymbolTable) {
+public TSPHPDefinitionWalker(TreeNodeStream input, ISymbolTable theSymbolTable) {
     this(input);
     symbolTable = theSymbolTable;    
 }

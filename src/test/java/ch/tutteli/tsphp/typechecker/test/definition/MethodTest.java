@@ -16,7 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker.test.definition;
 
-import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
+import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tutteli.tsphp.typechecker.symbols.ModifierHelper;
 import ch.tutteli.tsphp.typechecker.test.testutils.ADefinitionSymbolTest;
 import ch.tutteli.tsphp.typechecker.test.testutils.IAdder;
@@ -75,7 +75,7 @@ public class MethodTest extends ADefinitionSymbolTest
                 collection.add(new Object[]{
                             prefix + "function " + type + " get(){}" + appendix,
                             prefixExpected + "\\a\\.\\a\\.b." + typeExpected
-                            + " \\a\\.\\a\\.b.get()|" + TSPHPTypeCheckerDefinition.Public + typeModifiers
+                            + " \\a\\.\\a\\.b.get()|" + TSPHPDefinitionWalker.Public + typeModifiers
                         });
             }
         });
@@ -83,11 +83,11 @@ public class MethodTest extends ADefinitionSymbolTest
 
     private static void addModifiers() {
 
-        int priv = TSPHPTypeCheckerDefinition.Private;
-        int prot = TSPHPTypeCheckerDefinition.Protected;
-        int pub = TSPHPTypeCheckerDefinition.Public;
-        int fin = TSPHPTypeCheckerDefinition.Final;
-        int stat = TSPHPTypeCheckerDefinition.Static;
+        int priv = TSPHPDefinitionWalker.Private;
+        int prot = TSPHPDefinitionWalker.Protected;
+        int pub = TSPHPDefinitionWalker.Public;
+        int fin = TSPHPDefinitionWalker.Final;
+        int stat = TSPHPDefinitionWalker.Static;
 
         Object[][] variations = new Object[][]{
             {"", new TreeSet<>(Arrays.asList(new Integer[]{pub}))},
@@ -143,7 +143,7 @@ public class MethodTest extends ADefinitionSymbolTest
                     });
         }
 
-        int abstr = TSPHPTypeCheckerDefinition.Abstract;
+        int abstr = TSPHPDefinitionWalker.Abstract;
         variations = new Object[][]{
             {"abstract", new TreeSet<>(Arrays.asList(new Integer[]{pub, abstr}))},
             {"abstract protected", new TreeSet<>(Arrays.asList(new Integer[]{prot, abstr}))},
@@ -170,7 +170,7 @@ public class MethodTest extends ADefinitionSymbolTest
     private static void addParameters() {
         collection.addAll(ParameterListHelper.getTestStrings(
                 prefix + "function void foo(", "){}" + appendix,
-                prefixExpected + "\\a\\.\\a\\.b.void \\a\\.\\a\\.b.foo()|" + TSPHPTypeCheckerDefinition.Public + " ",
+                prefixExpected + "\\a\\.\\a\\.b.void \\a\\.\\a\\.b.foo()|" + TSPHPDefinitionWalker.Public + " ",
                 "\\a\\.\\a\\.b.foo().", true));
     }
 }

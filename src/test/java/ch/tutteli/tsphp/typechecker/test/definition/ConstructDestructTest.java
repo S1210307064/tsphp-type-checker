@@ -16,7 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker.test.definition;
 
-import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
+import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tutteli.tsphp.typechecker.symbols.ModifierHelper;
 import ch.tutteli.tsphp.typechecker.test.testutils.ADefinitionSymbolTest;
 import ch.tutteli.tsphp.typechecker.test.testutils.ParameterListHelper;
@@ -65,10 +65,10 @@ public class ConstructDestructTest extends ADefinitionSymbolTest
 
     private static void addModifiers() {
 
-        int priv = TSPHPTypeCheckerDefinition.Private;
-        int prot = TSPHPTypeCheckerDefinition.Protected;
-        int pub = TSPHPTypeCheckerDefinition.Public;
-        int fin = TSPHPTypeCheckerDefinition.Final;
+        int priv = TSPHPDefinitionWalker.Private;
+        int prot = TSPHPDefinitionWalker.Protected;
+        int pub = TSPHPDefinitionWalker.Public;
+        int fin = TSPHPDefinitionWalker.Final;
 
         Object[][] variations = new Object[][]{
             {"", new TreeSet<>(Arrays.asList(new Integer[]{pub}))},
@@ -100,7 +100,7 @@ public class ConstructDestructTest extends ADefinitionSymbolTest
                     });
         }
 
-        int abstr = TSPHPTypeCheckerDefinition.Abstract;
+        int abstr = TSPHPDefinitionWalker.Abstract;
         variations = new Object[][]{
             {"abstract", new TreeSet<>(Arrays.asList(new Integer[]{pub, abstr}))},
             {"abstract protected", new TreeSet<>(Arrays.asList(new Integer[]{prot, abstr}))},
@@ -133,7 +133,7 @@ public class ConstructDestructTest extends ADefinitionSymbolTest
         collection.addAll(ParameterListHelper.getTestStrings(
                 prefix + "function __construct(", "){}" + appendix,
                 prefixExpected
-                + "\\a\\.\\a\\.b.void \\a\\.\\a\\.b.__construct()|" + TSPHPTypeCheckerDefinition.Public + " ",
+                + "\\a\\.\\a\\.b.void \\a\\.\\a\\.b.__construct()|" + TSPHPDefinitionWalker.Public + " ",
                 "\\a\\.\\a\\.b.__construct().", true));
     }
 }

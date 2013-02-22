@@ -16,7 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker.test.definition;
 
-import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
+import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tutteli.tsphp.typechecker.symbols.ModifierHelper;
 import ch.tutteli.tsphp.typechecker.test.testutils.ADefinitionSymbolTest;
 import ch.tutteli.tsphp.typechecker.test.testutils.IAdder;
@@ -43,7 +43,7 @@ public class InterfaceMethodTest extends ADefinitionSymbolTest
 
     private static String prefix = "namespace a{ interface b{";
     private static String appendix = "}}";
-    private static String prefixExpected = "\\a\\.\\a\\.b|" + TSPHPTypeCheckerDefinition.Abstract + " ";
+    private static String prefixExpected = "\\a\\.\\a\\.b|" + TSPHPDefinitionWalker.Abstract + " ";
     private static List<Object[]> collection;
 
     public InterfaceMethodTest(String testString, String expectedResult) {
@@ -60,8 +60,8 @@ public class InterfaceMethodTest extends ADefinitionSymbolTest
         collection = new ArrayList<>();
 
         final String methodModifier = ModifierHelper.getModifiers(new TreeSet<>(Arrays.asList(new Integer[]{
-                    TSPHPTypeCheckerDefinition.Public,
-                    TSPHPTypeCheckerDefinition.Abstract
+                    TSPHPDefinitionWalker.Public,
+                    TSPHPDefinitionWalker.Abstract
                 })));
 
         TypeHelper.getAllTypesInclModifier(new IAdder()

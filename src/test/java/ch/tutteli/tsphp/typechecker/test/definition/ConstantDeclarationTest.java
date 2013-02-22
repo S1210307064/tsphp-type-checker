@@ -16,7 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker.test.definition;
 
-import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
+import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tutteli.tsphp.typechecker.test.testutils.ADefinitionSymbolTest;
 import ch.tutteli.tsphp.typechecker.test.testutils.ConstantHelper;
 import java.util.ArrayList;
@@ -61,7 +61,7 @@ public class ConstantDeclarationTest extends ADefinitionSymbolTest
         //interface constants
         collection.addAll(ConstantHelper.testStrings(
                 "namespace a\\b\\c; interface f{", "}",
-                "\\a\\b\\c\\.\\a\\b\\c\\.f|" + TSPHPTypeCheckerDefinition.Abstract + " ",
+                "\\a\\b\\c\\.\\a\\b\\c\\.f|" + TSPHPDefinitionWalker.Abstract + " ",
                 "\\a\\b\\c\\.\\a\\b\\c\\.f.", true));
 
         return collection;

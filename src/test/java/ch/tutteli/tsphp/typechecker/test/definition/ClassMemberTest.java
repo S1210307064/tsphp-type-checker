@@ -16,7 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker.test.definition;
 
-import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
+import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tutteli.tsphp.typechecker.test.testutils.ADefinitionSymbolTest;
 import ch.tutteli.tsphp.typechecker.test.testutils.VariableDeclarationListHelper;
 import java.util.ArrayList;
@@ -50,10 +50,10 @@ public class ClassMemberTest extends ADefinitionSymbolTest
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
         List<Object[]> collection = new ArrayList<>();
-        int priv = TSPHPTypeCheckerDefinition.Private;
-        int prot = TSPHPTypeCheckerDefinition.Protected;
-        int pub = TSPHPTypeCheckerDefinition.Public;
-        int stat = TSPHPTypeCheckerDefinition.Static;
+        int priv = TSPHPDefinitionWalker.Private;
+        int prot = TSPHPDefinitionWalker.Protected;
+        int pub = TSPHPDefinitionWalker.Public;
+        int stat = TSPHPDefinitionWalker.Static;
         Object[][] variations = new Object[][]{
             {"", new TreeSet<>(Arrays.asList(new Integer[]{pub}))},
             {"private", new TreeSet<>(Arrays.asList(new Integer[]{priv}))},

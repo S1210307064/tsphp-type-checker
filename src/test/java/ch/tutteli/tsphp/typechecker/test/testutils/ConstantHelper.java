@@ -16,7 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker.test.testutils;
 
-import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
+import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tutteli.tsphp.typechecker.symbols.ModifierHelper;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,9 +38,9 @@ public class ConstantHelper
         List<Object[]> collection = new ArrayList<>();
         String[] types = TypeHelper.getScalarTypes();
         SortedSet<Integer> modifiers = new TreeSet<>(Arrays.asList(new Integer[]{
-                    TSPHPTypeCheckerDefinition.Public,
-                    TSPHPTypeCheckerDefinition.Static,
-                    TSPHPTypeCheckerDefinition.Final
+                    TSPHPDefinitionWalker.Public,
+                    TSPHPDefinitionWalker.Static,
+                    TSPHPDefinitionWalker.Final
                 }));
         String mod = ModifierHelper.getModifiers(modifiers);
 

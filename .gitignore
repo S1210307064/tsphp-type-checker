@@ -2,8 +2,9 @@ build/*
 nbproject/*
 /src/main/antlr/output
 
-/src/main/java/ch/tutteli/tsphp/typechecker/antlr/TSPHPTypeCheckerDefinition.java
-/src/main/java/ch/tutteli/tsphp/typechecker/antlr/TSPHPTypeCheckerDefinition.tokens
-/src/main/java/ch/tutteli/tsphp/typechecker/antlr/TSPHPTypeCheckerReference.java
-/src/main/java/ch/tutteli/tsphp/typechecker/antlr/TSPHPTypeCheckerReference.tokens
-
+/src/main/java/ch/tutteli/tsphp/typechecker/antlr/TSPHPDefinitionWalker.java
+/src/main/java/ch/tutteli/tsphp/typechecker/antlr/TSPHPDefinitionWalker.tokens
+/src/main/java/ch/tutteli/tsphp/typechecker/antlr/TSPHPReferenceWalker.java
+/src/main/java/ch/tutteli/tsphp/typechecker/antlr/TSPHPReferenceWalker.tokens
+/src/main/java/ch/tutteli/tsphp/typechecker/antlr/TSPHPTypeCheckWalker.java
+/src/main/java/ch/tutteli/tsphp/typechecker/antlr/TSPHPTypeCheckWalker.tokens

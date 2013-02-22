@@ -17,7 +17,7 @@
 package ch.tutteli.tsphp.typechecker.test.testutils;
 
 import ch.tutteli.tsphp.common.IErrorReporter;
-import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerReference;
+import ch.tutteli.tsphp.typechecker.antlr.TSPHPReferenceWalker;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
 import junit.framework.Assert;
 import org.junit.Ignore;
@@ -30,7 +30,7 @@ import org.junit.Ignore;
 public abstract class AReferenceTest extends ADefinitionTest
 {
 
-    protected TSPHPTypeCheckerReference reference;
+    protected TSPHPReferenceWalker reference;
 
     public AReferenceTest(String testString) {
         super(testString);
@@ -50,7 +50,7 @@ public abstract class AReferenceTest extends ADefinitionTest
     @Override
     protected final void verifyDefinitions() {
         commonTreeNodeStream.reset();
-        reference = new TSPHPTypeCheckerReference(commonTreeNodeStream, symbolTable);
+        reference = new TSPHPReferenceWalker(commonTreeNodeStream, symbolTable);
         reference.downup(ast);
         checkReferences();
     }

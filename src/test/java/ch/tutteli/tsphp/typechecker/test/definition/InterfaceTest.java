@@ -16,7 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker.test.definition;
 
-import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckerDefinition;
+import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tutteli.tsphp.typechecker.test.testutils.ADefinitionSymbolTest;
 import ch.tutteli.tsphp.typechecker.test.testutils.TypeHelper;
 import java.util.ArrayList;
@@ -49,7 +49,7 @@ public class InterfaceTest extends ADefinitionSymbolTest
     public static Collection<Object[]> testStrings() {
         List<Object[]> collection = new ArrayList<>();
 
-        int abstr = TSPHPTypeCheckerDefinition.Abstract;
+        int abstr = TSPHPDefinitionWalker.Abstract;
 
         collection.addAll(Arrays.asList(new Object[][]{
                     {"interface a{}", "\\.\\.a|" + abstr},

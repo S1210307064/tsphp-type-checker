@@ -121,7 +121,7 @@
 
     <target name="copyAntlr" depends="clean" description="copy antlr generated classes to src/java folder">
         <copy todir="${antlr.copyLocation}">
-            <fileset dir="${antlr.output}" includes="TSPHPTypeChecker*.java"/>
+            <fileset dir="${antlr.output}" includes="TSPHP*.java"/>
         </copy>
     </target>
     
@@ -132,8 +132,9 @@
             <arg path="${antlr}"/>
             <arg value="-o"/>
             <arg path="${antlr.copyLocation}"/>
-            <arg path="${antlr}/TSPHPTypeCheckerDefinition.g"/>
-            <arg path="${antlr}/TSPHPTypeCheckerReference.g"/>
+            <arg path="${antlr}/TSPHPDefinitionWalker.g"/>
+            <arg path="${antlr}/TSPHPReferenceWalker.g"/>
+            <arg path="${antlr}/TSPHPTypeCheckWalker.g"/>
             <classpath>
                 <path refid="libset" />
             </classpath>
@@ -148,7 +149,7 @@
             <arg path="${antlr}"/>
             <arg value="-o"/>
             <arg path="${antlr.copyLocation}"/>
-            <arg path="${antlr}/TSPHPTypeCheckerDefinition.g"/>
+            <arg path="${antlr}/TSPHPDefinitionWalker.g"/>
             <classpath>
                 <path refid="libset" />
             </classpath>
