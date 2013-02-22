@@ -45,14 +45,15 @@ public class ResolvePrimitiveTypeTest extends ASymbolTableTest
 
     @Test
     public void testResolveType() {
-        INamespaceScope scope = symbolTable.defineNamespace("\\");
+        
+        INamespaceScope scope = symbolTable.getDefiner().defineNamespace("\\");
         ISymbol typeSymbol = symbolTable.getGlobalNamespaceScopes().get("\\").getSymbols().get(type).get(0);
         Assert.assertEquals(typeSymbol, symbolTable.resolvePrimitiveType(AstTestHelper.getAstWithTokenText(type,scope)));
     }
     
      @Test
     public void testResolveTypeFromOtherNamespace() {
-        INamespaceScope scope = symbolTable.defineNamespace("\\a\\a\\");
+        INamespaceScope scope = symbolTable.getDefiner().defineNamespace("\\a\\a\\");
         ISymbol typeSymbol = symbolTable.getGlobalNamespaceScopes().get("\\").getSymbols().get(type).get(0);
         Assert.assertEquals(typeSymbol, symbolTable.resolvePrimitiveType(AstTestHelper.getAstWithTokenText(type,scope)));
     }

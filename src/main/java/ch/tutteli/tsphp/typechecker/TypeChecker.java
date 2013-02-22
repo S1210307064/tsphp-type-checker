@@ -48,7 +48,7 @@ public class TypeChecker implements ITypeChecker
 
     @Override
     public void enrichWithDefinitions(ITSPHPAst ast, TreeNodeStream treeNodeStream) {
-        TSPHPDefinitionWalker definition = new TSPHPDefinitionWalker(treeNodeStream, symbolTable);
+        TSPHPDefinitionWalker definition = new TSPHPDefinitionWalker(treeNodeStream, symbolTable.getDefiner());
         definition.downup(ast);
     }
 

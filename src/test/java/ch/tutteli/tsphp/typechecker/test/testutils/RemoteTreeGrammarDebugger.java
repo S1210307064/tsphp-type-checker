@@ -32,7 +32,7 @@ public class RemoteTreeGrammarDebugger
 {
 
     public static void main(String[] args) throws Exception {
-        
+
         ITSPHPAstAdaptor adaptor = new TSPHPAstAdaptor();
         IParser parser = new ParserFacade(adaptor);
         ITSPHPAst ast = parser.parse("$a=1, $b, $c;");
@@ -40,8 +40,10 @@ public class RemoteTreeGrammarDebugger
         commonTreeNodeStream.setTokenStream(parser.getTokenStream());
 
         TestSymbolFactory testSymbolFactory = new TestSymbolFactory();
-        TSPHPDefinitionWalker definition = new TSPHPDefinitionWalker(
-                commonTreeNodeStream, new TestSymbolTable(testSymbolFactory, new TestScopeFactory(), new TSPHPAstAdaptor()));
+        TestSymbolTable symbolTable = new TestSymbolTable(
+                testSymbolFactory, new TestScopeFactory(), new TSPHPAstAdaptor());
+        
+        TSPHPDefinitionWalker definition = new TSPHPDefinitionWalker(commonTreeNodeStream, symbolTable.getDefiner());
 
         definition.downup(ast);
         System.exit(0);

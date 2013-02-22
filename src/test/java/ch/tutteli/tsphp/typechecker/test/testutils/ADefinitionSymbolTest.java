@@ -44,7 +44,7 @@ public abstract class ADefinitionSymbolTest extends ADefinitionTest
     }
     
     public String getSymbolsAsString() {
-        List<Map.Entry<ISymbol, ITSPHPAst>> symbols = symbolTable.getSymbols();
+        List<Map.Entry<ISymbol, ITSPHPAst>> symbols = definer.getSymbols();
         StringBuilder stringBuilder = new StringBuilder();
         boolean isFirstSymbol = true;
         for (Map.Entry<ISymbol, ITSPHPAst> entry : symbols) {

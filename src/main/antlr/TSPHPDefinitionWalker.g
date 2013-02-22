@@ -42,22 +42,20 @@ package ch.tutteli.tsphp.typechecker.antlr;
 
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.typechecker.ISymbolTable;
+import ch.tutteli.tsphp.typechecker.IDefiner;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
-import ch.tutteli.tsphp.typechecker.scopes.IScopeFactory;
 
 }
 
 @members {
 
-protected ISymbolTable symbolTable;
+protected IDefiner definer;
 protected IScope currentScope;
-protected IScopeFactory scopeFactory;
 
 
-public TSPHPDefinitionWalker(TreeNodeStream input, ISymbolTable theSymbolTable) {
+public TSPHPDefinitionWalker(TreeNodeStream input, IDefiner theDefiner) {
     this(input);
-    symbolTable = theSymbolTable;    
+    definer = theDefiner;    
 }
 
 }
@@ -104,7 +102,7 @@ exitScope
     
 namespaceDeclaration
 	:	^(Namespace t=(TYPE_NAME|DEFAULT_NAMESPACE) .) 
-		{currentScope = symbolTable.defineNamespace($t.text); }
+		{currentScope = definer.defineNamespace($t.text); }
 	;
 
 useDeclarationList
@@ -113,22 +111,22 @@ useDeclarationList
 	
 useDeclaration
 	:	^(USE_DECLARATION type=TYPE_NAME alias=Identifier)
-		{symbolTable.defineUse((INamespaceScope) currentScope, $type, $alias);}
+		{definer.defineUse((INamespaceScope) currentScope, $type, $alias);}
 	;
 	
 interfaceDeclaration
 	:	^('interface' iMod=. identifier=Identifier extIds=. .)
-		{currentScope = symbolTable.defineInterface(currentScope, $iMod, $identifier, $extIds); }
+		{currentScope = definer.defineInterface(currentScope, $iMod, $identifier, $extIds); }
 	;
 	
 classDeclaration
 	:	^('class' cMod=. identifier=Identifier extId=. implIds=. .) 
-		{currentScope = symbolTable.defineClass(currentScope, $cMod, $identifier, $extId, $implIds); }	
+		{currentScope = definer.defineClass(currentScope, $cMod, $identifier, $extId, $implIds); }	
 	;
 	
 constructDeclaration
 	:	^(identifier='__construct' mMod=.  ^(TYPE rtMod=. returnType=.) . .)
-		{currentScope = symbolTable.defineConstruct(currentScope, $mMod, $rtMod, $returnType, $identifier);}
+		{currentScope = definer.defineConstruct(currentScope, $mMod, $rtMod, $returnType, $identifier);}
 	;
 
 methodFunctionDeclaration
@@ -137,12 +135,12 @@ methodFunctionDeclaration
 			) 
 			mMod=. ^(TYPE rtMod=. returnType=.) identifier=. . .
 		)
-		{currentScope = symbolTable.defineMethod(currentScope,$mMod, $rtMod, $returnType, $identifier); }
+		{currentScope = definer.defineMethod(currentScope,$mMod, $rtMod, $returnType, $identifier); }
 	;
 	
 conditionalBlock
 	:	^(BLOCK_CONDITIONAL .*) 
-		{currentScope = symbolTable.defineConditionalScope(currentScope); }	
+		{currentScope = definer.defineConditionalScope(currentScope); }	
 	;
 	
 constantDeclarationList
@@ -151,7 +149,7 @@ constantDeclarationList
 
 constantDeclaration[ITSPHPAst tMod, ITSPHPAst type]
 	:	^(identifier=Identifier .)
-		{ symbolTable.defineConstant(currentScope,$tMod, $type,$identifier); }
+		{ definer.defineConstant(currentScope,$tMod, $type,$identifier); }
 	;
 
 parameterDeclarationList
@@ -176,7 +174,7 @@ variableDeclaration[ITSPHPAst tMod, ITSPHPAst type]
 		(	^(variableId=VariableId .)
 		|	variableId=VariableId	
 		)
-		{symbolTable.defineVariable(currentScope, $tMod, $type, $variableId);}
+		{definer.defineVariable(currentScope, $tMod, $type, $variableId);}
 	;
 	
 methodFunctionCall

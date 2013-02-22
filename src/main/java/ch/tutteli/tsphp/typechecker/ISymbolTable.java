@@ -17,14 +17,9 @@
 package ch.tutteli.tsphp.typechecker;
 
 import ch.tutteli.tsphp.common.ILowerCaseStringMap;
-import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
-import ch.tutteli.tsphp.typechecker.scopes.IConditionalScope;
 import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
-import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
-import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
-import ch.tutteli.tsphp.typechecker.symbols.IInterfaceTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 
@@ -37,27 +32,7 @@ public interface ISymbolTable
 
     ILowerCaseStringMap<IGlobalNamespaceScope> getGlobalNamespaceScopes();
 
-    INamespaceScope defineNamespace(String name);
-
-    void defineUse(INamespaceScope currentScope, ITSPHPAst type, ITSPHPAst alias);
-
-    void defineConstant(IScope currentScope, ITSPHPAst modifier, ITSPHPAst type, ITSPHPAst identifier);
-
-    IInterfaceTypeSymbol defineInterface(IScope currentScope, ITSPHPAst modifier, ITSPHPAst identifier,
-            ITSPHPAst extendsIds);
-
-    IClassTypeSymbol defineClass(IScope currentScope, ITSPHPAst modifier, ITSPHPAst identifier,
-            ITSPHPAst extendsId, ITSPHPAst implementsIds);
-
-    IMethodSymbol defineConstruct(IScope currentScope, ITSPHPAst methodModifier,
-            ITSPHPAst returnTypeModifier, ITSPHPAst returnType, ITSPHPAst identifier);
-
-    IMethodSymbol defineMethod(IScope currentScope, ITSPHPAst methodModifier,
-            ITSPHPAst returnTypeModifier, ITSPHPAst returnType, ITSPHPAst identifier);
-
-    IConditionalScope defineConditionalScope(IScope currentScope);
-
-    void defineVariable(IScope currentScope, ITSPHPAst modifier, ITSPHPAst type, ITSPHPAst variableId);
+    IDefiner getDefiner();
 
     boolean checkIfInterface(ITSPHPAst typeAst, ITypeSymbol symbol);
 

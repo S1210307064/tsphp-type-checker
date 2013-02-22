@@ -19,6 +19,7 @@ package ch.tutteli.tsphp.typechecker.test.testutils;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITSPHPAstAdaptor;
 import ch.tutteli.tsphp.common.TSPHPAstAdaptor;
+import ch.tutteli.tsphp.typechecker.IDefiner;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.CommonTreeNodeStream;
@@ -35,11 +36,13 @@ public abstract class ADefinitionTest extends ATest
 
     protected String testString;
     protected String errorMessagePrefix;
+    protected TestDefiner definer;
     protected TestSymbolTable symbolTable;
     protected TestScopeFactory scopeFactory;
     protected ITSPHPAst ast;
     protected CommonTreeNodeStream commonTreeNodeStream;
     private ITSPHPAstAdaptor adaptor;
+    
 
     protected abstract void verifyDefinitions();
 
@@ -54,6 +57,7 @@ public abstract class ADefinitionTest extends ATest
         adaptor = new TSPHPAstAdaptor();
         scopeFactory = new TestScopeFactory();
         symbolTable = new TestSymbolTable(new TestSymbolFactory(), scopeFactory, adaptor);
+        definer = (TestDefiner) symbolTable.getDefiner();
     }
 
     public void check() throws RecognitionException {
@@ -64,7 +68,7 @@ public abstract class ADefinitionTest extends ATest
         commonTreeNodeStream = new CommonTreeNodeStream(adaptor, ast);
         commonTreeNodeStream.setTokenStream(parser.getTokenStream());
 
-        TSPHPDefinitionWalker definition = new TSPHPDefinitionWalker(commonTreeNodeStream, symbolTable);
+        TSPHPDefinitionWalker definition = new TSPHPDefinitionWalker(commonTreeNodeStream, symbolTable.getDefiner());
         definition.downup(ast);
 
         verifyDefinitions();
