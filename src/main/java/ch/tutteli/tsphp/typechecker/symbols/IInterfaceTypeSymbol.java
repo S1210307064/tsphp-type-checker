@@ -17,13 +17,11 @@
 package ch.tutteli.tsphp.typechecker.symbols;
 
 import ch.tutteli.tsphp.common.IScope;
-import ch.tutteli.tsphp.common.ITypeSymbol;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public interface IInterfaceTypeSymbol extends ITypeSymbol, IScope
+public interface IInterfaceTypeSymbol extends IPolymorphicTypeSymbol, IScope
 {
-    
 }

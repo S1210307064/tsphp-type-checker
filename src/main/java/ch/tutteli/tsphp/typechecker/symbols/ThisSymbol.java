@@ -16,25 +16,34 @@
  */
 package ch.tutteli.tsphp.typechecker.symbols;
 
-import ch.tutteli.tsphp.typechecker.scopes.ICaseInsensitiveScope;
-import java.util.Set;
+import ch.tutteli.tsphp.common.ASymbol;
+import ch.tutteli.tsphp.common.ITSPHPAst;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public interface IClassTypeSymbol extends IPolymorphicTypeSymbol, ICaseInsensitiveScope
+public class ThisSymbol extends ASymbol implements IVariableSymbol
 {
 
-    IMethodSymbol getConstruct();
+    public ThisSymbol(ITSPHPAst definitionAst, String name, IPolymorphicTypeSymbol polymorphicTypeSymbol) {
+        super(definitionAst, name);
+        type = polymorphicTypeSymbol;
+        setDefinitionScope(polymorphicTypeSymbol.getDefinitionScope());
+    }
 
-    void setConstruct(IMethodSymbol construct);
+    @Override
+    public boolean isStatic() {
+        return false;
+    }
 
-    IVariableSymbol getThis();
+    @Override
+    public boolean isNullable() {
+        return true;
+    }
 
-    void setThis(IVariableSymbol $this);
-    
-    void addInterface(IInterfaceTypeSymbol interfaceTypeSymbol);
-    
-    Set<IInterfaceTypeSymbol> getInterfaces();
+    @Override
+    public boolean isAlwaysCasting() {
+        return false;
+    }
 }

@@ -20,7 +20,11 @@ import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
 import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IInterfaceTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IPolymorphicTypeSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
+import java.util.Set;
 
 /**
  *
@@ -30,6 +34,7 @@ public class ErroneousClassTypeSymbol extends AErroneousScopedSymbol implements 
 {
 
     private IMethodSymbol construct;
+    private IVariableSymbol $this;
 
     public ErroneousClassTypeSymbol(ITSPHPAst ast, TypeCheckerException exception, IMethodSymbol theConstruct) {
         super(ast, exception);
@@ -57,12 +62,32 @@ public class ErroneousClassTypeSymbol extends AErroneousScopedSymbol implements 
     }
 
     @Override
-    public void setParent(IClassTypeSymbol newParent) {
+    public void setParent(IPolymorphicTypeSymbol newParent) {
         throw new UnsupportedOperationException("ErroneousClassSymbol is not a real class.");
     }
 
     @Override
     public boolean doubleDefinitionCheckCaseInsensitive(ISymbol symbol) {
+        throw new UnsupportedOperationException("ErroneousClassSymbol is not a real class.");
+    }
+
+    @Override
+    public IVariableSymbol getThis() {
+        return $this;
+    }
+
+    @Override
+    public void setThis(IVariableSymbol theThis) {
+        $this = theThis;
+    }
+
+    @Override
+    public void addInterface(IInterfaceTypeSymbol interfaceTypeSymbol) {
+        throw new UnsupportedOperationException("ErroneousClassSymbol is not a real class.");
+    }
+
+    @Override
+    public Set<IInterfaceTypeSymbol> getInterfaces() {
         throw new UnsupportedOperationException("ErroneousClassSymbol is not a real class.");
     }
 }

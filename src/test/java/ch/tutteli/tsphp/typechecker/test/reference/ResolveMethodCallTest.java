@@ -130,7 +130,7 @@ public class ResolveMethodCallTest extends AReferenceScopeTest
                         "namespace a{class a{function void foo(){}}} "
                         + "namespace a\\a\\c{ use a as b; b\\a $a; $a->foo();}",
                         new ReferenceScopeTestStruct[]{
-                            callee("a","\\a\\.\\a\\.","$a", "\\a\\a\\c\\.\\a\\a\\c\\.", 1, 1, 2, 0),
+                            callee("a", "\\a\\.\\a\\.", "$a", "\\a\\a\\c\\.\\a\\a\\c\\.", 1, 1, 2, 0),
                             function("\\a\\.\\a\\.", 1, 1, 2, 1)
                         }
                     },
@@ -138,10 +138,56 @@ public class ResolveMethodCallTest extends AReferenceScopeTest
                         "namespace a{class a{function void foo(){}}} "
                         + "namespace a\\a\\c{ use a\\a as b; b $a; $a->foo();}",
                         new ReferenceScopeTestStruct[]{
-                            callee("a","\\a\\.\\a\\.","$a", "\\a\\a\\c\\.\\a\\a\\c\\.", 1, 1, 2, 0),
+                            callee("a", "\\a\\.\\a\\.", "$a", "\\a\\a\\c\\.\\a\\a\\c\\.", 1, 1, 2, 0),
                             function("\\a\\.\\a\\.", 1, 1, 2, 1)
                         }
-                    },});
+                    },
+                    //$this
+                    {
+                        "class a{function void foo(){} function void bar(){$this->foo();}} ",
+                        new ReferenceScopeTestStruct[]{
+                            callee("a", dfault, "$this", dfault, 1, 0, 4, 1, 4, 0, 0),
+                            functionDefault(1, 0, 4, 1, 4, 0, 1)
+                        }
+                    },
+                    {
+                        "namespace a{class a{function void foo(){} function void bar(){$this->foo();}}} ",
+                        new ReferenceScopeTestStruct[]{
+                            callee("a", "\\a\\.\\a\\.", "$this", "\\a\\.\\a\\.", 1, 0, 4, 1, 4, 0, 0),
+                            function("\\a\\.\\a\\.", 1, 0, 4, 1, 4, 0, 1)
+                        }
+                    },
+                    //self
+                    {
+                        "class a{function void foo(){} function void bar(){self::foo();}} ",
+                        new ReferenceScopeTestStruct[]{
+                            callee("a", dfault, "self", dfault, 1, 0, 4, 1, 4, 0, 0),
+                            functionDefault(1, 0, 4, 1, 4, 0, 1)
+                        }
+                    },
+                    {
+                        "namespace a{class a{function void foo(){} function void bar(){self::foo();}}} ",
+                        new ReferenceScopeTestStruct[]{
+                            callee("a", "\\a\\.\\a\\.", "self", "\\a\\.\\a\\.", 1, 0, 4, 1, 4, 0, 0),
+                            function("\\a\\.\\a\\.", 1, 0, 4, 1, 4, 0, 1)
+                        }
+                    },
+                    //parent
+                    {
+                        "class a{function void foo(){}} class b extends a{function void bar(){parent::foo();}} ",
+                        new ReferenceScopeTestStruct[]{
+                            callee("b", dfault, "parent", dfault, 1, 1, 4, 0, 4, 0, 0),
+                            functionDefault(1, 1, 4, 0, 4, 0, 1)
+                        }
+                    },
+                    {
+                        "namespace a{class a{function void foo(){} } "
+                        + "class b extends a{function void bar(){parent::foo();}}} ",
+                        new ReferenceScopeTestStruct[]{
+                            callee("b", "\\a\\.\\a\\.", "parent", "\\a\\.\\a\\.", 1, 1, 4, 0, 4, 0, 0),
+                            function("\\a\\.\\a\\.", 1, 1, 4, 0, 4, 0, 1)
+                        }
+                    }});
     }
 
     private static ReferenceScopeTestStruct callee(String type, String typeScope,

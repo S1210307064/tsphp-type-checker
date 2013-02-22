@@ -16,14 +16,9 @@
  */
 package ch.tutteli.tsphp.typechecker.symbols;
 
-import ch.tutteli.tsphp.common.ILowerCaseStringMap;
 import ch.tutteli.tsphp.common.IScope;
-import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.common.LowerCaseStringMap;
-import ch.tutteli.tsphp.typechecker.scopes.ScopeHelperRegistry;
-import ch.tutteli.tsphp.typechecker.utils.MapHelper;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -31,45 +26,15 @@ import java.util.Set;
  * @author Robert Stoll <rstoll@tutteli.ch>
  *
  */
-public class ClassSymbol extends AScopedSymbol implements IClassTypeSymbol
+public class ClassSymbol extends AScopedTypeSymbol implements IClassTypeSymbol
 {
 
-    private IClassTypeSymbol parent;
     private IMethodSymbol construct;
-    private ILowerCaseStringMap<List<ISymbol>> symbolsCaseInsensitive = new LowerCaseStringMap<>();
+    private IVariableSymbol $this;
+    private Set<IInterfaceTypeSymbol> interfaceTypeSymbols = new HashSet<>();
 
     public ClassSymbol(ITSPHPAst definitionAst, Set<Integer> modifiers, String name, IScope enclosingScope) {
         super(definitionAst, modifiers, name, enclosingScope);
-    }
-
-    @Override
-    public void define(ISymbol symbol) {
-        super.define(symbol);
-        MapHelper.addToListMap(symbolsCaseInsensitive, symbol.getName(), symbol);
-    }
-
-    @Override
-    public boolean doubleDefinitionCheckCaseInsensitive(ISymbol symbol) {
-        return ScopeHelperRegistry.get().doubleDefinitionCheck(symbolsCaseInsensitive, symbol);
-    }
-
-    @Override
-    public ISymbol resolveWithFallbackToParent(ITSPHPAst ast) {
-        ISymbol symbol = ScopeHelperRegistry.get().resolve(this, ast);
-        if (symbol == null) {
-            symbol = parent.resolveWithFallbackToParent(ast);
-        }
-        return symbol;
-    }
-
-    @Override
-    public IClassTypeSymbol getParent() {
-        return parent;
-    }
-
-    @Override
-    public void setParent(IClassTypeSymbol newParent) {
-        parent = newParent;
     }
 
     @Override
@@ -80,5 +45,25 @@ public class ClassSymbol extends AScopedSymbol implements IClassTypeSymbol
     @Override
     public IMethodSymbol getConstruct() {
         return construct;
+    }
+
+    @Override
+    public IVariableSymbol getThis() {
+        return $this;
+    }
+
+    @Override
+    public void setThis(IVariableSymbol theThis) {
+        $this = theThis;
+    }
+
+    @Override
+    public void addInterface(IInterfaceTypeSymbol interfaceTypeSymbol) {
+        interfaceTypeSymbols.add(interfaceTypeSymbol);
+    }
+
+    @Override
+    public Set<IInterfaceTypeSymbol> getInterfaces() {
+        return interfaceTypeSymbols;
     }
 }

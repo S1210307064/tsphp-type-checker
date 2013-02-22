@@ -49,6 +49,8 @@ public interface ISymbolFactory
     IMethodSymbol createMethodSymbol(ITSPHPAst methodModifier, ITSPHPAst returnTypeModifier, ITSPHPAst identifier,
             IScope currentScope);
 
+    IVariableSymbol createThisSymbol(ITSPHPAst variableId, IPolymorphicTypeSymbol polymorphicTypeSymbol);
+    
     IVariableSymbol createVariableSymbol(ITSPHPAst typeModifier, ITSPHPAst variableId);
 
     IErroneousTypeSymbol createErroneousTypeSymbol(ITSPHPAst ast, TypeCheckerException exception);

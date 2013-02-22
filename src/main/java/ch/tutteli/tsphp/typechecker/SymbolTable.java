@@ -36,6 +36,7 @@ import ch.tutteli.tsphp.typechecker.scopes.IScopeFactory;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ICanBeStatic;
+import ch.tutteli.tsphp.typechecker.symbols.IPolymorphicTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IInterfaceTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
@@ -220,7 +221,9 @@ public class SymbolTable implements ISymbolTable
             ITSPHPAst definitionAst = symbol.getDefinitionAst();
             isNotUsedBefore = definitionAst.isDefinedEarlierThan(ast);
             if (!isNotUsedBefore) {
-                ErrorReporterRegistry.get().forwardReference(ast, definitionAst);
+                DefinitionException exception = ErrorReporterRegistry.get().forwardReference(ast, definitionAst);
+                symbol = symbolFactory.createErroneousVariableSymbol(ast, exception);
+                ast.setSymbol(symbol);
             }
         }
         return isNotUsedBefore;
@@ -236,16 +239,17 @@ public class SymbolTable implements ISymbolTable
 
     @Override
     public IVariableSymbol resolveConstant(ITSPHPAst ast) {
-        ISymbol symbol = resolver.resolveGlobalIdentifierWithFallback(ast);
+        IVariableSymbol symbol = resolver.resolveConstant(ast);
+
         if (symbol == null) {
             ReferenceException exception = ErrorReporterRegistry.get().notDefined(ast);
             symbol = symbolFactory.createErroneousVariableSymbol(ast, exception);
         }
-        return (IVariableSymbol) symbol;
+        return symbol;
     }
 
     @Override
-    public IVariableSymbol resolveStaticConstant(ITSPHPAst callee, ITSPHPAst id) {
+    public IVariableSymbol resolveClassConstant(ITSPHPAst callee, ITSPHPAst id) {
         return resolveStaticVariable(callee, id);
     }
 
@@ -331,20 +335,63 @@ public class SymbolTable implements ISymbolTable
 
     @Override
     public IMethodSymbol resolveMethod(ITSPHPAst callee, ITSPHPAst id) {
-        ISymbol symbol = callee.getSymbol().getType();
         IMethodSymbol methodSymbol;
-        if (!(symbol instanceof IErroneousSymbol)) {
-            if (symbol instanceof IClassTypeSymbol) {
-                IClassTypeSymbol classTypeSymbol = (IClassTypeSymbol) symbol;
-                methodSymbol = (IMethodSymbol) classTypeSymbol.resolveWithFallbackToParent(id);
+        
+        IVariableSymbol variableSymbol = (IVariableSymbol) callee.getSymbol();
+        if (!(variableSymbol instanceof IErroneousSymbol)) {
+            ITypeSymbol typeSymbol = variableSymbol.getType();
+            if (!(typeSymbol instanceof IErroneousSymbol)) {
+                methodSymbol = resolveMethod(typeSymbol, callee, id);
             } else {
-                DefinitionException exception = ErrorReporterRegistry.get().methodNotDefined(callee, id);
-                methodSymbol = symbolFactory.createErroneousMethodSymbol(id, exception);
+                methodSymbol = symbolFactory.createErroneousMethodSymbol(id,
+                        ((IErroneousSymbol) typeSymbol).getException());
             }
-        }else{
-            methodSymbol = symbolFactory.createErroneousMethodSymbol(id, ((IErroneousSymbol)symbol).getException());
+        } else {
+            methodSymbol = symbolFactory.createErroneousMethodSymbol(id,
+                    ((IErroneousSymbol) variableSymbol).getException());
+        }
+        if (methodSymbol == null) {
+            DefinitionException exception = ErrorReporterRegistry.get().methodNotDefined(callee, id);
+            methodSymbol = symbolFactory.createErroneousMethodSymbol(id, exception);
         }
         return methodSymbol;
+    }
+
+    private IMethodSymbol resolveMethod(ITypeSymbol typeSymbol, ITSPHPAst callee, ITSPHPAst id) {
+        IMethodSymbol methodSymbol;
+        if (typeSymbol instanceof IPolymorphicTypeSymbol) {
+            IPolymorphicTypeSymbol inheritableTypeSymbol = (IPolymorphicTypeSymbol) typeSymbol;
+            methodSymbol = (IMethodSymbol) inheritableTypeSymbol.resolveWithFallbackToParent(id);
+        } else {
+            DefinitionException exception = ErrorReporterRegistry.get().objectExpected(callee, typeSymbol.getDefinitionAst());
+            methodSymbol = symbolFactory.createErroneousMethodSymbol(id, exception);
+        }
+        return methodSymbol;
+    }
+
+    @Override
+    public IVariableSymbol resolveThisSelf(ITSPHPAst ast) {
+        return resolveThis(getEnclosingClass(ast), ast);
+    }
+
+    private IVariableSymbol resolveThis(IClassTypeSymbol classTypeSymbol, ITSPHPAst $this) {
+        IVariableSymbol variableSymbol;
+        if (classTypeSymbol != null) {
+            variableSymbol = classTypeSymbol.getThis();
+            if (variableSymbol == null) {
+                variableSymbol = symbolFactory.createThisSymbol($this, classTypeSymbol);
+                classTypeSymbol.setThis(variableSymbol);
+            }
+        } else {
+            ReferenceException exception = ErrorReporterRegistry.get().notInClass($this);
+            variableSymbol = symbolFactory.createErroneousVariableSymbol($this, exception);
+        }
+        return variableSymbol;
+    }
+
+    @Override
+    public IVariableSymbol resolveParent(ITSPHPAst ast) {
+        return resolveThis(getParent(ast), ast);
     }
 
     @Override
@@ -388,8 +435,7 @@ public class SymbolTable implements ISymbolTable
         return (ITypeSymbol) globalDefaultNamespace.resolve(typeASt);
     }
 
-    @Override
-    public IClassTypeSymbol getEnclosingClass(ITSPHPAst ast) {
+    private IClassTypeSymbol getEnclosingClass(ITSPHPAst ast) {
         IClassTypeSymbol classTypeSymbol = resolver.getEnclosingClass(ast);
         if (classTypeSymbol == null) {
             ReferenceException ex = ErrorReporterRegistry.get().notInClass(ast);
@@ -398,10 +444,9 @@ public class SymbolTable implements ISymbolTable
         return classTypeSymbol;
     }
 
-    @Override
-    public IClassTypeSymbol getParentClass(ITSPHPAst ast) {
+    private IClassTypeSymbol getParent(ITSPHPAst ast) {
         IClassTypeSymbol classTypeSymbol = getEnclosingClass(ast);
-        IClassTypeSymbol parent = classTypeSymbol.getParent();
+        IClassTypeSymbol parent = (IClassTypeSymbol) classTypeSymbol.getParent();
         if (parent == null) {
             TypeCheckerException ex = ErrorReporterRegistry.get().noParentClass(classTypeSymbol.getDefinitionAst());
             parent = symbolFactory.createErroneousClassSymbol(ast, ex);

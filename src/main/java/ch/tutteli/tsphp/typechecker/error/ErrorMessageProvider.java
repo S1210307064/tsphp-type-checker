@@ -43,6 +43,7 @@ public class ErrorMessageProvider extends AErrorMessageProvider
                 + "on line %line%|%pos%");
         definitionErrors.put("methodNotDefined", "Line %lineN%|%posN% - method %idN% is not defined in %id%");
         definitionErrors.put("memberNotDefined", "Line %lineN%|%posN% - class member %idN% is not defined in %id%");
+        definitionErrors.put("objectExpected", "Line %lineN%|%posN% - object expected but %idN% is of type %id%");
     }
 
     @Override
@@ -52,7 +53,8 @@ public class ErrorMessageProvider extends AErrorMessageProvider
         referenceErrors.put("interfaceExpected", "Line %line%|%pos% - Interface expected, \"%id%\" is not an interface.");
         referenceErrors.put("classExpected", "Line %line%|%pos% - class expected, \"%id%\" is not a class.");
         referenceErrors.put("notInClass", "Line %line%|%pos% - %id% is used outside a class.");
-        referenceErrors.put("noParent", "Line %line%|%pos% - %id% has no parent class.");
+        
+        referenceErrors.put("noParentClass", "Line %line%|%pos% - class %id% has no parent class.");
         referenceErrors.put("notDefined", "Line %line%|%pos% - %id% was never defined.");
         referenceErrors.put("notStatic", "Line %line%|%pos% - %id% is not static.");
     }

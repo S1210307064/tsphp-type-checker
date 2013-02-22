@@ -23,16 +23,14 @@ import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.LowerCaseStringMap;
 import ch.tutteli.tsphp.common.exceptions.DefinitionException;
-import ch.tutteli.tsphp.common.exceptions.ReferenceException;
-import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.ScopeHelperRegistry;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasSymbol;
-import ch.tutteli.tsphp.typechecker.symbols.IAliasTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
+import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 
 /**
  *
@@ -81,6 +79,11 @@ public class Resolver implements IResolver
     @Override
     public ISymbol resolveGlobalIdentifierWithFallback(ITSPHPAst ast) {
         ISymbol symbol = resolveGlobalIdentifier(ast);
+        symbol = fallbackIfNull(symbol, ast);
+        return symbol;
+    }
+
+    private ISymbol fallbackIfNull(ISymbol symbol, ITSPHPAst ast) {
         if (symbol == null) {
             symbol = globalDefaultNamespace.resolve(ast);
         }
@@ -248,5 +251,18 @@ public class Resolver implements IResolver
             classTypeSymbol = (IClassTypeSymbol) scope;
         }
         return classTypeSymbol;
+    }
+
+    @Override
+    public IVariableSymbol resolveConstant(ITSPHPAst ast) {
+        ISymbol symbol;
+        if (ast.getText().indexOf("\\") != -1) {
+            symbol =  resolveGlobalIdentifierWithFallback(ast);
+        } else {
+            INamespaceScope scope = getEnclosingNamespaceScope(ast);
+            symbol =  scope.resolve(ast);
+            symbol =  fallbackIfNull(symbol, ast);
+        }
+        return (IVariableSymbol) symbol;
     }
 }

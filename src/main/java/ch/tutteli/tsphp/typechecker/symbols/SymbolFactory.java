@@ -82,6 +82,11 @@ public class SymbolFactory implements ISymbolFactory
     }
 
     @Override
+    public IVariableSymbol createThisSymbol(ITSPHPAst variableId, IPolymorphicTypeSymbol polymorphicTypeSymbol) {
+        return new ThisSymbol(variableId, variableId.getText(), polymorphicTypeSymbol);
+    }
+
+    @Override
     public IVariableSymbol createVariableSymbol(ITSPHPAst typeModifier, ITSPHPAst variableId) {
         return new VariableSymbol(variableId, getModifiers(typeModifier), variableId.getText());
     }

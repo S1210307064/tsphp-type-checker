@@ -24,7 +24,7 @@ import java.util.Set;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class InterfaceTypeSymbol extends AScopedSymbol implements IInterfaceTypeSymbol
+public class InterfaceTypeSymbol extends AScopedTypeSymbol implements IInterfaceTypeSymbol
 {
 
     public InterfaceTypeSymbol(ITSPHPAst definitionAst, Set<Integer> modifiers, String name, IScope theEnclosingScope) {

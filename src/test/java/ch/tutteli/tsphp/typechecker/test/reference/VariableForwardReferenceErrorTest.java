@@ -50,30 +50,30 @@ public class VariableForwardReferenceErrorTest extends AReferenceDefinitionError
     public static Collection<Object[]> testStrings() {
         collection = new ArrayList<>();
 
-//        //global constants
-//        addVariations("", "");
-//        addVariations("namespace{", "}");
-//        addVariations("namespace a;", "");
-//        addVariations("namespace a{", "}");
-//        addVariations("namespace a\\b;", "");
-//        addVariations("namespace a\\b\\z{", "}");
-//
-//        //functions
-//        addVariations("function void foo(){", "}");
-//        addVariations("namespace{function void foo(){", "}}");
-//        addVariations("namespace a;function void foo(){", "}");
-//        addVariations("namespace a{function void foo(){", "}}");
-//        addVariations("namespace a\\b;function void foo(){", "}");
-//        addVariations("namespace a\\b\\z{function void foo(){", "}}");
-//
+        //global constants
+        addVariations("", "");
+        addVariations("namespace{", "}");
+        addVariations("namespace a;", "");
+        addVariations("namespace a{", "}");
+        addVariations("namespace a\\b;", "");
+        addVariations("namespace a\\b\\z{", "}");
+
+        //functions
+        addVariations("function void foo(){", "}");
+        addVariations("namespace{function void foo(){", "}}");
+        addVariations("namespace a;function void foo(){", "}");
+        addVariations("namespace a{function void foo(){", "}}");
+        addVariations("namespace a\\b;function void foo(){", "}");
+        addVariations("namespace a\\b\\z{function void foo(){", "}}");
+
         DefinitionErrorDto[] errorDto = new DefinitionErrorDto[]{new DefinitionErrorDto("$a", 2, 1, "$a", 3, 1)};
-//        //methods
-//        addVariations("class a{ function void foo(){", "}}");
-//        addVariations("namespace{ class a{ function void foo(){", "}}}");
-//        addVariations("namespace a; class a{ function void foo(){", "}}");
-//        addVariations("namespace a{ class a { function void foo(){", "}}}");
-//        addVariations("namespace a\\b; class a{ function void foo(){", "}}");
-//        addVariations("namespace a\\b\\z{ class a{ function void foo(){", "}}}");
+        //methods
+        addVariations("class a{ function void foo(){", "}}");
+        addVariations("namespace{ class a{ function void foo(){", "}}}");
+        addVariations("namespace a; class a{ function void foo(){", "}}");
+        addVariations("namespace a{ class a { function void foo(){", "}}}");
+        addVariations("namespace a\\b; class a{ function void foo(){", "}}");
+        addVariations("namespace a\\b\\z{ class a{ function void foo(){", "}}}");
         collection.addAll(Arrays.asList(new Object[][]{
                     {"class a{function void foo(){}} \n $a->foo(); a\n $a;", errorDto}
                 }));

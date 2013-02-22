@@ -16,25 +16,20 @@
  */
 package ch.tutteli.tsphp.typechecker.symbols;
 
-import ch.tutteli.tsphp.typechecker.scopes.ICaseInsensitiveScope;
-import java.util.Set;
+import ch.tutteli.tsphp.common.ISymbol;
+import ch.tutteli.tsphp.common.ITSPHPAst;
+import ch.tutteli.tsphp.common.ITypeSymbol;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public interface IClassTypeSymbol extends IPolymorphicTypeSymbol, ICaseInsensitiveScope
+public interface IPolymorphicTypeSymbol extends ITypeSymbol
 {
 
-    IMethodSymbol getConstruct();
+    ISymbol resolveWithFallbackToParent(ITSPHPAst ast);
 
-    void setConstruct(IMethodSymbol construct);
+    IPolymorphicTypeSymbol getParent();
 
-    IVariableSymbol getThis();
-
-    void setThis(IVariableSymbol $this);
-    
-    void addInterface(IInterfaceTypeSymbol interfaceTypeSymbol);
-    
-    Set<IInterfaceTypeSymbol> getInterfaces();
+    void setParent(IPolymorphicTypeSymbol newParent);
 }

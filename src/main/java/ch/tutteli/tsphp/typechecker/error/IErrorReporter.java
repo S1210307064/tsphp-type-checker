@@ -53,6 +53,8 @@ public interface IErrorReporter extends ch.tutteli.tsphp.common.IErrorReporter
 
     DefinitionException memberNotDefined(ITSPHPAst callee, ITSPHPAst id);
 
+    DefinitionException objectExpected(ITSPHPAst callee, ITSPHPAst definitionAst);
+
     ReferenceException unkownType(ITSPHPAst typeAst);
 
     ReferenceException interfaceExpected(ITSPHPAst typeAst);

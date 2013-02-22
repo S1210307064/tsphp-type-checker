@@ -67,7 +67,7 @@ public interface ISymbolTable
 
     IVariableSymbol resolveConstant(ITSPHPAst ast);
 
-    IVariableSymbol resolveStaticConstant(ITSPHPAst callee, ITSPHPAst id);
+    IVariableSymbol resolveClassConstant(ITSPHPAst callee, ITSPHPAst id);
 
     IMethodSymbol resolveStaticMethod(ITSPHPAst callee, ITSPHPAst id);
 
@@ -81,11 +81,11 @@ public interface ISymbolTable
 
     IMethodSymbol resolveMethod(ITSPHPAst callee, ITSPHPAst id);
 
+    IVariableSymbol resolveThisSelf(ITSPHPAst $this);
+
+    IVariableSymbol resolveParent(ITSPHPAst $this);
+
     IVariableSymbol resolveVariable(ITSPHPAst ast);
-
-    IClassTypeSymbol getEnclosingClass(ITSPHPAst ast);
-
-    IClassTypeSymbol getParentClass(ITSPHPAst ast);
 
     ITypeSymbol resolveUseType(ITSPHPAst typeAst, ITSPHPAst alias);
 

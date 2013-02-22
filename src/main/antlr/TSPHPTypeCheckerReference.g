@@ -47,8 +47,9 @@ import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.ICaseInsensitiveScope;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
-import ch.tutteli.tsphp.typechecker.symbols.IInterfaceTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IInterfaceTypeSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IPolymorphicTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 
 }
@@ -94,33 +95,54 @@ useDeclaration
 	;
 
 interfaceDeclaration
-	:	^('interface' iMod=. identifier=Identifier extIds=interfaceExtendsDeclaration .)
+	:	^('interface' iMod=. identifier=Identifier extIds=interfaceExtendsDeclaration[$identifier] .)
 		{
 			INamespaceScope namespaceScope = (INamespaceScope) $identifier.getScope();
 			namespaceScope.doubleDefinitionCheckCaseInsensitive($identifier.getSymbol());
 		}
 	;
-interfaceExtendsDeclaration
-	:	^('extends' (allTypes{symbolTable.checkIfInterface($allTypes.start, $allTypes.type);})+) 
+interfaceExtendsDeclaration[ITSPHPAst identifier]
+	:	^('extends' 	
+			(allTypes {	
+				ITypeSymbol typeSymbol = $allTypes.type;
+				if(symbolTable.checkIfInterface($allTypes.start, typeSymbol)){
+				    ((IPolymorphicTypeSymbol)identifier.getSymbol()).setParent((IPolymorphicTypeSymbol)typeSymbol);
+				}
+			})+
+		) 
 	|	'extends'
 	;
 
 	
 classDeclaration
-	:	^('class' cMod=. identifier=Identifier extId=extendsDeclaration implIds=implementsDeclaration .) 
+	:	^('class' cMod=. identifier=Identifier extId=classExtendsDeclaration[$identifier] implIds=implementsDeclaration[identifier] .) 
 		{
 			INamespaceScope namespaceScope = (INamespaceScope) $identifier.getScope();
 			namespaceScope.doubleDefinitionCheckCaseInsensitive($identifier.getSymbol());
 		}
 	;
 
-extendsDeclaration	
-	:	^('extends' allTypes{symbolTable.checkIfClass($allTypes.start, $allTypes.type);} )
+classExtendsDeclaration[ITSPHPAst identifier]
+	:	^('extends' 
+			allTypes {
+				ITypeSymbol typeSymbol = $allTypes.type;
+				if(symbolTable.checkIfClass($allTypes.start, typeSymbol)){
+				    ((IClassTypeSymbol)identifier.getSymbol()).setParent((IPolymorphicTypeSymbol)typeSymbol);
+				}
+			} 
+		)
 	|	'extends'
 	;
 
-implementsDeclaration
-	:	^('implements' (allTypes{symbolTable.checkIfInterface($allTypes.start, $allTypes.type);})+)
+implementsDeclaration[ITSPHPAst identifier]
+	:	^('implements' 	
+			(allTypes{
+				ITypeSymbol typeSymbol = $allTypes.type;
+				if(symbolTable.checkIfInterface($allTypes.start, typeSymbol)){
+				    ((IClassTypeSymbol)identifier.getSymbol()).addInterface((IInterfaceTypeSymbol)typeSymbol);
+				}
+			})+
+		)
 	|	'implements'
 	;
 
@@ -204,6 +226,7 @@ variable
 		{
 			tokenType!=VARIABLE_DECLARATION_LIST 
 			&& tokenType!=PARAMETER_DECLARATION 
+			&& tokenType!=METHOD_CALL
 		}? varId=VariableId
 		{
       			$varId.setSymbol(symbolTable.resolveVariable($varId));
@@ -212,11 +235,10 @@ variable
 	;
 	
 thisVariable
-	:	t='$this'	
-		{
-			IClassTypeSymbol classSymbol = symbolTable.getEnclosingClass($t);
-			$t.setSymbol(classSymbol);
-		 }
+@init { int tokenType = $start.getParent().getType();}
+	:	{ tokenType!=METHOD_CALL
+		}? t='$this'	
+		{$t.setSymbol(symbolTable.resolveThisSelf($t));}
 	;
 
 
@@ -255,7 +277,7 @@ methodCall
 	;
 methodCallee
 	:	t='$this'
-		{$t.setSymbol(symbolTable.getEnclosingClass($t));}
+		{$t.setSymbol(symbolTable.resolveThisSelf($t));}
 	
 	|	varId=VariableId
 		{
@@ -264,10 +286,10 @@ methodCallee
 		}
 	
 	|	slf='self'
-		{$slf.setSymbol(symbolTable.getEnclosingClass($slf));}
+		{$slf.setSymbol(symbolTable.resolveThisSelf($slf));}
 		
 	|	par='parent'
-		{$par.setSymbol(symbolTable.getParentClass($par));}
+		{$par.setSymbol(symbolTable.resolveParent($par));}
 	;
 
 
