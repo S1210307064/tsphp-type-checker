@@ -75,6 +75,7 @@ topdown
  	|	functionCall
  	|	methodCallStatic
  	|	methodCall
+ 	|	classConstantStaticMember
     	|	atom
     	;
 
@@ -214,6 +215,71 @@ variableDeclaration[ITypeSymbol type] returns [IVariableSymbol variableSymbol]
 		}
 	;
 
+
+functionCall
+	:	^(FUNCTION_CALL	identifier=TYPE_NAME .)
+		{
+			IMethodSymbol methodSymbol = symbolTable.resolveFunction($identifier);
+			$identifier.setSymbol(methodSymbol);
+		}
+	;
+
+methodCallStatic
+	:	^(METHOD_CALL_STATIC callee=TYPE_NAME identifier=Identifier .)	
+		{
+			ITypeSymbol typeSymbol = symbolTable.resolveType($callee);
+			$callee.setSymbol(typeSymbol);
+			$identifier.setSymbol(symbolTable.resolveStaticMethod($callee, $identifier));
+		}
+	;
+	
+methodCall
+	:	^(METHOD_CALL callee=methodCallee identifier=Identifier .)	
+		{
+			//callee's symbol is set in methodCallee
+			$identifier.setSymbol( symbolTable.resolveMethod($callee.start, $identifier));
+		}
+	;
+methodCallee
+	:	t='$this'
+		{$t.setSymbol(symbolTable.resolveThisSelf($t));}
+	
+	|	varId=VariableId
+		{
+      			$varId.setSymbol(symbolTable.resolveVariable($varId));
+			symbolTable.checkForwardReference($varId);
+		}
+	
+	|	slf='self'
+		{$slf.setSymbol(symbolTable.resolveThisSelf($slf));}
+		
+	|	par='parent'
+		{$par.setSymbol(symbolTable.resolveParent($par));}
+	;
+	
+classConstantStaticMember
+	:	^(CLASS_STATIC_ACCESS accessor=staticAccessor identifier=(CLASS_STATIC_ACCESS_VARIABLE_ID|CONSTANT))
+		{$identifier.setSymbol(symbolTable.resolveStaticMemberOrClassConstant($accessor.start, $identifier));}
+	;
+
+staticAccessor
+	:	typeName=TYPE_NAME
+		{$typeName.setSymbol(symbolTable.resolveType($typeName));}
+
+	|	slf='self'
+		{$slf.setSymbol(symbolTable.resolveThisSelf($slf).getType());}
+		
+	|	par='parent'
+		{$par.setSymbol(symbolTable.resolveParent($par).getType());}							
+	;
+
+
+returnTypes returns [ITypeSymbol type]
+	:	allTypes {$type = $allTypes.type;}
+	|	voidType {$type = $voidType.type;}
+	;
+	
+	
 atom	:	
 	|	thisVariable
 	|	variable
@@ -243,59 +309,14 @@ thisVariable
 
 
 constant
-	:	cnst=CONSTANT
+@init { int tokenType = $start.getParent().getType();}
+	:	{ tokenType!=CLASS_STATIC_ACCESS
+		}? cnst=CONSTANT
 		{
 			IVariableSymbol variableSymbol = symbolTable.resolveConstant($cnst);
 			$cnst.setSymbol(variableSymbol);
 			symbolTable.checkForwardReference($cnst);
 		}
-	;
-
-functionCall
-	:	^(FUNCTION_CALL	id=TYPE_NAME .)
-		{
-			IMethodSymbol methodSymbol = symbolTable.resolveFunction($id);
-			$id.setSymbol(methodSymbol);
-		}
-	;
-
-methodCallStatic
-	:	^(METHOD_CALL_STATIC callee=TYPE_NAME id=Identifier .)	
-		{
-			ITypeSymbol typeSymbol = symbolTable.resolveType($callee);
-			$callee.setSymbol(typeSymbol);
-			$id.setSymbol(symbolTable.resolveStaticMethod($callee, $id));
-		}
-	;
-	
-methodCall
-	:	^(METHOD_CALL callee=methodCallee id=Identifier .)	
-		{
-			//callee's symbol is set in methodCallee
-			$id.setSymbol( symbolTable.resolveMethod($callee.start, $id));
-		}
-	;
-methodCallee
-	:	t='$this'
-		{$t.setSymbol(symbolTable.resolveThisSelf($t));}
-	
-	|	varId=VariableId
-		{
-      			$varId.setSymbol(symbolTable.resolveVariable($varId));
-			symbolTable.checkForwardReference($varId);
-		}
-	
-	|	slf='self'
-		{$slf.setSymbol(symbolTable.resolveThisSelf($slf));}
-		
-	|	par='parent'
-		{$par.setSymbol(symbolTable.resolveParent($par));}
-	;
-
-
-returnTypes returns [ITypeSymbol type]
-	:	allTypes {$type = $allTypes.type;}
-	|	voidType {$type = $voidType.type;}
 	;
 	
 voidType returns [ITypeSymbol type]
@@ -305,6 +326,7 @@ voidType returns [ITypeSymbol type]
 			$start.setSymbol($type);
 		}
  	;
+ 	
 allTypes returns [ITypeSymbol type]
 	:	(	'bool'
 		|	'int'

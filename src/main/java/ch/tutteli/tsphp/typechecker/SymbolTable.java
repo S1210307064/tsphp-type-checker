@@ -249,11 +249,6 @@ public class SymbolTable implements ISymbolTable
     }
 
     @Override
-    public IVariableSymbol resolveClassConstant(ITSPHPAst callee, ITSPHPAst id) {
-        return resolveStaticVariable(callee, id);
-    }
-
-    @Override
     public IMethodSymbol resolveStaticMethod(ITSPHPAst callee, ITSPHPAst id) {
         IMethodSymbol symbol;
         ISymbol calleeSymbol = callee.getSymbol();
@@ -273,20 +268,24 @@ public class SymbolTable implements ISymbolTable
     private ICanBeStatic resolveStatic(ITSPHPAst callee, ITSPHPAst id) {
         IClassTypeSymbol classTypeSymbol = (IClassTypeSymbol) callee.getSymbol();
         ICanBeStatic symbol = (ICanBeStatic) classTypeSymbol.resolve(id);
-        if (symbol != null && !symbol.isStatic()) {
+        if (isDefinedButNotStatic(symbol)) {
             ErrorReporterRegistry.get().notStatic(callee);
         }
         return symbol;
     }
 
+    private boolean isDefinedButNotStatic(ICanBeStatic symbol) {
+        return symbol != null && !symbol.isStatic();
+    }
+
     @Override
-    public IVariableSymbol resolveStaticVariable(ITSPHPAst callee, ITSPHPAst id) {
+    public IVariableSymbol resolveStaticMemberOrClassConstant(ITSPHPAst accessor, ITSPHPAst id) {
         IVariableSymbol symbol;
-        ISymbol calleeSymbol = callee.getSymbol();
-        if (!(calleeSymbol instanceof IErroneousSymbol)) {
-            symbol = (IVariableSymbol) resolveStatic(callee, id);
+        ISymbol accessorSymbol = accessor.getSymbol();
+        if (!(accessorSymbol instanceof IErroneousSymbol)) {
+            symbol = (IVariableSymbol) resolveStatic(accessor, id);
         } else {
-            IErroneousSymbol erroneousSymbol = (IErroneousSymbol) calleeSymbol;
+            IErroneousSymbol erroneousSymbol = (IErroneousSymbol) accessorSymbol;
             symbol = symbolFactory.createErroneousVariableSymbol(id, erroneousSymbol.getException());
         }
         if (symbol == null) {
@@ -336,7 +335,7 @@ public class SymbolTable implements ISymbolTable
     @Override
     public IMethodSymbol resolveMethod(ITSPHPAst callee, ITSPHPAst id) {
         IMethodSymbol methodSymbol;
-        
+
         IVariableSymbol variableSymbol = (IVariableSymbol) callee.getSymbol();
         if (!(variableSymbol instanceof IErroneousSymbol)) {
             ITypeSymbol typeSymbol = variableSymbol.getType();

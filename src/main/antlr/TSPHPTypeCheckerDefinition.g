@@ -199,7 +199,7 @@ atom
     		|	identifier='parent'
     		|	identifier='self'
     			//self and parent are already covered above
-    		|	^(CLASS_STATIC_ACCESS identifier=TYPE_NAME .)
+    		|	^(CLASS_STATIC_ACCESS identifier=(TYPE_NAME|'self'|'parent') .)
     		|	^(CASTING ^(TYPE . type=allTypesWithoutObjectAndResource) .) {$identifier=$type.start;}
     		|	^('instanceof' . (identifier=VariableId | identifier=TYPE_NAME))
     		|	^('new' identifier=TYPE_NAME .)

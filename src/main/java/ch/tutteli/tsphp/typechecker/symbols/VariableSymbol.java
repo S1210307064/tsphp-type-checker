@@ -34,7 +34,7 @@ public class VariableSymbol extends ASymbolWithModifier implements IVariableSymb
 
     @Override
     public boolean isStatic() {
-        return modifiers.contains(TSPHPTypeCheckerDefinition.QuestionMark);
+        return modifiers.contains(TSPHPTypeCheckerDefinition.Static);
     }
 
     @Override

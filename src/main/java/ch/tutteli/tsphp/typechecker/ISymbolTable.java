@@ -67,11 +67,9 @@ public interface ISymbolTable
 
     IVariableSymbol resolveConstant(ITSPHPAst ast);
 
-    IVariableSymbol resolveClassConstant(ITSPHPAst callee, ITSPHPAst id);
-
     IMethodSymbol resolveStaticMethod(ITSPHPAst callee, ITSPHPAst id);
 
-    IVariableSymbol resolveStaticVariable(ITSPHPAst callee, ITSPHPAst id);
+    IVariableSymbol resolveStaticMemberOrClassConstant(ITSPHPAst accessor, ITSPHPAst id);
 
     IMethodSymbol resolveFunction(ITSPHPAst ast);
 
