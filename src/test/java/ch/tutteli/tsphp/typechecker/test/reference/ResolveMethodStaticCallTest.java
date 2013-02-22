@@ -48,80 +48,80 @@ public class ResolveMethodStaticCallTest extends AReferenceStaticScopeTest
                     {
                         "class a{static function void foo(){}} a::foo();",
                         new ScopeTestStruct[]{
-                            callee("a", "\\.\\.", 1, 1, 0),
-                            functionDefault(1, 1, 1)
+                            callee("a", "\\.\\.", 1, 1, 0, 0),
+                            functionDefault(1, 1, 0, 1)
                         }
                     },
                     {
                         "namespace{class a{static function void foo(){}} a::foo();}",
                         new ScopeTestStruct[]{
-                            callee("a", "\\.\\.", 1, 1, 0),
-                            functionDefault(1, 1, 1)
+                            callee("a", "\\.\\.", 1, 1, 0, 0),
+                            functionDefault(1, 1, 0, 1)
                         }
                     },
                     {
                         "namespace a{class a{static function void foo(){}} a::foo();}",
                         new ScopeTestStruct[]{
-                            callee("a", "\\a\\.\\a\\.", 1, 1, 0),
-                            function("\\a\\.\\a\\.", 1, 1, 1)
+                            callee("a", "\\a\\.\\a\\.", 1, 1, 0, 0),
+                            function("\\a\\.\\a\\.", 1, 1, 0, 1)
                         }
                     },
                     {
                         "namespace a{class a{static function void foo(){}}} namespace a{ a::foo();}",
                         new ScopeTestStruct[]{
-                            callee("a", "\\a\\.\\a\\.", 1, 1, 0, 0),
-                            function("\\a\\.\\a\\.", 1, 1, 0, 1)
+                            callee("a", "\\a\\.\\a\\.", 1, 1, 0, 0, 0),
+                            function("\\a\\.\\a\\.", 1, 1, 0, 0, 1)
                         }
                     },
                     {
                         "namespace{ a::foo();} namespace{class a{static function void foo(){}}}",
                         new ScopeTestStruct[]{
-                            callee("a", "\\.\\.", 0, 1, 0, 0),
-                            functionDefault(0, 1, 0, 1)
+                            callee("a", "\\.\\.", 0, 1, 0, 0, 0),
+                            functionDefault(0, 1, 0, 0, 1)
                         }
                     },
                     {
                         "namespace a{class a{static function void foo(){}}} namespace a{ a::foo();}",
                         new ScopeTestStruct[]{
-                            callee("a", "\\a\\.\\a\\.", 1, 1, 0, 0),
-                            function("\\a\\.\\a\\.", 1, 1, 0, 1)
+                            callee("a", "\\a\\.\\a\\.", 1, 1, 0, 0, 0),
+                            function("\\a\\.\\a\\.", 1, 1, 0, 0, 1)
                         }
                     },
                     {
                         "namespace a{ a::foo();} namespace a{class a{static function void foo(){}}}",
                         new ScopeTestStruct[]{
-                            callee("a", "\\a\\.\\a\\.", 0, 1, 0, 0),
-                            function("\\a\\.\\a\\.", 0, 1, 0, 1)
+                            callee("a", "\\a\\.\\a\\.", 0, 1, 0, 0, 0),
+                            function("\\a\\.\\a\\.", 0, 1, 0, 0, 1)
                         }
                     },
                     //absolute path
                     {
                         "namespace{class a{static function void foo(){}}} namespace a{ \\a::foo();}",
                         new ScopeTestStruct[]{
-                            callee("\\a", "\\.\\.", 1, 1, 0, 0),
-                            functionDefault(1, 1, 0, 1)
+                            callee("\\a", "\\.\\.", 1, 1, 0, 0, 0),
+                            functionDefault(1, 1, 0, 0, 1)
                         }
                     },
                     {
                         "namespace a\\b{class a{static function void foo(){}}} namespace x{ \\a\\b\\a::foo();}",
                         new ScopeTestStruct[]{
-                            callee("\\a\\b\\a", "\\a\\b\\.\\a\\b\\.", 1, 1, 0, 0),
-                            function("\\a\\b\\.\\a\\b\\.", 1, 1, 0, 1)
+                            callee("\\a\\b\\a", "\\a\\b\\.\\a\\b\\.", 1, 1, 0, 0, 0),
+                            function("\\a\\b\\.\\a\\b\\.", 1, 1, 0, 0, 1)
                         }
                     },
                     //relative
                     {
                         "namespace a\\b{class a{static function void foo(){}}} namespace a{ b\\a::foo();}",
                         new ScopeTestStruct[]{
-                            callee("\\a\\b\\a", "\\a\\b\\.\\a\\b\\.", 1, 1, 0, 0),
-                            function("\\a\\b\\.\\a\\b\\.", 1, 1, 0, 1)
+                            callee("\\a\\b\\a", "\\a\\b\\.\\a\\b\\.", 1, 1, 0, 0, 0),
+                            function("\\a\\b\\.\\a\\b\\.", 1, 1, 0, 0, 1)
                         }
                     },
                     {
                         "namespace a\\b{class a{static function void foo(){}}} namespace { a\\b\\a::foo();}",
                         new ScopeTestStruct[]{
-                            callee("\\a\\b\\a", "\\a\\b\\.\\a\\b\\.", 1, 1, 0, 0),
-                            function("\\a\\b\\.\\a\\b\\.", 1, 1, 0, 1)
+                            callee("\\a\\b\\a", "\\a\\b\\.\\a\\b\\.", 1, 1, 0, 0, 0),
+                            function("\\a\\b\\.\\a\\b\\.", 1, 1, 0, 0, 1)
                         }
                     },
                     //using an alias
@@ -129,16 +129,16 @@ public class ResolveMethodStaticCallTest extends AReferenceStaticScopeTest
                         "namespace a{class a{static function void foo(){}}} "
                         + "namespace a\\a\\c{ use a as b; b\\a::foo();}",
                         new ScopeTestStruct[]{
-                            callee("\\a\\a", "\\a\\.\\a\\.", 1, 1, 1, 0),
-                            function("\\a\\.\\a\\.", 1, 1, 1, 1)
+                            callee("\\a\\a", "\\a\\.\\a\\.", 1, 1, 1, 0, 0),
+                            function("\\a\\.\\a\\.", 1, 1, 1, 0, 1)
                         }
                     },
                     {
                         "namespace a{class a{static function void foo(){}}} "
                         + "namespace a\\a\\c{ use a\\a as b; b::foo();}",
                         new ScopeTestStruct[]{
-                            callee("b", "\\a\\.\\a\\.", 1, 1, 1, 0),
-                            function("\\a\\.\\a\\.", 1, 1, 1, 1)
+                            callee("b", "\\a\\.\\a\\.", 1, 1, 1, 0, 0),
+                            function("\\a\\.\\a\\.", 1, 1, 1, 0, 1)
                         }
                     },});
     }

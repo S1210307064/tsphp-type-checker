@@ -48,25 +48,25 @@ public class ResolveInstanceofTest extends AReferenceStaticScopeTest
                     {
                         "class a{} a $a; $a instanceof a;",
                         new ScopeTestStruct[]{
-                            instanceOf("a", "\\.\\.", 1, 2, 1)
+                            instanceOf("a", "\\.\\.", 1, 2, 0, 1)
                         }
                     },
                     {
                         "namespace b{class a{} a $a; $a instanceof a;}",
                         new ScopeTestStruct[]{
-                            instanceOf("a", "\\b\\.\\b\\.", 1, 2, 1)
+                            instanceOf("a", "\\b\\.\\b\\.", 1, 2, 0, 1)
                         }
                     },
                     {
                         "class a{} use a as b; b $a; $a instanceof b;",
                         new ScopeTestStruct[]{
-                            instanceOf("b", "\\.\\.", 1, 3, 1)
+                            instanceOf("b", "\\.\\.", 1, 3, 0, 1)
                         }
                     },
                     {
                         "namespace b{class a{}} namespace x{ use b\\a as b; b $a; $a instanceof b;}",
                         new ScopeTestStruct[]{
-                            instanceOf("b", "\\b\\.\\b\\.", 1, 1, 2, 1)
+                            instanceOf("b", "\\b\\.\\b\\.", 1, 1, 2, 0, 1)
                         }
                     }
                 });

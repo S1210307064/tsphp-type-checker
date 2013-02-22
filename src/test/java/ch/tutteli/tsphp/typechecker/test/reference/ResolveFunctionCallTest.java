@@ -45,51 +45,67 @@ public class ResolveFunctionCallTest extends AReferenceScopeTest
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
         return Arrays.asList(new Object[][]{
-                    {"function void foo(){} foo();", structDefault("", 1, 1, 0)},
-                    {"namespace{function void foo(){} foo();}", structDefault("", 1, 1, 0)},
-                    {"namespace{function void foo(){}} namespace{ foo();}", structDefault("", 1, 1, 0, 0)},
-                    {"namespace{ foo();} namespace{function void foo(){}} ", structDefault("", 0, 1, 0, 0)},
-                    {"namespace a{function void foo(){}} namespace a{ foo();}", struct("", "\\a\\.\\a\\.", 1, 1, 0, 0)},
-                    {"namespace a{ foo();} namespace a{function void foo(){}} ", struct("", "\\a\\.\\a\\.", 0, 1, 0, 0)},
+                    {
+                        "function void foo(){} foo();",
+                        structDefault("", 1, 1, 0, 0)
+                    },
+                    {
+                        "namespace{function void foo(){} foo();}",
+                        structDefault("", 1, 1, 0, 0)
+                    },
+                    {
+                        "namespace{function void foo(){}} namespace{ foo();}",
+                        structDefault("", 1, 1, 0, 0, 0)
+                    },
+                    {
+                        "namespace{ foo();} namespace{function void foo(){}} ",
+                        structDefault("", 0, 1, 0, 0, 0)
+                    },
+                    {
+                        "namespace a{function void foo(){}} namespace a{ foo();}",
+                        struct("", "\\a\\.\\a\\.", 1, 1, 0, 0, 0)},
+                    {
+                        "namespace a{ foo();} namespace a{function void foo(){}} ",
+                        struct("", "\\a\\.\\a\\.", 0, 1, 0, 0, 0)},
                     //absolute path
                     {
                         "namespace{function void foo(){}} namespace a{ \\foo();}",
-                        structDefault("\\", 1, 1, 0, 0)
+                        structDefault("\\", 1, 1, 0, 0, 0)
                     },
                     {
                         "namespace a\\b{function void foo(){}} namespace x{ \\a\\b\\foo();}",
-                        struct("\\a\\b\\", "\\a\\b\\.\\a\\b\\.", 1, 1, 0, 0)
+                        struct("\\a\\b\\", "\\a\\b\\.\\a\\b\\.", 1, 1, 0, 0, 0)
                     },
                     //relative
                     {
                         "namespace a\\b{function void foo(){}} namespace a{ b\\foo();}",
-                        struct("\\a\\b\\", "\\a\\b\\.\\a\\b\\.", 1, 1, 0, 0)
+                        struct("\\a\\b\\", "\\a\\b\\.\\a\\b\\.", 1, 1, 0, 0, 0)
                     },
                     {
                         "namespace a\\b{function void foo(){}} namespace { a\\b\\foo();}",
-                        struct("\\a\\b\\", "\\a\\b\\.\\a\\b\\.", 1, 1, 0, 0)
+                        struct("\\a\\b\\", "\\a\\b\\.\\a\\b\\.", 1, 1, 0, 0, 0)
                     },
                     //using an alias
                     {
                         "namespace a{function void foo(){}} namespace a\\a\\c{ use a as b; b\\foo();}",
-                        struct("\\a\\", "\\a\\.\\a\\.", 1, 1, 1, 0)
+                        struct("\\a\\", "\\a\\.\\a\\.", 1, 1, 1, 0, 0)
                     },
                     {
                         "namespace a{function void foo(){}} namespace a\\a\\c{ use a as b; b\\foo();}",
-                        struct("\\a\\", "\\a\\.\\a\\.", 1, 1, 1, 0)
+                        struct("\\a\\", "\\a\\.\\a\\.", 1, 1, 1, 0, 0)
                     },
                     //fallback to global
                     {
                         "namespace{function void foo(){}} namespace a{ foo();}",
-                        struct("", "\\.\\.", 1, 1, 0, 0)
+                        struct("", "\\.\\.", 1, 1, 0, 0, 0)
                     },
                     {
                         "namespace{function void foo(){}} namespace a\\b{ foo();}",
-                        struct("", "\\.\\.", 1, 1, 0, 0)
+                        struct("", "\\.\\.", 1, 1, 0, 0, 0)
                     },
                     {
                         "namespace{function void foo(){}} namespace a\\a\\c{ foo();}",
-                        struct("", "\\.\\.", 1, 1, 0, 0)
+                        struct("", "\\.\\.", 1, 1, 0, 0, 0)
                     }
                 });
     }

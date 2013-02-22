@@ -60,7 +60,7 @@ public class ResolveCastingTest extends AReferenceStaticScopeTest
                     {
                         "int $a; $a = (int) '2';",
                         new ScopeTestStruct[]{
-                            casting("int", "\\.", 1, 1, 1, 0, 1)
+                            casting("int", "\\.", 1, 1, 0, 1, 0, 1)
                         }
                     },
                     {

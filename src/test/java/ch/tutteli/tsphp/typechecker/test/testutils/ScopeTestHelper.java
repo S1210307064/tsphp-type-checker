@@ -114,53 +114,67 @@ public class ScopeTestHelper
         return Arrays.asList(new Object[][]{
                     {prefix + "int $a = " + variableId + ";" + appendix, new ScopeTestStruct[]{
                             // vars $a $b
-                            new ScopeTestStruct(astText, fullScopeName, getAstAccessOrder(accessToScope, stepIn, 0, 1, 0))
+                            new ScopeTestStruct(astText, fullScopeName,
+                            getAstAccessOrder(accessToScope, stepIn, 0, 1, 0))
                         }
                     },
                     {prefix + "int $a = " + variableId + " + $c;" + appendix, new ScopeTestStruct[]{
                             //vars $a + variableId
-                            new ScopeTestStruct(astText, fullScopeName, getAstAccessOrder(accessToScope, stepIn, 0, 1, 0, 0)),
+                            new ScopeTestStruct(astText, fullScopeName,
+                            getAstAccessOrder(accessToScope, stepIn, 0, 1, 0, 0)),
                             //vars $a + $c
-                            new ScopeTestStruct("$c", fullScopeName, getAstAccessOrder(accessToScope, emptyStepIn, 0, 1, 0, 1))
+                            new ScopeTestStruct("$c", fullScopeName,
+                            getAstAccessOrder(accessToScope, emptyStepIn, 0, 1, 0, 1))
                         }
                     },
                     {prefix + "int $a = $c + " + variableId + ";" + appendix, new ScopeTestStruct[]{
                             //vars $a + $c
-                            new ScopeTestStruct("$c", fullScopeName, getAstAccessOrder(accessToScope, emptyStepIn, 0, 1, 0, 0)),
+                            new ScopeTestStruct("$c", fullScopeName,
+                            getAstAccessOrder(accessToScope, emptyStepIn, 0, 1, 0, 0)),
                             //vars $a + variableId
-                            new ScopeTestStruct(astText, fullScopeName, getAstAccessOrder(accessToScope, stepIn, 0, 1, 0, 1))
+                            new ScopeTestStruct(astText, fullScopeName,
+                            getAstAccessOrder(accessToScope, stepIn, 0, 1, 0, 1))
                         }
                     },
                     {prefix + "int $a = 1 + " + variableId + " + $c;" + appendix, new ScopeTestStruct[]{
                             //vars $a + + variableId
-                            new ScopeTestStruct(astText, fullScopeName, getAstAccessOrder(accessToScope, stepIn, 0, 1, 0, 0, 1)),
+                            new ScopeTestStruct(astText, fullScopeName,
+                            getAstAccessOrder(accessToScope, stepIn, 0, 1, 0, 0, 1)),
                             //vars $a + $c
-                            new ScopeTestStruct("$c", fullScopeName, getAstAccessOrder(accessToScope, emptyStepIn, 0, 1, 0, 1))
+                            new ScopeTestStruct("$c", fullScopeName,
+                            getAstAccessOrder(accessToScope, emptyStepIn, 0, 1, 0, 1))
                         }
                     },
                     {prefix + variableId + " = $a;" + appendix, new ScopeTestStruct[]{
-                            //= variableId
-                            new ScopeTestStruct(astText, fullScopeName, getAstAccessOrder(accessToScope, stepIn, 0, 0)),
-                            //= $a
-                            new ScopeTestStruct("$a", fullScopeName, getAstAccessOrder(accessToScope, emptyStepIn, 0, 1))
+                            //expr = variableId
+                            new ScopeTestStruct(astText, fullScopeName,
+                            getAstAccessOrder(accessToScope, stepIn, 0, 0, 0)),
+                            //expr = $a
+                            new ScopeTestStruct("$a", fullScopeName,
+                            getAstAccessOrder(accessToScope, emptyStepIn, 0, 0, 1))
                         }
                     },
                     //there are no nested local scopes
                     {prefix + " { " + variableId + " = $a; } " + appendix, new ScopeTestStruct[]{
-                            //= variableId
-                            new ScopeTestStruct(astText, fullScopeName, getAstAccessOrder(accessToScope, stepIn, 0, 0)),
-                            //= $a
-                            new ScopeTestStruct("$a", fullScopeName, getAstAccessOrder(accessToScope, emptyStepIn, 0, 1))
+                            //expr = variableId
+                            new ScopeTestStruct(astText, fullScopeName,
+                            getAstAccessOrder(accessToScope, stepIn, 0, 0, 0)),
+                            //expr = $a
+                            new ScopeTestStruct("$a", fullScopeName,
+                            getAstAccessOrder(accessToScope, emptyStepIn, 0, 0, 1))
                         }
                     },
                     //there are no nested local scopes, does not matter how many {} we declare
                     {prefix + " { { $a = " + variableId + ";} int $a = $c; } " + appendix, new ScopeTestStruct[]{
-                            //= $a
-                            new ScopeTestStruct("$a", fullScopeName, getAstAccessOrder(accessToScope, emptyStepIn, 0, 0)),
-                            //= variableId
-                            new ScopeTestStruct(astText, fullScopeName, getAstAccessOrder(accessToScope, stepIn, 0, 1)),
+                            //expr = $a
+                            new ScopeTestStruct("$a", fullScopeName,
+                            getAstAccessOrder(accessToScope, emptyStepIn, 0, 0, 0)),
+                            //expr = variableId
+                            new ScopeTestStruct(astText, fullScopeName,
+                            getAstAccessOrder(accessToScope, stepIn, 0, 0, 1)),
                             //vars $a $c
-                            new ScopeTestStruct("$c", fullScopeName, getAstAccessOrder(accessToScope, emptyStepIn, 1, 1, 0))
+                            new ScopeTestStruct("$c", fullScopeName,
+                            getAstAccessOrder(accessToScope, emptyStepIn, 1, 1, 0))
                         }
                     }
                 });
@@ -177,23 +191,27 @@ public class ScopeTestHelper
 
         return Arrays.asList(new Object[][]{
                     {prefix + variableId + "[0];" + appendix, new ScopeTestStruct[]{
-                            //arrAccess variableId
-                            new ScopeTestStruct(astText, fullScopeName, getAstAccessOrder(accessToScope, stepIn, 0, 0))
+                            //expr arrAccess variableId
+                            new ScopeTestStruct(astText, fullScopeName,
+                            getAstAccessOrder(accessToScope, stepIn, 0, 0, 0))
                         }
                     },
                     {prefix + variableId + "[1+1][0];" + appendix, new ScopeTestStruct[]{
                             //arrAccess arrAccess variableId
-                            new ScopeTestStruct(astText, fullScopeName, getAstAccessOrder(accessToScope, stepIn, 0, 0, 0))
+                            new ScopeTestStruct(astText, fullScopeName,
+                            getAstAccessOrder(accessToScope, stepIn, 0, 0, 0, 0))
                         }
                     },
                     {prefix + variableId + "->foo();" + appendix, new ScopeTestStruct[]{
                             //smCall/mCall/fCall variableId
-                            new ScopeTestStruct(astText, fullScopeName, getAstAccessOrder(accessToScope, stepIn, 0, 0))
+                            new ScopeTestStruct(astText, fullScopeName,
+                            getAstAccessOrder(accessToScope, stepIn, 0, 0, 0))
                         }
                     },
                     {prefix + variableId + "->foo()->bar();" + appendix, new ScopeTestStruct[]{
                             //smCall/mCall/fCall smCall/mCall/fCall variableId
-                            new ScopeTestStruct(astText, fullScopeName, getAstAccessOrder(accessToScope, stepIn, 0, 0, 0))
+                            new ScopeTestStruct(astText, fullScopeName,
+                            getAstAccessOrder(accessToScope, stepIn, 0, 0, 0, 0))
                         }
                     }
                 });
