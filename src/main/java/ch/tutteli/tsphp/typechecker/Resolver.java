@@ -23,11 +23,13 @@ import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.LowerCaseStringMap;
 import ch.tutteli.tsphp.common.exceptions.DefinitionException;
+import ch.tutteli.tsphp.common.exceptions.ReferenceException;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.ScopeHelperRegistry;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IAliasTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
@@ -94,28 +96,40 @@ public class Resolver implements IResolver
     public ISymbol resolveGlobalIdentifier(ITSPHPAst typeAst) {
         ISymbol symbol = null;
 
-        String identifier = typeAst.getText();
-        if (isAbsolute(identifier)) {
-            IGlobalNamespaceScope scope = ScopeHelperRegistry.get()
-                    .getCorrespondingGlobalNamespace(globalNamespaceScopes, identifier);
-            if (scope != null) {
-                symbol = scope.resolve(typeAst);
-            }
+        if (isAbsolute(typeAst.getText())) {
+            symbol = resolveAbsoluteIdentifier(typeAst);
         } else {
-            INamespaceScope scope = getEnclosingNamespaceScope(typeAst);
-            if (scope != null) {
-                symbol = scope.resolve(typeAst);
+            symbol = resolveIdentifierCompriseAlias(typeAst);
 
-                String alias = getPotentialAlias(typeAst.getText());
-                ITSPHPAst useDefinition = scope.getFirstUseDefinitionAst(alias);
-                useDefinition = checkTypeNameClashAndRecoverIfNecessary(useDefinition, symbol);
-
-                if (useDefinition != null) {
-                    symbol = resolveAlias(useDefinition, alias, typeAst);
-                }
-            }
             if (symbol == null && isRelative(typeAst.getText())) {
-                symbol = resolveRelative(typeAst);
+                symbol = resolveRelativeIdentifier(typeAst);
+            }
+        }
+        return symbol;
+    }
+
+    private ISymbol resolveAbsoluteIdentifier(ITSPHPAst typeAst) {
+        ISymbol symbol = null;
+        IGlobalNamespaceScope scope = ScopeHelperRegistry.get()
+                .getCorrespondingGlobalNamespace(globalNamespaceScopes, typeAst.getText());
+        if (scope != null) {
+            symbol = scope.resolve(typeAst);
+        }
+        return symbol;
+    }
+
+    private ISymbol resolveIdentifierCompriseAlias(ITSPHPAst typeAst) {
+        ISymbol symbol = null;
+        INamespaceScope scope = getEnclosingNamespaceScope(typeAst);
+        if (scope != null) {
+            symbol = scope.resolve(typeAst);
+
+            String alias = getPotentialAlias(typeAst.getText());
+            ITSPHPAst useDefinition = scope.getFirstUseDefinitionAst(alias);
+            useDefinition = checkTypeNameClashAndRecoverIfNecessary(useDefinition, symbol);
+
+            if (useDefinition != null) {
+                symbol = resolveAlias(useDefinition, alias, typeAst);
             }
         }
         return symbol;
@@ -177,18 +191,16 @@ public class Resolver implements IResolver
             symbol = useDefinition.getSymbol().getType();
             String typeName = typeAst.getText();
             if (isUsedAsNamespace(alias, typeName)) {
-                String fullTypeName = symbol + "\\";
-                if (!fullTypeName.substring(0, 1).equals("\\")) {
-                    fullTypeName = "\\" + fullTypeName;
-                }
-
-                typeName = fullTypeName + typeName.substring(alias.length() + 1);
+                typeName = getFullTypeName((ITypeSymbol) symbol, alias, typeName);
                 typeAst.setText(typeName);
 
                 IGlobalNamespaceScope globalNamespaceScope = ScopeHelperRegistry.get().
                         getCorrespondingGlobalNamespace(globalNamespaceScopes, typeName);
                 if (globalNamespaceScope != null) {
                     symbol = globalNamespaceScope.resolve(typeAst);
+                } else {
+                    ReferenceException ex = ErrorReporterRegistry.get().notDefined(typeAst);
+                    symbol = symbolFactory.createErroneousTypeSymbol(typeAst, ex);
                 }
             }
         } else {
@@ -196,6 +208,21 @@ public class Resolver implements IResolver
             symbol = symbolFactory.createErroneousTypeSymbol(typeAst, ex);
         }
         return symbol;
+    }
+
+    private String getFullTypeName(ITypeSymbol typeSymbol, String alias, String typeName) {
+        String fullTypeName;
+        //alias does not point to a real type
+        if (typeSymbol instanceof IAliasTypeSymbol) {
+            fullTypeName = typeSymbol.getName() + "\\";
+        } else {
+            fullTypeName = typeSymbol.getDefinitionScope().getScopeName() + typeSymbol.getName() + "\\";
+        }
+        if (!fullTypeName.substring(0, 1).equals("\\")) {
+            fullTypeName = "\\" + fullTypeName;
+        }
+        typeName = fullTypeName + typeName.substring(alias.length() + 1);
+        return typeName;
     }
 
     private boolean isUsedAsNamespace(String alias, String typeName) {
@@ -217,7 +244,7 @@ public class Resolver implements IResolver
         return identifier.indexOf("\\") > 0;
     }
 
-    private ISymbol resolveRelative(ITSPHPAst typeAst) {
+    private ISymbol resolveRelativeIdentifier(ITSPHPAst typeAst) {
         IScope enclosingGlobalNamespaceScope = getEnclosingGlobalNamespaceScope(typeAst.getScope());
         String typeName = enclosingGlobalNamespaceScope.getScopeName() + typeAst.getText();
         typeAst.setText(typeName);
@@ -257,11 +284,11 @@ public class Resolver implements IResolver
     public IVariableSymbol resolveConstant(ITSPHPAst ast) {
         ISymbol symbol;
         if (ast.getText().indexOf("\\") != -1) {
-            symbol =  resolveGlobalIdentifierWithFallback(ast);
+            symbol = resolveGlobalIdentifierWithFallback(ast);
         } else {
             INamespaceScope scope = getEnclosingNamespaceScope(ast);
-            symbol =  scope.resolve(ast);
-            symbol =  fallbackIfNull(symbol, ast);
+            symbol = scope.resolve(ast);
+            symbol = fallbackIfNull(symbol, ast);
         }
         return (IVariableSymbol) symbol;
     }

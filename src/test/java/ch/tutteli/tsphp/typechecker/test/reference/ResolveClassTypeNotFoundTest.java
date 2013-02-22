@@ -67,12 +67,29 @@ public class ResolveClassTypeNotFoundTest extends AReferenceErrorTest
                     {
                         "namespace b\\c\\d  {class a{} use a as b;\n b $b;} ",
                         new ReferenceErrorDto[]{new ReferenceErrorDto("\\a", 2, 1)}
+                    },
+                    {
+                        "namespace a\\b{class a{}} namespace ab\\b{class c{}} "
+                        + "namespace ab{use a\\b; \n b\\c $b = new\n b\\c();}",
+                        new ReferenceErrorDto[]{
+                            new ReferenceErrorDto("\\a\\b\\c", 2, 1),
+                            new ReferenceErrorDto("\\a\\b\\c", 3, 1)
+                        }
+                    },
+                    //See bug TSPHP-380
+                    {
+                        "namespace a{class b{}} namespace a\\b{class a{}} namespace ab\\b\\c{class d{}} "
+                        + "namespace ab{use a\\b; \n b\\c\\d $b = new\n b\\c\\d();}",
+                        new ReferenceErrorDto[]{
+                            new ReferenceErrorDto("\\a\\b\\c\\d", 2, 1),
+                            new ReferenceErrorDto("\\a\\b\\c\\d", 3, 1)
+                        }
                     }
                 }));
 
         return collection;
     }
-    
+
     public static Collection<Object[]> getVariations(String prefix, String appendix, String namespace) {
         List<Object[]> collection = new ArrayList<>();
         String[] types = TypeHelper.getClassInterfaceTypes();
