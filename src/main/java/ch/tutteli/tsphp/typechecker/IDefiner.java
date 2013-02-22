@@ -21,9 +21,11 @@ import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.typechecker.scopes.IConditionalScope;
 import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
+import ch.tutteli.tsphp.typechecker.symbols.IArrayTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IInterfaceTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IScalarTypeSymbol;
 
 /**
  *
@@ -33,8 +35,18 @@ public interface IDefiner
 {
 
     void initTypeSystem();
-    
+
     IGlobalNamespaceScope getGlobalDefaultNamespace();
+
+    IScalarTypeSymbol getBoolTypeSymbol();
+
+    IScalarTypeSymbol getIntTypeSymbol();
+
+    IScalarTypeSymbol getFloatTypeSymbol();
+
+    IScalarTypeSymbol getStringTypeSymbol();
+
+    IArrayTypeSymbol getArrayTypeSymbol();
 
     INamespaceScope defineNamespace(String name);
 

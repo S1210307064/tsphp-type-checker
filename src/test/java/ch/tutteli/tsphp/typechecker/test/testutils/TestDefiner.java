@@ -31,7 +31,6 @@ import ch.tutteli.tsphp.typechecker.scopes.IScopeFactory;
 import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IInterfaceTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
-import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

@@ -29,9 +29,11 @@ import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.IScopeFactory;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IArrayTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IInterfaceTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IScalarTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 import org.antlr.runtime.CommonToken;
@@ -49,6 +51,12 @@ public class Definer implements IDefiner
     //
     private ILowerCaseStringMap<IGlobalNamespaceScope> globalNamespaceScopes;
     private IGlobalNamespaceScope globalDefaultNamespace;
+    //
+    private IScalarTypeSymbol boolTypeSymbol;
+    private IScalarTypeSymbol intTypeSymbol;
+    private IScalarTypeSymbol floatTypeSymbol;
+    private IScalarTypeSymbol stringTypeSymbol;
+    private IArrayTypeSymbol arrayTypeSymbol;
 
     public Definer(ISymbolFactory aSymbolFactory, IScopeFactory aScopeFactory, ITSPHPAstAdaptor theAstAdaptor,
             ILowerCaseStringMap<IGlobalNamespaceScope> theGlobalNamespaceScopes) {
@@ -62,13 +70,21 @@ public class Definer implements IDefiner
     public void initTypeSystem() {
         globalDefaultNamespace = getOrCreateGlobalNamespace("\\");
 
-        String[] scalarTypes = new String[]{"bool", "int", "float", "string"};
-        for (String type : scalarTypes) {
-            globalDefaultNamespace.define(symbolFactory.createScalarTypeSymbol(type));
-        }
+        boolTypeSymbol = symbolFactory.createScalarTypeSymbol("bool");
+        globalDefaultNamespace.define(boolTypeSymbol);
+
+        intTypeSymbol = symbolFactory.createScalarTypeSymbol("int");
+        globalDefaultNamespace.define(intTypeSymbol);
+
+        floatTypeSymbol = symbolFactory.createScalarTypeSymbol("float");
+        globalDefaultNamespace.define(floatTypeSymbol);
+
+        stringTypeSymbol = symbolFactory.createScalarTypeSymbol("string");
+        globalDefaultNamespace.define(stringTypeSymbol);
 
         ITypeSymbol object = symbolFactory.createPseudoTypeSymbol("object");
-        globalDefaultNamespace.define(symbolFactory.createArrayTypeSymbol("array", object));
+        arrayTypeSymbol = symbolFactory.createArrayTypeSymbol("array", object);
+        globalDefaultNamespace.define(arrayTypeSymbol);
 
         globalDefaultNamespace.define(symbolFactory.createPseudoTypeSymbol("resource"));
         globalDefaultNamespace.define(object);
@@ -87,6 +103,31 @@ public class Definer implements IDefiner
     @Override
     public IGlobalNamespaceScope getGlobalDefaultNamespace() {
         return globalDefaultNamespace;
+    }
+
+    @Override
+    public IScalarTypeSymbol getBoolTypeSymbol() {
+        return boolTypeSymbol;
+    }
+
+    @Override
+    public IScalarTypeSymbol getIntTypeSymbol() {
+        return intTypeSymbol;
+    }
+
+    @Override
+    public IScalarTypeSymbol getFloatTypeSymbol() {
+        return floatTypeSymbol;
+    }
+
+    @Override
+    public IScalarTypeSymbol getStringTypeSymbol() {
+        return stringTypeSymbol;
+    }
+
+    @Override
+    public IArrayTypeSymbol getArrayTypeSymbol() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

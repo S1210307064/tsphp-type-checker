@@ -65,12 +65,12 @@ public class SymbolTable implements ISymbolTable
     public IDefiner getDefiner() {
         return definer;
     }
-    
+
     @Override
-    public ILowerCaseStringMap<IGlobalNamespaceScope>  getGlobalNamespaceScopes(){
+    public ILowerCaseStringMap<IGlobalNamespaceScope> getGlobalNamespaceScopes() {
         return globalNamespaceScopes;
     }
-    
+
     @Override
     public boolean checkIfInterface(ITSPHPAst typeAst, ITypeSymbol symbol) {
         boolean isInterface = symbol instanceof IInterfaceTypeSymbol || symbol instanceof IErroneousTypeSymbol;
@@ -274,7 +274,11 @@ public class SymbolTable implements ISymbolTable
 
     @Override
     public ITypeSymbol resolveUseType(ITSPHPAst typeAst, ITSPHPAst alias) {
-        return resolver.resolveUseType(typeAst, alias);
+        ITypeSymbol aliasTypeSymbol = resolver.resolveUseType(typeAst, alias);
+        if (aliasTypeSymbol == null) {
+            aliasTypeSymbol = symbolFactory.createAliasTypeSymbol(typeAst, typeAst.getText());
+        }
+        return aliasTypeSymbol;
     }
 
     @Override

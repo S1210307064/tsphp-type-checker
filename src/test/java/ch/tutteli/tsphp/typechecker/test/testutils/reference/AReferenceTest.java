@@ -14,11 +14,12 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.test.testutils;
+package ch.tutteli.tsphp.typechecker.test.testutils.reference;
 
 import ch.tutteli.tsphp.common.IErrorReporter;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPReferenceWalker;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
+import ch.tutteli.tsphp.typechecker.test.testutils.definition.ADefinitionTest;
 import junit.framework.Assert;
 import org.junit.Ignore;
 

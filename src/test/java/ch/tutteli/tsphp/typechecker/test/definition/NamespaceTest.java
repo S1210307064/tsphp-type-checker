@@ -17,8 +17,8 @@
 package ch.tutteli.tsphp.typechecker.test.definition;
 
 import ch.tutteli.tsphp.common.IScope;
-import ch.tutteli.tsphp.typechecker.test.testutils.ADefinitionTest;
 import ch.tutteli.tsphp.typechecker.test.testutils.ScopeTestHelper;
+import ch.tutteli.tsphp.typechecker.test.testutils.definition.ADefinitionTest;
 import java.util.Arrays;
 import java.util.Collection;
 import junit.framework.Assert;

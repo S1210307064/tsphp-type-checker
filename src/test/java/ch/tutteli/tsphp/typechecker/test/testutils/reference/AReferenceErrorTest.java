@@ -14,7 +14,7 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.test.testutils;
+package ch.tutteli.tsphp.typechecker.test.testutils.reference;
 
 import ch.tutteli.tsphp.common.IErrorReporter;
 import ch.tutteli.tsphp.common.exceptions.ReferenceException;

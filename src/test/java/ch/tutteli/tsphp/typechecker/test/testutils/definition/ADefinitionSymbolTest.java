@@ -14,10 +14,11 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.test.testutils;
+package ch.tutteli.tsphp.typechecker.test.testutils.definition;
 
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
+import ch.tutteli.tsphp.typechecker.test.testutils.ScopeTestHelper;
 import java.util.List;
 import java.util.Map;
 import junit.framework.Assert;

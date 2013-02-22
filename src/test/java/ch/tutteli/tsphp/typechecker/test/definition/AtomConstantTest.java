@@ -16,9 +16,9 @@
  */
 package ch.tutteli.tsphp.typechecker.test.definition;
 
-import ch.tutteli.tsphp.typechecker.test.testutils.ADefinitionScopeTest;
 import ch.tutteli.tsphp.typechecker.test.testutils.ScopeTestHelper;
 import ch.tutteli.tsphp.typechecker.test.testutils.ScopeTestStruct;
+import ch.tutteli.tsphp.typechecker.test.testutils.definition.ADefinitionScopeTest;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

@@ -16,7 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker.test.definition;
 
-import ch.tutteli.tsphp.typechecker.test.testutils.ADoubleDefinitionTest;
+import ch.tutteli.tsphp.typechecker.test.testutils.definition.ADoubleDefinitionTest;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

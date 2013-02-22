@@ -65,12 +65,7 @@ public class Resolver implements IResolver
             typeAst.setText(typeName);
         }
 
-        ITypeSymbol aliasType = (ITypeSymbol) resolveGlobalIdentifier(typeAst);
-        if (aliasType == null) {
-            aliasType = symbolFactory.createAliasTypeSymbol(typeAst, typeAst.getText());
-        }
-
-        return aliasType;
+        return (ITypeSymbol) resolveGlobalIdentifier(typeAst);
     }
 
     @Override
@@ -85,7 +80,7 @@ public class Resolver implements IResolver
         return symbol;
     }
 
-    private ISymbol fallbackIfNull(ISymbol symbol, ITSPHPAst ast) {
+    public ISymbol fallbackIfNull(ISymbol symbol, ITSPHPAst ast) {
         if (symbol == null) {
             symbol = globalDefaultNamespace.resolve(ast);
         }

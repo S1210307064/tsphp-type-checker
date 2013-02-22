@@ -16,7 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker.test.reference;
 
-import ch.tutteli.tsphp.typechecker.test.testutils.AReferenceStaticScopeTest;
+import ch.tutteli.tsphp.typechecker.test.testutils.reference.AReferenceStaticScopeTest;
 import ch.tutteli.tsphp.typechecker.test.testutils.ScopeTestStruct;
 import java.util.Arrays;
 import java.util.Collection;

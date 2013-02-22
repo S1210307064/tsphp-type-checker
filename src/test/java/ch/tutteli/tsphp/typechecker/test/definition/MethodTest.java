@@ -18,10 +18,10 @@ package ch.tutteli.tsphp.typechecker.test.definition;
 
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tutteli.tsphp.typechecker.symbols.ModifierHelper;
-import ch.tutteli.tsphp.typechecker.test.testutils.ADefinitionSymbolTest;
 import ch.tutteli.tsphp.typechecker.test.testutils.IAdder;
 import ch.tutteli.tsphp.typechecker.test.testutils.ParameterListHelper;
 import ch.tutteli.tsphp.typechecker.test.testutils.TypeHelper;
+import ch.tutteli.tsphp.typechecker.test.testutils.definition.ADefinitionSymbolTest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;

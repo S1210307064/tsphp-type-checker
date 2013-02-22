@@ -43,42 +43,61 @@ package ch.tutteli.tsphp.typechecker.antlr;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.typechecker.ISymbolTable;
+import ch.tutteli.tsphp.typechecker.IDefiner;
 }
 
 @members {
 ISymbolTable symbolTable;
+IDefiner definer;
 
 public TSPHPTypeCheckWalker(TreeNodeStream input, ISymbolTable theSymbolTable) {
     this(input);
     symbolTable = theSymbolTable;
+    definer = symbolTable.getDefiner();
 }
 }
 
 
 bottomup 
-    :   exprLists
-    |	exprRoot 
-    ;
-exprLists
+    	:	expressionLists
+   	|	expressionRoot 
+   	|	variableInit
+	;
+    
+expressionLists
 	:	(	EXPRESSION_LIST
 	    	|	ACTUAL_PARAMETERS	
    		|	TypeArray
 	    	)
-	    	expr=.+
+	    	expression+
 	;
-exprRoot 
-	:   ^(	
-		(	EXPRESSION
-    		|	'return'
-    		|	'throw'
-    		|	'echo'
-    		|	VariableId
-    		|	ARRAY_ACCESS
-    		
-    		|	If
-    		|	Foreach
-    		|	While
+expressionRoot 
+	:	^(	nil=(	EXPRESSION
+	    		|	'return'
+	    		|	'throw'
+	    		|	'echo'
+	    		|	ARRAY_ACCESS
+	    		|	If
+	    		|	Foreach
+	    		|	While
+	    		)
+		    	expression
     		)
-    	expr=.
-    	)
-    ;
+		{$nil.setEvalType($expression.type);}
+	;
+variableInit
+	:	^(VariableId expression)
+	;
+	
+expression returns [ITypeSymbol type]
+@after { $start.setEvalType($type); } // do after any alternative
+	:   	Bool		{$type = definer.getBoolTypeSymbol();}
+    	|   	Int     	{$type =  definer.getIntTypeSymbol();}
+    	|   	Float		{$type = definer.getFloatTypeSymbol();}
+    	|   	String		{$type =  definer.getStringTypeSymbol();}
+    	|	TypeArray	{$type = definer.getArrayTypeSymbol();}
+    	|  	VariableId	{$type = $VariableId.getSymbol().getType();}
+    	;
+    	
+    	
+    	

@@ -14,25 +14,18 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.test.testutils;
-
-import java.util.List;
+package ch.tutteli.tsphp.typechecker.test.testutils.typecheck;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class ReferenceScopeTestStruct extends ScopeTestStruct
+public enum EBuiltInType
 {
 
-    public String typeText;
-    public String typeScope;
-
-    public ReferenceScopeTestStruct(String theAstText, String theAstScope, List<Integer> theAstAccessOrder,
-            String theTypeText, String theTypeScope) {
-        super(theAstText, theAstScope, theAstAccessOrder);
-        typeText = theTypeText;
-        typeScope = theTypeScope;
-
-    }
+    Bool,
+    Int,
+    Float,
+    String,
+    Array
 }

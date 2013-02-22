@@ -14,7 +14,7 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.test.testutils;
+package ch.tutteli.tsphp.typechecker.test.testutils.reference;
 
 import ch.tutteli.tsphp.common.TSPHPAstAdaptor;
 import ch.tutteli.tsphp.typechecker.ISymbolTable;
@@ -22,6 +22,7 @@ import ch.tutteli.tsphp.typechecker.SymbolTable;
 import ch.tutteli.tsphp.typechecker.scopes.IScopeFactory;
 import ch.tutteli.tsphp.typechecker.scopes.ScopeFactory;
 import ch.tutteli.tsphp.typechecker.symbols.SymbolFactory;
+import ch.tutteli.tsphp.typechecker.test.testutils.ATest;
 import org.junit.Ignore;
 
 /**

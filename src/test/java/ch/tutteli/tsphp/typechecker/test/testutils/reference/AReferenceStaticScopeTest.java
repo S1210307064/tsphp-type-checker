@@ -14,10 +14,12 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.test.testutils;
+package ch.tutteli.tsphp.typechecker.test.testutils.reference;
 
+import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
-import java.util.List;
+import ch.tutteli.tsphp.typechecker.test.testutils.ScopeTestHelper;
+import ch.tutteli.tsphp.typechecker.test.testutils.ScopeTestStruct;
 import org.junit.Assert;
 import org.junit.Ignore;
 
@@ -26,29 +28,29 @@ import org.junit.Ignore;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @Ignore
-public abstract class ADefinitionScopeTest extends ADefinitionTest
+public abstract class AReferenceStaticScopeTest extends AReferenceTest
 {
 
     protected ScopeTestStruct[] testStructs;
 
-    public ADefinitionScopeTest(String testString, ScopeTestStruct[] theTestStructs) {
+    public AReferenceStaticScopeTest(String testString, ScopeTestStruct[] theTestStructs) {
         super(testString);
         testStructs = theTestStructs;
     }
 
     @Override
-    protected void verifyDefinitions() {
+    protected void verifyReferences() {
         for (int i = 0; i < testStructs.length; ++i) {
             ScopeTestStruct testStruct = testStructs[i];
-            ITSPHPAst testCandidate = ScopeTestHelper.getAst(ast,testString,testStruct.astAccessOrder);
-            Assert.assertNotNull(testString + " failed. testCandidate is null. should be "+testStruct.astText, testCandidate);
+            ITSPHPAst testCandidate = ScopeTestHelper.getAst(ast, testString, testStruct.astAccessOrder);
+            Assert.assertNotNull(testString + " failed. testCandidate is null. should be " + testStruct.astText, testCandidate);
             Assert.assertEquals(testString + " failed. wrong ast text,", testStruct.astText,
                     testCandidate.toStringTree());
 
-            Assert.assertEquals(testString + "--"+testStruct.astText+ " failed. wrong scope,", testStruct.astScope,
-                    ScopeTestHelper.getEnclosingScopeNames(testCandidate.getScope()));
+            ISymbol symbol = testCandidate.getSymbol();
+            Assert.assertNotNull(testString + " -- " + testStruct.astText + " failed. symbol was null", symbol);
+            Assert.assertEquals(testString + " -- " + testStruct.astText + " failed. wrong scope,",
+                    testStruct.astScope, ScopeTestHelper.getEnclosingScopeNames(symbol.getDefinitionScope()));
         }
-
     }
-
 }

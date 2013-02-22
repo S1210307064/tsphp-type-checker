@@ -17,7 +17,7 @@
 package ch.tutteli.tsphp.typechecker.test.reference;
 
 import ch.tutteli.tsphp.typechecker.error.ReferenceErrorDto;
-import ch.tutteli.tsphp.typechecker.test.testutils.AReferenceErrorTest;
+import ch.tutteli.tsphp.typechecker.test.testutils.reference.AReferenceErrorTest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;

@@ -16,8 +16,8 @@
  */
 package ch.tutteli.tsphp.typechecker.test.definition;
 
-import ch.tutteli.tsphp.typechecker.test.testutils.ADefinitionSymbolTest;
 import ch.tutteli.tsphp.typechecker.test.testutils.TypeHelper;
+import ch.tutteli.tsphp.typechecker.test.testutils.definition.ADefinitionSymbolTest;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

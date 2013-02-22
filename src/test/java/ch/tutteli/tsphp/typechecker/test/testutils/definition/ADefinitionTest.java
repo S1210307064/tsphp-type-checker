@@ -14,13 +14,18 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.test.testutils;
+package ch.tutteli.tsphp.typechecker.test.testutils.definition;
 
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITSPHPAstAdaptor;
 import ch.tutteli.tsphp.common.TSPHPAstAdaptor;
 import ch.tutteli.tsphp.typechecker.IDefiner;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
+import ch.tutteli.tsphp.typechecker.test.testutils.ATest;
+import ch.tutteli.tsphp.typechecker.test.testutils.TestDefiner;
+import ch.tutteli.tsphp.typechecker.test.testutils.TestScopeFactory;
+import ch.tutteli.tsphp.typechecker.test.testutils.TestSymbolFactory;
+import ch.tutteli.tsphp.typechecker.test.testutils.TestSymbolTable;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.CommonTreeNodeStream;
 import org.junit.Assert;

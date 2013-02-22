@@ -14,12 +14,14 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.test.testutils;
+package ch.tutteli.tsphp.typechecker.test.testutils.definition;
 
+import ch.tutteli.tsphp.typechecker.test.testutils.definition.ADefinitionTest;
 import ch.tutteli.tsphp.common.ILowerCaseStringMap;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
+import ch.tutteli.tsphp.typechecker.test.testutils.ScopeTestStruct;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
