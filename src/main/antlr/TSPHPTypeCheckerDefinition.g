@@ -176,7 +176,7 @@ variableDeclaration[ITSPHPAst tMod, ITSPHPAst type]
 		(	^(variableId=VariableId .)
 		|	variableId=VariableId	
 		)
-		{ symbolTable.defineVariable(currentScope, $tMod, $type, $variableId); }
+		{symbolTable.defineVariable(currentScope, $tMod, $type, $variableId);}
 	;
 	
 methodFunctionCall

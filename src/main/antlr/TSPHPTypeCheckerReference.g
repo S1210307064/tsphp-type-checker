@@ -76,6 +76,9 @@ topdown
  	|	methodCallStatic
  	|	methodCall
  	|	classConstantStaticMember
+ 	|	casting
+ 	|	instanceofStatement
+ 	|	newOperator
     	|	atom
     	;
 
@@ -278,7 +281,21 @@ returnTypes returns [ITypeSymbol type]
 	:	allTypes {$type = $allTypes.type;}
 	|	voidType {$type = $voidType.type;}
 	;
+
+casting	:	^(CASTING ^(TYPE . type=allTypes) .) 
+	;
 	
+instanceofStatement
+	:	(	^('instanceof' . identifier=VariableId)
+		|	^('instanceof' . identifier=TYPE_NAME)
+		)
+		{$identifier.setSymbol(symbolTable.resolveType($identifier));}
+	;
+	
+newOperator
+	:	^('new' identifier=TYPE_NAME .)
+		{$identifier.setSymbol(symbolTable.resolveType($identifier));}
+	;
 	
 atom	:	
 	|	thisVariable
