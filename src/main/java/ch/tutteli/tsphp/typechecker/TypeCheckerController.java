@@ -16,18 +16,14 @@
  */
 package ch.tutteli.tsphp.typechecker;
 
-import ch.tutteli.tsphp.common.ILowerCaseStringMap;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.common.ITSPHPAstAdaptor;
 import ch.tutteli.tsphp.common.ITypeSymbol;
-import ch.tutteli.tsphp.common.LowerCaseStringMap;
 import ch.tutteli.tsphp.common.exceptions.DefinitionException;
 import ch.tutteli.tsphp.common.exceptions.ReferenceException;
 import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
-import ch.tutteli.tsphp.typechecker.scopes.IScopeFactory;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ICanBeStatic;
 import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
@@ -38,27 +34,47 @@ import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousTypeSymbol;
+import ch.tutteli.tsphp.typechecker.utils.IAstHelper;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class SymbolTable implements ISymbolTable
+public class TypeCheckerController implements ITypeCheckerController
 {
 
     private ISymbolFactory symbolFactory;
-    private ILowerCaseStringMap<IGlobalNamespaceScope> globalNamespaceScopes = new LowerCaseStringMap<>();
-    private IGlobalNamespaceScope globalDefaultNamespace;
-    private IResolver resolver;
+    private ISymbolResolver symbolResolver;
+    private ITypeSystemInitialiser typeSystemInitialiser;
     private IDefiner definer;
+    private IOverloadResolver methodResolver;
+    private IAstHelper astHelper;
+    //
+    private Map<Integer, List<IMethodSymbol>> unaryOperators = new HashMap<>();
+    private Map<Integer, List<IMethodSymbol>> binaryOperators = new HashMap<>();
+    private Map<ITypeSymbol, Map<ITypeSymbol, IMethodSymbol>> explicitCastings = new HashMap<>();
+    //
+    private IGlobalNamespaceScope globalDefaultNamespace;
 
-    public SymbolTable(ISymbolFactory aSymbolFactory, IScopeFactory aScopeFactory, ITSPHPAstAdaptor theAstAdaptor) {
-        symbolFactory = aSymbolFactory;
+    public TypeCheckerController(ISymbolFactory theSymbolFactory, ITypeSystemInitialiser theTypeSystemInitialiser,
+            IDefiner theDefiner, ISymbolResolver theSymbolResolver, IOverloadResolver theMethodResolver,
+            IAstHelper theAstHelper) {
+        symbolFactory = theSymbolFactory;
+        typeSystemInitialiser = theTypeSystemInitialiser;
+        definer = theDefiner;
+        symbolResolver = theSymbolResolver;
+        methodResolver = theMethodResolver;
+        astHelper = theAstHelper;
 
-        definer = new Definer(aSymbolFactory, aScopeFactory, theAstAdaptor, globalNamespaceScopes);
-        definer.initTypeSystem();
+        typeSystemInitialiser.initTypeSystem();
+        unaryOperators = typeSystemInitialiser.getUnaryOperators();
+        binaryOperators = typeSystemInitialiser.getBinaryOperators();
+        explicitCastings = typeSystemInitialiser.getExplicitCastings();
         globalDefaultNamespace = definer.getGlobalDefaultNamespace();
-        resolver = new Resolver(aSymbolFactory, globalNamespaceScopes, globalDefaultNamespace);
     }
 
     @Override
@@ -67,8 +83,8 @@ public class SymbolTable implements ISymbolTable
     }
 
     @Override
-    public ILowerCaseStringMap<IGlobalNamespaceScope> getGlobalNamespaceScopes() {
-        return globalNamespaceScopes;
+    public ITypeSystemInitialiser getSymbolTable() {
+        return typeSystemInitialiser;
     }
 
     @Override
@@ -108,7 +124,7 @@ public class SymbolTable implements ISymbolTable
 
     @Override
     public IVariableSymbol resolveConstant(ITSPHPAst ast) {
-        IVariableSymbol symbol = resolver.resolveConstant(ast);
+        IVariableSymbol symbol = symbolResolver.resolveConstant(ast);
 
         if (symbol == null) {
             ReferenceException exception = ErrorReporterRegistry.get().notDefined(ast);
@@ -166,7 +182,7 @@ public class SymbolTable implements ISymbolTable
 
     @Override
     public IMethodSymbol resolveFunction(ITSPHPAst ast) {
-        ISymbol symbol = resolver.resolveGlobalIdentifierWithFallback(ast);
+        ISymbol symbol = symbolResolver.resolveGlobalIdentifierWithFallback(ast);
         if (symbol == null) {
             ReferenceException exception = ErrorReporterRegistry.get().notDefined(ast);
             symbol = symbolFactory.createErroneousMethodSymbol(ast, exception);
@@ -274,7 +290,7 @@ public class SymbolTable implements ISymbolTable
 
     @Override
     public ITypeSymbol resolveUseType(ITSPHPAst typeAst, ITSPHPAst alias) {
-        ITypeSymbol aliasTypeSymbol = resolver.resolveUseType(typeAst, alias);
+        ITypeSymbol aliasTypeSymbol = symbolResolver.resolveUseType(typeAst, alias);
         if (aliasTypeSymbol == null) {
             aliasTypeSymbol = symbolFactory.createAliasTypeSymbol(typeAst, typeAst.getText());
         }
@@ -283,12 +299,12 @@ public class SymbolTable implements ISymbolTable
 
     @Override
     public ITypeSymbol resolveType(ITSPHPAst typeAst) {
-        ITypeSymbol symbol = (ITypeSymbol) resolver.resolveGlobalIdentifier(typeAst);
+        ITypeSymbol symbol = (ITypeSymbol) symbolResolver.resolveGlobalIdentifier(typeAst);
 
         if (symbol == null) {
             String typeName = typeAst.getText();
-            if (!resolver.isAbsolute(typeName)) {
-                typeAst.setText(resolver.getEnclosingGlobalNamespaceScope(typeAst.getScope()).getScopeName() + typeName);
+            if (!symbolResolver.isAbsolute(typeName)) {
+                typeAst.setText(symbolResolver.getEnclosingGlobalNamespaceScope(typeAst.getScope()).getScopeName() + typeName);
             }
             ReferenceException ex = ErrorReporterRegistry.get().unkownType(typeAst);
             symbol = symbolFactory.createErroneousTypeSymbol(typeAst, ex);
@@ -308,7 +324,7 @@ public class SymbolTable implements ISymbolTable
     }
 
     private IClassTypeSymbol getEnclosingClass(ITSPHPAst ast) {
-        IClassTypeSymbol classTypeSymbol = resolver.getEnclosingClass(ast);
+        IClassTypeSymbol classTypeSymbol = symbolResolver.getEnclosingClass(ast);
         if (classTypeSymbol == null) {
             ReferenceException ex = ErrorReporterRegistry.get().notInClass(ast);
             classTypeSymbol = symbolFactory.createErroneousClassSymbol(ast, ex);
@@ -318,11 +334,162 @@ public class SymbolTable implements ISymbolTable
 
     private IClassTypeSymbol getParent(ITSPHPAst ast) {
         IClassTypeSymbol classTypeSymbol = getEnclosingClass(ast);
-        IClassTypeSymbol parent = (IClassTypeSymbol) classTypeSymbol.getParent();
+        IClassTypeSymbol parent = (IClassTypeSymbol) classTypeSymbol.getParentTypeSymbol();
         if (parent == null) {
             TypeCheckerException ex = ErrorReporterRegistry.get().noParentClass(classTypeSymbol.getDefinitionAst());
             parent = symbolFactory.createErroneousClassSymbol(ast, ex);
         }
         return parent;
+    }
+
+    @Override
+    public ITypeSymbol getBinaryOperatorEvalType(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right) {
+        ITypeSymbol typeSymbol;
+
+        List<ITypeSymbol> actualParameterTypes = new ArrayList<>();
+        actualParameterTypes.add((ITypeSymbol) left.getEvalType());
+        actualParameterTypes.add((ITypeSymbol) right.getEvalType());
+
+        IErroneousTypeSymbol erroneousTypeSymbol = getFirstErroneousTypeSymbol(actualParameterTypes);
+
+        if (erroneousTypeSymbol == null) {
+            //TODO Code duplication -> change behaviour, use "delegate" to reduce code duplication
+            if (binaryOperators.containsKey(operator.getToken().getType())) {
+                try {
+                    typeSymbol = resolveEvalType(operator, left, right);
+                } catch (TypeCheckerException ex) {
+                    //Error reporting is done in resolveBinary
+                    typeSymbol = symbolFactory.createErroneousTypeSymbol(operator, ex);
+                }
+            } else {
+                TypeCheckerException exception = ErrorReporterRegistry.get().unsupportedOperator(operator);
+                typeSymbol = symbolFactory.createErroneousTypeSymbol(operator, exception);
+            }
+
+        } else {
+            typeSymbol = erroneousTypeSymbol;
+        }
+
+        return typeSymbol;
+    }
+
+    private IErroneousTypeSymbol getFirstErroneousTypeSymbol(List<ITypeSymbol> actualParameterTypes) {
+        IErroneousTypeSymbol erroneousTypeSymbol = null;
+        for (ITypeSymbol typeSymbol : actualParameterTypes) {
+            if (typeSymbol instanceof IErroneousTypeSymbol) {
+                erroneousTypeSymbol = (IErroneousTypeSymbol) typeSymbol;
+                break;
+            }
+        }
+        return erroneousTypeSymbol;
+    }
+
+    private ITypeSymbol resolveEvalType(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right)
+            throws TypeCheckerException {
+        ITypeSymbol typeSymbol = null;
+        OverloadDto methodDto;
+
+        try {
+            methodDto = resolveBinaryOperator(operator, left, right);
+        } catch (AmbiguousCallException ex) {
+            ErrorReporterRegistry.get().ambiguousBinaryOperatorUsage(operator, left, right, ex);
+            methodDto = ex.getAmbiguousOverloads().get(0);
+        }
+        if (methodDto != null) {
+            typeSymbol = methodDto.methodSymbol.getType();
+            if (methodDto.parametersNeedCasting != null) {
+                addCastingsToAst(methodDto.parametersNeedCasting);
+            }
+        }
+        return typeSymbol;
+    }
+
+    private OverloadDto resolveBinaryOperator(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right)
+            throws AmbiguousCallException, TypeCheckerException {
+
+
+        int tokenType = operator.getToken().getType();
+        List<ITSPHPAst> actualParameterTypes = new ArrayList<>();
+        actualParameterTypes.add(left);
+        actualParameterTypes.add(right);
+
+        OverloadDto methodDto = null;
+
+        List<IMethodSymbol> methods = binaryOperators.get(tokenType);
+        List<OverloadDto> goodMethods = methodResolver.getApplicableMethods(methods, actualParameterTypes);
+        if (!goodMethods.isEmpty()) {
+            methodDto = methodResolver.getMostSpecificApplicableMethod(goodMethods);
+        }
+        if (methodDto == null) {
+            throw ErrorReporterRegistry.get().wrongBinaryOperatorUsage(operator, left, right, methods);
+        }
+        return methodDto;
+    }
+
+    private void addCastingsToAst(List<ParameterPromotionDto> parametersNeedCasting) {
+        for (ParameterPromotionDto parameterPromotionDto : parametersNeedCasting) {
+            astHelper.prependCasting(parameterPromotionDto);
+        }
+    }
+
+    //TODO code duplication !!!!!!!!!!!!!!!!!
+    @Override
+    public ITypeSymbol getUnaryOperatorEvalType(ITSPHPAst operator, ITSPHPAst expression) {
+        ITypeSymbol typeSymbol;
+        if (unaryOperators.containsKey(operator.getToken().getType())) {
+            try {
+                typeSymbol = resolveEvalType(operator, expression);
+            } catch (TypeCheckerException ex) {
+                //Error reporting is done in resolveBinary
+                typeSymbol = symbolFactory.createErroneousTypeSymbol(expression, ex);
+            }
+        } else {
+            TypeCheckerException exception = ErrorReporterRegistry.get().unsupportedOperator(operator);
+            typeSymbol = symbolFactory.createErroneousTypeSymbol(operator, exception);
+        }
+        return typeSymbol;
+    }
+
+    //TODO code duplication !!!!!!!!!!!!!!!!!
+    private ITypeSymbol resolveEvalType(ITSPHPAst operator, ITSPHPAst expression)
+            throws TypeCheckerException {
+        ITypeSymbol typeSymbol = null;
+        OverloadDto methodDto;
+
+        try {
+            methodDto = resolveUnaryOperator(operator, expression);
+        } catch (AmbiguousCallException ex) {
+            ErrorReporterRegistry.get().ambiguousUnaryOperatorUsage(operator, expression, ex);
+            methodDto = ex.getAmbiguousOverloads().get(0);
+        }
+        if (methodDto != null) {
+            typeSymbol = methodDto.methodSymbol.getType();
+            if (methodDto.parametersNeedCasting != null) {
+                addCastingsToAst(methodDto.parametersNeedCasting);
+            }
+        }
+        return typeSymbol;
+    }
+
+    //TODO code duplication !!!!!!!!!!!!!!!!!
+    private OverloadDto resolveUnaryOperator(ITSPHPAst operator, ITSPHPAst expression)
+            throws AmbiguousCallException, TypeCheckerException {
+
+        List<ITSPHPAst> actualParameters = new ArrayList<>();
+        actualParameters.add(expression);
+
+        int tokenType = operator.getToken().getType();
+
+        OverloadDto methodDto = null;
+
+        List<IMethodSymbol> methods = binaryOperators.get(tokenType);
+        List<OverloadDto> goodMethods = methodResolver.getApplicableMethods(methods, actualParameters);
+        if (!goodMethods.isEmpty()) {
+            methodDto = methodResolver.getMostSpecificApplicableMethod(goodMethods);
+        }
+        if (methodDto == null) {
+            throw ErrorReporterRegistry.get().wrongUnaryOperatorUsage(operator, expression, methods);
+        }
+        return methodDto;
     }
 }

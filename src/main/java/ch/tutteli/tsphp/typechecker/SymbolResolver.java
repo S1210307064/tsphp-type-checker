@@ -28,7 +28,6 @@ import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.ScopeHelperRegistry;
-import ch.tutteli.tsphp.typechecker.symbols.IAliasSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
@@ -38,14 +37,14 @@ import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class Resolver implements IResolver
+public class SymbolResolver implements ISymbolResolver
 {
 
     private ISymbolFactory symbolFactory;
     private ILowerCaseStringMap<IGlobalNamespaceScope> globalNamespaceScopes = new LowerCaseStringMap<>();
     private IGlobalNamespaceScope globalDefaultNamespace;
 
-    public Resolver(ISymbolFactory theSymbolFactory,
+    public SymbolResolver(ISymbolFactory theSymbolFactory,
             ILowerCaseStringMap<IGlobalNamespaceScope> theGlobalNamespaceScopes,
             IGlobalNamespaceScope theGlobalDefaultNamespace) {
 
@@ -56,8 +55,6 @@ public class Resolver implements IResolver
 
     @Override
     public ITypeSymbol resolveUseType(ITSPHPAst typeAst, ITSPHPAst alias) {
-        ((IAliasSymbol) alias.getSymbol()).setGlobalNamespaceScopes(globalNamespaceScopes);
-
         //Alias is always pointing to a full type name. If user has omitted \ at the beginning, then we add it here
         String typeName = typeAst.getText();
         if (!isAbsolute(typeName)) {
@@ -186,7 +183,7 @@ public class Resolver implements IResolver
             symbol = useDefinition.getSymbol().getType();
             String typeName = typeAst.getText();
             if (isUsedAsNamespace(alias, typeName)) {
-                typeName = getFullTypeName((ITypeSymbol) symbol, alias, typeName);
+                typeName = getAbsoluteTypeName((ITypeSymbol) symbol, alias, typeName);
                 typeAst.setText(typeName);
 
                 IGlobalNamespaceScope globalNamespaceScope = ScopeHelperRegistry.get().
@@ -205,7 +202,7 @@ public class Resolver implements IResolver
         return symbol;
     }
 
-    private String getFullTypeName(ITypeSymbol typeSymbol, String alias, String typeName) {
+    private String getAbsoluteTypeName(ITypeSymbol typeSymbol, String alias, String typeName) {
         String fullTypeName;
         //alias does not point to a real type
         if (typeSymbol instanceof IAliasTypeSymbol) {

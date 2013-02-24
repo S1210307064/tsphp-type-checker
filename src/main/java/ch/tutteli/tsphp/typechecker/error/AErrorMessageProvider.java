@@ -16,6 +16,8 @@
  */
 package ch.tutteli.tsphp.typechecker.error;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,17 +29,22 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
 
     protected Map<String, String> definitionErrors;
     protected Map<String, String> referenceErrors;
+    protected Map<String, String> wrongArgumentTypeErrors;
 
     protected abstract void loadDefinitionErrorMessages();
 
     protected abstract void loadReferenceErrorMessages();
 
-    protected abstract String getStandardErrorDefinitionMessage(String key, DefinitionErrorDto dto);
+    protected abstract void loadWrongArgumentTyperrorMessages();
 
-    protected abstract String getStandardErrorReferenceMessage(String key, ReferenceErrorDto dto);
+    protected abstract String getStandardDefinitionErrorMessage(String key, DefinitionErrorDto dto);
+
+    protected abstract String getStandardReferenceErrorMessage(String key, ReferenceErrorDto dto);
+
+    protected abstract String getStandardWrongArgumentTypeErrorMessage(String key, WrongArgumentTypeErrorDto dto);
 
     @Override
-    public String getErrorDefinitionMessage(String key, DefinitionErrorDto dto) {
+    public String getDefinitionErrorMessage(String key, DefinitionErrorDto dto) {
         String message;
         if (definitionErrors == null) {
             loadDefinitionErrorMessages();
@@ -58,13 +65,13 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
             message = message.replace("%posN%", "" + dto.positionNewDefinition);
 
         } else {
-            message = getStandardErrorDefinitionMessage(key, dto);
+            message = getStandardDefinitionErrorMessage(key, dto);
         }
         return message;
     }
 
     @Override
-    public String getErrorReferenceMessage(String key, ReferenceErrorDto dto) {
+    public String getReferenceErrorMessage(String key, ReferenceErrorDto dto) {
         String message;
         if (referenceErrors == null) {
             loadReferenceErrorMessages();
@@ -75,8 +82,42 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
             message = message.replace("%line%", "" + dto.line);
             message = message.replace("%pos%", "" + dto.position);
         } else {
-            message = getStandardErrorReferenceMessage(key, dto);
+            message = getStandardReferenceErrorMessage(key, dto);
         }
         return message;
+    }
+
+    @Override
+    public String getWrongArgumentTypeErrorMessage(String key, WrongArgumentTypeErrorDto dto) {
+        String message;
+        if (wrongArgumentTypeErrors == null) {
+            loadWrongArgumentTyperrorMessages();
+        }
+        if (wrongArgumentTypeErrors.containsKey(key)) {
+            message = wrongArgumentTypeErrors.get(key);
+            message = message.replace("%id%", "" + dto.identifier);
+            message = message.replace("%line%", "" + dto.line);
+            message = message.replace("%pos%", "" + dto.position);
+            message = message.replace("%aParams%", Arrays.toString(dto.actualParameterTypes));
+            message = message.replace("%overloads%", getOverloadSignatures(dto.possibleOverloads));
+        } else {
+            message = getStandardWrongArgumentTypeErrorMessage(key, dto);
+        }
+        return message;
+    }
+
+    protected String getOverloadSignatures(List<String[]> ambiguousFormalParameterTypes) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String[] parameterTypes : ambiguousFormalParameterTypes) {
+            boolean isNotFirst = false;
+            for (String parameterType : parameterTypes) {
+                if (isNotFirst) {
+                    stringBuilder.append(", ");
+                }
+                stringBuilder.append(parameterType);
+            }
+            stringBuilder.append("\n");
+        }
+        return stringBuilder.toString();
     }
 }

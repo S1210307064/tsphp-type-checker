@@ -51,7 +51,7 @@ public abstract class AReferenceTest extends ADefinitionTest
     @Override
     protected final void verifyDefinitions() {
         commonTreeNodeStream.reset();
-        reference = new TSPHPReferenceWalker(commonTreeNodeStream, symbolTable);
+        reference = new TSPHPReferenceWalker(commonTreeNodeStream, controller);
         reference.downup(ast);
         checkReferences();
     }

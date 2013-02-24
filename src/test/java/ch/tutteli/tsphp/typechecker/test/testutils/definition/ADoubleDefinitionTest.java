@@ -51,7 +51,7 @@ public abstract class ADoubleDefinitionTest extends ADefinitionTest
 
     @Override
     protected void verifyDefinitions() {
-        ILowerCaseStringMap<IGlobalNamespaceScope> globalNamespaces = symbolTable.getGlobalNamespaceScopes();
+        ILowerCaseStringMap<IGlobalNamespaceScope> globalNamespaces = definer.getGlobalNamespaceScopes();
         IScope globalNamespace = globalNamespaces.get(namespace);
         Assert.assertNotNull(errorMessagePrefix + " failed, global namespace " + namespace + " could not be found.",
                 globalNamespace);

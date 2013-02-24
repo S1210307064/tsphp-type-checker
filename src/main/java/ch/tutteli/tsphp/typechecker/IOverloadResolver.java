@@ -14,19 +14,22 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.symbols;
+package ch.tutteli.tsphp.typechecker;
 
 import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.common.ITypeSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
+import java.util.List;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class AliasTypeSymbol extends ATypeSymbol implements IAliasTypeSymbol
+public interface IOverloadResolver
 {
 
-    public AliasTypeSymbol(ITSPHPAst definitionAst, String name, ITypeSymbol parentTypeSymbol) {
-        super(definitionAst, name, parentTypeSymbol);
-    }
+    List<OverloadDto> getApplicableMethods(List<IMethodSymbol> methods,
+            List<ITSPHPAst> actualParameterTypes);
+
+    OverloadDto getMostSpecificApplicableMethod(List<OverloadDto> methods)
+            throws AmbiguousCallException;
 }

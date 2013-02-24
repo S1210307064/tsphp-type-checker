@@ -14,19 +14,24 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.symbols;
+package ch.tutteli.tsphp.typechecker.error;
 
-import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.common.ITypeSymbol;
+import java.util.List;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class AliasTypeSymbol extends ATypeSymbol implements IAliasTypeSymbol
+public class WrongArgumentTypeErrorDto extends ReferenceErrorDto
 {
 
-    public AliasTypeSymbol(ITSPHPAst definitionAst, String name, ITypeSymbol parentTypeSymbol) {
-        super(definitionAst, name, parentTypeSymbol);
+    public String[] actualParameterTypes;
+    public List<String[]> possibleOverloads;
+
+    public WrongArgumentTypeErrorDto(String theIdentifier, int theLine, int thePosition,
+            String[] theActualParameterTypes, List<String[]> thePossibleOverloads) {
+        super(theIdentifier, theLine, thePosition);
+        actualParameterTypes = theActualParameterTypes;
+        possibleOverloads = thePossibleOverloads;
     }
 }

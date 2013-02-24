@@ -14,37 +14,28 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker;
+package ch.tutteli.tsphp.typechecker.symbols;
 
-import ch.tutteli.tsphp.common.IScope;
-import ch.tutteli.tsphp.common.ISymbol;
+import ch.tutteli.tsphp.common.ASymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
-import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
-import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public interface IResolver
+public class ATypeSymbol extends ASymbol implements ITypeSymbol
 {
 
-    boolean isAbsolute(String typeName);
+    private ITypeSymbol parentTypeSymbol;
 
-    IClassTypeSymbol getEnclosingClass(ITSPHPAst ast);
+    public ATypeSymbol(ITSPHPAst theDefinitionAst, String theName, ITypeSymbol theParentTypeSymbol) {
+        super(theDefinitionAst, theName);
+        parentTypeSymbol = theParentTypeSymbol;
+    }
 
-    IScope getEnclosingGlobalNamespaceScope(IScope scope);
-
-    IScope getResolvingScope(ITSPHPAst typeAst);
-
-    ISymbol resolveGlobalIdentifier(ITSPHPAst typeAst);
-
-    ISymbol resolveGlobalIdentifierWithFallback(ITSPHPAst ast);
-
-    ISymbol resolveInClassSymbol(ITSPHPAst ast);
-
-    ITypeSymbol resolveUseType(ITSPHPAst typeAst, ITSPHPAst alias);
-
-    IVariableSymbol resolveConstant(ITSPHPAst ast);
+    @Override
+    public ITypeSymbol getParentTypeSymbol() {
+        return parentTypeSymbol;
+    }
 }

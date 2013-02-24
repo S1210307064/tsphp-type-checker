@@ -16,13 +16,24 @@
  */
 package ch.tutteli.tsphp.typechecker.test.testutils.reference;
 
+import ch.tutteli.tsphp.common.ITSPHPAstAdaptor;
 import ch.tutteli.tsphp.common.TSPHPAstAdaptor;
-import ch.tutteli.tsphp.typechecker.ISymbolTable;
-import ch.tutteli.tsphp.typechecker.SymbolTable;
+import ch.tutteli.tsphp.typechecker.IDefiner;
+import ch.tutteli.tsphp.typechecker.IOverloadResolver;
+import ch.tutteli.tsphp.typechecker.ISymbolResolver;
+import ch.tutteli.tsphp.typechecker.ITypeCheckerController;
+import ch.tutteli.tsphp.typechecker.ITypeSystemInitialiser;
+import ch.tutteli.tsphp.typechecker.OverloadResolver;
+import ch.tutteli.tsphp.typechecker.SymbolResolver;
+import ch.tutteli.tsphp.typechecker.TypeCheckerController;
+import ch.tutteli.tsphp.typechecker.TypeSystemInitialiser;
 import ch.tutteli.tsphp.typechecker.scopes.IScopeFactory;
-import ch.tutteli.tsphp.typechecker.scopes.ScopeFactory;
-import ch.tutteli.tsphp.typechecker.symbols.SymbolFactory;
 import ch.tutteli.tsphp.typechecker.test.testutils.ATest;
+import ch.tutteli.tsphp.typechecker.test.testutils.TestDefiner;
+import ch.tutteli.tsphp.typechecker.test.testutils.TestScopeFactory;
+import ch.tutteli.tsphp.typechecker.test.testutils.TestSymbolFactory;
+import ch.tutteli.tsphp.typechecker.utils.AstHelper;
+import ch.tutteli.tsphp.typechecker.utils.IAstHelper;
 import org.junit.Ignore;
 
 /**
@@ -34,11 +45,26 @@ public class ASymbolTableTest extends ATest
 {
 
     protected IScopeFactory scopeFactory;
-    protected ISymbolTable symbolTable;
+    protected ITypeCheckerController controller;
 
     public ASymbolTableTest() {
         super();
-        scopeFactory = new ScopeFactory();
-        symbolTable = new SymbolTable(new SymbolFactory(), scopeFactory, new TSPHPAstAdaptor());
+        ITSPHPAstAdaptor adaptor = new TSPHPAstAdaptor();
+        IAstHelper astHelper = new AstHelper(adaptor);
+        scopeFactory = new TestScopeFactory();
+        TestSymbolFactory symbolFactory = new TestSymbolFactory();
+        IDefiner definer = new TestDefiner(symbolFactory, scopeFactory);
+        ITypeSystemInitialiser typeSystemInitialiser = new TypeSystemInitialiser(symbolFactory, astHelper, definer.getGlobalDefaultNamespace());
+        ISymbolResolver symbolResolver = new SymbolResolver(symbolFactory, definer.getGlobalNamespaceScopes(),
+                definer.getGlobalDefaultNamespace());
+        IOverloadResolver methodResolver = new OverloadResolver(typeSystemInitialiser);
+
+        controller = new TypeCheckerController(
+                symbolFactory,
+                typeSystemInitialiser,
+                definer,
+                symbolResolver,
+                methodResolver,
+                astHelper);
     }
 }

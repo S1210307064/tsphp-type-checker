@@ -16,11 +16,22 @@
  */
 package ch.tutteli.tsphp.typechecker.error;
 
+import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
+import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.exceptions.DefinitionException;
 import ch.tutteli.tsphp.common.exceptions.ReferenceException;
+import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
+import ch.tutteli.tsphp.common.exceptions.UnsupportedOperationException;
+import ch.tutteli.tsphp.typechecker.AmbiguousCallException;
+import ch.tutteli.tsphp.typechecker.OverloadDto;
+import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
+import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
+import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -105,7 +116,7 @@ public class ErrorReporter implements IErrorReporter
     private DefinitionException addAndGetDefinitionException(String key,
             ITSPHPAst existingDefintion, ITSPHPAst newDefinition) {
 
-        String errorMessage = errorMessageProvider.getErrorDefinitionMessage(key,
+        String errorMessage = errorMessageProvider.getDefinitionErrorMessage(key,
                 new DefinitionErrorDto(
                 existingDefintion.getText(), existingDefintion.getLine(), existingDefintion.getCharPositionInLine(),
                 newDefinition.getText(), newDefinition.getLine(), newDefinition.getCharPositionInLine()));
@@ -152,9 +163,102 @@ public class ErrorReporter implements IErrorReporter
 
     private ReferenceException addAndGetReferenceException(String key,
             ITSPHPAst typeAst) {
-        String errorMessage = errorMessageProvider.getErrorReferenceMessage(key,
+        String errorMessage = errorMessageProvider.getReferenceErrorMessage(key,
                 new ReferenceErrorDto(typeAst.getText(), typeAst.getLine(), typeAst.getCharPositionInLine()));
         ReferenceException exception = new ReferenceException(errorMessage, typeAst);
+        exceptions.add(exception);
+        return exception;
+    }
+
+    @Override
+    public ReferenceException ambiguousUnaryOperatorUsage(ITSPHPAst operator, ITSPHPAst expression,
+            AmbiguousCallException ex) {
+        List<ITSPHPAst> actualParameters = new ArrayList<>();
+        actualParameters.add(expression);
+        return addAndGetAmbiguousCallException("ambiguousOperatorUsage", operator, actualParameters, ex);
+    }
+
+    @Override
+    public ReferenceException ambiguousBinaryOperatorUsage(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right,
+            AmbiguousCallException ex) {
+        List<ITSPHPAst> actualParameters = new ArrayList<>();
+        actualParameters.add(left);
+        actualParameters.add(right);
+
+        return addAndGetAmbiguousCallException("ambiguousOperatorUsage", operator, actualParameters, ex);
+    }
+
+    private ReferenceException addAndGetAmbiguousCallException(String key, ITSPHPAst call, List<ITSPHPAst> actualParameters,
+            AmbiguousCallException ex) {
+        List<IMethodSymbol> methods = new ArrayList<>();
+        List<OverloadDto> overloads = ex.getAmbiguousOverloads();
+        for (OverloadDto overload : overloads) {
+            methods.add(overload.methodSymbol);
+        }
+        return addAndGetWrongArgumentTypeException(key, call, actualParameters, methods);
+    }
+
+    @Override
+    public TypeCheckerException wrongBinaryOperatorUsage(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right,
+            List<IMethodSymbol> existingMethodOverloads) {
+
+        List<ITSPHPAst> actualParameters = new ArrayList<>();
+        actualParameters.add(left);
+        actualParameters.add(right);
+        return addAndGetWrongArgumentTypeException("wrongOperatorUsage", operator,
+                actualParameters, existingMethodOverloads);
+
+    }
+
+    @Override
+    public TypeCheckerException wrongUnaryOperatorUsage(ITSPHPAst operator, ITSPHPAst expression,
+            List<IMethodSymbol> existingMethodOverloads) {
+        List<ITSPHPAst> actualParameters = new ArrayList<>();
+        actualParameters.add(expression);
+        return addAndGetWrongArgumentTypeException("wrongOperatorUsage", operator,
+                actualParameters, existingMethodOverloads);
+    }
+
+    private ReferenceException addAndGetWrongArgumentTypeException(String key,
+            ITSPHPAst call, List<ITSPHPAst> actualParameters, List<IMethodSymbol> existingMethodOverloads) {
+
+        String[] actualParameterTypes = new String[actualParameters.size()];
+        for (int i = 0; i < actualParameterTypes.length; ++i) {
+            actualParameterTypes[i] = getAbsoluteTypeName(actualParameters.get(i).getEvalType());
+        }
+
+        List<String[]> formalParameters = new ArrayList<>();
+
+        for (IMethodSymbol method : existingMethodOverloads) {
+            formalParameters.add(getFormalParameters(method.getParameters()));
+        }
+        String errorMessage = errorMessageProvider.getWrongArgumentTypeErrorMessage(key,
+                new WrongArgumentTypeErrorDto(call.getText(), call.getLine(), call.getCharPositionInLine(),
+                actualParameterTypes, formalParameters));
+        ReferenceException exception = new ReferenceException(errorMessage, call);
+        exceptions.add(exception);
+        return exception;
+    }
+
+    private String getAbsoluteTypeName(ITypeSymbol typeSymbol) {
+        IScope definitionScope = typeSymbol.getDefinitionScope();
+        return definitionScope.getScopeName() + typeSymbol.getName();
+    }
+
+    private String[] getFormalParameters(List<IVariableSymbol> formalParameters) {
+        String[] formalParameterTypes = new String[formalParameters.size()];
+        for (int i = 0; i < formalParameterTypes.length; ++i) {
+            formalParameterTypes[i] = getAbsoluteTypeName(formalParameters.get(i).getType());
+        }
+        return formalParameterTypes;
+    }
+
+    @Override
+    public UnsupportedOperationException unsupportedOperator(ITSPHPAst operator) {
+        UnsupportedOperationException exception = new UnsupportedOperationException(
+                "Unsupported operator exception occured. Please report bug to http://tsphp.tutteli.ch\nException "
+                + "was caused by operator \"" + operator.getText()
+                + " on line " + operator.getLine() + "|" + operator.getCharPositionInLine(), operator);
         exceptions.add(exception);
         return exception;
     }

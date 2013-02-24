@@ -17,10 +17,11 @@
 package ch.tutteli.tsphp.typechecker.test.reference;
 
 import ch.tutteli.tsphp.common.ISymbol;
+import ch.tutteli.tsphp.typechecker.IDefiner;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
-import ch.tutteli.tsphp.typechecker.test.testutils.reference.ASymbolTableTest;
 import ch.tutteli.tsphp.typechecker.test.testutils.AstTestHelper;
 import ch.tutteli.tsphp.typechecker.test.testutils.TypeHelper;
+import ch.tutteli.tsphp.typechecker.test.testutils.reference.ASymbolTableTest;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -45,17 +46,18 @@ public class ResolvePrimitiveTypeTest extends ASymbolTableTest
 
     @Test
     public void testResolveType() {
-        
-        INamespaceScope scope = symbolTable.getDefiner().defineNamespace("\\");
-        ISymbol typeSymbol = symbolTable.getGlobalNamespaceScopes().get("\\").getSymbols().get(type).get(0);
-        Assert.assertEquals(typeSymbol, symbolTable.resolvePrimitiveType(AstTestHelper.getAstWithTokenText(type,scope)));
+        IDefiner definer = controller.getDefiner();
+        INamespaceScope scope = definer.defineNamespace("\\");
+        ISymbol typeSymbol = definer.getGlobalNamespaceScopes().get("\\").getSymbols().get(type).get(0);
+        Assert.assertEquals(typeSymbol, controller.resolvePrimitiveType(AstTestHelper.getAstWithTokenText(type, scope)));
     }
-    
-     @Test
+
+    @Test
     public void testResolveTypeFromOtherNamespace() {
-        INamespaceScope scope = symbolTable.getDefiner().defineNamespace("\\a\\a\\");
-        ISymbol typeSymbol = symbolTable.getGlobalNamespaceScopes().get("\\").getSymbols().get(type).get(0);
-        Assert.assertEquals(typeSymbol, symbolTable.resolvePrimitiveType(AstTestHelper.getAstWithTokenText(type,scope)));
+        IDefiner definer = controller.getDefiner();
+        INamespaceScope scope = definer.defineNamespace("\\a\\a\\");
+        ISymbol typeSymbol = definer.getGlobalNamespaceScopes().get("\\").getSymbols().get(type).get(0);
+        Assert.assertEquals(typeSymbol, controller.resolvePrimitiveType(AstTestHelper.getAstWithTokenText(type, scope)));
     }
 
     @Parameterized.Parameters

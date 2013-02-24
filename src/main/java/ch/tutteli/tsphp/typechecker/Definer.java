@@ -20,23 +20,17 @@ import ch.tutteli.tsphp.common.ILowerCaseStringMap;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.common.ITSPHPAstAdaptor;
-import ch.tutteli.tsphp.common.ITypeSymbol;
-import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
-import ch.tutteli.tsphp.typechecker.scopes.GlobalNamespaceScope;
+import ch.tutteli.tsphp.common.LowerCaseStringMap;
 import ch.tutteli.tsphp.typechecker.scopes.IConditionalScope;
 import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.IScopeFactory;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasSymbol;
-import ch.tutteli.tsphp.typechecker.symbols.IArrayTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IInterfaceTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
-import ch.tutteli.tsphp.typechecker.symbols.IScalarTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
-import org.antlr.runtime.CommonToken;
 
 /**
  *
@@ -47,87 +41,25 @@ public class Definer implements IDefiner
 
     private ISymbolFactory symbolFactory;
     private IScopeFactory scopeFactory;
-    private ITSPHPAstAdaptor astAdaptor;
     //
-    private ILowerCaseStringMap<IGlobalNamespaceScope> globalNamespaceScopes;
+    private ILowerCaseStringMap<IGlobalNamespaceScope> globalNamespaceScopes = new LowerCaseStringMap<>();
     private IGlobalNamespaceScope globalDefaultNamespace;
-    //
-    private IScalarTypeSymbol boolTypeSymbol;
-    private IScalarTypeSymbol intTypeSymbol;
-    private IScalarTypeSymbol floatTypeSymbol;
-    private IScalarTypeSymbol stringTypeSymbol;
-    private IArrayTypeSymbol arrayTypeSymbol;
 
-    public Definer(ISymbolFactory aSymbolFactory, IScopeFactory aScopeFactory, ITSPHPAstAdaptor theAstAdaptor,
-            ILowerCaseStringMap<IGlobalNamespaceScope> theGlobalNamespaceScopes) {
+    public Definer(ISymbolFactory aSymbolFactory, IScopeFactory aScopeFactory) {
         symbolFactory = aSymbolFactory;
         scopeFactory = aScopeFactory;
-        astAdaptor = theAstAdaptor;
-        globalNamespaceScopes = theGlobalNamespaceScopes;
+        globalDefaultNamespace = getOrCreateGlobalNamespace("\\");
+
     }
 
     @Override
-    public void initTypeSystem() {
-        globalDefaultNamespace = getOrCreateGlobalNamespace("\\");
-
-        boolTypeSymbol = symbolFactory.createScalarTypeSymbol("bool");
-        globalDefaultNamespace.define(boolTypeSymbol);
-
-        intTypeSymbol = symbolFactory.createScalarTypeSymbol("int");
-        globalDefaultNamespace.define(intTypeSymbol);
-
-        floatTypeSymbol = symbolFactory.createScalarTypeSymbol("float");
-        globalDefaultNamespace.define(floatTypeSymbol);
-
-        stringTypeSymbol = symbolFactory.createScalarTypeSymbol("string");
-        globalDefaultNamespace.define(stringTypeSymbol);
-
-        ITypeSymbol object = symbolFactory.createPseudoTypeSymbol("object");
-        arrayTypeSymbol = symbolFactory.createArrayTypeSymbol("array", object);
-        globalDefaultNamespace.define(arrayTypeSymbol);
-
-        globalDefaultNamespace.define(symbolFactory.createPseudoTypeSymbol("resource"));
-        globalDefaultNamespace.define(object);
-        globalDefaultNamespace.define(symbolFactory.createPseudoTypeSymbol("void"));
-
-        //predefiend classes
-        ITSPHPAst classModifier = createAst(TSPHPDefinitionWalker.CLASS_MODIFIER, "cMod");
-        ITSPHPAst identifier = createAst(TSPHPDefinitionWalker.TYPE_NAME, "Exception");
-        globalDefaultNamespace.define(symbolFactory.createClassTypeSymbol(classModifier, identifier, globalDefaultNamespace));
-    }
-
-    private ITSPHPAst createAst(int tokenType, String name) {
-        return (ITSPHPAst) astAdaptor.create(0, new CommonToken(tokenType, name));
+    public ILowerCaseStringMap<IGlobalNamespaceScope> getGlobalNamespaceScopes() {
+        return globalNamespaceScopes;
     }
 
     @Override
     public IGlobalNamespaceScope getGlobalDefaultNamespace() {
         return globalDefaultNamespace;
-    }
-
-    @Override
-    public IScalarTypeSymbol getBoolTypeSymbol() {
-        return boolTypeSymbol;
-    }
-
-    @Override
-    public IScalarTypeSymbol getIntTypeSymbol() {
-        return intTypeSymbol;
-    }
-
-    @Override
-    public IScalarTypeSymbol getFloatTypeSymbol() {
-        return floatTypeSymbol;
-    }
-
-    @Override
-    public IScalarTypeSymbol getStringTypeSymbol() {
-        return stringTypeSymbol;
-    }
-
-    @Override
-    public IArrayTypeSymbol getArrayTypeSymbol() {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -140,7 +72,7 @@ public class Definer implements IDefiner
         if (globalNamespaceScopes.containsKey(name)) {
             scope = globalNamespaceScopes.get(name);
         } else {
-            scope = new GlobalNamespaceScope(name);
+            scope = scopeFactory.createGlobalNamespaceScope(name);
             globalNamespaceScopes.put(name, scope);
         }
         return scope;

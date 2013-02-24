@@ -14,19 +14,20 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.symbols;
-
-import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.common.ITypeSymbol;
+package ch.tutteli.tsphp.typechecker;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class AliasTypeSymbol extends ATypeSymbol implements IAliasTypeSymbol
+public class PromotionExplicitCastingLevelDto
 {
 
-    public AliasTypeSymbol(ITSPHPAst definitionAst, String name, ITypeSymbol parentTypeSymbol) {
-        super(definitionAst, name, parentTypeSymbol);
+    public int promotionLevel;
+    public int explicitCastingLevel;
+
+    public PromotionExplicitCastingLevelDto(int thePromotionLevel, int theExplicitCastingLevel) {
+        promotionLevel = thePromotionLevel;
+        explicitCastingLevel = theExplicitCastingLevel;
     }
 }

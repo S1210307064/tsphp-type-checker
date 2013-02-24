@@ -32,9 +32,11 @@ import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousTypeSymbol;
 public interface ISymbolFactory
 {
 
-    IScalarTypeSymbol createScalarTypeSymbol(String name);
+    void setObjectTypeSymbol(ITypeSymbol typeSymbol);
 
-    IArrayTypeSymbol createArrayTypeSymbol(String name, ITypeSymbol baseType);
+    IScalarTypeSymbol createScalarTypeSymbol(String name, int tokenType, ITypeSymbol parentTypeSymbol);
+
+    IArrayTypeSymbol createArrayTypeSymbol(String name, int tokenType, ITypeSymbol baseType);
 
     IPseudoTypeSymbol createPseudoTypeSymbol(String name);
 
@@ -50,7 +52,7 @@ public interface ISymbolFactory
             IScope currentScope);
 
     IVariableSymbol createThisSymbol(ITSPHPAst variableId, IPolymorphicTypeSymbol polymorphicTypeSymbol);
-    
+
     IVariableSymbol createVariableSymbol(ITSPHPAst typeModifier, ITSPHPAst variableId);
 
     IErroneousTypeSymbol createErroneousTypeSymbol(ITSPHPAst ast, TypeCheckerException exception);

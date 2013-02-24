@@ -40,19 +40,26 @@ import java.util.Set;
 public class SymbolFactory implements ISymbolFactory
 {
 
+    private ITypeSymbol objectTypeSymbol = null;
+
     @Override
-    public IScalarTypeSymbol createScalarTypeSymbol(String name) {
-        return new ScalarTypeSymbol(name);
+    public void setObjectTypeSymbol(ITypeSymbol typeSymbol) {
+        objectTypeSymbol = typeSymbol;
     }
 
     @Override
-    public IArrayTypeSymbol createArrayTypeSymbol(String name, ITypeSymbol baseType) {
-        return new ArrayTypeSymbol(name, baseType);
+    public IScalarTypeSymbol createScalarTypeSymbol(String name, int tokenType, ITypeSymbol parentTypeSymbol) {
+        return new ScalarTypeSymbol(name, parentTypeSymbol, tokenType);
+    }
+
+    @Override
+    public IArrayTypeSymbol createArrayTypeSymbol(String name, int tokenType, ITypeSymbol baseType) {
+        return new ArrayTypeSymbol(name, tokenType, baseType, objectTypeSymbol);
     }
 
     @Override
     public IPseudoTypeSymbol createPseudoTypeSymbol(String name) {
-        return new PseudoTypeSymbol(name);
+        return new PseudoTypeSymbol(name, objectTypeSymbol);
     }
 
     @Override
@@ -60,23 +67,28 @@ public class SymbolFactory implements ISymbolFactory
         return new AliasSymbol(useDefinition, alias);
     }
 
+    @Override
     public IAliasTypeSymbol createAliasTypeSymbol(ITSPHPAst definitionAst, String name) {
-        return new AliasTypeSymbol(definitionAst, name);
+        return new AliasTypeSymbol(definitionAst, name, objectTypeSymbol);
     }
 
     @Override
-    public IInterfaceTypeSymbol createInterfaceTypeSymbol(ITSPHPAst modifier, ITSPHPAst identifier, IScope currentScope) {
-        return new InterfaceTypeSymbol(identifier, getModifiers(modifier), identifier.getText(), currentScope);
-    }
-
-    @Override
-    public IClassTypeSymbol createClassTypeSymbol(ITSPHPAst classModifierAst, ITSPHPAst identifier, IScope currentScope) {
-        return new ClassSymbol(identifier, getModifiers(classModifierAst), identifier.getText(), currentScope);
-    }
-
-    @Override
-    public IMethodSymbol createMethodSymbol(ITSPHPAst methodModifier, ITSPHPAst returnTypeModifier, ITSPHPAst identifier,
+    public IInterfaceTypeSymbol createInterfaceTypeSymbol(ITSPHPAst modifier, ITSPHPAst identifier,
             IScope currentScope) {
+        return new InterfaceTypeSymbol(identifier, getModifiers(modifier), identifier.getText(), currentScope,
+                objectTypeSymbol);
+    }
+
+    @Override
+    public IClassTypeSymbol createClassTypeSymbol(ITSPHPAst classModifierAst, ITSPHPAst identifier,
+            IScope currentScope) {
+        return new ClassTypeSymbol(identifier, getModifiers(classModifierAst), identifier.getText(), currentScope,
+                objectTypeSymbol);
+    }
+
+    @Override
+    public IMethodSymbol createMethodSymbol(ITSPHPAst methodModifier, ITSPHPAst returnTypeModifier,
+            ITSPHPAst identifier, IScope currentScope) {
         return new MethodSymbol(identifier, getModifiers(methodModifier), getModifiers(returnTypeModifier),
                 identifier.getText(), currentScope);
     }

@@ -16,17 +16,18 @@
  */
 package ch.tutteli.tsphp.typechecker.symbols;
 
-import ch.tutteli.tsphp.common.ASymbol;
+import ch.tutteli.tsphp.common.ITypeSymbol;
+
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  *
  * Adopted from the book Language Implementation Patterns by Terence Parr
  */
-public class PseudoTypeSymbol extends ASymbol implements IPseudoTypeSymbol
+public class PseudoTypeSymbol extends ATypeSymbol implements IPseudoTypeSymbol
 {
 
-    public PseudoTypeSymbol(String name) {
-        super(null,name);
+    public PseudoTypeSymbol(String name, ITypeSymbol parentTypeSymbol) {
+        super(null, name, parentTypeSymbol);
     }
 }

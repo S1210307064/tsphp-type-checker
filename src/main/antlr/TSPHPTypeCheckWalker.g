@@ -42,18 +42,18 @@ package ch.tutteli.tsphp.typechecker.antlr;
 
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.typechecker.ISymbolTable;
-import ch.tutteli.tsphp.typechecker.IDefiner;
+import ch.tutteli.tsphp.typechecker.ITypeSystemInitialiser;
+import ch.tutteli.tsphp.typechecker.ITypeCheckerController;
 }
 
 @members {
-ISymbolTable symbolTable;
-IDefiner definer;
+ITypeSystemInitialiser symbolTable;
+ITypeCheckerController controller;
 
-public TSPHPTypeCheckWalker(TreeNodeStream input, ISymbolTable theSymbolTable) {
+public TSPHPTypeCheckWalker(TreeNodeStream input, ITypeCheckerController theController) {
     this(input);
-    symbolTable = theSymbolTable;
-    definer = symbolTable.getDefiner();
+    controller = theController;
+    symbolTable = theController.getSymbolTable();
 }
 }
 
@@ -68,6 +68,7 @@ expressionLists
 	:	(	EXPRESSION_LIST
 	    	|	ACTUAL_PARAMETERS	
    		|	TypeArray
+    		|	'echo'
 	    	)
 	    	expression+
 	;
@@ -75,7 +76,6 @@ expressionRoot
 	:	^(	nil=(	EXPRESSION
 	    		|	'return'
 	    		|	'throw'
-	    		|	'echo'
 	    		|	ARRAY_ACCESS
 	    		|	If
 	    		|	Foreach
@@ -85,19 +85,101 @@ expressionRoot
     		)
 		{$nil.setEvalType($expression.type);}
 	;
+	
 variableInit
 	:	^(VariableId expression)
 	;
 	
 expression returns [ITypeSymbol type]
 @after { $start.setEvalType($type); } // do after any alternative
-	:   	Bool		{$type = definer.getBoolTypeSymbol();}
-    	|   	Int     	{$type =  definer.getIntTypeSymbol();}
-    	|   	Float		{$type = definer.getFloatTypeSymbol();}
-    	|   	String		{$type =  definer.getStringTypeSymbol();}
-    	|	TypeArray	{$type = definer.getArrayTypeSymbol();}
-    	|  	VariableId	{$type = $VariableId.getSymbol().getType();}
+	:   	Bool		{$type = symbolTable.getBoolTypeSymbol();}
+    	|   	Int     	{$type =  symbolTable.getIntTypeSymbol();}
+    	|   	Float		{$type = symbolTable.getFloatTypeSymbol();}
+    	|   	String		{$type =  symbolTable.getStringTypeSymbol();}
+    	|	TypeArray	{$type = symbolTable.getArrayTypeSymbol();}
+    	|  	symbol		{$type = $symbol.type;}
+	|	unaryOperator 	{$type = $unaryOperator.type;}
+	|	binaryOperator 	{$type = $binaryOperator.type;}
+
     	;
     	
-    	
+symbol returns [ITypeSymbol type]
+	:	(	identifier=VariableId	
+		|   	^(FUNCTION_CALL	identifier=TYPE_NAME .)
+		|	^(METHOD_CALL_STATIC TYPE_NAME identifier=Identifier .)	
+		|	^(METHOD_CALL . identifier=Identifier .)
+		|	^(CLASS_STATIC_ACCESS . identifier=(CLASS_STATIC_ACCESS_VARIABLE_ID|CONSTANT))
+		)
+		{$type = $identifier.getSymbol().getType();}		
+	;
+   
+unaryOperator returns [ITypeSymbol type]
+	:	^(	(	PRE_INCREMENT 
+		    	|	PRE_DECREMENT 
+		    	|	'@' 
+		    	|	'~' 
+		    	|	'!' 
+		    	|	UNARY_MINUS     	
+			|	POST_INCREMENT 
+		    	|	POST_DECREMENT 
+			)
+			expr=expression
+		)
+    		{$type = controller.getUnaryOperatorEvalType($start, $expr.start);}
+   	;
+
+binaryOperator returns [ITypeSymbol type]
+   	:	^(	(	'or' 
+			|	'xor' 
+			|	'and' 
+			|	'=' 
+			|	'+=' 
+			|	'-=' 
+			|	'*=' 
+			|	'/=' 
+			|	'&=' 
+			|	'|=' 
+			|	'^=' 
+			|	'%=' 
+			|	'.=' 
+			|	'<<=' 
+			|	'>>=' 
+			|	CASTING_ASSIGN 
+			|	'||' 
+			|	'&&' 
+			|	'|' 
+			|	'^' 
+			|	'&' 
+			|	'==' 
+			|	'===' 
+			|	'!=' 
+			|	'!==' 
+			|	'<>' 
+			|	'<' 
+			|	'<=' 
+			|	'>' 
+			|	'>=' 
+			|	'<<' 
+			|	'>>' 
+			|	'+' 
+			|	'-' 
+			|	'.' 
+			|	'*' 
+			|	'/' 
+			|	'%' 
+			|	CASTING 
+			)
+			left=expression right=expression
+		)
+		{$type = controller.getBinaryOperatorEvalType($start, $left.start, $right.start);}
+	;
+
+
+
+specialOperators
+	:	^('?' condition=expression caseTrue=expression caseFalse=expression)
+	|	^('instanceof' variable=expression type=(TYPE_NAME|VariableId))
+    	|	^('new' type=TYPE_NAME args=.)
+    	|	^('clone' expression)
+	;
     	

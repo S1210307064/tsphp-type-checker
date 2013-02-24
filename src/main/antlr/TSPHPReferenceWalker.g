@@ -42,7 +42,7 @@ package ch.tutteli.tsphp.typechecker.antlr;
 
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.typechecker.ISymbolTable;
+import ch.tutteli.tsphp.typechecker.ITypeCheckerController;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.ICaseInsensitiveScope;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasSymbol;
@@ -55,11 +55,11 @@ import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 }
 
 @members {
-ISymbolTable symbolTable;
+ITypeCheckerController controller;
 
-public TSPHPReferenceWalker(TreeNodeStream input, ISymbolTable theSymbolTable) {
+public TSPHPReferenceWalker(TreeNodeStream input, ITypeCheckerController theController) {
     this(input);
-    symbolTable = theSymbolTable;
+    controller = theController;
 }
 }
 
@@ -89,7 +89,7 @@ useDeclarationList
 useDeclaration
 	:	^(USE_DECLARATION typeName=TYPE_NAME alias=.)
 		{
-			ITypeSymbol typeSymbol = symbolTable.resolveUseType($typeName, $alias);
+			ITypeSymbol typeSymbol = controller.resolveUseType($typeName, $alias);
 			$typeName.setSymbol(typeSymbol);
 			$alias.getSymbol().setType(typeSymbol);
 			
@@ -109,7 +109,7 @@ interfaceExtendsDeclaration[ITSPHPAst identifier]
 	:	^('extends' 	
 			(allTypes {	
 				ITypeSymbol typeSymbol = $allTypes.type;
-				if(symbolTable.checkIfInterface($allTypes.start, typeSymbol)){
+				if(controller.checkIfInterface($allTypes.start, typeSymbol)){
 				    ((IPolymorphicTypeSymbol)identifier.getSymbol()).setParent((IPolymorphicTypeSymbol)typeSymbol);
 				}
 			})+
@@ -130,7 +130,7 @@ classExtendsDeclaration[ITSPHPAst identifier]
 	:	^('extends' 
 			allTypes {
 				ITypeSymbol typeSymbol = $allTypes.type;
-				if(symbolTable.checkIfClass($allTypes.start, typeSymbol)){
+				if(controller.checkIfClass($allTypes.start, typeSymbol)){
 				    ((IClassTypeSymbol)identifier.getSymbol()).setParent((IPolymorphicTypeSymbol)typeSymbol);
 				}
 			} 
@@ -142,7 +142,7 @@ implementsDeclaration[ITSPHPAst identifier]
 	:	^('implements' 	
 			(allTypes{
 				ITypeSymbol typeSymbol = $allTypes.type;
-				if(symbolTable.checkIfInterface($allTypes.start, typeSymbol)){
+				if(controller.checkIfInterface($allTypes.start, typeSymbol)){
 				    ((IClassTypeSymbol)identifier.getSymbol()).addInterface((IInterfaceTypeSymbol)typeSymbol);
 				}
 			})+
@@ -173,7 +173,7 @@ methodFunctionDeclaration
 			scope.doubleDefinitionCheckCaseInsensitive(methodSymbol);
 		}
 	;
-	
+
 constantDeclarationList
 	:	^(CONSTANT_DECLARATION_LIST ^(TYPE tMod=. scalarTypes) constantDeclaration[$scalarTypes.type]+)
 	;
@@ -222,7 +222,7 @@ variableDeclaration[ITypeSymbol type] returns [IVariableSymbol variableSymbol]
 functionCall
 	:	^(FUNCTION_CALL	identifier=TYPE_NAME .)
 		{
-			IMethodSymbol methodSymbol = symbolTable.resolveFunction($identifier);
+			IMethodSymbol methodSymbol = controller.resolveFunction($identifier);
 			$identifier.setSymbol(methodSymbol);
 		}
 	;
@@ -230,9 +230,9 @@ functionCall
 methodCallStatic
 	:	^(METHOD_CALL_STATIC callee=TYPE_NAME identifier=Identifier .)	
 		{
-			ITypeSymbol typeSymbol = symbolTable.resolveType($callee);
+			ITypeSymbol typeSymbol = controller.resolveType($callee);
 			$callee.setSymbol(typeSymbol);
-			$identifier.setSymbol(symbolTable.resolveStaticMethod($callee, $identifier));
+			$identifier.setSymbol(controller.resolveStaticMethod($callee, $identifier));
 		}
 	;
 	
@@ -240,40 +240,40 @@ methodCall
 	:	^(METHOD_CALL callee=methodCallee identifier=Identifier .)	
 		{
 			//callee's symbol is set in methodCallee
-			$identifier.setSymbol( symbolTable.resolveMethod($callee.start, $identifier));
+			$identifier.setSymbol( controller.resolveMethod($callee.start, $identifier));
 		}
 	;
 methodCallee
 	:	t='$this'
-		{$t.setSymbol(symbolTable.resolveThisSelf($t));}
+		{$t.setSymbol(controller.resolveThisSelf($t));}
 	
 	|	varId=VariableId
 		{
-      			$varId.setSymbol(symbolTable.resolveVariable($varId));
-			symbolTable.checkForwardReference($varId);
+      			$varId.setSymbol(controller.resolveVariable($varId));
+			controller.checkForwardReference($varId);
 		}
 	
 	|	slf='self'
-		{$slf.setSymbol(symbolTable.resolveThisSelf($slf));}
+		{$slf.setSymbol(controller.resolveThisSelf($slf));}
 		
 	|	par='parent'
-		{$par.setSymbol(symbolTable.resolveParent($par));}
+		{$par.setSymbol(controller.resolveParent($par));}
 	;
 	
 classConstantStaticMember
 	:	^(CLASS_STATIC_ACCESS accessor=staticAccessor identifier=(CLASS_STATIC_ACCESS_VARIABLE_ID|CONSTANT))
-		{$identifier.setSymbol(symbolTable.resolveStaticMemberOrClassConstant($accessor.start, $identifier));}
+		{$identifier.setSymbol(controller.resolveStaticMemberOrClassConstant($accessor.start, $identifier));}
 	;
 
 staticAccessor
 	:	typeName=TYPE_NAME
-		{$typeName.setSymbol(symbolTable.resolveType($typeName));}
+		{$typeName.setSymbol(controller.resolveType($typeName));}
 
 	|	slf='self'
-		{$slf.setSymbol(symbolTable.resolveThisSelf($slf).getType());}
+		{$slf.setSymbol(controller.resolveThisSelf($slf).getType());}
 		
 	|	par='parent'
-		{$par.setSymbol(symbolTable.resolveParent($par).getType());}							
+		{$par.setSymbol(controller.resolveParent($par).getType());}							
 	;
 
 
@@ -289,12 +289,12 @@ instanceofStatement
 	:	(	^('instanceof' . identifier=VariableId)
 		|	^('instanceof' . identifier=TYPE_NAME)
 		)
-		{$identifier.setSymbol(symbolTable.resolveType($identifier));}
+		{$identifier.setSymbol(controller.resolveType($identifier));}
 	;
 	
 newOperator
 	:	^('new' identifier=TYPE_NAME .)
-		{$identifier.setSymbol(symbolTable.resolveType($identifier));}
+		{$identifier.setSymbol(controller.resolveType($identifier));}
 	;
 	
 atom	:	
@@ -312,8 +312,8 @@ variable
 			&& tokenType!=METHOD_CALL
 		}? varId=VariableId
 		{
-      			$varId.setSymbol(symbolTable.resolveVariable($varId));
-			symbolTable.checkForwardReference($varId);
+      			$varId.setSymbol(controller.resolveVariable($varId));
+			controller.checkForwardReference($varId);
       		}
 	;
 	
@@ -321,7 +321,7 @@ thisVariable
 @init { int tokenType = $start.getParent().getType();}
 	:	{ tokenType!=METHOD_CALL
 		}? t='$this'	
-		{$t.setSymbol(symbolTable.resolveThisSelf($t));}
+		{$t.setSymbol(controller.resolveThisSelf($t));}
 	;
 
 
@@ -330,16 +330,16 @@ constant
 	:	{ tokenType!=CLASS_STATIC_ACCESS
 		}? cnst=CONSTANT
 		{
-			IVariableSymbol variableSymbol = symbolTable.resolveConstant($cnst);
+			IVariableSymbol variableSymbol = controller.resolveConstant($cnst);
 			$cnst.setSymbol(variableSymbol);
-			symbolTable.checkForwardReference($cnst);
+			controller.checkForwardReference($cnst);
 		}
 	;
 	
 voidType returns [ITypeSymbol type]
  	:	'void'
 		{
-			$type = symbolTable.resolvePrimitiveType($start);
+			$type = controller.resolvePrimitiveType($start);
 			$start.setSymbol($type);
 		}
  	;
@@ -354,13 +354,13 @@ allTypes returns [ITypeSymbol type]
 		|	'resource'
 		)
 		{
-			$type = symbolTable.resolvePrimitiveType($start);
+			$type = controller.resolvePrimitiveType($start);
 			$start.setSymbol($type);
 		}
 		
 	|	TYPE_NAME
 		{
-			$type = symbolTable.resolveType($start);
+			$type = controller.resolveType($start);
 			$start.setSymbol($type);
 		}
 	;
@@ -372,7 +372,7 @@ scalarTypes returns [ITypeSymbol type]
 		|	'string'
 		)
 		{
-			$type = symbolTable.resolvePrimitiveType($start);
+			$type = controller.resolvePrimitiveType($start);
 			$start.setSymbol($type);
 		}
 	;

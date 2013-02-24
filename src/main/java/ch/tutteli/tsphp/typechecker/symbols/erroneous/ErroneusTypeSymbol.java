@@ -17,6 +17,7 @@
 package ch.tutteli.tsphp.typechecker.symbols.erroneous;
 
 import ch.tutteli.tsphp.common.ITSPHPAst;
+import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
 
 /**
@@ -28,5 +29,10 @@ public class ErroneusTypeSymbol extends AErroneousSymbol implements IErroneousTy
 
     public ErroneusTypeSymbol(ITSPHPAst type, TypeCheckerException exception) {
         super(type, exception);
+    }
+
+    @Override
+    public ITypeSymbol getParentTypeSymbol() {
+        throw new UnsupportedOperationException("ErroneusTypeSymbol is not a real type.");
     }
 }

@@ -19,13 +19,21 @@ package ch.tutteli.tsphp.typechecker.test.testutils.definition;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITSPHPAstAdaptor;
 import ch.tutteli.tsphp.common.TSPHPAstAdaptor;
-import ch.tutteli.tsphp.typechecker.IDefiner;
+import ch.tutteli.tsphp.typechecker.IOverloadResolver;
+import ch.tutteli.tsphp.typechecker.ISymbolResolver;
+import ch.tutteli.tsphp.typechecker.ITypeCheckerController;
+import ch.tutteli.tsphp.typechecker.ITypeSystemInitialiser;
+import ch.tutteli.tsphp.typechecker.OverloadResolver;
+import ch.tutteli.tsphp.typechecker.SymbolResolver;
+import ch.tutteli.tsphp.typechecker.TypeCheckerController;
+import ch.tutteli.tsphp.typechecker.TypeSystemInitialiser;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tutteli.tsphp.typechecker.test.testutils.ATest;
 import ch.tutteli.tsphp.typechecker.test.testutils.TestDefiner;
 import ch.tutteli.tsphp.typechecker.test.testutils.TestScopeFactory;
 import ch.tutteli.tsphp.typechecker.test.testutils.TestSymbolFactory;
-import ch.tutteli.tsphp.typechecker.test.testutils.TestSymbolTable;
+import ch.tutteli.tsphp.typechecker.utils.AstHelper;
+import ch.tutteli.tsphp.typechecker.utils.IAstHelper;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.CommonTreeNodeStream;
 import org.junit.Assert;
@@ -42,12 +50,12 @@ public abstract class ADefinitionTest extends ATest
     protected String testString;
     protected String errorMessagePrefix;
     protected TestDefiner definer;
-    protected TestSymbolTable symbolTable;
+    protected ITypeCheckerController controller;
+    protected ITypeSystemInitialiser typeSystemInitialiser;
     protected TestScopeFactory scopeFactory;
     protected ITSPHPAst ast;
     protected CommonTreeNodeStream commonTreeNodeStream;
-    private ITSPHPAstAdaptor adaptor;
-    
+    protected ITSPHPAstAdaptor adaptor;
 
     protected abstract void verifyDefinitions();
 
@@ -60,9 +68,22 @@ public abstract class ADefinitionTest extends ATest
 
     private void init() {
         adaptor = new TSPHPAstAdaptor();
+        IAstHelper astHelper = new AstHelper(adaptor);
         scopeFactory = new TestScopeFactory();
-        symbolTable = new TestSymbolTable(new TestSymbolFactory(), scopeFactory, adaptor);
-        definer = (TestDefiner) symbolTable.getDefiner();
+        TestSymbolFactory symbolFactory = new TestSymbolFactory();
+        definer = new TestDefiner(symbolFactory, scopeFactory);
+        typeSystemInitialiser = new TypeSystemInitialiser(symbolFactory, astHelper, definer.getGlobalDefaultNamespace());
+        ISymbolResolver symbolResolver = new SymbolResolver(symbolFactory, definer.getGlobalNamespaceScopes(),
+                definer.getGlobalDefaultNamespace());
+        IOverloadResolver methodResolver = new OverloadResolver(typeSystemInitialiser);
+
+        controller = new TypeCheckerController(
+                symbolFactory,
+                typeSystemInitialiser,
+                definer,
+                symbolResolver,
+                methodResolver,
+                astHelper);
     }
 
     public void check() throws RecognitionException {
@@ -73,7 +94,7 @@ public abstract class ADefinitionTest extends ATest
         commonTreeNodeStream = new CommonTreeNodeStream(adaptor, ast);
         commonTreeNodeStream.setTokenStream(parser.getTokenStream());
 
-        TSPHPDefinitionWalker definition = new TSPHPDefinitionWalker(commonTreeNodeStream, symbolTable.getDefiner());
+        TSPHPDefinitionWalker definition = new TSPHPDefinitionWalker(commonTreeNodeStream, controller.getDefiner());
         definition.downup(ast);
 
         verifyDefinitions();

@@ -16,10 +16,8 @@
  */
 package ch.tutteli.tsphp.typechecker;
 
-import ch.tutteli.tsphp.common.ILowerCaseStringMap;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
-import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 
@@ -27,10 +25,8 @@ import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public interface ISymbolTable
+public interface ITypeCheckerController
 {
-
-    ILowerCaseStringMap<IGlobalNamespaceScope> getGlobalNamespaceScopes();
 
     IDefiner getDefiner();
 
@@ -72,4 +68,10 @@ public interface ISymbolTable
     ITypeSymbol resolveType(ITSPHPAst typeAst);
 
     ITypeSymbol resolvePrimitiveType(ITSPHPAst typeASt);
+
+    ITypeSymbol getBinaryOperatorEvalType(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
+
+    ITypeSymbol getUnaryOperatorEvalType(ITSPHPAst operator, ITSPHPAst expression);
+
+    ITypeSystemInitialiser getSymbolTable();
 }

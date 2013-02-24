@@ -53,14 +53,25 @@ public class ErrorMessageProvider extends AErrorMessageProvider
         referenceErrors.put("interfaceExpected", "Line %line%|%pos% - Interface expected, \"%id%\" is not an interface.");
         referenceErrors.put("classExpected", "Line %line%|%pos% - class expected, \"%id%\" is not a class.");
         referenceErrors.put("notInClass", "Line %line%|%pos% - %id% is used outside a class.");
-        
+
         referenceErrors.put("noParentClass", "Line %line%|%pos% - class %id% has no parent class.");
         referenceErrors.put("notDefined", "Line %line%|%pos% - %id% was never defined.");
         referenceErrors.put("notStatic", "Line %line%|%pos% - %id% is not static.");
     }
 
     @Override
-    protected String getStandardErrorDefinitionMessage(String key, DefinitionErrorDto dto) {
+    protected void loadWrongArgumentTyperrorMessages() {
+        wrongArgumentTypeErrors = new HashMap<>();
+        wrongArgumentTypeErrors.put("wrongOperatorUsage", "Line %line%|%pos% - usage of operator %id% is wrong.\n"
+                + "It cannot be applied to the given types for LHS/RHS: %aParams%\n"
+                + "existing overloads: %overloads%");
+        wrongArgumentTypeErrors.put("ambiguousOperatorUsage", "Line %line%|%pos% - usage of operator %id% is ambiguous."
+                + "\ntypes LHS/RHS: %aParams%\n"
+                + "ambiguous overloads: %overloads%");
+    }
+
+    @Override
+    protected String getStandardDefinitionErrorMessage(String key, DefinitionErrorDto dto) {
         return "DefinitionException occured, corresponding error message for \"" + key + "\" not defined. "
                 + "Please report bug to http://tsphp.tutteli.ch\n"
                 + "However, the following information was gathered.\n"
@@ -69,11 +80,21 @@ public class ErrorMessageProvider extends AErrorMessageProvider
     }
 
     @Override
-    protected String getStandardErrorReferenceMessage(String key, ReferenceErrorDto dto) {
+    protected String getStandardReferenceErrorMessage(String key, ReferenceErrorDto dto) {
         return "ReferenceException occured, corresponding error message for \"" + key + "\" is not defined. "
                 + "Please report bug to http://tsphp.tutteli.ch\n"
                 + "However, the following information was gathered.\n"
                 + "Line " + dto.line + "|" + dto.position + " - " + dto.identifier + " could not been resolved to its"
                 + "corresponding reference.";
+    }
+
+    @Override
+    protected String getStandardWrongArgumentTypeErrorMessage(String key, WrongArgumentTypeErrorDto dto) {
+        return "WrongArgumentTypeException occured, corresponding error message for \"" + key + "\" is not defined. "
+                + "Please report bug to http://tsphp.tutteli.ch\n"
+                + "However, the following information was gathered.\n"
+                + "Line " + dto.line + "|" + dto.position + " - usage of " + dto.identifier + " was wrong.\n"
+                + "types actual parameters: " + dto.actualParameterTypes.toString() + "\n"
+                + "existing overloads: " + getOverloadSignatures(dto.possibleOverloads);
     }
 }

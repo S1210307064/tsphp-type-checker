@@ -32,14 +32,17 @@ import java.util.Set;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class AScopedTypeSymbol extends AScopedSymbol implements ITypeSymbol, ICaseInsensitiveScope, IPolymorphicTypeSymbol
+public class AScopedTypeSymbol extends AScopedSymbol implements ITypeSymbol, ICaseInsensitiveScope,
+        IPolymorphicTypeSymbol
 {
 
-    protected IPolymorphicTypeSymbol parent;
+    protected ITypeSymbol parentTypeSymbol;
     protected ILowerCaseStringMap<List<ISymbol>> symbolsCaseInsensitive = new LowerCaseStringMap<>();
 
-    public AScopedTypeSymbol(ITSPHPAst definitionAst, Set<Integer> modifiers, String name, IScope enclosingScope) {
+    public AScopedTypeSymbol(ITSPHPAst definitionAst, Set<Integer> modifiers, String name, IScope enclosingScope,
+            ITypeSymbol theParentTypeSymbol) {
         super(definitionAst, modifiers, name, enclosingScope);
+        parentTypeSymbol = theParentTypeSymbol;
     }
 
     @Override
@@ -56,19 +59,19 @@ public class AScopedTypeSymbol extends AScopedSymbol implements ITypeSymbol, ICa
     @Override
     public ISymbol resolveWithFallbackToParent(ITSPHPAst ast) {
         ISymbol symbol = ScopeHelperRegistry.get().resolve(this, ast);
-        if (symbol == null) {
-            symbol = parent.resolveWithFallbackToParent(ast);
+        if (symbol == null && parentTypeSymbol instanceof IPolymorphicTypeSymbol) {
+            symbol = ((IPolymorphicTypeSymbol) parentTypeSymbol).resolveWithFallbackToParent(ast);
         }
         return symbol;
     }
 
     @Override
-    public IPolymorphicTypeSymbol getParent() {
-        return parent;
+    public ITypeSymbol getParentTypeSymbol() {
+        return parentTypeSymbol;
     }
 
     @Override
     public void setParent(IPolymorphicTypeSymbol newParent) {
-        parent = newParent;
+        parentTypeSymbol = newParent;
     }
 }

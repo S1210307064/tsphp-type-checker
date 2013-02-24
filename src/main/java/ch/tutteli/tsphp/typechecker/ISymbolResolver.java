@@ -14,20 +14,37 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.symbols;
+package ch.tutteli.tsphp.typechecker;
 
+import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public interface IPolymorphicTypeSymbol extends ITypeSymbol
+public interface ISymbolResolver
 {
 
-    ISymbol resolveWithFallbackToParent(ITSPHPAst ast);
+    boolean isAbsolute(String typeName);
 
-    void setParent(IPolymorphicTypeSymbol newParent);
+    IClassTypeSymbol getEnclosingClass(ITSPHPAst ast);
+
+    IScope getEnclosingGlobalNamespaceScope(IScope scope);
+
+    IScope getResolvingScope(ITSPHPAst typeAst);
+
+    ISymbol resolveGlobalIdentifier(ITSPHPAst typeAst);
+
+    ISymbol resolveGlobalIdentifierWithFallback(ITSPHPAst ast);
+
+    ISymbol resolveInClassSymbol(ITSPHPAst ast);
+
+    ITypeSymbol resolveUseType(ITSPHPAst typeAst, ITSPHPAst alias);
+
+    IVariableSymbol resolveConstant(ITSPHPAst ast);
 }

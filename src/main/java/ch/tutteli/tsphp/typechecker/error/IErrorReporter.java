@@ -20,7 +20,12 @@ import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.exceptions.DefinitionException;
 import ch.tutteli.tsphp.common.exceptions.ReferenceException;
-import org.omg.CORBA.IDLTypeHelper;
+import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
+import ch.tutteli.tsphp.common.exceptions.UnsupportedOperationException;
+import ch.tutteli.tsphp.typechecker.AmbiguousCallException;
+import ch.tutteli.tsphp.typechecker.OverloadDto;
+import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
+import java.util.List;
 
 /**
  *
@@ -68,4 +73,18 @@ public interface IErrorReporter extends ch.tutteli.tsphp.common.IErrorReporter
     ReferenceException notDefined(ITSPHPAst ast);
 
     ReferenceException notStatic(ITSPHPAst callee);
+
+    UnsupportedOperationException unsupportedOperator(ITSPHPAst operator);
+
+    ReferenceException ambiguousUnaryOperatorUsage(ITSPHPAst operator, ITSPHPAst expression,
+            AmbiguousCallException ex);
+
+    ReferenceException ambiguousBinaryOperatorUsage(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right,
+            AmbiguousCallException ex);
+
+    TypeCheckerException wrongBinaryOperatorUsage(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right,
+            List<IMethodSymbol> existingMethodOverloads);
+
+    TypeCheckerException wrongUnaryOperatorUsage(ITSPHPAst operator, ITSPHPAst expression,
+            List<IMethodSymbol> existingMethodOverloads);
 }

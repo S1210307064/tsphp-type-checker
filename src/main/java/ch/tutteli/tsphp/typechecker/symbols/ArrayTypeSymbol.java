@@ -16,19 +16,24 @@
  */
 package ch.tutteli.tsphp.typechecker.symbols;
 
-import ch.tutteli.tsphp.common.ASymbol;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class ArrayTypeSymbol extends ASymbol implements IArrayTypeSymbol
+public class ArrayTypeSymbol extends ATypeSymbol implements IArrayTypeSymbol
 {
 
-    ITypeSymbol baseType;
+    private int tokenType;
 
-    public ArrayTypeSymbol(String name, ITypeSymbol baseType) {
-        super(null, name);
+    public ArrayTypeSymbol(String name, int theTokenType, ITypeSymbol baseType, ITypeSymbol parentTypeSymbol) {
+        super(null, name, parentTypeSymbol);
+        tokenType = theTokenType;
+    }
+
+    @Override
+    public int getTokenTypeForCasting() {
+        return tokenType;
     }
 }

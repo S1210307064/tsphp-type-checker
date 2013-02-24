@@ -21,13 +21,16 @@ import ch.tutteli.tsphp.common.ITSPHPAstAdaptor;
 import ch.tutteli.tsphp.common.ITypeChecker;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPReferenceWalker;
-import ch.tutteli.tsphp.typechecker.error.ErrorReporter;
 import ch.tutteli.tsphp.typechecker.error.ErrorMessageProvider;
+import ch.tutteli.tsphp.typechecker.error.ErrorReporter;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.scopes.ScopeFactory;
 import ch.tutteli.tsphp.typechecker.scopes.ScopeHelper;
 import ch.tutteli.tsphp.typechecker.scopes.ScopeHelperRegistry;
+import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
 import ch.tutteli.tsphp.typechecker.symbols.SymbolFactory;
+import ch.tutteli.tsphp.typechecker.utils.AstHelper;
+import ch.tutteli.tsphp.typechecker.utils.IAstHelper;
 import java.util.List;
 import org.antlr.runtime.tree.TreeNodeStream;
 
@@ -38,24 +41,41 @@ import org.antlr.runtime.tree.TreeNodeStream;
 public class TypeChecker implements ITypeChecker
 {
 
-    private ISymbolTable symbolTable;
+    private ITypeCheckerController controller;
 
     public TypeChecker(ITSPHPAstAdaptor astAdaptor) {
         ScopeHelperRegistry.set(new ScopeHelper());
         ErrorReporterRegistry.set(new ErrorReporter(new ErrorMessageProvider()));
-        symbolTable = new SymbolTable(new SymbolFactory(), new ScopeFactory(), astAdaptor);
+        ISymbolFactory symbolFactory = new SymbolFactory();
+        IAstHelper astHelper = new AstHelper(astAdaptor);
+        IDefiner definer = new Definer(symbolFactory, new ScopeFactory());
+        ITypeSystemInitialiser symbolTable = new TypeSystemInitialiser(symbolFactory, astHelper,
+                definer.getGlobalDefaultNamespace());
+
+        ISymbolResolver symbolResolver = new SymbolResolver(symbolFactory, definer.getGlobalNamespaceScopes(),
+                definer.getGlobalDefaultNamespace());
+
+        IOverloadResolver methodResolver = new OverloadResolver(symbolTable);
+
+        controller = new TypeCheckerController(
+                symbolFactory,
+                symbolTable,
+                definer,
+                symbolResolver,
+                methodResolver,
+                astHelper);
     }
 
     @Override
     public void enrichWithDefinitions(ITSPHPAst ast, TreeNodeStream treeNodeStream) {
-        TSPHPDefinitionWalker definition = new TSPHPDefinitionWalker(treeNodeStream, symbolTable.getDefiner());
+        TSPHPDefinitionWalker definition = new TSPHPDefinitionWalker(treeNodeStream, controller.getDefiner());
         definition.downup(ast);
     }
 
     @Override
     public void enrichWithReferences(ITSPHPAst ast, TreeNodeStream treeNodeStream) {
         treeNodeStream.reset();
-        TSPHPReferenceWalker reference = new TSPHPReferenceWalker(treeNodeStream, symbolTable);
+        TSPHPReferenceWalker reference = new TSPHPReferenceWalker(treeNodeStream, controller);
         reference.downup(ast);
     }
 

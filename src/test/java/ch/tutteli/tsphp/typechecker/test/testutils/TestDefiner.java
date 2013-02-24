@@ -46,9 +46,8 @@ public class TestDefiner extends Definer implements IDefiner, ICreateSymbolListe
     private List<Map.Entry<ISymbol, ITSPHPAst>> symbols = new ArrayList<>();
     private ISymbol newlyCreatedSymbol;
 
-    public TestDefiner(TestSymbolFactory aSymbolFactory, IScopeFactory aScopeFactory, ITSPHPAstAdaptor theAstAdaptor,
-            ILowerCaseStringMap<IGlobalNamespaceScope> theGlobalNamespaceScopes) {
-        super(aSymbolFactory, aScopeFactory, theAstAdaptor, theGlobalNamespaceScopes);
+    public TestDefiner(TestSymbolFactory aSymbolFactory, IScopeFactory aScopeFactory) {
+        super(aSymbolFactory, aScopeFactory);
         aSymbolFactory.registerListener(this);
     }
 

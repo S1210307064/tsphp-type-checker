@@ -14,19 +14,26 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.symbols;
+package ch.tutteli.tsphp.typechecker;
 
-import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.common.ITypeSymbol;
+import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
+import java.util.List;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class AliasTypeSymbol extends ATypeSymbol implements IAliasTypeSymbol
+public class AmbiguousCastException extends TypeCheckerException
 {
 
-    public AliasTypeSymbol(ITSPHPAst definitionAst, String name, ITypeSymbol parentTypeSymbol) {
-        super(definitionAst, name, parentTypeSymbol);
+    private List<ParameterPromotionDto> ambiguousCasts;
+
+    public AmbiguousCastException(List<ParameterPromotionDto> theAmmbiguousCasts) {
+
+        ambiguousCasts = theAmmbiguousCasts;
+    }
+
+    public List<ParameterPromotionDto> getAmbiguousCasts() {
+        return ambiguousCasts;
     }
 }

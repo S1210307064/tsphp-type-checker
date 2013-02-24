@@ -14,19 +14,24 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.symbols;
+package ch.tutteli.tsphp.typechecker.utils;
 
 import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.common.ITypeSymbol;
+import ch.tutteli.tsphp.typechecker.ParameterPromotionDto;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class AliasTypeSymbol extends ATypeSymbol implements IAliasTypeSymbol
+public interface IAstHelper
 {
 
-    public AliasTypeSymbol(ITSPHPAst definitionAst, String name, ITypeSymbol parentTypeSymbol) {
-        super(definitionAst, name, parentTypeSymbol);
-    }
+    ITSPHPAst createAst(int tokenType, String name);
+
+    /**
+     * Create a function call or static method call AST node and use the given expression as actual parameter.
+     *
+     * @return The create node
+     */
+    ITSPHPAst prependCasting(ParameterPromotionDto parameterPromotionDto);
 }

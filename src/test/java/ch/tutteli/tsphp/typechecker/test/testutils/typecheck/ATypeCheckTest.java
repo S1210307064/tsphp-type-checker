@@ -16,10 +16,11 @@
  */
 package ch.tutteli.tsphp.typechecker.test.testutils.typecheck;
 
+import ch.tutteli.tsphp.common.IErrorReporter;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
-import ch.tutteli.tsphp.typechecker.antlr.TSPHPReferenceWalker;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckWalker;
+import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.test.testutils.ScopeTestHelper;
 import ch.tutteli.tsphp.typechecker.test.testutils.reference.AReferenceTest;
 import org.junit.Assert;
@@ -47,7 +48,7 @@ public class ATypeCheckTest extends AReferenceTest
         testStructs = structs;
     }
 
-    protected void verifyTypCheck() {
+    protected void verifyTypeCheck() {
         for (int i = 0; i < testStructs.length; ++i) {
             TypCheckStruct testStruct = testStructs[i];
             ITSPHPAst testCandidate = ScopeTestHelper.getAst(ast, testString, testStruct.accessOrderToNode);
@@ -64,20 +65,20 @@ public class ATypeCheckTest extends AReferenceTest
 
         switch (type) {
             case Bool:
-                typeSymbol = definer.getBoolTypeSymbol();
+                typeSymbol = typeSystemInitialiser.getBoolTypeSymbol();
                 break;
             case Int:
-                typeSymbol = definer.getIntTypeSymbol();
+                typeSymbol = typeSystemInitialiser.getIntTypeSymbol();
                 break;
             case Float:
-                typeSymbol = definer.getFloatTypeSymbol();
+                typeSymbol = typeSystemInitialiser.getFloatTypeSymbol();
                 break;
             case String:
-                typeSymbol = definer.getStringTypeSymbol();
+                typeSymbol = typeSystemInitialiser.getStringTypeSymbol();
                 break;
             case Array:
             default:
-                typeSymbol = definer.getArrayTypeSymbol();
+                typeSymbol = typeSystemInitialiser.getArrayTypeSymbol();
                 break;
         }
         return typeSymbol;
@@ -86,8 +87,16 @@ public class ATypeCheckTest extends AReferenceTest
     @Override
     protected void verifyReferences() {
         commonTreeNodeStream.reset();
-        typeCheckWalker = new TSPHPTypeCheckWalker(commonTreeNodeStream, symbolTable);
+        typeCheckWalker = new TSPHPTypeCheckWalker(commonTreeNodeStream, controller);
         typeCheckWalker.downup(ast);
-        verifyTypCheck();
+        checkErrors();
+    }
+
+    private void checkErrors() {
+        IErrorReporter errorHelper = ErrorReporterRegistry.get();
+        junit.framework.Assert.assertFalse(testString + " failed. Exceptions occured." + errorHelper.getExceptions(),
+                errorHelper.hasFoundError());
+
+        verifyTypeCheck();
     }
 }

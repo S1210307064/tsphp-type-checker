@@ -22,7 +22,10 @@ package ch.tutteli.tsphp.typechecker.error;
  */
 public interface IErrorMessageProvider
 {
-    String getErrorDefinitionMessage(String key, DefinitionErrorDto dto);
 
-    String getErrorReferenceMessage(String unkownType, ReferenceErrorDto referenceErrorDto);
+    String getDefinitionErrorMessage(String key, DefinitionErrorDto dto);
+
+    String getReferenceErrorMessage(String key, ReferenceErrorDto referenceErrorDto);
+
+    String getWrongArgumentTypeErrorMessage(String key, WrongArgumentTypeErrorDto wrongArgumentTypeErrorDto);
 }

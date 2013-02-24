@@ -57,7 +57,7 @@ public class ErroneousClassTypeSymbol extends AErroneousScopedSymbol implements 
     }
 
     @Override
-    public IClassTypeSymbol getParent() {
+    public IClassTypeSymbol getParentTypeSymbol() {
         return this;
     }
 

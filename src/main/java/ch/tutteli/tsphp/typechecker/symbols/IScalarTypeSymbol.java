@@ -16,12 +16,10 @@
  */
 package ch.tutteli.tsphp.typechecker.symbols;
 
-import ch.tutteli.tsphp.common.ITypeSymbol;
-
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public interface IScalarTypeSymbol extends ITypeSymbol
+public interface IScalarTypeSymbol extends ITypeSymbolWithPHPBuiltInCasting
 {
 }

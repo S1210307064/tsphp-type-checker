@@ -18,6 +18,7 @@ package ch.tutteli.tsphp.typechecker.symbols;
 
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ITSPHPAst;
+import ch.tutteli.tsphp.common.ITypeSymbol;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -26,15 +27,16 @@ import java.util.Set;
  * @author Robert Stoll <rstoll@tutteli.ch>
  *
  */
-public class ClassSymbol extends AScopedTypeSymbol implements IClassTypeSymbol
+public class ClassTypeSymbol extends AScopedTypeSymbol implements IClassTypeSymbol
 {
 
     private IMethodSymbol construct;
     private IVariableSymbol $this;
     private Set<IInterfaceTypeSymbol> interfaceTypeSymbols = new HashSet<>();
 
-    public ClassSymbol(ITSPHPAst definitionAst, Set<Integer> modifiers, String name, IScope enclosingScope) {
-        super(definitionAst, modifiers, name, enclosingScope);
+    public ClassTypeSymbol(ITSPHPAst definitionAst, Set<Integer> modifiers, String name, IScope enclosingScope,
+            ITypeSymbol parentTypeSymbol) {
+        super(definitionAst, modifiers, name, enclosingScope, parentTypeSymbol);
     }
 
     @Override
