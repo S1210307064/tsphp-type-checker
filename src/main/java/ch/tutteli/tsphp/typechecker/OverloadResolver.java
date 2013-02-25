@@ -35,13 +35,13 @@ public class OverloadResolver implements IOverloadResolver
 {
 
     private Map<ITypeSymbol, Map<ITypeSymbol, IMethodSymbol>> explicitCasts;
-    private ITypeSystemInitialiser symbolTable;
+    private ISymbolTable symbolTable;
 
     /**
      *
      * @param theScalarCastMethod The method used to cast a scalar type to another scalar type
      */
-    public OverloadResolver(ITypeSystemInitialiser theSymbolTable) {
+    public OverloadResolver(ISymbolTable theSymbolTable) {
         symbolTable = theSymbolTable;
         explicitCasts = theSymbolTable.getExplicitCastings();
     }

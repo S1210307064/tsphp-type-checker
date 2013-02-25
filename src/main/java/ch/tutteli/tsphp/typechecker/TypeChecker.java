@@ -49,20 +49,20 @@ public class TypeChecker implements ITypeChecker
         ISymbolFactory symbolFactory = new SymbolFactory();
         IAstHelper astHelper = new AstHelper(astAdaptor);
         IDefiner definer = new Definer(symbolFactory, new ScopeFactory());
-        ITypeSystemInitialiser symbolTable = new TypeSystemInitialiser(symbolFactory, astHelper,
+        ISymbolTable symbolTable = new SymbolTable(symbolFactory, astHelper,
                 definer.getGlobalDefaultNamespace());
 
         ISymbolResolver symbolResolver = new SymbolResolver(symbolFactory, definer.getGlobalNamespaceScopes(),
                 definer.getGlobalDefaultNamespace());
 
-        IOverloadResolver methodResolver = new OverloadResolver(symbolTable);
+        IOverloadResolver overloadResolver = new OverloadResolver(symbolTable);
 
         controller = new TypeCheckerController(
                 symbolFactory,
                 symbolTable,
                 definer,
                 symbolResolver,
-                methodResolver,
+                overloadResolver,
                 astHelper);
     }
 

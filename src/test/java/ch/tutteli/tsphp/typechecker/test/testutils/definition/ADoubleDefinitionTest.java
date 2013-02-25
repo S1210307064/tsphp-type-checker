@@ -16,7 +16,6 @@
  */
 package ch.tutteli.tsphp.typechecker.test.testutils.definition;
 
-import ch.tutteli.tsphp.typechecker.test.testutils.definition.ADefinitionTest;
 import ch.tutteli.tsphp.common.ILowerCaseStringMap;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;

@@ -73,5 +73,5 @@ public interface ITypeCheckerController
 
     ITypeSymbol getUnaryOperatorEvalType(ITSPHPAst operator, ITSPHPAst expression);
 
-    ITypeSystemInitialiser getSymbolTable();
+    ISymbolTable getSymbolTable();
 }

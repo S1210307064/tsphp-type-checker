@@ -109,13 +109,7 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
     protected String getOverloadSignatures(List<String[]> ambiguousFormalParameterTypes) {
         StringBuilder stringBuilder = new StringBuilder();
         for (String[] parameterTypes : ambiguousFormalParameterTypes) {
-            boolean isNotFirst = false;
-            for (String parameterType : parameterTypes) {
-                if (isNotFirst) {
-                    stringBuilder.append(", ");
-                }
-                stringBuilder.append(parameterType);
-            }
+            stringBuilder.append(Arrays.toString(parameterTypes));
             stringBuilder.append("\n");
         }
         return stringBuilder.toString();

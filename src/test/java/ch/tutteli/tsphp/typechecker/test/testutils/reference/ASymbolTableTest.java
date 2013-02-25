@@ -21,12 +21,12 @@ import ch.tutteli.tsphp.common.TSPHPAstAdaptor;
 import ch.tutteli.tsphp.typechecker.IDefiner;
 import ch.tutteli.tsphp.typechecker.IOverloadResolver;
 import ch.tutteli.tsphp.typechecker.ISymbolResolver;
+import ch.tutteli.tsphp.typechecker.ISymbolTable;
 import ch.tutteli.tsphp.typechecker.ITypeCheckerController;
-import ch.tutteli.tsphp.typechecker.ITypeSystemInitialiser;
 import ch.tutteli.tsphp.typechecker.OverloadResolver;
 import ch.tutteli.tsphp.typechecker.SymbolResolver;
+import ch.tutteli.tsphp.typechecker.SymbolTable;
 import ch.tutteli.tsphp.typechecker.TypeCheckerController;
-import ch.tutteli.tsphp.typechecker.TypeSystemInitialiser;
 import ch.tutteli.tsphp.typechecker.scopes.IScopeFactory;
 import ch.tutteli.tsphp.typechecker.test.testutils.ATest;
 import ch.tutteli.tsphp.typechecker.test.testutils.TestDefiner;
@@ -54,14 +54,15 @@ public class ASymbolTableTest extends ATest
         scopeFactory = new TestScopeFactory();
         TestSymbolFactory symbolFactory = new TestSymbolFactory();
         IDefiner definer = new TestDefiner(symbolFactory, scopeFactory);
-        ITypeSystemInitialiser typeSystemInitialiser = new TypeSystemInitialiser(symbolFactory, astHelper, definer.getGlobalDefaultNamespace());
+        ISymbolTable symbolTable = new SymbolTable(symbolFactory, astHelper,
+                definer.getGlobalDefaultNamespace());
         ISymbolResolver symbolResolver = new SymbolResolver(symbolFactory, definer.getGlobalNamespaceScopes(),
                 definer.getGlobalDefaultNamespace());
-        IOverloadResolver methodResolver = new OverloadResolver(typeSystemInitialiser);
+        IOverloadResolver methodResolver = new OverloadResolver(symbolTable);
 
         controller = new TypeCheckerController(
                 symbolFactory,
-                typeSystemInitialiser,
+                symbolTable,
                 definer,
                 symbolResolver,
                 methodResolver,

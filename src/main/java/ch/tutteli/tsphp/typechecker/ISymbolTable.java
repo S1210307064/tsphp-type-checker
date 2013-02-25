@@ -19,6 +19,7 @@ package ch.tutteli.tsphp.typechecker;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IArrayTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IPseudoTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IScalarTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ITypeSymbolWithPHPBuiltInCasting;
 import java.util.List;
@@ -28,7 +29,7 @@ import java.util.Map;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public interface ITypeSystemInitialiser
+public interface ISymbolTable
 {
 
     void initTypeSystem();
@@ -50,4 +51,8 @@ public interface ITypeSystemInitialiser
     IScalarTypeSymbol getStringTypeSymbol();
 
     IArrayTypeSymbol getArrayTypeSymbol();
+
+    IPseudoTypeSymbol getResourceTypeSymbol();
+
+    IPseudoTypeSymbol getObjectTypeSymbol();
 }

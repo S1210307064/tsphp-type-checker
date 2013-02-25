@@ -18,7 +18,7 @@ package ch.tutteli.tsphp.typechecker.test.typecheck;
 
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ATypeCheckTest;
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.EBuiltInType;
-import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.TypCheckStruct;
+import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.TypeCheckStruct;
 import java.util.Arrays;
 import java.util.Collection;
 import org.antlr.runtime.RecognitionException;
@@ -34,7 +34,7 @@ import org.junit.runners.Parameterized;
 public class InBuiltTypeTest extends ATypeCheckTest
 {
 
-    public InBuiltTypeTest(String testString, TypCheckStruct[] struct) {
+    public InBuiltTypeTest(String testString, TypeCheckStruct[] struct) {
         super(testString, struct);
     }
 
@@ -46,16 +46,16 @@ public class InBuiltTypeTest extends ATypeCheckTest
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
         return Arrays.asList(new Object[][]{
-                    {"bool $a = true;", new TypCheckStruct[]{struct("true", Bool, 1, 0, 1, 0)}},
-                    {"bool $a = false;", new TypCheckStruct[]{struct("false", Bool, 1, 0, 1, 0)}},
-                    {"int $a = 1;", new TypCheckStruct[]{struct("1", Int, 1, 0, 1, 0)}},
-                    {"float $a = 1.0;", new TypCheckStruct[]{struct("1.0", Float, 1, 0, 1, 0)}},
-                    {"string $a = 'hello';", new TypCheckStruct[]{struct("'hello'", String, 1, 0, 1, 0)}},
-                    {"string $a = \"hello\";", new TypCheckStruct[]{struct("\"hello\"", String, 1, 0, 1, 0)}}
+                    {"bool $a = true;", new TypeCheckStruct[]{struct("true", Bool, 1, 0, 1, 0)}},
+                    {"bool $a = false;", new TypeCheckStruct[]{struct("false", Bool, 1, 0, 1, 0)}},
+                    {"int $a = 1;", new TypeCheckStruct[]{struct("1", Int, 1, 0, 1, 0)}},
+                    {"float $a = 1.0;", new TypeCheckStruct[]{struct("1.0", Float, 1, 0, 1, 0)}},
+                    {"string $a = 'hello';", new TypeCheckStruct[]{struct("'hello'", String, 1, 0, 1, 0)}},
+                    {"string $a = \"hello\";", new TypeCheckStruct[]{struct("\"hello\"", String, 1, 0, 1, 0)}}
                 });
     }
 
-    private static TypCheckStruct struct(String astText, EBuiltInType type, Integer... accessOrder) {
-        return new TypCheckStruct(astText, type, Arrays.asList(accessOrder));
+    private static TypeCheckStruct struct(String astText, EBuiltInType type, Integer... accessOrder) {
+        return new TypeCheckStruct(astText, type, Arrays.asList(accessOrder));
     }
 }

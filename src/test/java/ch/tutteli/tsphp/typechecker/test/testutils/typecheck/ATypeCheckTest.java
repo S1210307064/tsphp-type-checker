@@ -41,16 +41,16 @@ public class ATypeCheckTest extends AReferenceTest
     public static EBuiltInType Array = EBuiltInType.Array;
     //
     protected TSPHPTypeCheckWalker typeCheckWalker;
-    protected TypCheckStruct[] testStructs;
+    protected TypeCheckStruct[] testStructs;
 
-    public ATypeCheckTest(String testString, TypCheckStruct[] structs) {
+    public ATypeCheckTest(String testString, TypeCheckStruct[] structs) {
         super(testString);
         testStructs = structs;
     }
 
     protected void verifyTypeCheck() {
         for (int i = 0; i < testStructs.length; ++i) {
-            TypCheckStruct testStruct = testStructs[i];
+            TypeCheckStruct testStruct = testStructs[i];
             ITSPHPAst testCandidate = ScopeTestHelper.getAst(ast, testString, testStruct.accessOrderToNode);
             Assert.assertNotNull(testString + " failed. testCandidate is null. should be " + testStruct.evalType, testCandidate);
             Assert.assertEquals(testString + " failed. wrong ast text,", testStruct.astText,
@@ -65,20 +65,20 @@ public class ATypeCheckTest extends AReferenceTest
 
         switch (type) {
             case Bool:
-                typeSymbol = typeSystemInitialiser.getBoolTypeSymbol();
+                typeSymbol = symbolTable.getBoolTypeSymbol();
                 break;
             case Int:
-                typeSymbol = typeSystemInitialiser.getIntTypeSymbol();
+                typeSymbol = symbolTable.getIntTypeSymbol();
                 break;
             case Float:
-                typeSymbol = typeSystemInitialiser.getFloatTypeSymbol();
+                typeSymbol = symbolTable.getFloatTypeSymbol();
                 break;
             case String:
-                typeSymbol = typeSystemInitialiser.getStringTypeSymbol();
+                typeSymbol = symbolTable.getStringTypeSymbol();
                 break;
             case Array:
             default:
-                typeSymbol = typeSystemInitialiser.getArrayTypeSymbol();
+                typeSymbol = symbolTable.getArrayTypeSymbol();
                 break;
         }
         return typeSymbol;

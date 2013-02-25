@@ -42,13 +42,13 @@ package ch.tutteli.tsphp.typechecker.antlr;
 
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.typechecker.ITypeSystemInitialiser;
+import ch.tutteli.tsphp.typechecker.ISymbolTable;
 import ch.tutteli.tsphp.typechecker.ITypeCheckerController;
 }
 
 @members {
-ITypeSystemInitialiser symbolTable;
 ITypeCheckerController controller;
+ISymbolTable symbolTable;
 
 public TSPHPTypeCheckWalker(TreeNodeStream input, ITypeCheckerController theController) {
     this(input);
@@ -92,15 +92,15 @@ variableInit
 	
 expression returns [ITypeSymbol type]
 @after { $start.setEvalType($type); } // do after any alternative
-	:   	Bool		{$type = symbolTable.getBoolTypeSymbol();}
-    	|   	Int     	{$type =  symbolTable.getIntTypeSymbol();}
-    	|   	Float		{$type = symbolTable.getFloatTypeSymbol();}
-    	|   	String		{$type =  symbolTable.getStringTypeSymbol();}
-    	|	TypeArray	{$type = symbolTable.getArrayTypeSymbol();}
-    	|  	symbol		{$type = $symbol.type;}
-	|	unaryOperator 	{$type = $unaryOperator.type;}
-	|	binaryOperator 	{$type = $binaryOperator.type;}
-
+	:   	Bool			{$type = symbolTable.getBoolTypeSymbol();}
+    	|   	Int     		{$type =  symbolTable.getIntTypeSymbol();}
+    	|   	Float			{$type = symbolTable.getFloatTypeSymbol();}
+    	|   	String			{$type =  symbolTable.getStringTypeSymbol();}
+    	|	^(TypeArray .*)		{$type = symbolTable.getArrayTypeSymbol();}
+    	|  	symbol			{$type = $symbol.type;}
+	|	unaryOperator 		{$type = $unaryOperator.type;}
+	|	binaryOperator 		{$type = $binaryOperator.type;}
+	|	^('@' expr=expression)	{$type = $expr.start.getEvalType();}
     	;
     	
 symbol returns [ITypeSymbol type]
@@ -116,7 +116,6 @@ symbol returns [ITypeSymbol type]
 unaryOperator returns [ITypeSymbol type]
 	:	^(	(	PRE_INCREMENT 
 		    	|	PRE_DECREMENT 
-		    	|	'@' 
 		    	|	'~' 
 		    	|	'!' 
 		    	|	UNARY_MINUS     	

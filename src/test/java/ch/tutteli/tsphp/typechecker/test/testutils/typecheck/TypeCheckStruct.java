@@ -22,14 +22,14 @@ import java.util.List;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class TypCheckStruct
+public class TypeCheckStruct
 {
 
     public String astText;
     public EBuiltInType evalType;
     public List<Integer> accessOrderToNode;
 
-    public TypCheckStruct(String theAstText, EBuiltInType theEvalType, List<Integer> theAccessOrderToNode) {
+    public TypeCheckStruct(String theAstText, EBuiltInType theEvalType, List<Integer> theAccessOrderToNode) {
         astText = theAstText;
         accessOrderToNode = theAccessOrderToNode;
         evalType = theEvalType;

@@ -21,12 +21,12 @@ import ch.tutteli.tsphp.common.ITSPHPAstAdaptor;
 import ch.tutteli.tsphp.common.TSPHPAstAdaptor;
 import ch.tutteli.tsphp.typechecker.IOverloadResolver;
 import ch.tutteli.tsphp.typechecker.ISymbolResolver;
+import ch.tutteli.tsphp.typechecker.ISymbolTable;
 import ch.tutteli.tsphp.typechecker.ITypeCheckerController;
-import ch.tutteli.tsphp.typechecker.ITypeSystemInitialiser;
 import ch.tutteli.tsphp.typechecker.OverloadResolver;
 import ch.tutteli.tsphp.typechecker.SymbolResolver;
+import ch.tutteli.tsphp.typechecker.SymbolTable;
 import ch.tutteli.tsphp.typechecker.TypeCheckerController;
-import ch.tutteli.tsphp.typechecker.TypeSystemInitialiser;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tutteli.tsphp.typechecker.test.testutils.ATest;
 import ch.tutteli.tsphp.typechecker.test.testutils.TestDefiner;
@@ -51,7 +51,7 @@ public abstract class ADefinitionTest extends ATest
     protected String errorMessagePrefix;
     protected TestDefiner definer;
     protected ITypeCheckerController controller;
-    protected ITypeSystemInitialiser typeSystemInitialiser;
+    protected ISymbolTable symbolTable;
     protected TestScopeFactory scopeFactory;
     protected ITSPHPAst ast;
     protected CommonTreeNodeStream commonTreeNodeStream;
@@ -72,14 +72,14 @@ public abstract class ADefinitionTest extends ATest
         scopeFactory = new TestScopeFactory();
         TestSymbolFactory symbolFactory = new TestSymbolFactory();
         definer = new TestDefiner(symbolFactory, scopeFactory);
-        typeSystemInitialiser = new TypeSystemInitialiser(symbolFactory, astHelper, definer.getGlobalDefaultNamespace());
+        symbolTable = new SymbolTable(symbolFactory, astHelper, definer.getGlobalDefaultNamespace());
         ISymbolResolver symbolResolver = new SymbolResolver(symbolFactory, definer.getGlobalNamespaceScopes(),
                 definer.getGlobalDefaultNamespace());
-        IOverloadResolver methodResolver = new OverloadResolver(typeSystemInitialiser);
+        IOverloadResolver methodResolver = new OverloadResolver(symbolTable);
 
         controller = new TypeCheckerController(
                 symbolFactory,
-                typeSystemInitialiser,
+                symbolTable,
                 definer,
                 symbolResolver,
                 methodResolver,

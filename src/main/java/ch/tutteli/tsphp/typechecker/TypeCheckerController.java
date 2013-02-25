@@ -49,7 +49,7 @@ public class TypeCheckerController implements ITypeCheckerController
 
     private ISymbolFactory symbolFactory;
     private ISymbolResolver symbolResolver;
-    private ITypeSystemInitialiser typeSystemInitialiser;
+    private ISymbolTable typeSystemInitialiser;
     private IDefiner definer;
     private IOverloadResolver methodResolver;
     private IAstHelper astHelper;
@@ -60,7 +60,7 @@ public class TypeCheckerController implements ITypeCheckerController
     //
     private IGlobalNamespaceScope globalDefaultNamespace;
 
-    public TypeCheckerController(ISymbolFactory theSymbolFactory, ITypeSystemInitialiser theTypeSystemInitialiser,
+    public TypeCheckerController(ISymbolFactory theSymbolFactory, ISymbolTable theTypeSystemInitialiser,
             IDefiner theDefiner, ISymbolResolver theSymbolResolver, IOverloadResolver theMethodResolver,
             IAstHelper theAstHelper) {
         symbolFactory = theSymbolFactory;
@@ -83,7 +83,7 @@ public class TypeCheckerController implements ITypeCheckerController
     }
 
     @Override
-    public ITypeSystemInitialiser getSymbolTable() {
+    public ISymbolTable getSymbolTable() {
         return typeSystemInitialiser;
     }
 
@@ -482,7 +482,7 @@ public class TypeCheckerController implements ITypeCheckerController
 
         OverloadDto methodDto = null;
 
-        List<IMethodSymbol> methods = binaryOperators.get(tokenType);
+        List<IMethodSymbol> methods = unaryOperators.get(tokenType);
         List<OverloadDto> goodMethods = methodResolver.getApplicableMethods(methods, actualParameters);
         if (!goodMethods.isEmpty()) {
             methodDto = methodResolver.getMostSpecificApplicableMethod(goodMethods);

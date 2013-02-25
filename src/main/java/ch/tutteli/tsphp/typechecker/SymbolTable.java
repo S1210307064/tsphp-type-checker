@@ -22,6 +22,7 @@ import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.*;
 import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.symbols.IArrayTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IPseudoTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IScalarTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
 import ch.tutteli.tsphp.typechecker.symbols.ITypeSymbolWithPHPBuiltInCasting;
@@ -36,7 +37,7 @@ import java.util.Map;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class TypeSystemInitialiser implements ITypeSystemInitialiser
+public class SymbolTable implements ISymbolTable
 {
 
     private ISymbolFactory symbolFactory;
@@ -51,11 +52,14 @@ public class TypeSystemInitialiser implements ITypeSystemInitialiser
     private IScalarTypeSymbol floatTypeSymbol;
     private IScalarTypeSymbol stringTypeSymbol;
     private IArrayTypeSymbol arrayTypeSymbol;
+    private IPseudoTypeSymbol resourceTypeSymbol;
+    private IPseudoTypeSymbol objectTypeSymbol;
     //
     private IGlobalNamespaceScope globalDefaultNamespace;
 
-    public TypeSystemInitialiser(ISymbolFactory theSymbolFactory, IAstHelper theAstHelper,
+    public SymbolTable(ISymbolFactory theSymbolFactory, IAstHelper theAstHelper,
             IGlobalNamespaceScope theGlobalDefaultNamespace) {
+
         symbolFactory = theSymbolFactory;
         astHelper = theAstHelper;
         globalDefaultNamespace = theGlobalDefaultNamespace;
@@ -102,8 +106,19 @@ public class TypeSystemInitialiser implements ITypeSystemInitialiser
     }
 
     @Override
+    public IPseudoTypeSymbol getResourceTypeSymbol() {
+        return resourceTypeSymbol;
+    }
+
+    @Override
+    public IPseudoTypeSymbol getObjectTypeSymbol() {
+        return objectTypeSymbol;
+    }
+
+    @Override
     public void initTypeSystem() {
         defineBuiltInTypes();
+        initMaps();
         defineOperators();
         defineExplicitCastings();
     }
@@ -138,85 +153,6 @@ public class TypeSystemInitialiser implements ITypeSystemInitialiser
         globalDefaultNamespace.define(symbolFactory.createClassTypeSymbol(classModifier, identifier, globalDefaultNamespace));
     }
 
-    private void defineOperators() {
-        initMaps();
-
-        IMethodSymbol methodSymbol = createInBuiltMethodSymbol("||");
-        methodSymbol.addParameter(createParameter("left", boolTypeSymbol));
-        methodSymbol.addParameter(createParameter("right", boolTypeSymbol));
-        methodSymbol.setType(boolTypeSymbol);
-        addToBinaryOperators(LogicOr, methodSymbol);
-
-        methodSymbol = createInBuiltMethodSymbol("&&");
-        methodSymbol.addParameter(createParameter("left", boolTypeSymbol));
-        methodSymbol.addParameter(createParameter("right", boolTypeSymbol));
-        methodSymbol.setType(boolTypeSymbol);
-        addToBinaryOperators(LogicAnd, methodSymbol);
-
-        //bool, int, float cast implicitly to string
-//        methodSymbol = createInBuiltMethodSymbol("==");
-//        methodSymbol.addParameter(createParameter("left", boolTypeSymbol));
-//        methodSymbol.addParameter(createParameter("right", boolTypeSymbol));
-//        methodSymbol.setType(boolTypeSymbol);
-//        addToBinaryOperators(LogicAnd, methodSymbol);
-//
-//        methodSymbol = createInBuiltMethodSymbol("==");
-//        methodSymbol.addParameter(createParameter("left", intTypeSymbol));
-//        methodSymbol.addParameter(createParameter("right", intTypeSymbol));
-//        methodSymbol.setType(boolTypeSymbol);
-//        addToBinaryOperators(LogicAnd, methodSymbol);
-//
-//        methodSymbol = createInBuiltMethodSymbol("==");
-//        methodSymbol.addParameter(createParameter("left", floatTypeSymbol));
-//        methodSymbol.addParameter(createParameter("right", floatTypeSymbol));
-//        methodSymbol.setType(boolTypeSymbol);
-//        addToBinaryOperators(LogicAnd, methodSymbol);
-
-        methodSymbol = createInBuiltMethodSymbol("==");
-        methodSymbol.addParameter(createParameter("left", stringTypeSymbol));
-        methodSymbol.addParameter(createParameter("right", stringTypeSymbol));
-        methodSymbol.setType(boolTypeSymbol);
-        addToBinaryOperators(LogicAnd, methodSymbol);
-
-
-        //bool, int cast implicitly to float
-        methodSymbol = createInBuiltMethodSymbol("<");
-        methodSymbol.addParameter(createParameter("left", floatTypeSymbol));
-        methodSymbol.addParameter(createParameter("right", floatTypeSymbol));
-        methodSymbol.setType(boolTypeSymbol);
-        addToBinaryOperators(LessThan, methodSymbol);
-
-        methodSymbol = createInBuiltMethodSymbol(">");
-        methodSymbol.addParameter(createParameter("left", floatTypeSymbol));
-        methodSymbol.addParameter(createParameter("right", floatTypeSymbol));
-        methodSymbol.setType(boolTypeSymbol);
-        addToBinaryOperators(GreaterThan, methodSymbol);
-
-        defineArithmeticOperators();
-
-        methodSymbol = createInBuiltMethodSymbol(".");
-        methodSymbol.addParameter(createParameter("left", stringTypeSymbol));
-        methodSymbol.addParameter(createParameter("right", stringTypeSymbol));
-        methodSymbol.setType(stringTypeSymbol);
-        addToBinaryOperators(GreaterThan, methodSymbol);
-
-        methodSymbol = createInBuiltMethodSymbol("!");
-        methodSymbol.addParameter(createParameter("expr", boolTypeSymbol));
-        methodSymbol.setType(boolTypeSymbol);
-        addToUnaryOperators(LogicNot, methodSymbol);
-
-
-        methodSymbol = createInBuiltMethodSymbol("-");
-        methodSymbol.addParameter(createParameter("expr", intTypeSymbol));
-        methodSymbol.setType(intTypeSymbol);
-        addToUnaryOperators(UNARY_MINUS, methodSymbol);
-
-        methodSymbol = createInBuiltMethodSymbol("-");
-        methodSymbol.addParameter(createParameter("expr", floatTypeSymbol));
-        methodSymbol.setType(floatTypeSymbol);
-        addToUnaryOperators(UNARY_MINUS, methodSymbol);
-    }
-
     private void initMaps() {
         int[] unaryOperatoTypes = new int[]{
             PRE_INCREMENT, PRE_DECREMENT,
@@ -243,7 +179,20 @@ public class TypeSystemInitialiser implements ITypeSystemInitialiser
         for (int i = 0; i < binaryOperatorTypes.length; ++i) {
             binaryOperators.put(binaryOperatorTypes[i], new ArrayList<IMethodSymbol>());
         }
+    }
 
+    private void defineOperators() {
+
+        defineLogicOperators();
+        defineBitLevelOperators();
+        defineRelationalOperators();
+        defineArithmeticOperators();
+
+        IMethodSymbol methodSymbol = createInBuiltMethodSymbol(".");
+        methodSymbol.addParameter(createParameter("left", stringTypeSymbol));
+        methodSymbol.addParameter(createParameter("right", stringTypeSymbol));
+        methodSymbol.setType(stringTypeSymbol);
+        addToBinaryOperators(GreaterThan, methodSymbol);
 
     }
 
@@ -286,14 +235,79 @@ public class TypeSystemInitialiser implements ITypeSystemInitialiser
         }
     }
 
+    private void defineLogicOperators() {
+        Object[][] operators = new Object[][]{
+            {"or", LogicOrWeak},
+            {"xor", LogicXorWeak},
+            {"and", LogicAndWeak},
+            {"&&", LogicAnd},
+            {"||", LogicOr}
+        };
+        for (Object[] operator : operators) {
+            IMethodSymbol methodSymbol = createInBuiltMethodSymbol((String) operator[0]);
+            methodSymbol.addParameter(createParameter("left", boolTypeSymbol));
+            methodSymbol.addParameter(createParameter("right", boolTypeSymbol));
+            methodSymbol.setType(boolTypeSymbol);
+            addToBinaryOperators((int) operator[1], methodSymbol);
+        }
+
+        IMethodSymbol methodSymbol = createInBuiltMethodSymbol("!");
+        methodSymbol.addParameter(createParameter("expr", boolTypeSymbol));
+        methodSymbol.setType(boolTypeSymbol);
+        addToUnaryOperators(LogicNot, methodSymbol);
+    }
+
+    private void defineBitLevelOperators() {
+        Object[][] operators = new Object[][]{
+            {"|", BitwiseOr},
+            {"^", BitwiseXor},
+            {"&", BitwiseAnd},
+            {"<<", ShiftLeft},
+            {">>", ShiftRight}
+        };
+        for (Object[] operator : operators) {
+            IMethodSymbol methodSymbol = createInBuiltMethodSymbol((String) operator[0]);
+            methodSymbol.addParameter(createParameter("left", intTypeSymbol));
+            methodSymbol.addParameter(createParameter("right", intTypeSymbol));
+            methodSymbol.setType(intTypeSymbol);
+            addToBinaryOperators((int) operator[1], methodSymbol);
+        }
+
+        IMethodSymbol methodSymbol = createInBuiltMethodSymbol("~");
+        methodSymbol.addParameter(createParameter("expr", intTypeSymbol));
+        methodSymbol.setType(intTypeSymbol);
+        addToUnaryOperators(BitwiseNot, methodSymbol);
+    }
+
+    private void defineRelationalOperators() {
+        Object[][] operators = new Object[][]{
+            {"<", LessThan},
+            {"<=", LessEqualThan},
+            {">", GreaterThan},
+            {">=", GreaterEqualThan},};
+        for (Object[] operator : operators) {
+            IMethodSymbol methodSymbol = createInBuiltMethodSymbol((String) operator[0]);
+            methodSymbol.addParameter(createParameter("left", intTypeSymbol));
+            methodSymbol.addParameter(createParameter("right", intTypeSymbol));
+            methodSymbol.setType(boolTypeSymbol);
+            addToBinaryOperators((int) operator[1], methodSymbol);
+
+            methodSymbol = createInBuiltMethodSymbol((String) operator[0]);
+            methodSymbol.addParameter(createParameter("left", floatTypeSymbol));
+            methodSymbol.addParameter(createParameter("right", floatTypeSymbol));
+            methodSymbol.setType(boolTypeSymbol);
+            addToBinaryOperators((int) operator[1], methodSymbol);
+        }
+    }
+
     private void defineArithmeticOperators() {
         Object[][] operators = new Object[][]{
             {"+", Plus},
             {"-", Minus},
             {"*", Multiply},
             {"/", Divide},
-            {"%", Modulo}
-        };
+            {"%", Modulo},};
+
         for (Object[] operator : operators) {
             IMethodSymbol methodSymbol = createInBuiltMethodSymbol((String) operator[0]);
             methodSymbol.addParameter(createParameter("left", intTypeSymbol));
@@ -306,6 +320,25 @@ public class TypeSystemInitialiser implements ITypeSystemInitialiser
             methodSymbol.addParameter(createParameter("right", floatTypeSymbol));
             methodSymbol.setType(floatTypeSymbol);
             addToBinaryOperators((int) operator[1], methodSymbol);
+        }
+
+        operators = new Object[][]{
+            {"++", PRE_INCREMENT},
+            {"++", POST_INCREMENT},
+            {"--", PRE_DECREMENT},
+            {"--", POST_DECREMENT},
+            {"-", UNARY_MINUS}
+        };
+        for (Object[] operator : operators) {
+            IMethodSymbol methodSymbol = createInBuiltMethodSymbol((String) operator[0]);
+            methodSymbol.addParameter(createParameter("expr", intTypeSymbol));
+            methodSymbol.setType(intTypeSymbol);
+            addToUnaryOperators((int) operator[1], methodSymbol);
+
+            methodSymbol = createInBuiltMethodSymbol((String) operator[0]);
+            methodSymbol.addParameter(createParameter("expr", floatTypeSymbol));
+            methodSymbol.setType(floatTypeSymbol);
+            addToUnaryOperators((int) operator[1], methodSymbol);
         }
     }
 

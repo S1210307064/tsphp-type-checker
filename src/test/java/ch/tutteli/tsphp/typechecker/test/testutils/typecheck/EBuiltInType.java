@@ -27,5 +27,7 @@ public enum EBuiltInType
     Int,
     Float,
     String,
-    Array
+    Array,
+    Resource,
+    Object
 }
