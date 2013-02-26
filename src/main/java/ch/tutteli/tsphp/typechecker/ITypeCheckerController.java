@@ -74,4 +74,10 @@ public interface ITypeCheckerController
     ITypeSymbol getUnaryOperatorEvalType(ITSPHPAst operator, ITSPHPAst expression);
 
     ISymbolTable getSymbolTable();
+
+    void checkEquality(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
+
+    void checkIdentity(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
+
+    void checkAssignment(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
 }

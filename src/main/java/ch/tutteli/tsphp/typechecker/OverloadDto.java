@@ -29,10 +29,10 @@ public class OverloadDto
     public IMethodSymbol methodSymbol;
     public int parameterPromotedCount;
     public int promotionsTotal;
-    public List<ParameterPromotionDto> parametersNeedCasting;
+    public List<CastingDto> parametersNeedCasting;
 
     public OverloadDto(IMethodSymbol theMethodSymbol, int howManyParameterWerePromoted, int thePromotionsInTotal,
-            List<ParameterPromotionDto> theParametersNeedCasting) {
+            List<CastingDto> theParametersNeedCasting) {
         methodSymbol = theMethodSymbol;
         parameterPromotedCount = howManyParameterWerePromoted;
         promotionsTotal = thePromotionsInTotal;

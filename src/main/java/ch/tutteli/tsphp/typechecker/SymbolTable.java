@@ -340,6 +340,13 @@ public class SymbolTable implements ISymbolTable
             methodSymbol.setType(floatTypeSymbol);
             addToUnaryOperators((int) operator[1], methodSymbol);
         }
+        
+        IMethodSymbol methodSymbol = createInBuiltMethodSymbol("+");
+        methodSymbol.addParameter(createParameter("left", arrayTypeSymbol));
+        methodSymbol.addParameter(createParameter("right", arrayTypeSymbol));
+        methodSymbol.setType(arrayTypeSymbol);
+        addToBinaryOperators(Plus, methodSymbol);
+
     }
 
     private void addToUnaryOperators(int operatorType, IMethodSymbol methodSymbol) {

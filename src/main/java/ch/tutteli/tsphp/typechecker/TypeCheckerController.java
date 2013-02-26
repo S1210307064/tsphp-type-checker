@@ -22,6 +22,7 @@ import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.exceptions.DefinitionException;
 import ch.tutteli.tsphp.common.exceptions.ReferenceException;
 import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
+import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasTypeSymbol;
@@ -30,6 +31,7 @@ import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IInterfaceTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IPolymorphicTypeSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IScalarTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousSymbol;
@@ -51,12 +53,11 @@ public class TypeCheckerController implements ITypeCheckerController
     private ISymbolResolver symbolResolver;
     private ISymbolTable typeSystemInitialiser;
     private IDefiner definer;
-    private IOverloadResolver methodResolver;
+    private IOverloadResolver overloadResolver;
     private IAstHelper astHelper;
     //
     private Map<Integer, List<IMethodSymbol>> unaryOperators = new HashMap<>();
     private Map<Integer, List<IMethodSymbol>> binaryOperators = new HashMap<>();
-    private Map<ITypeSymbol, Map<ITypeSymbol, IMethodSymbol>> explicitCastings = new HashMap<>();
     //
     private IGlobalNamespaceScope globalDefaultNamespace;
 
@@ -67,13 +68,12 @@ public class TypeCheckerController implements ITypeCheckerController
         typeSystemInitialiser = theTypeSystemInitialiser;
         definer = theDefiner;
         symbolResolver = theSymbolResolver;
-        methodResolver = theMethodResolver;
+        overloadResolver = theMethodResolver;
         astHelper = theAstHelper;
 
         typeSystemInitialiser.initTypeSystem();
         unaryOperators = typeSystemInitialiser.getUnaryOperators();
         binaryOperators = typeSystemInitialiser.getBinaryOperators();
-        explicitCastings = typeSystemInitialiser.getExplicitCastings();
         globalDefaultNamespace = definer.getGlobalDefaultNamespace();
     }
 
@@ -247,7 +247,9 @@ public class TypeCheckerController implements ITypeCheckerController
             IPolymorphicTypeSymbol inheritableTypeSymbol = (IPolymorphicTypeSymbol) typeSymbol;
             methodSymbol = (IMethodSymbol) inheritableTypeSymbol.resolveWithFallbackToParent(id);
         } else {
-            DefinitionException exception = ErrorReporterRegistry.get().objectExpected(callee, typeSymbol.getDefinitionAst());
+            DefinitionException exception = ErrorReporterRegistry.get().objectExpected(callee,
+                    typeSymbol.getDefinitionAst());
+
             methodSymbol = symbolFactory.createErroneousMethodSymbol(id, exception);
         }
         return methodSymbol;
@@ -304,7 +306,8 @@ public class TypeCheckerController implements ITypeCheckerController
         if (symbol == null) {
             String typeName = typeAst.getText();
             if (!symbolResolver.isAbsolute(typeName)) {
-                typeAst.setText(symbolResolver.getEnclosingGlobalNamespaceScope(typeAst.getScope()).getScopeName() + typeName);
+                String namespace = symbolResolver.getEnclosingGlobalNamespaceScope(typeAst.getScope()).getScopeName();
+                typeAst.setText(namespace + typeName);
             }
             ReferenceException ex = ErrorReporterRegistry.get().unkownType(typeAst);
             symbol = symbolFactory.createErroneousTypeSymbol(typeAst, ex);
@@ -346,11 +349,7 @@ public class TypeCheckerController implements ITypeCheckerController
     public ITypeSymbol getBinaryOperatorEvalType(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right) {
         ITypeSymbol typeSymbol;
 
-        List<ITypeSymbol> actualParameterTypes = new ArrayList<>();
-        actualParameterTypes.add((ITypeSymbol) left.getEvalType());
-        actualParameterTypes.add((ITypeSymbol) right.getEvalType());
-
-        IErroneousTypeSymbol erroneousTypeSymbol = getFirstErroneousTypeSymbol(actualParameterTypes);
+        IErroneousTypeSymbol erroneousTypeSymbol = getFirstErroneousTypeSymbol(left.getEvalType(), right.getEvalType());
 
         if (erroneousTypeSymbol == null) {
             //TODO Code duplication -> change behaviour, use "delegate" to reduce code duplication
@@ -373,7 +372,7 @@ public class TypeCheckerController implements ITypeCheckerController
         return typeSymbol;
     }
 
-    private IErroneousTypeSymbol getFirstErroneousTypeSymbol(List<ITypeSymbol> actualParameterTypes) {
+    private IErroneousTypeSymbol getFirstErroneousTypeSymbol(ITypeSymbol... actualParameterTypes) {
         IErroneousTypeSymbol erroneousTypeSymbol = null;
         for (ITypeSymbol typeSymbol : actualParameterTypes) {
             if (typeSymbol instanceof IErroneousTypeSymbol) {
@@ -416,9 +415,9 @@ public class TypeCheckerController implements ITypeCheckerController
         OverloadDto methodDto = null;
 
         List<IMethodSymbol> methods = binaryOperators.get(tokenType);
-        List<OverloadDto> goodMethods = methodResolver.getApplicableMethods(methods, actualParameterTypes);
+        List<OverloadDto> goodMethods = overloadResolver.getApplicableMethods(methods, actualParameterTypes);
         if (!goodMethods.isEmpty()) {
-            methodDto = methodResolver.getMostSpecificApplicableMethod(goodMethods);
+            methodDto = overloadResolver.getMostSpecificApplicableMethod(goodMethods);
         }
         if (methodDto == null) {
             throw ErrorReporterRegistry.get().wrongBinaryOperatorUsage(operator, left, right, methods);
@@ -426,8 +425,8 @@ public class TypeCheckerController implements ITypeCheckerController
         return methodDto;
     }
 
-    private void addCastingsToAst(List<ParameterPromotionDto> parametersNeedCasting) {
-        for (ParameterPromotionDto parameterPromotionDto : parametersNeedCasting) {
+    private void addCastingsToAst(List<CastingDto> parametersNeedCasting) {
+        for (CastingDto parameterPromotionDto : parametersNeedCasting) {
             astHelper.prependCasting(parameterPromotionDto);
         }
     }
@@ -483,13 +482,87 @@ public class TypeCheckerController implements ITypeCheckerController
         OverloadDto methodDto = null;
 
         List<IMethodSymbol> methods = unaryOperators.get(tokenType);
-        List<OverloadDto> goodMethods = methodResolver.getApplicableMethods(methods, actualParameters);
+        List<OverloadDto> goodMethods = overloadResolver.getApplicableMethods(methods, actualParameters);
         if (!goodMethods.isEmpty()) {
-            methodDto = methodResolver.getMostSpecificApplicableMethod(goodMethods);
+            methodDto = overloadResolver.getMostSpecificApplicableMethod(goodMethods);
         }
         if (methodDto == null) {
             throw ErrorReporterRegistry.get().wrongUnaryOperatorUsage(operator, expression, methods);
         }
         return methodDto;
+    }
+
+    @Override
+    public void checkEquality(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right) {
+        ITSPHPAst typeModifier = astHelper.createAst(TSPHPDefinitionWalker.TYPE_MODIFIER, "tMod");
+        IVariableSymbol leftSymbol = symbolFactory.createVariableSymbol(typeModifier, left);
+        IVariableSymbol rightSymbol = symbolFactory.createVariableSymbol(typeModifier, right);
+
+        CastingDto rightToLeft = overloadResolver.getCastingDto(leftSymbol, operator);
+        CastingDto leftToRight = overloadResolver.getCastingDto(rightSymbol, operator);
+        if (rightToLeft != null && leftToRight == null || rightToLeft == null && leftToRight != null) {
+        } else if (rightToLeft != null && leftToRight != null) {
+            //TODO error message - cannot compare types, because both are
+        } else {
+            //TODO types can not be compared
+        }
+    }
+
+    @Override
+    public void checkAssignment(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right) {
+        if (areNotErroneousTypes(left, right)) {
+            ISymbol symbol = left.getSymbol();
+            if (symbol != null && symbol instanceof IVariableSymbol) {
+                CastingDto castingDto = overloadResolver.getCastingDto((IVariableSymbol) symbol, operator);
+                if (castingDto != null) {
+                    if (castingDto.castingMethods != null) {
+                        astHelper.prependCasting(castingDto);
+                    }
+                    if (castingDto.ambigousCastings != null) {
+                        ErrorReporterRegistry.get().ambiguousCasting(operator, left, right, castingDto.ambigousCastings);
+                    }
+                } else {
+                    ErrorReporterRegistry.get().wrongAssignment(operator, left, right);
+                }
+            } else {
+                ErrorReporterRegistry.get().variableExpected(left);
+            }
+        }
+    }
+
+    @Override
+    public void checkIdentity(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right) {
+        ITypeSymbol leftType = left.getEvalType();
+        ITypeSymbol rightType = right.getEvalType();
+
+        if (areNotErroneousTypes(leftType, rightType)) {
+            if (isOneAScalarType(leftType, rightType)) {
+                if (leftType != rightType) {
+                    ErrorReporterRegistry.get().wrongIdentityUsageScalar(operator, left, right);
+                }
+            } else {
+                boolean areSameOrOneIsSubType = overloadResolver.getPromotionCountFromTo(leftType, rightType) == -1;
+                if (areSameOrOneIsSubType) {
+                    areSameOrOneIsSubType = overloadResolver.getPromotionCountFromTo(rightType, leftType) == -1;
+                }
+                if (areSameOrOneIsSubType) {
+                    ErrorReporterRegistry.get().wrongIdentityUsage(operator, left, right);
+                }
+            }
+        }
+    }
+
+    private boolean areNotErroneousTypes(ITSPHPAst left, ITSPHPAst right) {
+        return areNotErroneousTypes(left.getEvalType(), right.getEvalType());
+
+    }
+
+    private boolean areNotErroneousTypes(ITypeSymbol leftType, ITypeSymbol rightType) {
+        IErroneousTypeSymbol erroneousTypeSymbol = getFirstErroneousTypeSymbol(leftType, rightType);
+        return erroneousTypeSymbol == null;
+    }
+
+    private boolean isOneAScalarType(ITypeSymbol leftType, ITypeSymbol rightType) {
+        return leftType instanceof IScalarTypeSymbol || rightType instanceof IScalarTypeSymbol;
     }
 }

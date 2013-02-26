@@ -23,6 +23,7 @@ import ch.tutteli.tsphp.common.exceptions.ReferenceException;
 import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
 import ch.tutteli.tsphp.common.exceptions.UnsupportedOperationException;
 import ch.tutteli.tsphp.typechecker.AmbiguousCallException;
+import ch.tutteli.tsphp.typechecker.CastingDto;
 import ch.tutteli.tsphp.typechecker.OverloadDto;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import java.util.List;
@@ -66,6 +67,8 @@ public interface IErrorReporter extends ch.tutteli.tsphp.common.IErrorReporter
 
     ReferenceException classExpected(ITSPHPAst typeAst);
 
+    ReferenceException variableExpected(ITSPHPAst leftHandSide);
+
     ReferenceException noParentClass(ITSPHPAst ast);
 
     ReferenceException notInClass(ITSPHPAst ast);
@@ -82,9 +85,18 @@ public interface IErrorReporter extends ch.tutteli.tsphp.common.IErrorReporter
     ReferenceException ambiguousBinaryOperatorUsage(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right,
             AmbiguousCallException ex);
 
-    TypeCheckerException wrongBinaryOperatorUsage(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right,
+    List<ReferenceException> ambiguousCasting(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right,
+            List<CastingDto> ambiguousCastings);
+
+    ReferenceException wrongBinaryOperatorUsage(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right,
             List<IMethodSymbol> existingMethodOverloads);
 
-    TypeCheckerException wrongUnaryOperatorUsage(ITSPHPAst operator, ITSPHPAst expression,
+    ReferenceException wrongUnaryOperatorUsage(ITSPHPAst operator, ITSPHPAst expression,
             List<IMethodSymbol> existingMethodOverloads);
+
+    ReferenceException wrongIdentityUsage(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
+
+    ReferenceException wrongIdentityUsageScalar(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
+
+    ReferenceException wrongAssignment(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
 }

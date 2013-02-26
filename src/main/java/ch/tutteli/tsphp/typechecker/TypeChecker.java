@@ -21,6 +21,7 @@ import ch.tutteli.tsphp.common.ITSPHPAstAdaptor;
 import ch.tutteli.tsphp.common.ITypeChecker;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPReferenceWalker;
+import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckWalker;
 import ch.tutteli.tsphp.typechecker.error.ErrorMessageProvider;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporter;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
@@ -87,5 +88,12 @@ public class TypeChecker implements ITypeChecker
     @Override
     public List<Exception> getExceptions() {
         return ErrorReporterRegistry.get().getExceptions();
+    }
+
+    @Override
+    public void doTypeChecking(ITSPHPAst ast, TreeNodeStream treeNodeStream) {
+        treeNodeStream.reset();
+        TSPHPTypeCheckWalker typeCheckWalker = new TSPHPTypeCheckWalker(treeNodeStream, controller);
+        typeCheckWalker.downup(ast);
     }
 }

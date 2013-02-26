@@ -52,6 +52,8 @@ public class ErrorMessageProvider extends AErrorMessageProvider
         referenceErrors.put("unkownType", "Line %line%|%pos% - The type \"%id%\" could not be resolved.");
         referenceErrors.put("interfaceExpected", "Line %line%|%pos% - Interface expected, \"%id%\" is not an interface.");
         referenceErrors.put("classExpected", "Line %line%|%pos% - class expected, \"%id%\" is not a class.");
+        referenceErrors.put("variableExpected", "Line %line%|%pos% - assignments can only be made to variables,"
+                + " \"%id%\" is not a variable.");
         referenceErrors.put("notInClass", "Line %line%|%pos% - %id% is used outside a class.");
 
         referenceErrors.put("noParentClass", "Line %line%|%pos% - class %id% has no parent class.");
@@ -68,6 +70,23 @@ public class ErrorMessageProvider extends AErrorMessageProvider
         wrongArgumentTypeErrors.put("ambiguousOperatorUsage", "Line %line%|%pos% - usage of operator %id% is ambiguous."
                 + "\ntypes LHS/RHS: %aParams%\n"
                 + "ambiguous overloads: %overloads%");
+        wrongArgumentTypeErrors.put("ambiguousCasting", "Line %line%|%pos% - ambiguous casting detected for operator"
+                + "%id% and LHS/RHS: %aParams%\n"
+                + "ambiguous castings: %overloads%");
+    }
+
+    @Override
+    protected void loadTypeCheckErrorMessages() {
+        typeCheckErrors = new HashMap<>();
+        typeCheckErrors.put("identifyOperator", "Line %line%|%pos% - usage of operator %id% is wrong.\n"
+                + "LHS/RHS have to be from the same type or one has to be a sub-type of the other.\n"
+                + "The following types where found: [%tExp%, %tFound%]");
+        typeCheckErrors.put("identifyOperatorScalar", "Line %line%|%pos% - usage of operator %id% is wrong.\n"
+                + "scalar types have to be of the same type to check identity.\n"
+                + "The following types where found: [%tExp%, %tFound%]");
+        typeCheckErrors.put("wrongAssignment", "Line %line%|%pos% - cannot assign right hand side to %id%, "
+                + "types are not compatible.\n"
+                + "types LHS/RHS: [%tExp%, %tFound%]");
     }
 
     @Override
@@ -96,5 +115,10 @@ public class ErrorMessageProvider extends AErrorMessageProvider
                 + "Line " + dto.line + "|" + dto.position + " - usage of " + dto.identifier + " was wrong.\n"
                 + "types actual parameters: " + dto.actualParameterTypes.toString() + "\n"
                 + "existing overloads: " + getOverloadSignatures(dto.possibleOverloads);
+    }
+
+    @Override
+    protected String getStandardTypeCheckErrorMessage(String key, TypeCheckErrorDto dto) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

@@ -17,7 +17,7 @@
 package ch.tutteli.tsphp.typechecker.utils;
 
 import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.typechecker.ParameterPromotionDto;
+import ch.tutteli.tsphp.typechecker.CastingDto;
 
 /**
  *
@@ -33,5 +33,5 @@ public interface IAstHelper
      *
      * @return The create node
      */
-    ITSPHPAst prependCasting(ParameterPromotionDto parameterPromotionDto);
+    ITSPHPAst prependCasting(CastingDto parameterPromotionDto);
 }

@@ -19,7 +19,7 @@ package ch.tutteli.tsphp.typechecker.utils;
 import ch.tutteli.tsphp.common.AstHelperRegistry;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITSPHPAstAdaptor;
-import ch.tutteli.tsphp.typechecker.ParameterPromotionDto;
+import ch.tutteli.tsphp.typechecker.CastingDto;
 import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.*;
 import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
@@ -48,7 +48,7 @@ public class AstHelper implements IAstHelper
     }
 
     @Override
-    public ITSPHPAst prependCasting(ParameterPromotionDto dto) {
+    public ITSPHPAst prependCasting(CastingDto dto) {
         ITSPHPAst parent = (ITSPHPAst) dto.actualParameter.getParent();
 
         //save child index, since it is going to change during rewrite
@@ -97,9 +97,9 @@ public class AstHelper implements IAstHelper
     }
 
     private String getAbsoluteClassName(IMethodSymbol castingMethod) {
+        //Code duplication - copy can be found in
         IClassTypeSymbol classSymbol = (IClassTypeSymbol) castingMethod.getEnclosingScope();
         INamespaceScope namespaceScope = (INamespaceScope) classSymbol.getEnclosingScope();
-        return "\\" + namespaceScope.getScopeName() + "\\" + classSymbol.getName();
-
+        return namespaceScope.getScopeName() + classSymbol.getName();
     }
 }

@@ -14,26 +14,22 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker;
-
-import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
-import java.util.List;
+package ch.tutteli.tsphp.typechecker.error;
 
 /**
- * Represents an exception which occurs when a call is made and the actual parameters match to multiple signatures.
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class AmbiguousCallException extends TypeCheckerException
+public class TypeCheckErrorDto extends ReferenceErrorDto
 {
 
-    private List<OverloadDto> ambiguousOverloads;
+    public String typeExpected;
+    public String typeFound;
 
-    AmbiguousCallException(List<OverloadDto> theAmmbiguousMethodDtos) {
-        ambiguousOverloads = theAmmbiguousMethodDtos;
-    }
-
-    public List<OverloadDto> getAmbiguousOverloads() {
-        return ambiguousOverloads;
+    public TypeCheckErrorDto(String theIdentifier, int theLine, int thePosition,
+            String theTypeExpected, String theTypeFound) {
+        super(theIdentifier, theLine, thePosition);
+        typeExpected = theTypeExpected;
+        typeFound = theTypeFound;
     }
 }

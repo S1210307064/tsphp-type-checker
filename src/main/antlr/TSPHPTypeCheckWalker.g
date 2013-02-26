@@ -50,6 +50,7 @@ import ch.tutteli.tsphp.typechecker.ITypeCheckerController;
 ITypeCheckerController controller;
 ISymbolTable symbolTable;
 
+
 public TSPHPTypeCheckWalker(TreeNodeStream input, ITypeCheckerController theController) {
     this(input);
     controller = theController;
@@ -100,7 +101,9 @@ expression returns [ITypeSymbol type]
     	|  	symbol			{$type = $symbol.type;}
 	|	unaryOperator 		{$type = $unaryOperator.type;}
 	|	binaryOperator 		{$type = $binaryOperator.type;}
-	|	^('@' expr=expression)	{$type = $expr.start.getEvalType();}
+ 	|	^('@' expr=expression)	{$type = $expr.start.getEvalType();}
+      	|	equalityOperator	{$type = $equalityOperator.type;}
+      	|	assignOperator		{$type = $assignOperator.type;}
     	;
     	
 symbol returns [ITypeSymbol type]
@@ -131,16 +134,7 @@ binaryOperator returns [ITypeSymbol type]
    	:	^(	(	'or' 
 			|	'xor' 
 			|	'and' 
-			|	'=' 
-			|	'+=' 
-			|	'-=' 
-			|	'*=' 
-			|	'/=' 
-			|	'&=' 
-			|	'|=' 
-			|	'^=' 
-			|	'%=' 
-			|	'.=' 
+			
 			|	'<<=' 
 			|	'>>=' 
 			|	CASTING_ASSIGN 
@@ -149,11 +143,7 @@ binaryOperator returns [ITypeSymbol type]
 			|	'|' 
 			|	'^' 
 			|	'&' 
-			|	'==' 
-			|	'===' 
-			|	'!=' 
-			|	'!==' 
-			|	'<>' 
+			
 			|	'<' 
 			|	'<=' 
 			|	'>' 
@@ -173,6 +163,43 @@ binaryOperator returns [ITypeSymbol type]
 		{$type = controller.getBinaryOperatorEvalType($start, $left.start, $right.start);}
 	;
 
+equalityOperator returns [ITypeSymbol type]
+	:	^(	(	'==' 			
+			|	'!=' 
+			|	'<>' 
+			)
+			left=expression right=expression
+		)
+		{
+		    $type = symbolTable.getBoolTypeSymbol();
+		    controller.checkEquality($start, $left.start, $right.start);
+		}
+		^( ('===' |'!==') left=expression right=expression)
+		{
+		    $type = symbolTable.getBoolTypeSymbol();
+		    controller.checkIdentity($start, $left.start, $right.start);
+		}
+	;
+
+assignOperator returns [ITypeSymbol type]
+	:	^(	(	'=' 
+			|	'+='
+			|	'-='
+			|	'*='
+			|	'/='
+			|	'&='
+			|	'|='
+			|	'^='
+			|	'%='
+			|	'.='
+			)
+			left=expression right=expression
+		)		
+		{
+		    $type = symbolTable.getBoolTypeSymbol();
+	 	    controller.checkAssignment($start, $left.start, $right.start);
+		}
+	;
 
 
 specialOperators

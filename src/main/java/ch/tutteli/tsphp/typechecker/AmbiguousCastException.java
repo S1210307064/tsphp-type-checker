@@ -26,14 +26,14 @@ import java.util.List;
 public class AmbiguousCastException extends TypeCheckerException
 {
 
-    private List<ParameterPromotionDto> ambiguousCasts;
+    private List<CastingDto> ambiguousCasts;
 
-    public AmbiguousCastException(List<ParameterPromotionDto> theAmmbiguousCasts) {
+    public AmbiguousCastException(List<CastingDto> theAmmbiguousCasts) {
 
         ambiguousCasts = theAmmbiguousCasts;
     }
 
-    public List<ParameterPromotionDto> getAmbiguousCasts() {
+    public List<CastingDto> getAmbiguousCasts() {
         return ambiguousCasts;
     }
 }

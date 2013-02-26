@@ -24,19 +24,19 @@ import java.util.List;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class ParameterPromotionDto extends PromotionExplicitCastingLevelDto
+public class CastingDto extends PromotionExplicitCastingLevelDto
 {
 
     public ITSPHPAst actualParameter;
     public List<IMethodSymbol> castingMethods;
-    public List<ParameterPromotionDto> ambigousCastings;
+    public List<CastingDto> ambigousCastings;
 
-    public ParameterPromotionDto(int thePromotionCount, int theExplicitCastingCount,
+    public CastingDto(int thePromotionCount, int theExplicitCastingCount,
             List<IMethodSymbol> theCastingMethods) {
         this(thePromotionCount, theExplicitCastingCount, null, theCastingMethods);
     }
 
-    public ParameterPromotionDto(int thePromotionCount, int theExplicitCastingCount,
+    public CastingDto(int thePromotionCount, int theExplicitCastingCount,
             ITSPHPAst theActualParameter, List<IMethodSymbol> theCastingMethods) {
         super(thePromotionCount, theExplicitCastingCount);
         actualParameter = theActualParameter;

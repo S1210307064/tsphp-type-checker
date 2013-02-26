@@ -16,7 +16,6 @@
  */
 package ch.tutteli.tsphp.typechecker.test.typecheck;
 
-import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ATypeCheckTest;
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.EBuiltInType;
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.TypeCheckStruct;
@@ -95,7 +94,6 @@ public class OperatorTest extends ATypeCheckTest
                 }));
     }
 
-   
     private static void addArithmeticUnaryOperators() {
         String[][] arithmeticOperators = new String[][]{
             {"++", "preIncr"},
@@ -165,9 +163,20 @@ public class OperatorTest extends ATypeCheckTest
                                 struct(operator, Float, 1, 0, 0),
                                 struct(operator, Float, 1, 0, 0, 0)
                             }
-                        },}));
+                        }
+                    }));
 
         }
+        collection.addAll(Arrays.asList(new Object[][]{
+                    {"[1,2] + [3];", new TypeCheckStruct[]{struct("+", Array, 1, 0, 0)}},
+                    {"[1,'b'=>2] + [];", new TypeCheckStruct[]{struct("+", Array, 1, 0, 0)}},
+                    {"array() + [3];", new TypeCheckStruct[]{struct("+", Array, 1, 0, 0)}},
+                    {"[1] + ['hello'] + ['a' => 2.0];", new TypeCheckStruct[]{
+                            struct("+", Array, 1, 0, 0),
+                            struct("+", Array, 1, 0, 0, 0)
+                        }
+                    }
+                }));
 
     }
 

@@ -28,4 +28,6 @@ public interface IErrorMessageProvider
     String getReferenceErrorMessage(String key, ReferenceErrorDto referenceErrorDto);
 
     String getWrongArgumentTypeErrorMessage(String key, WrongArgumentTypeErrorDto wrongArgumentTypeErrorDto);
+
+    String getTypeCheckErrorMessage(String identityOperator, TypeCheckErrorDto typeCheckErrorDto);
 }

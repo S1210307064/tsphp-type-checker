@@ -30,6 +30,7 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
     protected Map<String, String> definitionErrors;
     protected Map<String, String> referenceErrors;
     protected Map<String, String> wrongArgumentTypeErrors;
+    protected Map<String, String> typeCheckErrors;
 
     protected abstract void loadDefinitionErrorMessages();
 
@@ -37,11 +38,15 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
 
     protected abstract void loadWrongArgumentTyperrorMessages();
 
+    protected abstract void loadTypeCheckErrorMessages();
+
     protected abstract String getStandardDefinitionErrorMessage(String key, DefinitionErrorDto dto);
 
     protected abstract String getStandardReferenceErrorMessage(String key, ReferenceErrorDto dto);
 
     protected abstract String getStandardWrongArgumentTypeErrorMessage(String key, WrongArgumentTypeErrorDto dto);
+
+    protected abstract String getStandardTypeCheckErrorMessage(String key, TypeCheckErrorDto dto);
 
     @Override
     public String getDefinitionErrorMessage(String key, DefinitionErrorDto dto) {
@@ -102,6 +107,25 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
             message = message.replace("%overloads%", getOverloadSignatures(dto.possibleOverloads));
         } else {
             message = getStandardWrongArgumentTypeErrorMessage(key, dto);
+        }
+        return message;
+    }
+
+    @Override
+    public String getTypeCheckErrorMessage(String key, TypeCheckErrorDto dto) {
+        String message;
+        if (wrongArgumentTypeErrors == null) {
+            loadWrongArgumentTyperrorMessages();
+        }
+        if (wrongArgumentTypeErrors.containsKey(key)) {
+            message = wrongArgumentTypeErrors.get(key);
+            message = message.replace("%id%", "" + dto.identifier);
+            message = message.replace("%line%", "" + dto.line);
+            message = message.replace("%pos%", "" + dto.position);
+            message = message.replace("%tExp%", dto.typeExpected);
+            message = message.replace("%tFound%", dto.typeFound);
+        } else {
+            message = getStandardTypeCheckErrorMessage(key, dto);
         }
         return message;
     }
