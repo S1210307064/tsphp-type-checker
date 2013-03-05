@@ -29,7 +29,7 @@ public class CastingDto extends PromotionExplicitCastingLevelDto
 
     public ITSPHPAst actualParameter;
     public List<IMethodSymbol> castingMethods;
-    public List<CastingDto> ambigousCastings;
+    public List<CastingDto> ambigousCasts;
 
     public CastingDto(int thePromotionCount, int theExplicitCastingCount,
             List<IMethodSymbol> theCastingMethods) {

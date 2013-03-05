@@ -26,8 +26,6 @@ import ch.tutteli.tsphp.common.exceptions.UnsupportedOperationException;
 import ch.tutteli.tsphp.typechecker.AmbiguousCallException;
 import ch.tutteli.tsphp.typechecker.CastingDto;
 import ch.tutteli.tsphp.typechecker.OverloadDto;
-import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
-import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 import java.util.ArrayList;
@@ -175,6 +173,59 @@ public class ErrorReporter implements IErrorReporter
     }
 
     @Override
+    public ReferenceException operatorAmbiguousCasts(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right,
+            List<CastingDto> leftAmbiguouities, List<CastingDto> rightAmbiguouties) {
+        return addAndGetOperatorAmbiguousCastsException("operatorAmbiguousCasting",
+                operator, leftAmbiguouities, rightAmbiguouties, left, right);
+    }
+
+    @Override
+    public ReferenceException ambiguousCasts(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right, List<CastingDto> ambiguousCastings) {
+        return addAndGetOperatorAmbiguousCastsException("ambiguousCasting", operator, null, ambiguousCastings, left, right);
+    }
+
+    private ReferenceException addAndGetOperatorAmbiguousCastsException(String key, ITSPHPAst operator,
+            List<CastingDto> leftAmbiguouities, List<CastingDto> rightAmbiguouities, ITSPHPAst left, ITSPHPAst right) {
+
+        String leftType = getAbsoluteTypeName(left.getEvalType());
+        List<String[]> leftReturnTypes = new ArrayList<>();
+        if (leftAmbiguouities != null) {
+
+            for (CastingDto castingDto : leftAmbiguouities) {
+                int castingMethodsSize = castingDto.castingMethods.size();
+                String[] types = new String[castingMethodsSize + 1];
+                types[0] = leftType;
+                for (int i = 0; i < castingMethodsSize; ++i) {
+                    types[i + 1] = getAbsoluteTypeName(castingDto.castingMethods.get(i).getType());
+                }
+                leftReturnTypes.add(types);
+            }
+        }
+
+        String rightType = getAbsoluteTypeName(right.getEvalType());
+        List<String[]> rightReturnTypes = new ArrayList<>();
+        if (rightAmbiguouities != null) {
+
+            for (CastingDto castingDto : rightAmbiguouities) {
+                int castingMethodsSize = castingDto.castingMethods.size();
+                String[] types = new String[castingMethodsSize + 1];
+                types[0] = rightType;
+                for (int i = 0; i < castingMethodsSize; ++i) {
+                    types[i + 1] = getAbsoluteTypeName(castingDto.castingMethods.get(i).getType());
+                }
+                rightReturnTypes.add(types);
+            }
+        }
+
+        String errorMessage = errorMessageProvider.getOperatorAmbiguousCastingErrorMessage(key,
+                new AmbiguousCastingErrorDto(operator.getText(), operator.getLine(), operator.getCharPositionInLine(),
+                leftType, rightType, leftReturnTypes, rightReturnTypes));
+        ReferenceException exception = new ReferenceException(errorMessage, operator);
+        exceptions.add(exception);
+        return exception;
+    }
+
+    @Override
     public ReferenceException ambiguousUnaryOperatorUsage(ITSPHPAst operator, ITSPHPAst expression,
             AmbiguousCallException ex) {
 
@@ -196,18 +247,6 @@ public class ErrorReporter implements IErrorReporter
             methods.add(overload.methodSymbol);
         }
         return addAndGetWrongArgumentTypeException(key, call, methods, actualParameters);
-    }
-
-    @Override
-    public List<ReferenceException> ambiguousCasting(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right,
-            List<CastingDto> ambiguousCastings) {
-
-        List<ReferenceException> referenceExceptions = new ArrayList<>();
-        for (CastingDto dto : ambiguousCastings) {
-            referenceExceptions.add(addAndGetWrongArgumentTypeException("ambiguousCasting",
-                    operator, dto.castingMethods, left, right));
-        }
-        return referenceExceptions;
     }
 
     @Override
@@ -270,13 +309,13 @@ public class ErrorReporter implements IErrorReporter
     }
 
     @Override
-    public ReferenceException wrongIdentityUsage(ITSPHPAst statement, ITSPHPAst left, ITSPHPAst right) {
-        return addAndGetTypeCheckErrorMessage("identityOperator", statement, left, right);
+    public ReferenceException wrongEqualityUsage(ITSPHPAst statement, ITSPHPAst left, ITSPHPAst right) {
+        return addAndGetTypeCheckErrorMessage("equalityOperator", statement, left, right);
     }
 
     @Override
-    public ReferenceException wrongIdentityUsageScalar(ITSPHPAst statement, ITSPHPAst left, ITSPHPAst right) {
-        return addAndGetTypeCheckErrorMessage("identityOperatorScalar", statement, left, right);
+    public ReferenceException wrongIdentityUsage(ITSPHPAst statement, ITSPHPAst left, ITSPHPAst right) {
+        return addAndGetTypeCheckErrorMessage("identityOperator", statement, left, right);
     }
 
     @Override

@@ -31,6 +31,7 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
     protected Map<String, String> referenceErrors;
     protected Map<String, String> wrongArgumentTypeErrors;
     protected Map<String, String> typeCheckErrors;
+    protected Map<String, String> ambiguousCastsErrors;
 
     protected abstract void loadDefinitionErrorMessages();
 
@@ -40,6 +41,8 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
 
     protected abstract void loadTypeCheckErrorMessages();
 
+    protected abstract void loadAmbiguousCastsErrorMessages();
+
     protected abstract String getStandardDefinitionErrorMessage(String key, DefinitionErrorDto dto);
 
     protected abstract String getStandardReferenceErrorMessage(String key, ReferenceErrorDto dto);
@@ -47,6 +50,8 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
     protected abstract String getStandardWrongArgumentTypeErrorMessage(String key, WrongArgumentTypeErrorDto dto);
 
     protected abstract String getStandardTypeCheckErrorMessage(String key, TypeCheckErrorDto dto);
+
+    protected abstract String getStandardAmbiguousCastsErrorMessage(String key, AmbiguousCastingErrorDto dto);
 
     @Override
     public String getDefinitionErrorMessage(String key, DefinitionErrorDto dto) {
@@ -114,11 +119,11 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
     @Override
     public String getTypeCheckErrorMessage(String key, TypeCheckErrorDto dto) {
         String message;
-        if (wrongArgumentTypeErrors == null) {
-            loadWrongArgumentTyperrorMessages();
+        if (typeCheckErrors == null) {
+            loadTypeCheckErrorMessages();
         }
-        if (wrongArgumentTypeErrors.containsKey(key)) {
-            message = wrongArgumentTypeErrors.get(key);
+        if (typeCheckErrors.containsKey(key)) {
+            message = typeCheckErrors.get(key);
             message = message.replace("%id%", "" + dto.identifier);
             message = message.replace("%line%", "" + dto.line);
             message = message.replace("%pos%", "" + dto.position);
@@ -130,10 +135,48 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
         return message;
     }
 
+    @Override
+    public String getOperatorAmbiguousCastingErrorMessage(String key, AmbiguousCastingErrorDto dto) {
+        String message;
+        if (ambiguousCastsErrors == null) {
+            loadAmbiguousCastsErrorMessages();
+        }
+        if (ambiguousCastsErrors.containsKey(key)) {
+            message = ambiguousCastsErrors.get(key);
+            message = message.replace("%id%", "" + dto.identifier);
+            message = message.replace("%line%", "" + dto.line);
+            message = message.replace("%pos%", "" + dto.position);
+            message = message.replace("%LHS%", dto.leftType);
+            message = message.replace("%RHS%", dto.rightType);
+            message = message.replace("%ambLHS%", getAmbiguousCastsSequences(dto.leftAmbiguouities));
+            message = message.replace("%ambRHS%", getAmbiguousCastsSequences(dto.rightAmbiguouities));
+        } else {
+            message = getStandardAmbiguousCastsErrorMessage(key, dto);
+        }
+        return message;
+    }
+
     protected String getOverloadSignatures(List<String[]> ambiguousFormalParameterTypes) {
         StringBuilder stringBuilder = new StringBuilder();
         for (String[] parameterTypes : ambiguousFormalParameterTypes) {
             stringBuilder.append(Arrays.toString(parameterTypes));
+            stringBuilder.append("\n");
+        }
+        return stringBuilder.toString();
+    }
+
+    protected String getAmbiguousCastsSequences(List<String[]> castingTypes) {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (String[] types : castingTypes) {
+            boolean isNotFirst = false;
+            for (String type : types) {
+                if (isNotFirst) {
+                    stringBuilder.append(" -> ");
+                }
+                isNotFirst = true;
+                stringBuilder.append(type);
+            }
             stringBuilder.append("\n");
         }
         return stringBuilder.toString();

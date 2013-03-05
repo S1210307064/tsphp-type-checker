@@ -14,22 +14,25 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.error;
+package ch.tutteli.tsphp.typechecker.test.testutils.typecheck;
+
+import java.util.Arrays;
+import org.junit.Ignore;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public interface IErrorMessageProvider
+@Ignore
+public abstract class AOperatorTypeCheckTest extends ATypeCheckTest
 {
 
-    String getDefinitionErrorMessage(String key, DefinitionErrorDto dto);
-
-    String getReferenceErrorMessage(String key, ReferenceErrorDto referenceErrorDto);
-
-    String getWrongArgumentTypeErrorMessage(String key, WrongArgumentTypeErrorDto wrongArgumentTypeErrorDto);
-
-    String getTypeCheckErrorMessage(String identityOperator, TypeCheckErrorDto typeCheckErrorDto);
-
-    String getOperatorAmbiguousCastingErrorMessage(String key, AmbiguousCastingErrorDto ambiguousCastingErrorDto);
+    public AOperatorTypeCheckTest(String testString, TypeCheckStruct[] structs) {
+        super(testString, structs);
+    }
+    
+    
+    protected static TypeCheckStruct struct(String astText, EBuiltInType type, Integer... accessOrder) {
+        return new TypeCheckStruct(astText, type, Arrays.asList(accessOrder));
+    }
 }

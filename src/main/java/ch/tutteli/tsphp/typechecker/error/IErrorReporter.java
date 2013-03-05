@@ -85,7 +85,10 @@ public interface IErrorReporter extends ch.tutteli.tsphp.common.IErrorReporter
     ReferenceException ambiguousBinaryOperatorUsage(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right,
             AmbiguousCallException ex);
 
-    List<ReferenceException> ambiguousCasting(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right,
+    ReferenceException operatorAmbiguousCasts(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right,
+            List<CastingDto> leftAmbiguouities, List<CastingDto> rightAmbiguouties);
+
+    ReferenceException ambiguousCasts(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right,
             List<CastingDto> ambiguousCastings);
 
     ReferenceException wrongBinaryOperatorUsage(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right,
@@ -94,9 +97,9 @@ public interface IErrorReporter extends ch.tutteli.tsphp.common.IErrorReporter
     ReferenceException wrongUnaryOperatorUsage(ITSPHPAst operator, ITSPHPAst expression,
             List<IMethodSymbol> existingMethodOverloads);
 
-    ReferenceException wrongIdentityUsage(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
+    ReferenceException wrongEqualityUsage(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
 
-    ReferenceException wrongIdentityUsageScalar(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
+    ReferenceException wrongIdentityUsage(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
 
     ReferenceException wrongAssignment(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
 }

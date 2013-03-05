@@ -116,11 +116,12 @@ public class OverloadResolver implements IOverloadResolver
 
         if (isSameOrParentType(promotionCount)) {
             List<IMethodSymbol> castings = null;
-            if (promotionCount!=0 && actualParameter.getEvalType() instanceof IScalarTypeSymbol) {
-                castings = new ArrayList<>();
-                castings.add(symbolTable.createPHPInBuiltCastingMethod(
-                        (ITypeSymbolWithPHPBuiltInCasting) formalParameterType));
-            }
+            //Not necessary, int can contain bool, float can contain int etc.
+//            if (promotionCount!=0 && actualParameter.getEvalType() instanceof IScalarTypeSymbol) {
+//                castings = new ArrayList<>();
+//                castings.add(symbolTable.createPHPInBuiltCastingMethod(
+//                        (ITypeSymbolWithPHPBuiltInCasting) formalParameterType));
+//            }
             parameterDto = new CastingDto(promotionCount, 0, actualParameter, castings);
         } else if (formalParameter.isAlwaysCasting()) {
 
@@ -147,6 +148,11 @@ public class OverloadResolver implements IOverloadResolver
         return count;
     }
 
+    @Override
+    public boolean isSameOrParentType(ITypeSymbol actualType, ITypeSymbol formalType){
+        return isSameOrParentType(getPromotionCountFromTo(actualType, formalType));
+    }
+    
     private boolean isSameOrParentType(int promotionCount) {
         return promotionCount != -1;
     }
@@ -189,7 +195,7 @@ public class OverloadResolver implements IOverloadResolver
                     List<CastingDto> castings = getMostSpecificExplicitCasting(castingDtos);
                     parameterDto = castings.get(0);
                     if (castings.size() != 1) {
-                        parameterDto.ambigousCastings = castings;
+                        parameterDto.ambigousCasts = castings;
                     }
                 }
                 explicitCastingDto.visitedTypes.put(explicitCastingDto.actualParameterType, parameterDto);

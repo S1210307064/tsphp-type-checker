@@ -16,20 +16,24 @@
  */
 package ch.tutteli.tsphp.typechecker.error;
 
+import java.util.List;
+
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public interface IErrorMessageProvider
+public class AmbiguousCastingErrorDto extends ReferenceErrorDto
 {
 
-    String getDefinitionErrorMessage(String key, DefinitionErrorDto dto);
+    public String leftType;
+    public String rightType;
+    public List<String[]> leftAmbiguouities;
+    public List<String[]> rightAmbiguouities;
 
-    String getReferenceErrorMessage(String key, ReferenceErrorDto referenceErrorDto);
-
-    String getWrongArgumentTypeErrorMessage(String key, WrongArgumentTypeErrorDto wrongArgumentTypeErrorDto);
-
-    String getTypeCheckErrorMessage(String identityOperator, TypeCheckErrorDto typeCheckErrorDto);
-
-    String getOperatorAmbiguousCastingErrorMessage(String key, AmbiguousCastingErrorDto ambiguousCastingErrorDto);
+    public AmbiguousCastingErrorDto(String theIdentifier, int theLine, int thePosition, String leftType,
+            String rightType, List<String[]> theLeftAmbiguouities, List<String[]> theRightAmbiguouities) {
+        super(theIdentifier, theLine, thePosition);
+        leftAmbiguouities = theLeftAmbiguouities;
+        rightAmbiguouities = theRightAmbiguouities;
+    }
 }

@@ -70,23 +70,40 @@ public class ErrorMessageProvider extends AErrorMessageProvider
         wrongArgumentTypeErrors.put("ambiguousOperatorUsage", "Line %line%|%pos% - usage of operator %id% is ambiguous."
                 + "\ntypes LHS/RHS: %aParams%\n"
                 + "ambiguous overloads: %overloads%");
-        wrongArgumentTypeErrors.put("ambiguousCasting", "Line %line%|%pos% - ambiguous casting detected for operator"
+        wrongArgumentTypeErrors.put("ambiguousCastOperator", "Line %line%|%pos% - ambiguous castings detected for operator"
                 + "%id% and LHS/RHS: %aParams%\n"
-                + "ambiguous castings: %overloads%");
+                + "ambiguous castings LHS: %ambLHS%\n"
+                + "ambiguous castings RHS: %ambRHS%\n");
     }
 
     @Override
     protected void loadTypeCheckErrorMessages() {
         typeCheckErrors = new HashMap<>();
-        typeCheckErrors.put("identifyOperator", "Line %line%|%pos% - usage of operator %id% is wrong.\n"
+        typeCheckErrors.put("equalityOperator", "Line %line%|%pos% - usage of operator %id% is wrong.\n"
+                + "LHS/RHS cannot be compared because they are not from the same type, non of them is a sub-type of "
+                + "the other and there does not exists an explicit cast from one type to the other.\n"
+                + "The following types where found: [%tExp%, %tFound%]");
+        typeCheckErrors.put("identityOperator", "Line %line%|%pos% - usage of operator %id% is wrong.\n"
                 + "LHS/RHS have to be from the same type or one has to be a sub-type of the other.\n"
                 + "The following types where found: [%tExp%, %tFound%]");
-        typeCheckErrors.put("identifyOperatorScalar", "Line %line%|%pos% - usage of operator %id% is wrong.\n"
-                + "scalar types have to be of the same type to check identity.\n"
-                + "The following types where found: [%tExp%, %tFound%]");
-        typeCheckErrors.put("wrongAssignment", "Line %line%|%pos% - cannot assign right hand side to %id%, "
+        typeCheckErrors.put("wrongAssignment", "Line %line%|%pos% - cannot assign RHS to %id%, "
                 + "types are not compatible.\n"
                 + "types LHS/RHS: [%tExp%, %tFound%]");
+
+    }
+
+    @Override
+    protected void loadAmbiguousCastsErrorMessages() {
+        ambiguousCastsErrors = new HashMap<>();
+        ambiguousCastsErrors.put("operatorAmbiguousCasts", "Line %line%|%pos% - ambiguous cast detected in conjunction "
+                + "with the operator %id%.\n"
+                + "type LHS: %LHS%\n"
+                + "type RHS: %RHS%\n"
+                + "ambiguous casts LHS to RHS: %ambLHS%\n"
+                + "ambiguous casts RHS to LHS: %ambRHS%");
+        ambiguousCastsErrors.put("ambiguousCasts", "Line %line%|%pos% - cast from %RHS% to %LHS% in %id% is "
+                + "ambiguous.\n"
+                + "The following ambiguous casts were found: %ambRHS%");
     }
 
     @Override
@@ -119,6 +136,23 @@ public class ErrorMessageProvider extends AErrorMessageProvider
 
     @Override
     protected String getStandardTypeCheckErrorMessage(String key, TypeCheckErrorDto dto) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return "TypeCheckException occured, corresponding error message for \"" + key + "\" is not defined. "
+                + "Please report bug to http://tsphp.tutteli.ch\n"
+                + "However, the following information was gathered.\n"
+                + "Line " + dto.line + "|" + dto.position + " - usage of " + dto.identifier + " was wrong.\n"
+                + "type expected: " + dto.typeExpected + "\n"
+                + "type found:: " + dto.typeFound;
+    }
+
+    @Override
+    protected String getStandardAmbiguousCastsErrorMessage(String key, AmbiguousCastingErrorDto dto) {
+        return "AmbiguousCastsException occured, corresponding error message for \"" + key + "\" is not defined. "
+                + "Please report bug to http://tsphp.tutteli.ch\n"
+                + "However, the following information was gathered.\n"
+                + "Line " + dto.line + "|" + dto.position + " - usage of " + dto.identifier + " was wrong.\n"
+                + "type LHS: " + dto.leftType + "\n"
+                + "type RHS: " + dto.rightType + "\n"
+                + "ambiguous casts LHS to RHS:" + getAmbiguousCastsSequences(dto.leftAmbiguouities) + "\n"
+                + "ambiguous casts RHS to LHS:" + getAmbiguousCastsSequences(dto.rightAmbiguouities);
     }
 }

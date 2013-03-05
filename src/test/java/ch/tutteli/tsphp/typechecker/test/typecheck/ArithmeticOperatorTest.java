@@ -16,8 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker.test.typecheck;
 
-import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ATypeCheckTest;
-import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.EBuiltInType;
+import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest;
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.TypeCheckStruct;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,12 +32,12 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class OperatorTest extends ATypeCheckTest
+public class ArithmeticOperatorTest extends AOperatorTypeCheckTest
 {
 
     private static List<Object[]> collection;
 
-    public OperatorTest(String testString, TypeCheckStruct[] struct) {
+    public ArithmeticOperatorTest(String testString, TypeCheckStruct[] struct) {
         super(testString, struct);
     }
 
@@ -50,48 +49,9 @@ public class OperatorTest extends ATypeCheckTest
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
         collection = new ArrayList<>();
-        addLogicOperators();
-        addBitLevelOperators();
         addArithmeticBinaryOperators();
         addArithmeticUnaryOperators();
-        addErrorHandlerOperator();
         return collection;
-    }
-
-    private static void addLogicOperators() {
-        String[] arithmeticOperators = new String[]{"or", "xor", "and", "||", "&&"};
-        for (String operator : arithmeticOperators) {
-            collection.addAll(Arrays.asList(new Object[][]{
-                        {"true " + operator + " true;", new TypeCheckStruct[]{struct(operator, Bool, 1, 0, 0)}},
-                        {"false " + operator + " false;", new TypeCheckStruct[]{struct(operator, Bool, 1, 0, 0)}},
-                        {"true " + operator + " false;", new TypeCheckStruct[]{struct(operator, Bool, 1, 0, 0)}},
-                        {"false " + operator + " true;", new TypeCheckStruct[]{struct(operator, Bool, 1, 0, 0)}},
-                        {"true " + operator + " false " + operator + " true;", new TypeCheckStruct[]{
-                                struct(operator, Bool, 1, 0, 0),
-                                struct(operator, Bool, 1, 0, 0, 0)
-                            }
-                        },}));
-        }
-        collection.addAll(Arrays.asList(new Object[][]{
-                    {"!true;", new TypeCheckStruct[]{struct("!", Bool, 1, 0, 0)}},
-                    {"!false;", new TypeCheckStruct[]{struct("!", Bool, 1, 0, 0)}},}));
-    }
-
-    private static void addBitLevelOperators() {
-        String[] arithmeticOperators = new String[]{"|", "&", "^", "<<", ">>"};
-        for (String operator : arithmeticOperators) {
-            collection.addAll(Arrays.asList(new Object[][]{
-                        {"true " + operator + " false;", new TypeCheckStruct[]{struct(operator, Int, 1, 0, 0)}},
-                        {"true " + operator + " 1;", new TypeCheckStruct[]{struct(operator, Int, 1, 0, 0)}},
-                        {"2 " + operator + " true;", new TypeCheckStruct[]{struct(operator, Int, 1, 0, 0)}},
-                        {"2 " + operator + " 5;", new TypeCheckStruct[]{struct(operator, Int, 1, 0, 0)}}
-                    }));
-        }
-        collection.addAll(Arrays.asList(new Object[][]{
-                    {"~true;", new TypeCheckStruct[]{struct("~", Int, 1, 0, 0)}},
-                    {"~false;", new TypeCheckStruct[]{struct("~", Int, 1, 0, 0)}},
-                    {"~23098;", new TypeCheckStruct[]{struct("~", Int, 1, 0, 0)}}
-                }));
     }
 
     private static void addArithmeticUnaryOperators() {
@@ -135,7 +95,6 @@ public class OperatorTest extends ATypeCheckTest
                         {"true " + operator + " 1 " + operator + " 10;", new TypeCheckStruct[]{
                                 struct(operator, Int, 1, 0, 0),
                                 struct(operator, Int, 1, 0, 0, 0),
-                                struct("casting", Int, 1, 0, 0, 0, 0)
                             }
                         },
                         {"1 " + operator + " 1 " + operator + " false;", new TypeCheckStruct[]{
@@ -178,20 +137,5 @@ public class OperatorTest extends ATypeCheckTest
                     }
                 }));
 
-    }
-
-    private static void addErrorHandlerOperator() {
-
-        collection.addAll(Arrays.asList(new Object[][]{
-                    //                    {"@true;", new TypCheckStruct[]{struct("@", Bool, 1, 0, 0)}},
-                    //                    {"@1;", new TypCheckStruct[]{struct("@", Int, 1, 0, 0)}},
-                    //                    {"@1.2;", new TypCheckStruct[]{struct("@", Float, 1, 0, 0)}},
-                    //                    {"@'hello';", new TypCheckStruct[]{struct("@", String, 1, 0, 0)}},
-                    {"@[1];", new TypeCheckStruct[]{struct("@", Array, 1, 0, 0)}}
-                }));
-    }
-
-    private static TypeCheckStruct struct(String astText, EBuiltInType type, Integer... accessOrder) {
-        return new TypeCheckStruct(astText, type, Arrays.asList(accessOrder));
     }
 }

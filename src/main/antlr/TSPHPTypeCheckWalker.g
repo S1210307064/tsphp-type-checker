@@ -174,7 +174,8 @@ equalityOperator returns [ITypeSymbol type]
 		    $type = symbolTable.getBoolTypeSymbol();
 		    controller.checkEquality($start, $left.start, $right.start);
 		}
-		^( ('===' |'!==') left=expression right=expression)
+		
+	|	^( ('===' |'!==') left=expression right=expression)
 		{
 		    $type = symbolTable.getBoolTypeSymbol();
 		    controller.checkIdentity($start, $left.start, $right.start);

@@ -42,4 +42,6 @@ public interface IOverloadResolver
      * the case where formalType is not the actualType or one of its parent types.
      */
     int getPromotionCountFromTo(ITypeSymbol actualType, ITypeSymbol formalType);
+
+    boolean isSameOrParentType(ITypeSymbol actualType, ITypeSymbol formalType);
 }

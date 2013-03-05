@@ -304,11 +304,7 @@ public class TypeCheckerController implements ITypeCheckerController
         ITypeSymbol symbol = (ITypeSymbol) symbolResolver.resolveGlobalIdentifier(typeAst);
 
         if (symbol == null) {
-            String typeName = typeAst.getText();
-            if (!symbolResolver.isAbsolute(typeName)) {
-                String namespace = symbolResolver.getEnclosingGlobalNamespaceScope(typeAst.getScope()).getScopeName();
-                typeAst.setText(namespace + typeName);
-            }
+            rewriteToAbsoluteNotFoundType(typeAst);
             ReferenceException ex = ErrorReporterRegistry.get().unkownType(typeAst);
             symbol = symbolFactory.createErroneousTypeSymbol(typeAst, ex);
 
@@ -321,9 +317,27 @@ public class TypeCheckerController implements ITypeCheckerController
         return symbol;
     }
 
+    /**
+     * Return the absolute name of a type which could not be found (prefix the enclosing namespace)
+     */
+    private void rewriteToAbsoluteNotFoundType(ITSPHPAst typeAst) {
+        String typeName = typeAst.getText();
+        if (!symbolResolver.isAbsolute(typeName)) {
+            String namespace = symbolResolver.getEnclosingGlobalNamespaceScope(typeAst.getScope()).getScopeName();
+            typeAst.setText(namespace + typeName);
+        }
+    }
+
     @Override
-    public ITypeSymbol resolvePrimitiveType(ITSPHPAst typeASt) {
-        return (ITypeSymbol) globalDefaultNamespace.resolve(typeASt);
+    public ITypeSymbol resolvePrimitiveType(ITSPHPAst typeAst) {
+        ITypeSymbol typeSymbol = (ITypeSymbol) globalDefaultNamespace.resolve(typeAst);
+        if (typeSymbol == null) {
+            rewriteToAbsoluteNotFoundType(typeAst);
+            ReferenceException ex = ErrorReporterRegistry.get().unkownType(typeAst);
+            typeSymbol = symbolFactory.createErroneousTypeSymbol(typeAst, ex);
+
+        }
+        return typeSymbol;
     }
 
     private IClassTypeSymbol getEnclosingClass(ITSPHPAst ast) {
@@ -494,17 +508,19 @@ public class TypeCheckerController implements ITypeCheckerController
 
     @Override
     public void checkEquality(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right) {
-        ITSPHPAst typeModifier = astHelper.createAst(TSPHPDefinitionWalker.TYPE_MODIFIER, "tMod");
-        IVariableSymbol leftSymbol = symbolFactory.createVariableSymbol(typeModifier, left);
-        IVariableSymbol rightSymbol = symbolFactory.createVariableSymbol(typeModifier, right);
+        if (areNotSameAndNoneIsSubType(left, right)) {
+            ITSPHPAst typeModifier = astHelper.createAst(TSPHPDefinitionWalker.TYPE_MODIFIER, "tMod");
+            IVariableSymbol leftSymbol = symbolFactory.createVariableSymbol(typeModifier, left);
+            IVariableSymbol rightSymbol = symbolFactory.createVariableSymbol(typeModifier, right);
 
-        CastingDto rightToLeft = overloadResolver.getCastingDto(leftSymbol, operator);
-        CastingDto leftToRight = overloadResolver.getCastingDto(rightSymbol, operator);
-        if (rightToLeft != null && leftToRight == null || rightToLeft == null && leftToRight != null) {
-        } else if (rightToLeft != null && leftToRight != null) {
-            //TODO error message - cannot compare types, because both are
-        } else {
-            //TODO types can not be compared
+            CastingDto rightToLeft = overloadResolver.getCastingDto(leftSymbol, operator);
+            CastingDto leftToRight = overloadResolver.getCastingDto(rightSymbol, operator);
+            if (rightToLeft != null && leftToRight != null) {
+                ErrorReporterRegistry.get().operatorAmbiguousCasts(operator, left, right,
+                        leftToRight.ambigousCasts, rightToLeft.ambigousCasts);
+            } else if (rightToLeft == null && leftToRight == null) {
+                ErrorReporterRegistry.get().wrongEqualityUsage(operator, left, right);
+            }
         }
     }
 
@@ -518,8 +534,8 @@ public class TypeCheckerController implements ITypeCheckerController
                     if (castingDto.castingMethods != null) {
                         astHelper.prependCasting(castingDto);
                     }
-                    if (castingDto.ambigousCastings != null) {
-                        ErrorReporterRegistry.get().ambiguousCasting(operator, left, right, castingDto.ambigousCastings);
+                    if (castingDto.ambigousCasts != null) {
+                        ErrorReporterRegistry.get().ambiguousCasts(operator, left, right, castingDto.ambigousCasts);
                     }
                 } else {
                     ErrorReporterRegistry.get().wrongAssignment(operator, left, right);
@@ -530,26 +546,25 @@ public class TypeCheckerController implements ITypeCheckerController
         }
     }
 
-    @Override
-    public void checkIdentity(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right) {
+    private boolean areNotSameAndNoneIsSubType(ITSPHPAst left, ITSPHPAst right) {
         ITypeSymbol leftType = left.getEvalType();
         ITypeSymbol rightType = right.getEvalType();
-
+        boolean areNotSameAndNoneIsSubType = false;
         if (areNotErroneousTypes(leftType, rightType)) {
-            if (isOneAScalarType(leftType, rightType)) {
-                if (leftType != rightType) {
-                    ErrorReporterRegistry.get().wrongIdentityUsageScalar(operator, left, right);
-                }
-            } else {
-                boolean areSameOrOneIsSubType = overloadResolver.getPromotionCountFromTo(leftType, rightType) == -1;
-                if (areSameOrOneIsSubType) {
-                    areSameOrOneIsSubType = overloadResolver.getPromotionCountFromTo(rightType, leftType) == -1;
-                }
-                if (areSameOrOneIsSubType) {
-                    ErrorReporterRegistry.get().wrongIdentityUsage(operator, left, right);
-                }
+            areNotSameAndNoneIsSubType = !overloadResolver.isSameOrParentType(leftType, rightType);
+            if (areNotSameAndNoneIsSubType) {
+                areNotSameAndNoneIsSubType = !overloadResolver.isSameOrParentType(rightType, leftType);
             }
         }
+        return areNotSameAndNoneIsSubType;
+    }
+
+    @Override
+    public void checkIdentity(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right) {
+        if (areNotSameAndNoneIsSubType(left, right)) {
+            ErrorReporterRegistry.get().wrongIdentityUsage(operator, left, right);
+        }
+
     }
 
     private boolean areNotErroneousTypes(ITSPHPAst left, ITSPHPAst right) {
@@ -560,9 +575,5 @@ public class TypeCheckerController implements ITypeCheckerController
     private boolean areNotErroneousTypes(ITypeSymbol leftType, ITypeSymbol rightType) {
         IErroneousTypeSymbol erroneousTypeSymbol = getFirstErroneousTypeSymbol(leftType, rightType);
         return erroneousTypeSymbol == null;
-    }
-
-    private boolean isOneAScalarType(ITypeSymbol leftType, ITypeSymbol rightType) {
-        return leftType instanceof IScalarTypeSymbol || rightType instanceof IScalarTypeSymbol;
     }
 }
