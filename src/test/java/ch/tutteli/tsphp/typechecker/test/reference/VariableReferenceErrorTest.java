@@ -88,6 +88,7 @@ public class VariableReferenceErrorTest extends AReferenceErrorTest
                     {prefix + "if(true){\n $a=2;}" + appendix, errorDto},
                     {prefix + "if(true){}else{\n $a=2;}" + appendix, errorDto},
                     {prefix + "if(true){ if(true){\n $a=2;}}" + appendix, errorDto},
+                    {prefix + "switch(\n $a){}" + appendix, errorDto},
                     {prefix + " int $b; switch($b){case 1: \n $a;break;}" + appendix, errorDto},
                     {prefix + " int $b; switch($b){case 1:{\n $a;}break;}" + appendix, errorDto},
                     {prefix + " int $b; switch($b){default:{\n $a;}break;}" + appendix, errorDto},

@@ -134,9 +134,6 @@ binaryOperator returns [ITypeSymbol type]
    	:	^(	(	'or' 
 			|	'xor' 
 			|	'and' 
-			
-			|	'<<=' 
-			|	'>>=' 
 			|	CASTING_ASSIGN 
 			|	'||' 
 			|	'&&' 
@@ -193,6 +190,8 @@ assignOperator returns [ITypeSymbol type]
 			|	'^='
 			|	'%='
 			|	'.='
+			|	'<<=' 
+			|	'>>=' 
 			)
 			left=expression right=expression
 		)		

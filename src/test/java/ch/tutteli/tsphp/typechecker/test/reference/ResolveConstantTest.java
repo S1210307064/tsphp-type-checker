@@ -52,6 +52,7 @@ public class ResolveConstantTest extends AReferenceScopeTest
                     {"const int a=1;if(true){ a;}", structDefault("", 1, 1, 1, 0, 0)},
                     {"const int a=1;if(true){}else{ a;}", structDefault("", 1, 1, 2, 0, 0)},
                     {"const int a=1;if(true){ if(true){ a;}}", structDefault("", 1, 1, 1, 0, 1, 0, 0)},
+                    {"const int a=1; switch(a){case 1: a;break;}", structDefault("", 1, 1, 0)},
                     {"const int a=1; int $b; switch($b){case 1: a;break;}", structDefault("", 1, 2, 2, 0, 0)},
                     {"const int a=1; int $b; switch($b){case 1:{a;}break;}", structDefault("", 1, 2, 2, 0, 0)},
                     {"const int a=1; int $b; switch($b){default:{a;}break;}", structDefault("", 1, 2, 2, 0, 0)},

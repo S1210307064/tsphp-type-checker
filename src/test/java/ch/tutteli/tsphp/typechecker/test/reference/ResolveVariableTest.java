@@ -99,6 +99,7 @@ public class ResolveVariableTest extends AReferenceTest
                     {prefix + "int $a; if(true){ $a=2;}" + appendix},
                     {prefix + "int $a; if(true){}else{ $a=2;}" + appendix},
                     {prefix + "int $a; if(true){ if(true){ $a=2;}}" + appendix},
+                    {prefix + "int $a;  int $b; switch($a = $b){case 1: $a;break;}" + appendix},
                     {prefix + "int $a;  int $b; switch($b){case 1: $a;break;}" + appendix},
                     {prefix + "int $a;  int $b; switch($b){case 1:{$a;}break;}" + appendix},
                     {prefix + "int $a;  int $b; switch($b){default:{$a;}break;}" + appendix},
