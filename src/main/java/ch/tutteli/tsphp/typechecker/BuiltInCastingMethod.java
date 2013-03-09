@@ -14,24 +14,24 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.symbols;
+package ch.tutteli.tsphp.typechecker;
 
-import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.common.ITypeSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.ITypeSymbolWithPHPBuiltInCasting;
+import ch.tutteli.tsphp.typechecker.utils.IAstHelper;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class AliasTypeSymbol extends ATypeSymbol implements IAliasTypeSymbol
+public class BuiltInCastingMethod extends ACastingMethod implements ICastingMethod
 {
 
-    public AliasTypeSymbol(ITSPHPAst definitionAst, String name, ITypeSymbol parentTypeSymbol) {
-        super(definitionAst, name, parentTypeSymbol);
+    public BuiltInCastingMethod(IAstHelper theAstHelper, ITypeSymbolWithPHPBuiltInCasting theType) {
+        super(theAstHelper, theType);
     }
 
     @Override
-    public boolean isNullable() {
-        return true;
+    protected int getTokenType() {
+        return ((ITypeSymbolWithPHPBuiltInCasting) typeSymbol).getTokenTypeForCasting();
     }
 }

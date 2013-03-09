@@ -19,23 +19,32 @@ package ch.tutteli.tsphp.typechecker.symbols;
 import ch.tutteli.tsphp.common.ASymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class ATypeSymbol extends ASymbol implements ITypeSymbol
+public abstract class ATypeSymbol extends ASymbol implements ITypeSymbol
 {
 
-    private ITypeSymbol parentTypeSymbol;
+    private Set<ITypeSymbol> parentTypeSymbols;
 
-    public ATypeSymbol(ITSPHPAst theDefinitionAst, String theName, ITypeSymbol theParentTypeSymbol) {
+    public ATypeSymbol(final ITSPHPAst theDefinitionAst, final String theName, final ITypeSymbol theParentTypeSymbol) {
         super(theDefinitionAst, theName);
-        parentTypeSymbol = theParentTypeSymbol;
+        parentTypeSymbols = new HashSet<>(1);
+        parentTypeSymbols.add(theParentTypeSymbol);
+
+    }
+
+    public ATypeSymbol(ITSPHPAst theDefinitionAst, String theName, Set<ITypeSymbol> theParentTypeSymbols) {
+        super(theDefinitionAst, theName);
+        parentTypeSymbols = theParentTypeSymbols;
     }
 
     @Override
-    public ITypeSymbol getParentTypeSymbol() {
-        return parentTypeSymbol;
+    public Set<ITypeSymbol> getParentTypeSymbols() {
+        return parentTypeSymbols;
     }
 }

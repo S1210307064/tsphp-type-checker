@@ -16,7 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker.test.reference;
 
-import ch.tutteli.tsphp.typechecker.test.testutils.reference.AReferenceStaticScopeTest;
+import ch.tutteli.tsphp.typechecker.test.testutils.reference.AReferenceAstTest;
 import ch.tutteli.tsphp.typechecker.test.testutils.ScopeTestStruct;
 import java.util.Arrays;
 import java.util.Collection;
@@ -30,7 +30,7 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class ResolveInstanceofTest extends AReferenceStaticScopeTest
+public class ResolveInstanceofTest extends AReferenceAstTest
 {
 
     public ResolveInstanceofTest(String testString, ScopeTestStruct[] testStructs) {

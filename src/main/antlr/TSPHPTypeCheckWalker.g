@@ -98,6 +98,7 @@ expression returns [ITypeSymbol type]
     	|   	Float			{$type = symbolTable.getFloatTypeSymbol();}
     	|   	String			{$type =  symbolTable.getStringTypeSymbol();}
     	|	^(TypeArray .*)		{$type = symbolTable.getArrayTypeSymbol();}
+    	|	Null			{$type = symbolTable.getNullTypeSymbol();}
     	|  	symbol			{$type = $symbol.type;}
 	|	unaryOperator 		{$type = $unaryOperator.type;}
 	|	binaryOperator 		{$type = $binaryOperator.type;}

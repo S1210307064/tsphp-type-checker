@@ -329,6 +329,19 @@ public class TypeCheckerController implements ITypeCheckerController
     }
 
     @Override
+    public IScalarTypeSymbol resolveScalarType(ITSPHPAst typeAst, boolean isNullable) {
+        String typeName = typeAst.getText();
+        if (isNullable) {
+            typeAst.setText(typeName + "?");
+        }
+        IScalarTypeSymbol typeSymbol = (IScalarTypeSymbol) resolvePrimitiveType(typeAst);
+        if (isNullable) {
+            typeAst.setText(typeName);
+        }
+        return typeSymbol;
+    }
+
+    @Override
     public ITypeSymbol resolvePrimitiveType(ITSPHPAst typeAst) {
         ITypeSymbol typeSymbol = (ITypeSymbol) globalDefaultNamespace.resolve(typeAst);
         if (typeSymbol == null) {
@@ -351,7 +364,7 @@ public class TypeCheckerController implements ITypeCheckerController
 
     private IClassTypeSymbol getParent(ITSPHPAst ast) {
         IClassTypeSymbol classTypeSymbol = getEnclosingClass(ast);
-        IClassTypeSymbol parent = (IClassTypeSymbol) classTypeSymbol.getParentTypeSymbol();
+        IClassTypeSymbol parent = classTypeSymbol.getParent();
         if (parent == null) {
             TypeCheckerException ex = ErrorReporterRegistry.get().noParentClass(classTypeSymbol.getDefinitionAst());
             parent = symbolFactory.createErroneousClassSymbol(ast, ex);
@@ -429,7 +442,7 @@ public class TypeCheckerController implements ITypeCheckerController
         OverloadDto methodDto = null;
 
         List<IMethodSymbol> methods = binaryOperators.get(tokenType);
-        List<OverloadDto> goodMethods = overloadResolver.getApplicableMethods(methods, actualParameterTypes);
+        List<OverloadDto> goodMethods = overloadResolver.getApplicableOverloads(methods, actualParameterTypes);
         if (!goodMethods.isEmpty()) {
             methodDto = overloadResolver.getMostSpecificApplicableMethod(goodMethods);
         }
@@ -496,7 +509,7 @@ public class TypeCheckerController implements ITypeCheckerController
         OverloadDto methodDto = null;
 
         List<IMethodSymbol> methods = unaryOperators.get(tokenType);
-        List<OverloadDto> goodMethods = overloadResolver.getApplicableMethods(methods, actualParameters);
+        List<OverloadDto> goodMethods = overloadResolver.getApplicableOverloads(methods, actualParameters);
         if (!goodMethods.isEmpty()) {
             methodDto = overloadResolver.getMostSpecificApplicableMethod(goodMethods);
         }
@@ -509,12 +522,12 @@ public class TypeCheckerController implements ITypeCheckerController
     @Override
     public void checkEquality(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right) {
         if (areNotSameAndNoneIsSubType(left, right)) {
-            ITSPHPAst typeModifier = astHelper.createAst(TSPHPDefinitionWalker.TYPE_MODIFIER, "tMod");
-            IVariableSymbol leftSymbol = symbolFactory.createVariableSymbol(typeModifier, left);
-            IVariableSymbol rightSymbol = symbolFactory.createVariableSymbol(typeModifier, right);
 
-            CastingDto rightToLeft = overloadResolver.getCastingDto(leftSymbol, operator);
-            CastingDto leftToRight = overloadResolver.getCastingDto(rightSymbol, operator);
+            IVariableSymbol leftSymbol = getVariableSymbolFromExpression(left);
+            IVariableSymbol rightSymbol = getVariableSymbolFromExpression(right);
+
+            CastingDto rightToLeft = overloadResolver.getCastingDtoAlwaysCasting(leftSymbol, right);
+            CastingDto leftToRight = overloadResolver.getCastingDtoAlwaysCasting(rightSymbol, left);
             if (rightToLeft != null && leftToRight != null) {
                 ErrorReporterRegistry.get().operatorAmbiguousCasts(operator, left, right,
                         leftToRight.ambigousCasts, rightToLeft.ambigousCasts);
@@ -524,12 +537,25 @@ public class TypeCheckerController implements ITypeCheckerController
         }
     }
 
+    private IVariableSymbol getVariableSymbolFromExpression(ITSPHPAst expression) {
+        IVariableSymbol variableSymbol;
+
+        ISymbol symbol = expression.getSymbol();
+        if (symbol != null) {
+            variableSymbol = (IVariableSymbol) symbol;
+        } else {
+            variableSymbol = symbolFactory.createVariableSymbol(null, expression);
+            variableSymbol.setType(expression.getEvalType());
+        }
+        return variableSymbol;
+    }
+
     @Override
     public void checkAssignment(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right) {
         if (areNotErroneousTypes(left, right)) {
-            ISymbol symbol = left.getSymbol();
-            if (symbol != null && symbol instanceof IVariableSymbol) {
-                CastingDto castingDto = overloadResolver.getCastingDto((IVariableSymbol) symbol, operator);
+            ISymbol leftSymbol = left.getSymbol();
+            if (leftSymbol != null && leftSymbol instanceof IVariableSymbol) {
+                CastingDto castingDto = overloadResolver.getCastingDto((IVariableSymbol) leftSymbol, right);
                 if (castingDto != null) {
                     if (castingDto.castingMethods != null) {
                         astHelper.prependCasting(castingDto);
@@ -551,9 +577,13 @@ public class TypeCheckerController implements ITypeCheckerController
         ITypeSymbol rightType = right.getEvalType();
         boolean areNotSameAndNoneIsSubType = false;
         if (areNotErroneousTypes(leftType, rightType)) {
-            areNotSameAndNoneIsSubType = !overloadResolver.isSameOrParentType(leftType, rightType);
+
+            IVariableSymbol leftSymbol = getVariableSymbolFromExpression(left);
+            IVariableSymbol rightSymbol = getVariableSymbolFromExpression(right);
+
+            areNotSameAndNoneIsSubType = !overloadResolver.isSameOrParentTypeConsiderNull(rightSymbol, left);
             if (areNotSameAndNoneIsSubType) {
-                areNotSameAndNoneIsSubType = !overloadResolver.isSameOrParentType(rightType, leftType);
+                areNotSameAndNoneIsSubType = !overloadResolver.isSameOrParentTypeConsiderNull(leftSymbol, right);
             }
         }
         return areNotSameAndNoneIsSubType;

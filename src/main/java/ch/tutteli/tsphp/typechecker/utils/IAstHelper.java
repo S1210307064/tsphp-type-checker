@@ -26,6 +26,8 @@ import ch.tutteli.tsphp.typechecker.CastingDto;
 public interface IAstHelper
 {
 
+    ITSPHPAst createAst(ITSPHPAst ast);
+
     ITSPHPAst createAst(int tokenType, String name);
 
     /**

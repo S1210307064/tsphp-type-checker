@@ -14,13 +14,25 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.symbols;
+package ch.tutteli.tsphp.typechecker;
+
+import ch.tutteli.tsphp.common.ITypeSymbol;
+import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
+import ch.tutteli.tsphp.typechecker.utils.IAstHelper;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public interface ICanBeNullable
+class ClassInterfaceCastingMethod extends ACastingMethod implements ICastingMethod
 {
-    boolean isNullable();
+
+    public ClassInterfaceCastingMethod(IAstHelper astHelper, ITypeSymbol typeSymbol) {
+        super(astHelper, typeSymbol);
+    }
+
+    @Override
+    protected int getTokenType() {
+        return TSPHPDefinitionWalker.TYPE_NAME;
+    }
 }

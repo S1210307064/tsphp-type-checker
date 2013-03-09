@@ -18,9 +18,9 @@ package ch.tutteli.tsphp.typechecker.symbols.erroneous;
 
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
+import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
 import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
-import ch.tutteli.tsphp.typechecker.symbols.IInterfaceTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IPolymorphicTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
@@ -57,16 +57,6 @@ public class ErroneousClassTypeSymbol extends AErroneousScopedSymbol implements 
     }
 
     @Override
-    public IClassTypeSymbol getParentTypeSymbol() {
-        return this;
-    }
-
-    @Override
-    public void setParent(IPolymorphicTypeSymbol newParent) {
-        throw new UnsupportedOperationException("ErroneousClassSymbol is not a real class.");
-    }
-
-    @Override
     public boolean doubleDefinitionCheckCaseInsensitive(ISymbol symbol) {
         throw new UnsupportedOperationException("ErroneousClassSymbol is not a real class.");
     }
@@ -82,12 +72,27 @@ public class ErroneousClassTypeSymbol extends AErroneousScopedSymbol implements 
     }
 
     @Override
-    public void addInterface(IInterfaceTypeSymbol interfaceTypeSymbol) {
+    public void addParentTypeSymbol(IPolymorphicTypeSymbol aParent) {
         throw new UnsupportedOperationException("ErroneousClassSymbol is not a real class.");
     }
 
     @Override
-    public Set<IInterfaceTypeSymbol> getInterfaces() {
+    public Set<ITypeSymbol> getParentTypeSymbols() {
+        throw new UnsupportedOperationException("ErroneousClassSymbol is not a real class.");
+    }
+
+    @Override
+    public boolean isNullable() {
+        return true;
+    }
+
+    @Override
+    public IClassTypeSymbol getParent() {
+        throw new UnsupportedOperationException("ErroneousClassSymbol is not a real class.");
+    }
+
+    @Override
+    public void setParent(IClassTypeSymbol theParent) {
         throw new UnsupportedOperationException("ErroneousClassSymbol is not a real class.");
     }
 }

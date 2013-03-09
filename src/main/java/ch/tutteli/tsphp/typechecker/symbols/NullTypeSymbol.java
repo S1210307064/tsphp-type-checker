@@ -16,18 +16,18 @@
  */
 package ch.tutteli.tsphp.typechecker.symbols;
 
-import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
+import java.util.HashSet;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class AliasTypeSymbol extends ATypeSymbol implements IAliasTypeSymbol
+public class NullTypeSymbol extends ATypeSymbol implements INullTypeSymbol
 {
 
-    public AliasTypeSymbol(ITSPHPAst definitionAst, String name, ITypeSymbol parentTypeSymbol) {
-        super(definitionAst, name, parentTypeSymbol);
+    public NullTypeSymbol() {
+        super(null, "null", new HashSet<ITypeSymbol>());
     }
 
     @Override

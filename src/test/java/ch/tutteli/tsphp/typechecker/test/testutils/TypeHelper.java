@@ -73,6 +73,15 @@ public class TypeHelper
         return collection;
     }
 
+     public static String[] getNullableScalarTypes() {
+        return new String[]{
+                    "bool?",
+                    "int?",
+                    "float?",
+                    "string?"
+                };
+    }
+    
     public static String[] getScalarTypes() {
         return new String[]{
                     "bool",

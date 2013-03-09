@@ -17,6 +17,7 @@
 package ch.tutteli.tsphp.typechecker.symbols;
 
 import ch.tutteli.tsphp.common.ITypeSymbol;
+import java.util.Set;
 
 /**
  *
@@ -28,14 +29,27 @@ public class ScalarTypeSymbol extends ATypeSymbol implements IScalarTypeSymbol
 {
 
     private int tokenType;
+    private boolean isNullable;
 
-    public ScalarTypeSymbol(String name, ITypeSymbol parentTypeSymbol, int theTokenType) {
+    public ScalarTypeSymbol(String name, Set<ITypeSymbol> parentTypeSymbol, int theTokenType, boolean isNullable) {
         super(null, name, parentTypeSymbol);
         tokenType = theTokenType;
+        this.isNullable = isNullable;
+    }
+
+    public ScalarTypeSymbol(String name, ITypeSymbol parentTypeSymbol, int theTokenType, boolean isNullable) {
+        super(null, name, parentTypeSymbol);
+        tokenType = theTokenType;
+        this.isNullable = isNullable;
     }
 
     @Override
     public int getTokenTypeForCasting() {
         return tokenType;
+    }
+
+    @Override
+    public boolean isNullable() {
+        return isNullable;
     }
 }

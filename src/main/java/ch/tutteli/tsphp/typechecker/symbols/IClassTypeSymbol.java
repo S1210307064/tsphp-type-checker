@@ -16,8 +16,8 @@
  */
 package ch.tutteli.tsphp.typechecker.symbols;
 
+import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.typechecker.scopes.ICaseInsensitiveScope;
-import java.util.Set;
 
 /**
  *
@@ -33,8 +33,8 @@ public interface IClassTypeSymbol extends IPolymorphicTypeSymbol, ICaseInsensiti
     IVariableSymbol getThis();
 
     void setThis(IVariableSymbol $this);
-    
-    void addInterface(IInterfaceTypeSymbol interfaceTypeSymbol);
-    
-    Set<IInterfaceTypeSymbol> getInterfaces();
+
+    IClassTypeSymbol getParent();
+
+    void setParent(IClassTypeSymbol theParent);
 }

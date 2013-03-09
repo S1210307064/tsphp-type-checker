@@ -22,7 +22,7 @@ import ch.tutteli.tsphp.common.ISymbol;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public interface IVariableSymbol extends ISymbol, ICanBeStatic, ICanBeNullable, ICanAlwaysCast
+public interface IVariableSymbol extends ISymbol, ICanBeStatic, ICanAlwaysCast
 {
 
 }

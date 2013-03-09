@@ -48,8 +48,27 @@ public class SymbolFactory implements ISymbolFactory
     }
 
     @Override
-    public IScalarTypeSymbol createScalarTypeSymbol(String name, int tokenType, ITypeSymbol parentTypeSymbol) {
-        return new ScalarTypeSymbol(name, parentTypeSymbol, tokenType);
+    public INullTypeSymbol createNullTypeSymbol() {
+        return new NullTypeSymbol();
+
+    }
+
+    @Override
+    public IVoidTypeSymbol createVoidTypeSymbol() {
+        return new VoidTypeSymbol();
+
+    }
+
+    @Override
+    public IScalarTypeSymbol createScalarTypeSymbol(String name, int tokenType, ITypeSymbol parentTypeSymbol,
+            boolean isNullable) {
+        return new ScalarTypeSymbol(name, parentTypeSymbol, tokenType, isNullable);
+    }
+
+    @Override
+    public IScalarTypeSymbol createScalarTypeSymbol(String name, int tokenType, Set<ITypeSymbol> parentTypeSymbol,
+            boolean isNullable) {
+        return new ScalarTypeSymbol(name, parentTypeSymbol, tokenType, isNullable);
     }
 
     @Override
@@ -100,7 +119,8 @@ public class SymbolFactory implements ISymbolFactory
 
     @Override
     public IVariableSymbol createVariableSymbol(ITSPHPAst typeModifier, ITSPHPAst variableId) {
-        return new VariableSymbol(variableId, getModifiers(typeModifier), variableId.getText());
+        Set<Integer> modifiers = typeModifier != null ? getModifiers(typeModifier) : new HashSet<Integer>();
+        return new VariableSymbol(variableId, modifiers, variableId.getText());
     }
 
     @Override

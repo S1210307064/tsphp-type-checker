@@ -16,18 +16,17 @@
  */
 package ch.tutteli.tsphp.typechecker.symbols;
 
-import ch.tutteli.tsphp.common.ASymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class ThisSymbol extends ASymbol implements IVariableSymbol
+public class ThisSymbol extends ASymbolWithModifier implements IVariableSymbol
 {
 
     public ThisSymbol(ITSPHPAst definitionAst, String name, IPolymorphicTypeSymbol polymorphicTypeSymbol) {
-        super(definitionAst, name);
+        super(definitionAst, null, name);
         type = polymorphicTypeSymbol;
         setDefinitionScope(polymorphicTypeSymbol.getDefinitionScope());
     }
@@ -35,11 +34,6 @@ public class ThisSymbol extends ASymbol implements IVariableSymbol
     @Override
     public boolean isStatic() {
         return false;
-    }
-
-    @Override
-    public boolean isNullable() {
-        return true;
     }
 
     @Override

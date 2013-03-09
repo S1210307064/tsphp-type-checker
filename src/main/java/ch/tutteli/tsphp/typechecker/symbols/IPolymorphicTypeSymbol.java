@@ -29,5 +29,5 @@ public interface IPolymorphicTypeSymbol extends ITypeSymbol
 
     ISymbol resolveWithFallbackToParent(ITSPHPAst ast);
 
-    void setParent(IPolymorphicTypeSymbol newParent);
+    void addParentTypeSymbol(IPolymorphicTypeSymbol aParent);
 }

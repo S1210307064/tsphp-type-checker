@@ -49,8 +49,8 @@ public class ArithmeticOperatorTest extends AOperatorTypeCheckTest
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
         collection = new ArrayList<>();
+       // addArithmeticUnaryOperators();
         addArithmeticBinaryOperators();
-        addArithmeticUnaryOperators();
         return collection;
     }
 
@@ -94,8 +94,7 @@ public class ArithmeticOperatorTest extends AOperatorTypeCheckTest
                         {"1.0 " + operator + " 2.0;", new TypeCheckStruct[]{struct(operator, Float, 1, 0, 0)}},
                         {"true " + operator + " 1 " + operator + " 10;", new TypeCheckStruct[]{
                                 struct(operator, Int, 1, 0, 0),
-                                struct(operator, Int, 1, 0, 0, 0),
-                            }
+                                struct(operator, Int, 1, 0, 0, 0),}
                         },
                         {"1 " + operator + " 1 " + operator + " false;", new TypeCheckStruct[]{
                                 struct(operator, Int, 1, 0, 0),

@@ -46,12 +46,7 @@ public class ErroneousMethodSymbol extends AErroneousScopedSymbol implements IEr
     public boolean isStatic() {
         return true;
     }
-
-    @Override
-    public boolean isNullable() {
-        return true;
-    }
-
+    
     @Override
     public boolean isAlwaysCasting() {
         return true;

@@ -38,11 +38,6 @@ public class VariableSymbol extends ASymbolWithModifier implements IVariableSymb
     }
 
     @Override
-    public boolean isNullable() {
-        return modifiers.contains(TSPHPDefinitionWalker.QuestionMark);
-    }
-
-    @Override
     public boolean isAlwaysCasting() {
         return modifiers.contains(TSPHPDefinitionWalker.Cast);
     }

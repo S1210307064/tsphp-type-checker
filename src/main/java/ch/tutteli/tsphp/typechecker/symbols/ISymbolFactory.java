@@ -24,6 +24,7 @@ import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousAccessSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousTypeSymbol;
+import java.util.Set;
 
 /**
  *
@@ -34,7 +35,15 @@ public interface ISymbolFactory
 
     void setObjectTypeSymbol(ITypeSymbol typeSymbol);
 
-    IScalarTypeSymbol createScalarTypeSymbol(String name, int tokenType, ITypeSymbol parentTypeSymbol);
+    INullTypeSymbol createNullTypeSymbol();
+
+    IVoidTypeSymbol createVoidTypeSymbol();
+
+    IScalarTypeSymbol createScalarTypeSymbol(String name, int tokenType, ITypeSymbol parentTypeSymbol,
+            boolean isNullable);
+
+    IScalarTypeSymbol createScalarTypeSymbol(String name, int tokenType, Set<ITypeSymbol> parentTypeSymbol,
+            boolean isNullable);
 
     IArrayTypeSymbol createArrayTypeSymbol(String name, int tokenType, ITypeSymbol baseType);
 

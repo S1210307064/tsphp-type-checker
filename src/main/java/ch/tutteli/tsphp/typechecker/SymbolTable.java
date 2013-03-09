@@ -22,6 +22,7 @@ import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.*;
 import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.symbols.IArrayTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.INullTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IPseudoTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IScalarTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
@@ -30,8 +31,10 @@ import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 import ch.tutteli.tsphp.typechecker.utils.IAstHelper;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -45,12 +48,17 @@ public class SymbolTable implements ISymbolTable
     //
     private Map<Integer, List<IMethodSymbol>> unaryOperators = new HashMap<>();
     private Map<Integer, List<IMethodSymbol>> binaryOperators = new HashMap<>();
-    Map<ITypeSymbol, Map<ITypeSymbol, IMethodSymbol>> explicitCastings = new HashMap<>();
+    private Map<ITypeSymbol, Map<ITypeSymbol, ICastingMethod>> explicitCastings = new HashMap<>();
     //
+    private INullTypeSymbol nullTypeSymbol;
     private IScalarTypeSymbol boolTypeSymbol;
+    private IScalarTypeSymbol boolNullableTypeSymbol;
     private IScalarTypeSymbol intTypeSymbol;
+    private IScalarTypeSymbol intNullableTypeSymbol;
     private IScalarTypeSymbol floatTypeSymbol;
+    private IScalarTypeSymbol floatNullableTypeSymbol;
     private IScalarTypeSymbol stringTypeSymbol;
+    private IScalarTypeSymbol stringNullableTypeSymbol;
     private IArrayTypeSymbol arrayTypeSymbol;
     private IPseudoTypeSymbol resourceTypeSymbol;
     private IPseudoTypeSymbol objectTypeSymbol;
@@ -76,8 +84,13 @@ public class SymbolTable implements ISymbolTable
     }
 
     @Override
-    public Map<ITypeSymbol, Map<ITypeSymbol, IMethodSymbol>> getExplicitCastings() {
+    public Map<ITypeSymbol, Map<ITypeSymbol, ICastingMethod>> getExplicitCastings() {
         return explicitCastings;
+    }
+
+    @Override
+    public INullTypeSymbol getNullTypeSymbol() {
+        return nullTypeSymbol;
     }
 
     @Override
@@ -116,6 +129,17 @@ public class SymbolTable implements ISymbolTable
     }
 
     @Override
+    public ICastingMethod getStandardCastingMethod(ITypeSymbol typeSymbol) {
+        ICastingMethod castingMethod;
+        if (typeSymbol instanceof ITypeSymbolWithPHPBuiltInCasting) {
+            castingMethod = new BuiltInCastingMethod(astHelper, (ITypeSymbolWithPHPBuiltInCasting) typeSymbol);
+        } else {
+            castingMethod = new ClassInterfaceCastingMethod(astHelper, typeSymbol);
+        }
+        return castingMethod;
+    }
+
+    @Override
     public void initTypeSystem() {
         defineBuiltInTypes();
         initMaps();
@@ -124,22 +148,50 @@ public class SymbolTable implements ISymbolTable
     }
 
     private void defineBuiltInTypes() {
-        globalDefaultNamespace.define(symbolFactory.createPseudoTypeSymbol("void"));
+
+        nullTypeSymbol = symbolFactory.createNullTypeSymbol();
+        globalDefaultNamespace.define(nullTypeSymbol);
+        globalDefaultNamespace.define(symbolFactory.createVoidTypeSymbol());
 
         ITypeSymbol object = symbolFactory.createPseudoTypeSymbol("object");
         symbolFactory.setObjectTypeSymbol(object);
         globalDefaultNamespace.define(object);
 
-        stringTypeSymbol = symbolFactory.createScalarTypeSymbol("string", TypeString, object);
+        stringNullableTypeSymbol = symbolFactory.createScalarTypeSymbol("string?", TypeString, object, true);
+        globalDefaultNamespace.define(stringNullableTypeSymbol);
+
+        floatNullableTypeSymbol = symbolFactory.createScalarTypeSymbol(
+                "float?", TypeFloat, stringNullableTypeSymbol, true);
+        globalDefaultNamespace.define(floatNullableTypeSymbol);
+
+        intNullableTypeSymbol = symbolFactory.createScalarTypeSymbol("int?", TypeInt, floatNullableTypeSymbol, true);
+        globalDefaultNamespace.define(intNullableTypeSymbol);
+
+        boolNullableTypeSymbol = symbolFactory.createScalarTypeSymbol("bool?", TypeBool, intNullableTypeSymbol, true);
+        globalDefaultNamespace.define(boolNullableTypeSymbol);
+
+
+        Set<ITypeSymbol> parentTypes = new HashSet<>();
+        parentTypes.add(stringNullableTypeSymbol);
+        stringTypeSymbol = symbolFactory.createScalarTypeSymbol("string", TypeString, parentTypes, false);
         globalDefaultNamespace.define(stringTypeSymbol);
 
-        floatTypeSymbol = symbolFactory.createScalarTypeSymbol("float", TypeFloat, stringTypeSymbol);
+        parentTypes = new HashSet<>();
+        parentTypes.add(stringTypeSymbol);
+        parentTypes.add(floatNullableTypeSymbol);
+        floatTypeSymbol = symbolFactory.createScalarTypeSymbol("float", TypeFloat, parentTypes, false);
         globalDefaultNamespace.define(floatTypeSymbol);
 
-        intTypeSymbol = symbolFactory.createScalarTypeSymbol("int", TypeInt, floatTypeSymbol);
+        parentTypes = new HashSet<>();
+        parentTypes.add(floatTypeSymbol);
+        parentTypes.add(intNullableTypeSymbol);
+        intTypeSymbol = symbolFactory.createScalarTypeSymbol("int", TypeInt, parentTypes, false);
         globalDefaultNamespace.define(intTypeSymbol);
 
-        boolTypeSymbol = symbolFactory.createScalarTypeSymbol("bool", TypeBool, intTypeSymbol);
+        parentTypes = new HashSet<>();
+        parentTypes.add(intTypeSymbol);
+        parentTypes.add(boolNullableTypeSymbol);
+        boolTypeSymbol = symbolFactory.createScalarTypeSymbol("bool", TypeBool, parentTypes, false);
         globalDefaultNamespace.define(boolTypeSymbol);
 
         arrayTypeSymbol = symbolFactory.createArrayTypeSymbol("array", TypeArray, object);
@@ -189,20 +241,11 @@ public class SymbolTable implements ISymbolTable
         defineArithmeticOperators();
 
         IMethodSymbol methodSymbol = createInBuiltMethodSymbol(".");
-        methodSymbol.addParameter(createParameter("left", stringTypeSymbol));
-        methodSymbol.addParameter(createParameter("right", stringTypeSymbol));
+        methodSymbol.addParameter(createParameter("left", stringNullableTypeSymbol));
+        methodSymbol.addParameter(createParameter("right", stringNullableTypeSymbol));
         methodSymbol.setType(stringTypeSymbol);
-        addToBinaryOperators(GreaterThan, methodSymbol);
+        addToBinaryOperators(Dot, methodSymbol);
 
-    }
-
-    @Override
-    public IMethodSymbol createPHPInBuiltCastingMethod(ITypeSymbolWithPHPBuiltInCasting typeSymbol) {
-        //cast is a reserved keyword and indicates in this particular case, that the default casting mechanism
-        //from PHP shall be used. However, the name could also be different, it is not examined at any place.
-        IMethodSymbol methodSymbol = createInBuiltMethodSymbol("cast");
-        methodSymbol.setType(typeSymbol);
-        return methodSymbol;
     }
 
     private IMethodSymbol createInBuiltMethodSymbol(String methodName) {
@@ -340,7 +383,7 @@ public class SymbolTable implements ISymbolTable
             methodSymbol.setType(floatTypeSymbol);
             addToUnaryOperators((int) operator[1], methodSymbol);
         }
-        
+
         IMethodSymbol methodSymbol = createInBuiltMethodSymbol("+");
         methodSymbol.addParameter(createParameter("left", arrayTypeSymbol));
         methodSymbol.addParameter(createParameter("right", arrayTypeSymbol));
@@ -360,24 +403,26 @@ public class SymbolTable implements ISymbolTable
     }
 
     private void defineExplicitCastings() {
-        ITypeSymbolWithPHPBuiltInCasting[][] castings = new ITypeSymbolWithPHPBuiltInCasting[][]{
-            {arrayTypeSymbol, boolTypeSymbol},
-            //TODO check if array cast to int, float and string
-            {stringTypeSymbol, floatTypeSymbol},
-            {stringTypeSymbol, intTypeSymbol},
-            {stringTypeSymbol, boolTypeSymbol},
-            {floatTypeSymbol, intTypeSymbol},
-            {floatTypeSymbol, boolTypeSymbol},
-            {intTypeSymbol, boolTypeSymbol},};
-        for (ITypeSymbolWithPHPBuiltInCasting[] fromTo : castings) {
-            addToExplicitTypeCastings(fromTo[0], fromTo[1], createPHPInBuiltCastingMethod(fromTo[1]));
+        if (null instanceof SymbolTable) {
+        }
+        ITypeSymbol[][] castings = new ITypeSymbol[][]{
+            //everything is castable to bool and array
+            {objectTypeSymbol, boolNullableTypeSymbol},
+            {objectTypeSymbol, boolTypeSymbol},
+            {objectTypeSymbol, arrayTypeSymbol}
+        //array conversion to float, int and string does not make sense therefore it is omitted here
+        };
+
+        for (ITypeSymbol[] fromTo : castings) {
+            addToExplicitTypeCastings(fromTo[0], fromTo[1],
+                    new BuiltInCastingMethod(astHelper, (ITypeSymbolWithPHPBuiltInCasting) fromTo[1]));
         }
     }
 
-    private void addToExplicitTypeCastings(ITypeSymbol from, ITypeSymbol to, IMethodSymbol methodSymbol) {
+    private void addToExplicitTypeCastings(ITypeSymbol from, ITypeSymbol to, ICastingMethod method) {
         if (!explicitCastings.containsKey(from)) {
-            explicitCastings.put(from, new HashMap<ITypeSymbol, IMethodSymbol>());
+            explicitCastings.put(from, new HashMap<ITypeSymbol, ICastingMethod>());
         }
-        explicitCastings.get(from).put(to, methodSymbol);
+        explicitCastings.get(from).put(to, method);
     }
 }

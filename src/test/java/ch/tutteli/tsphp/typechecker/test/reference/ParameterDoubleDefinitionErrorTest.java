@@ -17,10 +17,9 @@
 package ch.tutteli.tsphp.typechecker.test.reference;
 
 import ch.tutteli.tsphp.typechecker.error.DefinitionErrorDto;
-import ch.tutteli.tsphp.typechecker.test.testutils.reference.AReferenceDefinitionErrorTest;
 import ch.tutteli.tsphp.typechecker.test.testutils.TypeHelper;
+import ch.tutteli.tsphp.typechecker.test.testutils.reference.AReferenceDefinitionErrorTest;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import org.antlr.runtime.RecognitionException;

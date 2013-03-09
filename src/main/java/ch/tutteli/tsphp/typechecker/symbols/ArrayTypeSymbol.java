@@ -36,4 +36,9 @@ public class ArrayTypeSymbol extends ATypeSymbol implements IArrayTypeSymbol
     public int getTokenTypeForCasting() {
         return tokenType;
     }
+
+    @Override
+    public boolean isNullable() {
+        return true;
+    }
 }

@@ -28,12 +28,12 @@ import org.junit.Ignore;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @Ignore
-public abstract class AReferenceStaticScopeTest extends AReferenceTest
+public abstract class AReferenceAstTest extends AReferenceTest
 {
 
     protected ScopeTestStruct[] testStructs;
 
-    public AReferenceStaticScopeTest(String testString, ScopeTestStruct[] theTestStructs) {
+    public AReferenceAstTest(String testString, ScopeTestStruct[] theTestStructs) {
         super(testString);
         testStructs = theTestStructs;
     }

@@ -27,6 +27,7 @@ import ch.tutteli.tsphp.typechecker.AmbiguousCallException;
 import ch.tutteli.tsphp.typechecker.CastingDto;
 import ch.tutteli.tsphp.typechecker.OverloadDto;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IScalarTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 import java.util.ArrayList;
 import java.util.List;
@@ -287,7 +288,11 @@ public class ErrorReporter implements IErrorReporter
 
     private String getAbsoluteTypeName(ITypeSymbol typeSymbol) {
         IScope definitionScope = typeSymbol.getDefinitionScope();
-        return definitionScope.getScopeName() + typeSymbol.getName();
+        String name = definitionScope.getScopeName() + typeSymbol.getName();
+        if(typeSymbol instanceof IScalarTypeSymbol && typeSymbol.isNullable()){
+            name+="?";
+        }
+        return name;
     }
 
     private String[] getFormalParameters(List<IVariableSymbol> formalParameters) {

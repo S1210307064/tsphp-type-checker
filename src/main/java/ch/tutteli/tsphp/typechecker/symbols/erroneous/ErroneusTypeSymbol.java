@@ -19,6 +19,7 @@ package ch.tutteli.tsphp.typechecker.symbols.erroneous;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
+import java.util.Set;
 
 /**
  *
@@ -32,7 +33,12 @@ public class ErroneusTypeSymbol extends AErroneousSymbol implements IErroneousTy
     }
 
     @Override
-    public ITypeSymbol getParentTypeSymbol() {
+    public Set<ITypeSymbol> getParentTypeSymbols() {
         throw new UnsupportedOperationException("ErroneusTypeSymbol is not a real type.");
+    }
+
+    @Override
+    public boolean isNullable() {
+        return true;
     }
 }

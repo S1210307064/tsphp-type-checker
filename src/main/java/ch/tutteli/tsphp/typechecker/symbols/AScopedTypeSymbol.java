@@ -25,6 +25,7 @@ import ch.tutteli.tsphp.common.LowerCaseStringMap;
 import ch.tutteli.tsphp.typechecker.scopes.ICaseInsensitiveScope;
 import ch.tutteli.tsphp.typechecker.scopes.ScopeHelperRegistry;
 import ch.tutteli.tsphp.typechecker.utils.MapHelper;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -32,17 +33,18 @@ import java.util.Set;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class AScopedTypeSymbol extends AScopedSymbol implements ITypeSymbol, ICaseInsensitiveScope,
-        IPolymorphicTypeSymbol
+public abstract class AScopedTypeSymbol extends AScopedSymbol implements ICaseInsensitiveScope, IPolymorphicTypeSymbol
 {
 
-    protected ITypeSymbol parentTypeSymbol;
+    private boolean isObjectTheParentTypeSymbol = false;
+    protected Set<ITypeSymbol> parentTypeSymbols = new HashSet<>();
     protected ILowerCaseStringMap<List<ISymbol>> symbolsCaseInsensitive = new LowerCaseStringMap<>();
 
     public AScopedTypeSymbol(ITSPHPAst definitionAst, Set<Integer> modifiers, String name, IScope enclosingScope,
             ITypeSymbol theParentTypeSymbol) {
         super(definitionAst, modifiers, name, enclosingScope);
-        parentTypeSymbol = theParentTypeSymbol;
+        parentTypeSymbols.add(theParentTypeSymbol);
+        isObjectTheParentTypeSymbol = theParentTypeSymbol.getName().equals("object");
     }
 
     @Override
@@ -59,19 +61,35 @@ public class AScopedTypeSymbol extends AScopedSymbol implements ITypeSymbol, ICa
     @Override
     public ISymbol resolveWithFallbackToParent(ITSPHPAst ast) {
         ISymbol symbol = ScopeHelperRegistry.get().resolve(this, ast);
-        if (symbol == null && parentTypeSymbol instanceof IPolymorphicTypeSymbol) {
-            symbol = ((IPolymorphicTypeSymbol) parentTypeSymbol).resolveWithFallbackToParent(ast);
+        if (symbol == null && !parentTypeSymbols.isEmpty()) {
+            for (ITypeSymbol parentTypeSymbol : parentTypeSymbols) {
+                if (parentTypeSymbol instanceof InterfaceTypeSymbol) {
+                    symbol = ((InterfaceTypeSymbol) parentTypeSymbols).resolveWithFallbackToParent(ast);
+                    if (symbol != null) {
+                        break;
+                    }
+                }
+            }
         }
         return symbol;
     }
 
     @Override
-    public ITypeSymbol getParentTypeSymbol() {
-        return parentTypeSymbol;
+    public Set<ITypeSymbol> getParentTypeSymbols() {
+        return parentTypeSymbols;
     }
 
     @Override
-    public void setParent(IPolymorphicTypeSymbol newParent) {
-        parentTypeSymbol = newParent;
+    public void addParentTypeSymbol(IPolymorphicTypeSymbol aParent) {
+        if (isObjectTheParentTypeSymbol) {
+            parentTypeSymbols = new HashSet<>();
+            isObjectTheParentTypeSymbol = false;
+        }
+        parentTypeSymbols.add(aParent);
+    }
+
+    @Override
+    public boolean isNullable() {
+        return true;
     }
 }

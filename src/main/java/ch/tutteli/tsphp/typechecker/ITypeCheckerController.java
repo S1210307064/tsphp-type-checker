@@ -19,6 +19,7 @@ package ch.tutteli.tsphp.typechecker;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IScalarTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 
 /**
@@ -66,6 +67,8 @@ public interface ITypeCheckerController
      * @return The corresponding type or a {@link TSPHPErroneusTypeSymbol} if could not be found.
      */
     ITypeSymbol resolveType(ITSPHPAst typeAst);
+
+    IScalarTypeSymbol resolveScalarType(ITSPHPAst typeAst, boolean isNullable);
 
     ITypeSymbol resolvePrimitiveType(ITSPHPAst typeASt);
 

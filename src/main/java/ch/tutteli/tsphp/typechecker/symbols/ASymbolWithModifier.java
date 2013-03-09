@@ -17,6 +17,7 @@
 package ch.tutteli.tsphp.typechecker.symbols;
 
 import ch.tutteli.tsphp.common.ASymbol;
+import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import java.util.Set;
 import java.util.TreeSet;
@@ -25,7 +26,7 @@ import java.util.TreeSet;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public abstract class ASymbolWithModifier extends ASymbol
+public abstract class ASymbolWithModifier extends ASymbol implements ISymbol
 {
 
     protected Set<Integer> modifiers;
@@ -39,4 +40,19 @@ public abstract class ASymbolWithModifier extends ASymbol
     public String toString() {
         return super.toString() + ModifierHelper.getModifiers(new TreeSet<>(modifiers));
     }
+
+//    @Override
+//    public void addModifier(Integer modifier) {
+//        modifiers.add(modifier);
+//    }
+//
+//    @Override
+//    public Set<Integer> getModifiers() {
+//        return modifiers;
+//    }
+//
+//    @Override
+//    public void setModifiers(Set<Integer> newModifiers) {
+//        modifiers = newModifiers;
+//    }
 }

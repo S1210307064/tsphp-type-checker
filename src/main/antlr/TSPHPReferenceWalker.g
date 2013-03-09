@@ -107,10 +107,10 @@ interfaceDeclaration
 	;
 interfaceExtendsDeclaration[ITSPHPAst identifier]
 	:	^('extends' 	
-			(allTypes {	
+			(allTypes[true]{	
 				ITypeSymbol typeSymbol = $allTypes.type;
 				if(controller.checkIfInterface($allTypes.start, typeSymbol)){
-				    ((IPolymorphicTypeSymbol)identifier.getSymbol()).setParent((IPolymorphicTypeSymbol)typeSymbol);
+				    ((IPolymorphicTypeSymbol)identifier.getSymbol()).addParentTypeSymbol((IPolymorphicTypeSymbol)typeSymbol);
 				}
 			})+
 		) 
@@ -128,10 +128,10 @@ classDeclaration
 
 classExtendsDeclaration[ITSPHPAst identifier]
 	:	^('extends' 
-			allTypes {
+			allTypes[true]{
 				ITypeSymbol typeSymbol = $allTypes.type;
 				if(controller.checkIfClass($allTypes.start, typeSymbol)){
-				    ((IClassTypeSymbol)identifier.getSymbol()).setParent((IPolymorphicTypeSymbol)typeSymbol);
+				    ((IClassTypeSymbol)identifier.getSymbol()).setParent((IClassTypeSymbol)typeSymbol);
 				}
 			} 
 		)
@@ -140,10 +140,10 @@ classExtendsDeclaration[ITSPHPAst identifier]
 
 implementsDeclaration[ITSPHPAst identifier]
 	:	^('implements' 	
-			(allTypes{
+			(allTypes[true]{
 				ITypeSymbol typeSymbol = $allTypes.type;
 				if(controller.checkIfInterface($allTypes.start, typeSymbol)){
-				    ((IClassTypeSymbol)identifier.getSymbol()).addInterface((IInterfaceTypeSymbol)typeSymbol);
+				    ((IClassTypeSymbol)identifier.getSymbol()).addParentTypeSymbol((IInterfaceTypeSymbol)typeSymbol);
 				}
 			})+
 		)
@@ -164,7 +164,8 @@ methodFunctionDeclaration
 	:	^( 	(	METHOD_DECLARATION
 			|	Function
 			) 
-			. ^(TYPE rtMod=. returnTypes) identifier=. . .
+			. ^(TYPE typeModifier returnTypes[$typeModifier.isNullable]) 
+			identifier=. . .
 		)
 		{
 			IMethodSymbol methodSymbol = (IMethodSymbol) $identifier.getSymbol();
@@ -173,9 +174,15 @@ methodFunctionDeclaration
 			scope.doubleDefinitionCheckCaseInsensitive(methodSymbol);
 		}
 	;
+typeModifier returns[boolean isNullable]
+	:	^(TYPE_MODIFIER Cast? nullable=QuestionMark? ~(Cast|QuestionMark)?)
+		{$isNullable = $nullable!=null;}
+	|	TYPE_MODIFIER	
+	;
+	
 
 constantDeclarationList
-	:	^(CONSTANT_DECLARATION_LIST ^(TYPE tMod=. scalarTypes) constantDeclaration[$scalarTypes.type]+)
+	:	^(CONSTANT_DECLARATION_LIST ^(TYPE tMod=. scalarTypes[false]) constantDeclaration[$scalarTypes.type]+)
 	;
 
 constantDeclaration[ITypeSymbol type]
@@ -193,7 +200,8 @@ parameterDeclarationList
 
 parameterDeclaration
 	:	^(PARAMETER_DECLARATION 
-			^(TYPE tMod=. allTypes) variableDeclaration[$allTypes.type]
+			^(TYPE typeModifier allTypes[$typeModifier.isNullable]) 
+			variableDeclaration[$allTypes.type]
 		)
 		{
 		    IVariableSymbol parameter = $variableDeclaration.variableSymbol;
@@ -203,7 +211,10 @@ parameterDeclaration
 	;
 
 variableDeclarationList 
-	:	^(VARIABLE_DECLARATION_LIST ^(TYPE tMod=. allTypes) variableDeclaration[$allTypes.type]+ )
+	:	^(VARIABLE_DECLARATION_LIST 
+			^(TYPE typeModifier allTypes[$typeModifier.isNullable]) 
+			variableDeclaration[$allTypes.type]+ 
+		)
         ;
         
 variableDeclaration[ITypeSymbol type] returns [IVariableSymbol variableSymbol]
@@ -277,12 +288,12 @@ staticAccessor
 	;
 
 
-returnTypes returns [ITypeSymbol type]
-	:	allTypes {$type = $allTypes.type;}
+returnTypes[boolean isNullable] returns [ITypeSymbol type]
+	:	allTypes[isNullable] {$type = $allTypes.type;}
 	|	voidType {$type = $voidType.type;}
 	;
 
-casting	:	^(CASTING ^(TYPE . type=allTypes) .) 
+casting	:	^(CASTING ^(TYPE typeModifier allTypes[$typeModifier.isNullable]) .) 
 	;
 	
 instanceofStatement
@@ -344,12 +355,10 @@ voidType returns [ITypeSymbol type]
 		}
  	;
  	
-allTypes returns [ITypeSymbol type]
-	:	(	'bool'
-		|	'int'
-		|	'float'
-		|	'string'
-		|	'array'
+allTypes[boolean isNullable] returns [ITypeSymbol type]
+	:	scalarTypes[isNullable]
+		{$type = $scalarTypes.type;}
+	|	(	'array'
 		|	'object'
 		|	'resource'
 		)
@@ -365,14 +374,15 @@ allTypes returns [ITypeSymbol type]
 		}
 	;
 	
-scalarTypes returns [ITypeSymbol type]
+scalarTypes[boolean isNullable] returns [ITypeSymbol type]
 	:	(	'bool'
 		|	'int'
 		|	'float'
 		|	'string'
 		)
 		{
-			$type = controller.resolvePrimitiveType($start);
+			//const are never null -> one can use the const null to represent null
+			$type = controller.resolveScalarType($start, isNullable);
 			$start.setSymbol($type);
 		}
 	;

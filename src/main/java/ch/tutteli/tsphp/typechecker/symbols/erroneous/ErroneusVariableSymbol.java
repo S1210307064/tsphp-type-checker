@@ -36,11 +36,6 @@ public class ErroneusVariableSymbol extends AErroneousSymbol implements IErroneo
     }
 
     @Override
-    public boolean isNullable() {
-        return true;
-    }
-
-    @Override
     public boolean isAlwaysCasting() {
         return true;
     }

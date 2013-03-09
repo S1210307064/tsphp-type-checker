@@ -30,4 +30,9 @@ public class PseudoTypeSymbol extends ATypeSymbol implements IPseudoTypeSymbol
     public PseudoTypeSymbol(String name, ITypeSymbol parentTypeSymbol) {
         super(null, name, parentTypeSymbol);
     }
+
+    @Override
+    public boolean isNullable() {
+        return true;
+    }
 }

@@ -29,7 +29,7 @@ import java.util.List;
 public interface IOverloadResolver
 {
 
-    List<OverloadDto> getApplicableMethods(List<IMethodSymbol> methods,
+    List<OverloadDto> getApplicableOverloads(List<IMethodSymbol> methods,
             List<ITSPHPAst> actualParameterTypes);
 
     OverloadDto getMostSpecificApplicableMethod(List<OverloadDto> methods)
@@ -37,11 +37,13 @@ public interface IOverloadResolver
 
     CastingDto getCastingDto(IVariableSymbol formalParameter, ITSPHPAst actualParameter);
 
+    CastingDto getCastingDtoAlwaysCasting(IVariableSymbol formalParameter, ITSPHPAst actualParameter);
+
     /**
      * Return how many promotions have to be applied to the actualType to reach the formalType whereby -1 is returned in
      * the case where formalType is not the actualType or one of its parent types.
      */
-    int getPromotionCountFromTo(ITypeSymbol actualType, ITypeSymbol formalType);
+    int getPromotionCountFromTo(ITypeSymbol fromType, ITypeSymbol toType);
 
-    boolean isSameOrParentType(ITypeSymbol actualType, ITypeSymbol formalType);
+    boolean isSameOrParentTypeConsiderNull(IVariableSymbol formalType, ITSPHPAst actualType);
 }

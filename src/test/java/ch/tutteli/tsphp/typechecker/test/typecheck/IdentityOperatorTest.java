@@ -18,8 +18,6 @@ package ch.tutteli.tsphp.typechecker.test.typecheck;
 
 import ch.tutteli.tsphp.typechecker.test.testutils.TypeHelper;
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest;
-import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ATypeCheckTest;
-import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.EBuiltInType;
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.TypeCheckStruct;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,10 +50,15 @@ public class IdentityOperatorTest extends AOperatorTypeCheckTest
         List<Object[]> collection = new ArrayList<>();
         String[] operators = new String[]{"===", "!=="};
 
-        String[] types = TypeHelper.getScalarTypes();
+
+        String[] scalarTypes = TypeHelper.getScalarTypes();
+        String[] nullableScalarTypes = TypeHelper.getNullableScalarTypes();
+
+        String[] nullableTypes = new String[]{"array", "resource"};
+
         for (String operator : operators) {
-            for (String type : types) {
-                for (String type2 : types) {
+            for (String type : scalarTypes) {
+                for (String type2 : scalarTypes) {
                     collection.add(new Object[]{
                                 type + " $a; " + type2 + " $b; $a " + operator + " $b;",
                                 new TypeCheckStruct[]{struct(operator, Bool, 1, 2, 0)}
@@ -70,36 +73,59 @@ public class IdentityOperatorTest extends AOperatorTypeCheckTest
                             new TypeCheckStruct[]{struct(operator, Bool, 1, 2, 0)}
                         });
             }
-            collection.addAll(Arrays.asList(new Object[][]{
-                        {
-                            "array $a; array $b; $a " + operator + " $b;",
+            for (String type : nullableScalarTypes) {
+                for (String type2 : nullableScalarTypes) {
+                    collection.add(new Object[]{
+                                type + " $a; " + type2 + " $b; $a " + operator + " $b;",
+                                new TypeCheckStruct[]{struct(operator, Bool, 1, 2, 0)}
+                            });
+                }
+                collection.add(new Object[]{
+                            type + " $a; object $b; $a " + operator + " $b;",
                             new TypeCheckStruct[]{struct(operator, Bool, 1, 2, 0)}
-                        },
-                        {
-                            "object $a; array $b; $a " + operator + " $b;",
+                        });
+                collection.add(new Object[]{
+                            "object $a; " + type + " $b; $a " + operator + " $b;",
                             new TypeCheckStruct[]{struct(operator, Bool, 1, 2, 0)}
-                        },
-                        {
-                            "array $a; object $b; $a " + operator + " $b;",
+                        });
+                collection.add(new Object[]{
+                            type + " $a; $a " + operator + " null;",
+                            new TypeCheckStruct[]{struct(operator, Bool, 1, 1, 0)}
+                        });
+                collection.add(new Object[]{
+                            type + " $b; null " + operator + " $b;",
+                            new TypeCheckStruct[]{struct(operator, Bool, 1, 1, 0)}
+                        });
+            }
+
+            for (String type : nullableTypes) {
+                collection.add(new Object[]{
+                            type + " $a; " + type + "$b; $a " + operator + " $b;",
                             new TypeCheckStruct[]{struct(operator, Bool, 1, 2, 0)}
-                        },
-                        {
-                            "resource $a; resource $b; $a " + operator + " $b;",
+                        });
+                collection.add(new Object[]{
+                            type + " $a; object $b; $a " + operator + " $b;",
                             new TypeCheckStruct[]{struct(operator, Bool, 1, 2, 0)}
-                        },
-                        {
-                            "object $a; resource $b; $a " + operator + " $b;",
+                        });
+                collection.add(new Object[]{
+                            "object $a; " + type + " $b; $a " + operator + " $b;",
                             new TypeCheckStruct[]{struct(operator, Bool, 1, 2, 0)}
-                        },
-                        {
-                            "resource $a; object $b; $a " + operator + " $b;",
-                            new TypeCheckStruct[]{struct(operator, Bool, 1, 2, 0)}
-                        },
-                        {
-                            "object $a; object $b; $a " + operator + " $b;",
-                            new TypeCheckStruct[]{struct(operator, Bool, 1, 2, 0)}
-                        }
-                    }));
+                        });
+                collection.add(new Object[]{
+                            type + " $a; $a " + operator + " null;",
+                            new TypeCheckStruct[]{struct(operator, Bool, 1, 1, 0)}
+                        });
+                collection.add(new Object[]{
+                            type + " $b; null " + operator + " $b;",
+                            new TypeCheckStruct[]{struct(operator, Bool, 1, 1, 0)}
+                        });
+
+
+            }
+            collection.add(new Object[]{
+                        "object $a; object $b; $a " + operator + " $b;",
+                        new TypeCheckStruct[]{struct(operator, Bool, 1, 2, 0)}
+                    });
         }
 
 

@@ -56,11 +56,6 @@ public class MethodSymbol extends AScopedSymbol implements IMethodSymbol
     }
 
     @Override
-    public boolean isNullable() {
-        return modifiers.contains(TSPHPDefinitionWalker.QuestionMark);
-    }
-
-    @Override
     public boolean isAlwaysCasting() {
         return modifiers.contains(TSPHPDefinitionWalker.Cast);
     }
