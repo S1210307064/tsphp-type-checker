@@ -649,4 +649,11 @@ public class TypeCheckerController implements ITypeCheckerController
         checkCast(operator, left, right);
         operator.setText("=");
     }
+    
+    @Override
+    public void checkIfType(ITSPHPAst statement, ITSPHPAst expression, ITypeSymbol typeSymbol){
+        if(expression.getEvalType()!=typeSymbol){
+            ErrorReporterRegistry.get().wrongType(statement, expression, typeSymbol);
+        }
+    }
 }

@@ -89,4 +89,6 @@ public interface ITypeCheckerController
     void checkCast(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
 
     void checkCastAssignment(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
+    
+    void checkIfType(ITSPHPAst statement, ITSPHPAst expression, ITypeSymbol typeSymbol);
 }

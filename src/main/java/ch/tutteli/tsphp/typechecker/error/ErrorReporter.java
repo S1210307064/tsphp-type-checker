@@ -369,6 +369,16 @@ public class ErrorReporter implements IErrorReporter
         return addAndGetTypeCheckErrorMessage("wrongAssignment", operator, left, right);
     }
 
+    @Override
+    public ReferenceException wrongType(ITSPHPAst statement,ITSPHPAst expression, ITypeSymbol typeSymbol){
+        String errorMessage = errorMessageProvider.getTypeCheckErrorMessage("wrongType",
+                new TypeCheckErrorDto(statement.getText(), statement.getLine(), statement.getCharPositionInLine(),
+                getAbsoluteTypeName(typeSymbol), getAbsoluteTypeName(expression.getEvalType())));
+        ReferenceException exception = new ReferenceException(errorMessage, statement);
+        exceptions.add(exception);
+        return exception;
+    }
+    
     private ReferenceException addAndGetTypeCheckErrorMessage(String key, ITSPHPAst statement, ITSPHPAst left,
             ITSPHPAst right) {
         String errorMessage = errorMessageProvider.getTypeCheckErrorMessage(key,

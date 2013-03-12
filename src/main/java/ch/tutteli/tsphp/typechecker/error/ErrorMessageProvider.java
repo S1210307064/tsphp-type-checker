@@ -86,6 +86,7 @@ public class ErrorMessageProvider extends AErrorMessageProvider
         typeCheckErrors.put("wrongAssignment", "Line %line%|%pos% - cannot assign RHS to LHS using the operator %id% "
                 + "types are not compatible.\n"
                 + "types LHS/RHS: [%tExp%, %tFound%]");
+        typeCheckErrors.put("wrongType", "Line %line%|%pos% - type %tExp% expected for %id% but type %tFound% found.");
 
     }
 

@@ -75,17 +75,16 @@ expressionLists
 		)
 	;
 expressionRoot 
-	:	^(	nil=(	EXPRESSION
-	    		|	'return'
-	    		|	'throw'
-	    		|	ARRAY_ACCESS
-	    		|	If
-	    		|	Foreach
-	    		|	While
-	    		)
-		    	expression
+	:	(	^(nil=EXPRESSION expr=expression)
+    		|	^(nil='return' expr=expression)
+    		|	^(nil='throw' expr=expression)
+    		|	^(nil=ARRAY_ACCESS expr=expression)
+    		|	^(nil=If expr=expression . .?)
+    			{controller.checkIfType($nil, $expr.start, symbolTable.getBoolTypeSymbol());}
+    		|	^(nil=Foreach expr=expression)
+    		|	^(nil=While expr=expression)
     		)
-		{$nil.setEvalType($expression.type);}
+		{$nil.setEvalType($expr.type);}
 	;
 	
 variableInit
