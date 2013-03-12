@@ -154,6 +154,8 @@ public class ArithmeticOperatorTest extends AOperatorTypeCheckTest
                 }
             }
         }));
+        
+        
 
     }
 }
