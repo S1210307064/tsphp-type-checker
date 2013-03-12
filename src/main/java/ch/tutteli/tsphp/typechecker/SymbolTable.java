@@ -99,8 +99,18 @@ public class SymbolTable implements ISymbolTable
     }
 
     @Override
+    public IScalarTypeSymbol getBoolNullableTypeSymbol() {
+        return boolNullableTypeSymbol;
+    }
+
+    @Override
     public IScalarTypeSymbol getIntTypeSymbol() {
         return intTypeSymbol;
+    }
+
+    @Override
+    public IScalarTypeSymbol getIntNullableTypeSymbol() {
+        return intNullableTypeSymbol;
     }
 
     @Override
@@ -109,8 +119,18 @@ public class SymbolTable implements ISymbolTable
     }
 
     @Override
+    public IScalarTypeSymbol getFloatNullableTypeSymbol() {
+        return floatNullableTypeSymbol;
+    }
+
+    @Override
     public IScalarTypeSymbol getStringTypeSymbol() {
         return stringTypeSymbol;
+    }
+
+    @Override
+    public IScalarTypeSymbol getStringNullableTypeSymbol() {
+        return stringNullableTypeSymbol;
     }
 
     @Override
@@ -147,17 +167,21 @@ public class SymbolTable implements ISymbolTable
         defineExplicitCastings();
     }
 
+    protected void defineObjectTypeSymbol() {
+        objectTypeSymbol = symbolFactory.createPseudoTypeSymbol("object");
+        symbolFactory.setObjectTypeSymbol(objectTypeSymbol);
+        globalDefaultNamespace.define(objectTypeSymbol);
+    }
+
     private void defineBuiltInTypes() {
 
         nullTypeSymbol = symbolFactory.createNullTypeSymbol();
         globalDefaultNamespace.define(nullTypeSymbol);
         globalDefaultNamespace.define(symbolFactory.createVoidTypeSymbol());
 
-        ITypeSymbol object = symbolFactory.createPseudoTypeSymbol("object");
-        symbolFactory.setObjectTypeSymbol(object);
-        globalDefaultNamespace.define(object);
+        defineObjectTypeSymbol();
 
-        stringNullableTypeSymbol = symbolFactory.createScalarTypeSymbol("string?", TypeString, object, true);
+        stringNullableTypeSymbol = symbolFactory.createScalarTypeSymbol("string?", TypeString, objectTypeSymbol, true);
         globalDefaultNamespace.define(stringNullableTypeSymbol);
 
         floatNullableTypeSymbol = symbolFactory.createScalarTypeSymbol(
@@ -172,6 +196,7 @@ public class SymbolTable implements ISymbolTable
 
 
         Set<ITypeSymbol> parentTypes = new HashSet<>();
+        parentTypes.add(objectTypeSymbol);
         parentTypes.add(stringNullableTypeSymbol);
         stringTypeSymbol = symbolFactory.createScalarTypeSymbol("string", TypeString, parentTypes, false);
         globalDefaultNamespace.define(stringTypeSymbol);
@@ -194,7 +219,7 @@ public class SymbolTable implements ISymbolTable
         boolTypeSymbol = symbolFactory.createScalarTypeSymbol("bool", TypeBool, parentTypes, false);
         globalDefaultNamespace.define(boolTypeSymbol);
 
-        arrayTypeSymbol = symbolFactory.createArrayTypeSymbol("array", TypeArray, object);
+        arrayTypeSymbol = symbolFactory.createArrayTypeSymbol("array", TypeArray, objectTypeSymbol);
         globalDefaultNamespace.define(arrayTypeSymbol);
 
         globalDefaultNamespace.define(symbolFactory.createPseudoTypeSymbol("resource"));
@@ -314,10 +339,21 @@ public class SymbolTable implements ISymbolTable
             methodSymbol.addParameter(createParameter("right", intTypeSymbol));
             methodSymbol.setType(intTypeSymbol);
             addToBinaryOperators((int) operator[1], methodSymbol);
+
+            methodSymbol = createInBuiltMethodSymbol((String) operator[0]);
+            methodSymbol.addParameter(createParameter("left", intNullableTypeSymbol));
+            methodSymbol.addParameter(createParameter("right", intNullableTypeSymbol));
+            methodSymbol.setType(intTypeSymbol);
+            addToBinaryOperators((int) operator[1], methodSymbol);
         }
 
         IMethodSymbol methodSymbol = createInBuiltMethodSymbol("~");
         methodSymbol.addParameter(createParameter("expr", intTypeSymbol));
+        methodSymbol.setType(intTypeSymbol);
+        addToUnaryOperators(BitwiseNot, methodSymbol);
+
+        methodSymbol = createInBuiltMethodSymbol("~");
+        methodSymbol.addParameter(createParameter("expr", intNullableTypeSymbol));
         methodSymbol.setType(intTypeSymbol);
         addToUnaryOperators(BitwiseNot, methodSymbol);
     }
@@ -330,14 +366,8 @@ public class SymbolTable implements ISymbolTable
             {">=", GreaterEqualThan},};
         for (Object[] operator : operators) {
             IMethodSymbol methodSymbol = createInBuiltMethodSymbol((String) operator[0]);
-            methodSymbol.addParameter(createParameter("left", intTypeSymbol));
-            methodSymbol.addParameter(createParameter("right", intTypeSymbol));
-            methodSymbol.setType(boolTypeSymbol);
-            addToBinaryOperators((int) operator[1], methodSymbol);
-
-            methodSymbol = createInBuiltMethodSymbol((String) operator[0]);
-            methodSymbol.addParameter(createParameter("left", floatTypeSymbol));
-            methodSymbol.addParameter(createParameter("right", floatTypeSymbol));
+            methodSymbol.addParameter(createParameter("left", floatNullableTypeSymbol));
+            methodSymbol.addParameter(createParameter("right", floatNullableTypeSymbol));
             methodSymbol.setType(boolTypeSymbol);
             addToBinaryOperators((int) operator[1], methodSymbol);
         }
@@ -359,8 +389,20 @@ public class SymbolTable implements ISymbolTable
             addToBinaryOperators((int) operator[1], methodSymbol);
 
             methodSymbol = createInBuiltMethodSymbol((String) operator[0]);
+            methodSymbol.addParameter(createParameter("left", intNullableTypeSymbol));
+            methodSymbol.addParameter(createParameter("right", intNullableTypeSymbol));
+            methodSymbol.setType(intTypeSymbol);
+            addToBinaryOperators((int) operator[1], methodSymbol);
+
+            methodSymbol = createInBuiltMethodSymbol((String) operator[0]);
             methodSymbol.addParameter(createParameter("left", floatTypeSymbol));
             methodSymbol.addParameter(createParameter("right", floatTypeSymbol));
+            methodSymbol.setType(floatTypeSymbol);
+            addToBinaryOperators((int) operator[1], methodSymbol);
+
+            methodSymbol = createInBuiltMethodSymbol((String) operator[0]);
+            methodSymbol.addParameter(createParameter("left", floatNullableTypeSymbol));
+            methodSymbol.addParameter(createParameter("right", floatNullableTypeSymbol));
             methodSymbol.setType(floatTypeSymbol);
             addToBinaryOperators((int) operator[1], methodSymbol);
         }
@@ -379,7 +421,17 @@ public class SymbolTable implements ISymbolTable
             addToUnaryOperators((int) operator[1], methodSymbol);
 
             methodSymbol = createInBuiltMethodSymbol((String) operator[0]);
+            methodSymbol.addParameter(createParameter("expr", intNullableTypeSymbol));
+            methodSymbol.setType(intTypeSymbol);
+            addToUnaryOperators((int) operator[1], methodSymbol);
+
+            methodSymbol = createInBuiltMethodSymbol((String) operator[0]);
             methodSymbol.addParameter(createParameter("expr", floatTypeSymbol));
+            methodSymbol.setType(floatTypeSymbol);
+            addToUnaryOperators((int) operator[1], methodSymbol);
+
+            methodSymbol = createInBuiltMethodSymbol((String) operator[0]);
+            methodSymbol.addParameter(createParameter("expr", floatNullableTypeSymbol));
             methodSymbol.setType(floatTypeSymbol);
             addToUnaryOperators((int) operator[1], methodSymbol);
         }
@@ -409,8 +461,14 @@ public class SymbolTable implements ISymbolTable
             //everything is castable to bool and array
             {objectTypeSymbol, boolNullableTypeSymbol},
             {objectTypeSymbol, boolTypeSymbol},
-            {objectTypeSymbol, arrayTypeSymbol}
-        //array conversion to float, int and string does not make sense therefore it is omitted here
+            {objectTypeSymbol, arrayTypeSymbol},
+            //array conversion to float, int and string does not make sense therefore it is omitted here
+            {boolNullableTypeSymbol, intTypeSymbol},
+            {intNullableTypeSymbol, floatTypeSymbol},
+            {floatNullableTypeSymbol, stringTypeSymbol},
+            {intTypeSymbol, boolNullableTypeSymbol},
+            {floatTypeSymbol, intNullableTypeSymbol},
+            {stringTypeSymbol, floatNullableTypeSymbol}
         };
 
         for (ITypeSymbol[] fromTo : castings) {

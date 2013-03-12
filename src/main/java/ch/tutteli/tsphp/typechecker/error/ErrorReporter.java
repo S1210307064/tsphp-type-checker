@@ -288,11 +288,7 @@ public class ErrorReporter implements IErrorReporter
 
     private String getAbsoluteTypeName(ITypeSymbol typeSymbol) {
         IScope definitionScope = typeSymbol.getDefinitionScope();
-        String name = definitionScope.getScopeName() + typeSymbol.getName();
-        if(typeSymbol instanceof IScalarTypeSymbol && typeSymbol.isNullable()){
-            name+="?";
-        }
-        return name;
+        return definitionScope.getScopeName() + typeSymbol.getName();
     }
 
     private String[] getFormalParameters(List<IVariableSymbol> formalParameters) {

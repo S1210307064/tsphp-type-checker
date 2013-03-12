@@ -188,52 +188,59 @@ public class OverloadResolver implements IOverloadResolver
         ExplicitCastingDto dto = new ExplicitCastingDto(0, 0, formalParameter, dtos, actualParameter.getEvalType(), visitedTypes);
 
         CastingDto castingDto = getCastingDtoFromExplicitCasting(dto);
-        castingDto.actualParameter = actualParameter;
+        if (castingDto != null) {
+            castingDto.actualParameter = actualParameter;
+        }
 
         return castingDto;
     }
 
     private CastingDto getCastingDtoFromExplicitCasting(ExplicitCastingDto explicitCastingDto) {
-        CastingDto parameterDto = null;
+        CastingDto castingDto = null;
 
         explicitCastingDto.visitedTypes.put(explicitCastingDto.actualParameterType, null);
 
         Map<ITypeSymbol, ICastingMethod> casts = explicitCasts.get(explicitCastingDto.actualParameterType);
-        if (casts != null) {
-            ITypeSymbol formalType = explicitCastingDto.formalParameter.getType();
-            if (casts.containsKey(formalType)) {
-                List<ICastingMethod> castingMethods = new ArrayList<>();
-                castingMethods.add(casts.get(formalType));
-                parameterDto = new CastingDto(explicitCastingDto.promotionLevel,
-                        explicitCastingDto.explicitCastingLevel + 1, castingMethods);
 
-                explicitCastingDto.visitedTypes.put(explicitCastingDto.actualParameterType, parameterDto);
-                explicitCastingDto.parameterDto.add(parameterDto);
-            } else {
-                List<CastingDto> castingDtos = new ArrayList<>();
 
-                addParentExplicitCastings(explicitCastingDto);
+        ITypeSymbol formalType = explicitCastingDto.formalParameter.getType();
+        if (casts != null && casts.containsKey(formalType)) {
+            List<ICastingMethod> castingMethods = new ArrayList<>();
+            castingMethods.add(casts.get(formalType));
+            castingDto = new CastingDto(explicitCastingDto.promotionLevel,
+                    explicitCastingDto.explicitCastingLevel + 1, castingMethods);
 
+            explicitCastingDto.visitedTypes.put(explicitCastingDto.actualParameterType, castingDto);
+            explicitCastingDto.castingDto.add(castingDto);
+        } else {
+            List<CastingDto> castingDtos = new ArrayList<>();
+
+            addParentExplicitCastings(castingDtos, explicitCastingDto);
+
+            if (casts != null) {
                 addExplicitCastingsOfExplicitCastings(casts, castingDtos, explicitCastingDto);
-
-                if (!castingDtos.isEmpty()) {
-                    List<CastingDto> castings = getMostSpecificExplicitCasting(castingDtos);
-                    parameterDto = castings.get(0);
-                    if (castings.size() != 1) {
-                        parameterDto.ambigousCasts = castings;
-                    }
-                }
-                explicitCastingDto.visitedTypes.put(explicitCastingDto.actualParameterType, parameterDto);
             }
+
+            if (!castingDtos.isEmpty()) {
+                List<CastingDto> castings = getMostSpecificExplicitCasting(castingDtos);
+                castingDto = castings.get(0);
+                explicitCastingDto.castingDto.add(castingDto);
+                if (castings.size() != 1) {
+                    castingDto.ambigousCasts = castings;
+                }
+            }
+            explicitCastingDto.visitedTypes.put(explicitCastingDto.actualParameterType, castingDto);
         }
-        return parameterDto;
+
+        return castingDto;
     }
 
-    private void addParentExplicitCastings(ExplicitCastingDto explicitCastingDto) {
+    private void addParentExplicitCastings(List<CastingDto> castingDto, ExplicitCastingDto explicitCastingDto) {
         for (ITypeSymbol typeSymbol : explicitCastingDto.actualParameterType.getParentTypeSymbols()) {
             ExplicitCastingDto newDto = new ExplicitCastingDto(explicitCastingDto);
             newDto.actualParameterType = typeSymbol;
             ++newDto.promotionLevel;
+            newDto.castingDto = castingDto;
             if (newDto.actualParameterType != null && isNotYetVisitedOrHasBetterPath(newDto)) {
                 getCastingDtoFromExplicitCasting(newDto);
             }
@@ -242,26 +249,27 @@ public class OverloadResolver implements IOverloadResolver
 
     private boolean isNotYetVisitedOrHasBetterPath(ExplicitCastingDto dto) {
 
-        boolean betterPathFound = dto.visitedTypes.containsKey(dto.actualParameterType);
-        if (!betterPathFound) {
+        boolean hasBetterPath = false;
+        boolean isVisited = dto.visitedTypes.containsKey(dto.actualParameterType);
+        if (isVisited) {
             PromotionExplicitCastingLevelDto bestDto = dto.visitedTypes.get(dto.actualParameterType);
             //dto is null if typeSymbol was visited already but has no valid path to the goal type or it is still 
             //calculating and it should not be entered again
-            betterPathFound = bestDto != null && (bestDto.explicitCastingLevel > dto.explicitCastingLevel
+            hasBetterPath = bestDto != null && (bestDto.explicitCastingLevel > dto.explicitCastingLevel
                     || bestDto.explicitCastingLevel == dto.explicitCastingLevel
                     && bestDto.promotionLevel > dto.promotionLevel);
         }
-        return betterPathFound;
+        return !isVisited || hasBetterPath;
     }
 
     private void addExplicitCastingsOfExplicitCastings(Map<ITypeSymbol, ICastingMethod> casts,
-            List<CastingDto> parameterDto, ExplicitCastingDto explicitCastingDto) {
+            List<CastingDto> castingDto, ExplicitCastingDto explicitCastingDto) {
 
         for (ITypeSymbol castedType : casts.keySet()) {
             ExplicitCastingDto newDto = new ExplicitCastingDto(explicitCastingDto);
             newDto.actualParameterType = castedType;
             ++newDto.explicitCastingLevel;
-            newDto.parameterDto = parameterDto;
+            newDto.castingDto = castingDto;
             if (isNotYetVisitedOrHasBetterPath(newDto)) {
                 getCastingDtoFromExplicitCasting(newDto);
             }
@@ -275,7 +283,7 @@ public class OverloadResolver implements IOverloadResolver
         CastingDto mostSpecificDto = castingDtos.get(0);
 
         int castingsSize = castingDtos.size();
-        for (int i = 0; i < castingsSize; ++i) {
+        for (int i = 1; i < castingsSize; ++i) {
             CastingDto newDto = castingDtos.get(i);
             if (isSecondBetter(mostSpecificDto, newDto)) {
                 mostSpecificDto = newDto;
@@ -356,7 +364,7 @@ public class OverloadResolver implements IOverloadResolver
     {
 
         public IVariableSymbol formalParameter;
-        public List<CastingDto> parameterDto;
+        public List<CastingDto> castingDto;
         public ITypeSymbol actualParameterType;
         public Map<ITypeSymbol, PromotionExplicitCastingLevelDto> visitedTypes;
 
@@ -366,7 +374,7 @@ public class OverloadResolver implements IOverloadResolver
                 Map<ITypeSymbol, PromotionExplicitCastingLevelDto> theVisitedTypes) {
             super(thePromotionLevel, theExplicitCastingLevel);
             formalParameter = theFormalParameter;
-            parameterDto = theListToAddTheDtos;
+            castingDto = theListToAddTheDtos;
             actualParameterType = theActualParameterType;
             visitedTypes = theVisitedTypes;
         }
@@ -374,7 +382,7 @@ public class OverloadResolver implements IOverloadResolver
         private ExplicitCastingDto(ExplicitCastingDto explicitCastingDto) {
             super(explicitCastingDto.promotionLevel, explicitCastingDto.explicitCastingLevel);
             formalParameter = explicitCastingDto.formalParameter;
-            parameterDto = explicitCastingDto.parameterDto;
+            castingDto = explicitCastingDto.castingDto;
             actualParameterType = explicitCastingDto.actualParameterType;
             visitedTypes = explicitCastingDto.visitedTypes;
         }

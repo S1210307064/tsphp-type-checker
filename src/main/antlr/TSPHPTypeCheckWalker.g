@@ -66,12 +66,13 @@ bottomup
 	;
     
 expressionLists
-	:	(	EXPRESSION_LIST
-	    	|	ACTUAL_PARAMETERS	
-   		|	TypeArray
-    		|	'echo'
-	    	)
-	    	expression+
+	:	^(	(	EXPRESSION_LIST
+		    	|	ACTUAL_PARAMETERS	
+	   		|	TypeArray
+	    		|	'echo'
+		    	)
+			expression+
+		)
 	;
 expressionRoot 
 	:	^(	nil=(	EXPRESSION
@@ -135,13 +136,11 @@ binaryOperator returns [ITypeSymbol type]
    	:	^(	(	'or' 
 			|	'xor' 
 			|	'and' 
-			|	CASTING_ASSIGN 
 			|	'||' 
 			|	'&&' 
 			|	'|' 
 			|	'^' 
 			|	'&' 
-			
 			|	'<' 
 			|	'<=' 
 			|	'>' 
@@ -154,7 +153,6 @@ binaryOperator returns [ITypeSymbol type]
 			|	'*' 
 			|	'/' 
 			|	'%' 
-			|	CASTING 
 			)
 			left=expression right=expression
 		)
@@ -181,25 +179,15 @@ equalityOperator returns [ITypeSymbol type]
 	;
 
 assignOperator returns [ITypeSymbol type]
-	:	^(	(	'=' 
-			|	'+='
-			|	'-='
-			|	'*='
-			|	'/='
-			|	'&='
-			|	'|='
-			|	'^='
-			|	'%='
-			|	'.='
-			|	'<<=' 
-			|	'>>=' 
-			)
-			left=expression right=expression
-		)		
+	:	^('=' left=expression right=expression )	
 		{
-		    $type = symbolTable.getBoolTypeSymbol();
+		    $type = $left.start.getEvalType();
 	 	    controller.checkAssignment($start, $left.start, $right.start);
 		}
+	;
+castOperator
+	:	^(CASTING_ASSIGN left=expression right=expression)
+	|	^(CASTING left=expression right=expression)
 	;
 
 

@@ -62,4 +62,16 @@ public class AstHelper implements IAstHelper
 
         return actualParameter;
     }
+
+    /**
+     * Prepend ast to target, makes ast the parent of target
+     */
+    @Override
+    public void prependAst(ITSPHPAst ast, ITSPHPAst target) {
+        ITSPHPAst parent = (ITSPHPAst) target.getParent();
+        int childIndex = target.getChildIndex();
+        ast.setParent(parent);
+        ast.addChild(target);
+        parent.replaceChildren(childIndex, childIndex, ast);
+    }
 }

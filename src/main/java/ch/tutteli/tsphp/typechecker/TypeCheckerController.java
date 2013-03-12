@@ -572,6 +572,16 @@ public class TypeCheckerController implements ITypeCheckerController
         }
     }
 
+    private boolean areNotErroneousTypes(ITSPHPAst left, ITSPHPAst right) {
+        return areNotErroneousTypes(left.getEvalType(), right.getEvalType());
+
+    }
+
+    private boolean areNotErroneousTypes(ITypeSymbol leftType, ITypeSymbol rightType) {
+        IErroneousTypeSymbol erroneousTypeSymbol = getFirstErroneousTypeSymbol(leftType, rightType);
+        return erroneousTypeSymbol == null;
+    }
+
     private boolean areNotSameAndNoneIsSubType(ITSPHPAst left, ITSPHPAst right) {
         ITypeSymbol leftType = left.getEvalType();
         ITypeSymbol rightType = right.getEvalType();
@@ -597,13 +607,6 @@ public class TypeCheckerController implements ITypeCheckerController
 
     }
 
-    private boolean areNotErroneousTypes(ITSPHPAst left, ITSPHPAst right) {
-        return areNotErroneousTypes(left.getEvalType(), right.getEvalType());
-
-    }
-
-    private boolean areNotErroneousTypes(ITypeSymbol leftType, ITypeSymbol rightType) {
-        IErroneousTypeSymbol erroneousTypeSymbol = getFirstErroneousTypeSymbol(leftType, rightType);
-        return erroneousTypeSymbol == null;
+    public void checkCast(ITSPHPAst left, ITSPHPAst right) {
     }
 }

@@ -36,4 +36,6 @@ public interface IAstHelper
      * @return The create node
      */
     ITSPHPAst prependCasting(CastingDto parameterPromotionDto);
+
+    void prependAst(ITSPHPAst ast, ITSPHPAst target);
 }

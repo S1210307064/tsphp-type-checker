@@ -58,7 +58,7 @@ public class ResolveConstantTest extends AReferenceScopeTest
                     {"const int a=1; int $b; switch($b){default:{a;}break;}", structDefault("", 1, 2, 2, 0, 0)},
                     {"const int a=1; for(int $a=a;;){}", structDefault("", 1, 1, 0, 1, 0)},
                     {"const int a=1; for(;a==1;){}", structDefault("", 1, 1, 1, 0, 0)},
-                    {"const int a=1; int $a;for(;;$a+=a){}", structDefault("", 1, 2, 2, 0, 1)},
+                    {"const int a=1; int $a;for(;;$a+=a){}", structDefault("", 1, 2, 2, 0, 1, 1)},
                     {"const int a=1; for(;;){a;}", structDefault("", 1, 1, 3, 0, 0)},
                     {"const int a=1; foreach([1] as int $v){a;}", structDefault("", 1, 1, 2, 0, 0)},
                     {"const int a=1; while(a==1){}", structDefault("", 1, 1, 0, 0)},

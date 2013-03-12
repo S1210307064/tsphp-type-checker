@@ -44,11 +44,19 @@ public interface ISymbolTable
 
     IScalarTypeSymbol getBoolTypeSymbol();
 
+    IScalarTypeSymbol getBoolNullableTypeSymbol();
+
     IScalarTypeSymbol getIntTypeSymbol();
+
+    IScalarTypeSymbol getIntNullableTypeSymbol();
 
     IScalarTypeSymbol getFloatTypeSymbol();
 
+    IScalarTypeSymbol getFloatNullableTypeSymbol();
+
     IScalarTypeSymbol getStringTypeSymbol();
+
+    IScalarTypeSymbol getStringNullableTypeSymbol();
 
     IArrayTypeSymbol getArrayTypeSymbol();
 

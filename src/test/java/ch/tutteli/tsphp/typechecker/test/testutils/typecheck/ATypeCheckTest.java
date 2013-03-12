@@ -35,10 +35,15 @@ public class ATypeCheckTest extends AReferenceTest
 {
 
     public static EBuiltInType Bool = EBuiltInType.Bool;
+    public static EBuiltInType BoolNullable = EBuiltInType.BoolNullable;
     public static EBuiltInType Int = EBuiltInType.Int;
+    public static EBuiltInType IntNullable = EBuiltInType.IntNullable;
     public static EBuiltInType Float = EBuiltInType.Float;
+    public static EBuiltInType FloatNullable = EBuiltInType.FloatNullable;
     public static EBuiltInType String = EBuiltInType.String;
+    public static EBuiltInType StringNullable = EBuiltInType.StringNullable;
     public static EBuiltInType Array = EBuiltInType.Array;
+    public static EBuiltInType Object = EBuiltInType.Object;
     //
     protected TSPHPTypeCheckWalker typeCheckWalker;
     protected TypeCheckStruct[] testStructs;
@@ -67,18 +72,33 @@ public class ATypeCheckTest extends AReferenceTest
             case Bool:
                 typeSymbol = symbolTable.getBoolTypeSymbol();
                 break;
+            case BoolNullable:
+                typeSymbol = symbolTable.getBoolNullableTypeSymbol();
+                break;
             case Int:
                 typeSymbol = symbolTable.getIntTypeSymbol();
+                break;
+            case IntNullable:
+                typeSymbol = symbolTable.getIntNullableTypeSymbol();
                 break;
             case Float:
                 typeSymbol = symbolTable.getFloatTypeSymbol();
                 break;
+            case FloatNullable:
+                typeSymbol = symbolTable.getFloatNullableTypeSymbol();
+                break;
             case String:
                 typeSymbol = symbolTable.getStringTypeSymbol();
                 break;
+            case StringNullable:
+                typeSymbol = symbolTable.getStringNullableTypeSymbol();
+                break;
             case Array:
-            default:
                 typeSymbol = symbolTable.getArrayTypeSymbol();
+                break;
+            case Object:
+            default:
+                typeSymbol = symbolTable.getObjectTypeSymbol();
                 break;
         }
         return typeSymbol;
