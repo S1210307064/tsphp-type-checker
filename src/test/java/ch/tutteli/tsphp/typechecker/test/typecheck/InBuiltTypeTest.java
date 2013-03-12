@@ -16,6 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker.test.typecheck;
 
+import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest;
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ATypeCheckTest;
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.EBuiltInType;
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.TypeCheckStruct;
@@ -31,7 +32,7 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class InBuiltTypeTest extends ATypeCheckTest
+public class InBuiltTypeTest extends AOperatorTypeCheckTest
 {
 
     public InBuiltTypeTest(String testString, TypeCheckStruct[] struct) {
@@ -53,9 +54,5 @@ public class InBuiltTypeTest extends ATypeCheckTest
                     {"string $a = 'hello';", new TypeCheckStruct[]{struct("'hello'", String, 1, 0, 1, 0)}},
                     {"string $a = \"hello\";", new TypeCheckStruct[]{struct("\"hello\"", String, 1, 0, 1, 0)}}
                 });
-    }
-
-    private static TypeCheckStruct struct(String astText, EBuiltInType type, Integer... accessOrder) {
-        return new TypeCheckStruct(astText, type, Arrays.asList(accessOrder));
     }
 }

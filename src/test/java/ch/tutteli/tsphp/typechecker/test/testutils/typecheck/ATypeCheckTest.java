@@ -31,7 +31,7 @@ import org.junit.Ignore;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @Ignore
-public class ATypeCheckTest extends AReferenceTest
+public abstract class ATypeCheckTest extends AReferenceTest
 {
 
     public static EBuiltInType Bool = EBuiltInType.Bool;
@@ -47,65 +47,11 @@ public class ATypeCheckTest extends AReferenceTest
     public static EBuiltInType Object = EBuiltInType.Object;
     //
     protected TSPHPTypeCheckWalker typeCheckWalker;
-    protected TypeCheckStruct[] testStructs;
 
-    public ATypeCheckTest(String testString, TypeCheckStruct[] structs) {
+    protected abstract void verifyTypeCheck();
+
+    public ATypeCheckTest(String testString) {
         super(testString);
-        testStructs = structs;
-    }
-
-    protected void verifyTypeCheck() {
-        for (int i = 0; i < testStructs.length; ++i) {
-            TypeCheckStruct testStruct = testStructs[i];
-            ITSPHPAst testCandidate = ScopeTestHelper.getAst(ast, testString, testStruct.accessOrderToNode);
-            Assert.assertNotNull(testString + " failed. testCandidate is null. should be " + testStruct.evalType, testCandidate);
-            Assert.assertEquals(testString + " failed. wrong ast text,", testStruct.astText,
-                    testCandidate.getText());
-            Assert.assertEquals(testString + " failed. wrong type,", getTypeSymbol(testStruct.evalType),
-                    testCandidate.getEvalType());
-        }
-    }
-
-    private ITypeSymbol getTypeSymbol(EBuiltInType type) {
-        ITypeSymbol typeSymbol;
-
-        switch (type) {
-            case Bool:
-                typeSymbol = symbolTable.getBoolTypeSymbol();
-                break;
-            case BoolNullable:
-                typeSymbol = symbolTable.getBoolNullableTypeSymbol();
-                break;
-            case Int:
-                typeSymbol = symbolTable.getIntTypeSymbol();
-                break;
-            case IntNullable:
-                typeSymbol = symbolTable.getIntNullableTypeSymbol();
-                break;
-            case Float:
-                typeSymbol = symbolTable.getFloatTypeSymbol();
-                break;
-            case FloatNullable:
-                typeSymbol = symbolTable.getFloatNullableTypeSymbol();
-                break;
-            case String:
-                typeSymbol = symbolTable.getStringTypeSymbol();
-                break;
-            case StringNullable:
-                typeSymbol = symbolTable.getStringNullableTypeSymbol();
-                break;
-            case Array:
-                typeSymbol = symbolTable.getArrayTypeSymbol();
-                break;
-            case Resource:
-                typeSymbol = symbolTable.getResourceTypeSymbol();
-                break;
-            case Object:
-            default:
-                typeSymbol = symbolTable.getObjectTypeSymbol();
-                break;
-        }
-        return typeSymbol;
     }
 
     @Override
@@ -116,7 +62,7 @@ public class ATypeCheckTest extends AReferenceTest
         checkErrors();
     }
 
-    private void checkErrors() {
+    protected void checkErrors() {
         IErrorReporter errorHelper = ErrorReporterRegistry.get();
         junit.framework.Assert.assertFalse(testString + " failed. Exceptions occured." + errorHelper.getExceptions(),
                 errorHelper.hasFoundError());

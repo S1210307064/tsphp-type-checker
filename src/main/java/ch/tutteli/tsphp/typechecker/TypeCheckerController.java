@@ -499,7 +499,7 @@ public class TypeCheckerController implements ITypeCheckerController
     //TODO code duplication !!!!!!!!!!!!!!!!!
     private OverloadDto resolveUnaryOperator(ITSPHPAst operator, ITSPHPAst expression)
             throws AmbiguousCallException, TypeCheckerException {
-
+        
         List<ITSPHPAst> actualParameters = new ArrayList<>();
         actualParameters.add(expression);
 
@@ -613,6 +613,13 @@ public class TypeCheckerController implements ITypeCheckerController
         return areNotSameAndNoneIsSubType;
     }
 
+    @Override
+    public void checkPrePostIncrementDecrement(ITSPHPAst operator, ITSPHPAst expression){
+        if(!(expression.getSymbol() instanceof IVariableSymbol)){
+            ErrorReporterRegistry.get().variableExpected(expression);
+        }
+    }
+    
     @Override
     public void checkIdentity(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right) {
         if (areNotSameAndNoneIsSubType(left, right)) {

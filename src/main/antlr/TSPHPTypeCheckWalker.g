@@ -120,19 +120,20 @@ symbol returns [ITypeSymbol type]
 	;
    
 unaryOperator returns [ITypeSymbol type]
-	:	^(	(	PRE_INCREMENT 
+	:	^(	(	PRE_INCREMENT
 		    	|	PRE_DECREMENT 
 		    	|	'~' 
 		    	|	'!' 
 		    	|	UNARY_MINUS     	
 		    	|	UNARY_PLUS
-			|	POST_INCREMENT 
+		    	|	POST_INCREMENT 
 		    	|	POST_DECREMENT 
 			)
 			expr=expression
 		)
     		{$type = controller.getUnaryOperatorEvalType($start, $expr.start);}
    	;
+   	
 
 binaryOperator returns [ITypeSymbol type]
    	:	^(	(	'or' 
