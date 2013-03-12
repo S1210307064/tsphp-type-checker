@@ -60,7 +60,9 @@ public class ArithmeticOperatorTest extends AOperatorTypeCheckTest
         String[][] arithmeticOperators = new String[][]{
             {"++", "preIncr"},
             {"--", "preDecr"},
-            {"-", "uMinus"},};
+            {"-", "uMinus"},
+            {"+", "uPlus"}
+        };
         for (String[] operator : arithmeticOperators) {
             collection.addAll(Arrays.asList(new Object[][]{
                 {"bool $a; " + operator[0] + "$a;", new TypeCheckStruct[]{struct(operator[1], Int, 1, 1, 0)}},

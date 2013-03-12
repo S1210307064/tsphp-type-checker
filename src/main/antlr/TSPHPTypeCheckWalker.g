@@ -125,6 +125,7 @@ unaryOperator returns [ITypeSymbol type]
 		    	|	'~' 
 		    	|	'!' 
 		    	|	UNARY_MINUS     	
+		    	|	UNARY_PLUS
 			|	POST_INCREMENT 
 		    	|	POST_DECREMENT 
 			)

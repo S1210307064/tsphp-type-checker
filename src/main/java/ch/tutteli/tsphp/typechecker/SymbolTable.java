@@ -242,7 +242,7 @@ public class SymbolTable implements ISymbolTable
     private void initMaps() {
         int[] unaryOperatoTypes = new int[]{
             PRE_INCREMENT, PRE_DECREMENT,
-            At, BitwiseNot, LogicNot, UNARY_MINUS,
+            At, BitwiseNot, LogicNot, UNARY_MINUS, UNARY_PLUS,
             POST_INCREMENT, POST_DECREMENT
         };
         for (int i = 0; i < unaryOperatoTypes.length; ++i) {
@@ -421,7 +421,8 @@ public class SymbolTable implements ISymbolTable
             {"++", POST_INCREMENT},
             {"--", PRE_DECREMENT},
             {"--", POST_DECREMENT},
-            {"-", UNARY_MINUS}
+            {"-", UNARY_MINUS},
+            {"+", UNARY_PLUS}
         };
         for (Object[] operator : operators) {
             IMethodSymbol methodSymbol = createInBuiltMethodSymbol((String) operator[0]);
@@ -479,13 +480,7 @@ public class SymbolTable implements ISymbolTable
             //
             {intTypeSymbol, boolNullableTypeSymbol},
             {floatTypeSymbol, intNullableTypeSymbol},
-            {stringTypeSymbol, floatNullableTypeSymbol},
-            //
-//            {arrayTypeSymbol, boolTypeSymbol},
-//            {arrayTypeSymbol, boolNullableTypeSymbol},
-//            {arrayTypeSymbol, intNullableTypeSymbol},
-//            {arrayTypeSymbol, floatNullableTypeSymbol},
-//            {arrayTypeSymbol, stringNullableTypeSymbol}
+            {stringTypeSymbol, floatNullableTypeSymbol}, //
         };
 
         for (ITypeSymbol[] fromTo : castings) {
