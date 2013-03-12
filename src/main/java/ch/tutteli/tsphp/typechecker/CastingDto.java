@@ -17,6 +17,7 @@
 package ch.tutteli.tsphp.typechecker;
 
 import ch.tutteli.tsphp.common.ITSPHPAst;
+import ch.tutteli.tsphp.common.ITypeSymbol;
 import java.util.List;
 
 /**
@@ -28,17 +29,22 @@ public class CastingDto extends PromotionExplicitCastingLevelDto
 
     public ITSPHPAst actualParameter;
     public List<ICastingMethod> castingMethods;
-    public List<CastingDto> ambigousCasts;
+    public List<CastingDto> ambiguousCasts;
 
-    public CastingDto(int thePromotionCount, int theExplicitCastingCount,
-            List<ICastingMethod> theCastingMethods) {
-        this(thePromotionCount, theExplicitCastingCount, null, theCastingMethods);
+    public CastingDto(int thePromotionCount, int theExplicitCastingCount) {
+        this(thePromotionCount, theExplicitCastingCount, null, null);
     }
 
     public CastingDto(int thePromotionCount, int theExplicitCastingCount,
-            ITSPHPAst theActualParameter, List<ICastingMethod> theCastingMethods) {
+            List<ICastingMethod> theCastingMethods) {
+        this(thePromotionCount, theExplicitCastingCount, theCastingMethods, null);
+    }
+
+    public CastingDto(int thePromotionCount, int theExplicitCastingCount,
+            List<ICastingMethod> theCastingMethods, ITSPHPAst theActualParameter) {
         super(thePromotionCount, theExplicitCastingCount);
         actualParameter = theActualParameter;
         castingMethods = theCastingMethods;
+
     }
 }

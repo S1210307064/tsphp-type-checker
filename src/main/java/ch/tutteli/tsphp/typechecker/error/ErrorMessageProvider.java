@@ -106,7 +106,8 @@ public class ErrorMessageProvider extends AErrorMessageProvider
 
         ambiguousCastsErrors.put("ambiguousCasts", "Line %line%|%pos% - cast from %RHS% to %LHS% is "
                 + "ambiguous.\n"
-                + "The following ambiguous casts were found: %ambRHS%");
+                + "The following ambiguous casts were found:\n"
+                + "%ambRHS%");
     }
 
     @Override

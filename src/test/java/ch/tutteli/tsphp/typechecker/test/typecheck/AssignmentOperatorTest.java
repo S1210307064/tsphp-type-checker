@@ -27,6 +27,7 @@ import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ATypeCheckTe
 import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ATypeCheckTest.Object;
 import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ATypeCheckTest.String;
 import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ATypeCheckTest.StringNullable;
+import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.EBuiltInType;
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.TypeCheckStruct;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,12 +61,11 @@ public class AssignmentOperatorTest extends AOperatorTypeCheckTest
     public static Collection<Object[]> testStrings() {
         collection = new ArrayList<>();
 
-//        addSimpleAssignment();
+        addSimpleAssignment();
 
         addCastingAssignment();
 
-//        addCompoundAssignment();
-
+        addCompoundAssignment();
 
         return collection;
     }
@@ -233,6 +233,10 @@ public class AssignmentOperatorTest extends AOperatorTypeCheckTest
                 new TypeCheckStruct[]{struct("=", Array, 1, 1, 0)}
             },
             {
+                "resource $a; resource $b; $a = $b;",
+                new TypeCheckStruct[]{struct("=", Resource, 1, 2, 0)}
+            },
+            {
                 "object $a; $a = true;",
                 new TypeCheckStruct[]{struct("=", Object, 1, 1, 0)}
             },
@@ -268,111 +272,94 @@ public class AssignmentOperatorTest extends AOperatorTypeCheckTest
             {
                 "object $a; string? $b; $a = $b;",
                 new TypeCheckStruct[]{struct("=", Object, 1, 2, 0)}
+            },
+            {
+                "object $a; array $b; $a = $b;",
+                new TypeCheckStruct[]{struct("=", Object, 1, 2, 0)}
+            },
+            {
+                "object $a; resource $b; $a = $b;",
+                new TypeCheckStruct[]{struct("=", Object, 1, 2, 0)}
+            },
+            {
+                "object $a; object $b; $a = $b;",
+                new TypeCheckStruct[]{struct("=", Object, 1, 2, 0)}
             }
         }));
     }
 
     private static void addCastingAssignment() {
         String[][] castCombinations = new String[][]{{"", "=()"}, {"cast ", "="}};
+
+        Object[][] types = new Object[][]{
+            {"bool", Bool},
+            {"bool?", BoolNullable},
+            {"int", Int},
+            {"int?", IntNullable},
+            {"float", Float},
+            {"float?", FloatNullable},
+            {"string", String},
+            {"string?", StringNullable},
+            {"array", Array}
+        };
+
         for (String[] castCombination : castCombinations) {
-            collection.addAll(Arrays.asList(new Object[][]{
-//                {
-//                    castCombination[0] + "bool $a; $a " + castCombination[1] + " true;",
-//                    new TypeCheckStruct[]{struct("=", Bool, 1, 1, 0)}
-//                },
-//                {
-//                    castCombination[0] + "bool $a; $a " + castCombination[1] + " false;",
-//                    new TypeCheckStruct[]{struct("=", Bool, 1, 1, 0)}
-//                },
-//                {
-//                    castCombination[0] + "bool $a; $a " + castCombination[1] + " 1;",
-//                    new TypeCheckStruct[]{struct("=", Bool, 1, 1, 0)}
-//                },
-//                {
-//                    castCombination[0] + "bool $a; $a " + castCombination[1] + " 1.2;",
-//                    new TypeCheckStruct[]{struct("=", Bool, 1, 1, 0)}
-//                },
-//                {
-//                    castCombination[0] + "bool $a; $a " + castCombination[1] + " 'hello';", 
-//                    new TypeCheckStruct[]{struct("=", Bool, 1, 1, 0)
-//                    }},
-                {
-                    castCombination[0] + "bool $a; $a " + castCombination[1] + " [1,2];", 
-                    new TypeCheckStruct[]{struct("=", Bool, 1, 1, 0)}
-                },
-                {
-                    castCombination[0] + "bool $a; resource $b; $a " + castCombination[1] + " $b;", 
-                    new TypeCheckStruct[]{struct("=", Bool, 1, 2, 0)}
-                },
-                {
-                    castCombination[0] + "bool $a; object $b; $a " + castCombination[1] + " $b;", 
-                    new TypeCheckStruct[]{struct("=", Bool, 1, 2, 0)}
-                },
-                {
-                    castCombination[0] + "bool $a; bool? $b; $a " + castCombination[1] + " $b;",
-                    new TypeCheckStruct[]{struct("=", Bool, 1, 2, 0)}
-                },
-                {
-                    castCombination[0] + "bool $a; int? $b; $a " + castCombination[1] + " $b;", 
-                    new TypeCheckStruct[]{struct("=", Bool, 1, 2, 0)}
-                },
-                {
-                    castCombination[0] + "bool $a; float? $b; $a " + castCombination[1] + " $b;",
-                    new TypeCheckStruct[]{struct("=", Bool, 1, 2, 0)}
-                },
-                {
-                    castCombination[0] + "bool $a; string? $b; $a " + castCombination[1] + " $b;", 
-                    new TypeCheckStruct[]{struct("=", Bool, 1, 2, 0)}
-                },
-                {
-                    castCombination[0] + "bool? $a; $a " + castCombination[1] + " true;",
-                    new TypeCheckStruct[]{struct("=", BoolNullable, 1, 1, 0)}
-                },
-                {
-                    castCombination[0] + "bool? $a; $a " + castCombination[1] + " false;", 
-                    new TypeCheckStruct[]{struct("=", BoolNullable, 1, 1, 0)}
-                },
-                {
-                    castCombination[0] + "bool? $a; $a " + castCombination[1] + " 1;",
-                    new TypeCheckStruct[]{struct("=", BoolNullable, 1, 1, 0)}
-                },
-                {
-                    castCombination[0] + "bool? $a; $a " + castCombination[1] + " 1.2;",
-                    new TypeCheckStruct[]{struct("=", BoolNullable, 1, 1, 0)}
-                },
-                {
-                    castCombination[0] + "bool? $a; $a " + castCombination[1] + " 'hello';",
-                    new TypeCheckStruct[]{struct("=", BoolNullable, 1, 1, 0)}
-                },
-                {
-                    castCombination[0] + "bool? $a; $a " + castCombination[1] + " [1,2];",
-                    new TypeCheckStruct[]{struct("=", BoolNullable, 1, 1, 0)}
-                },
-                {
-                    castCombination[0] + "bool? $a; resource $b; $a " + castCombination[1] + " $b;", 
-                    new TypeCheckStruct[]{struct("=", BoolNullable, 1, 2, 0)}
-                },
-                {
-                    castCombination[0] + "bool? $a; object $b; $a " + castCombination[1] + " $b;",
-                    new TypeCheckStruct[]{struct("=", BoolNullable, 1, 2, 0)}
-                },
-                {
-                    castCombination[0] + "bool? $a; bool? $b; $a " + castCombination[1] + " $b;", 
-                    new TypeCheckStruct[]{struct("=", BoolNullable, 1, 2, 0)}
-                },
-                {
-                    castCombination[0] + "bool? $a; int? $b; $a " + castCombination[1] + " $b;",
-                    new TypeCheckStruct[]{struct("=", BoolNullable, 1, 2, 0)}
-                },
-                {
-                    castCombination[0] + "bool? $a; float? $b; $a " + castCombination[1] + " $b;", 
-                    new TypeCheckStruct[]{struct("=", BoolNullable, 1, 2, 0)}
-                },
-                {
-                    castCombination[0] + "bool? $a; string? $b; $a " + castCombination[1] + " $b;", 
-                    new TypeCheckStruct[]{struct("=", BoolNullable, 1, 2, 0)}
-                }
-            }));
+            for (Object[] type : types) {
+                collection.addAll(Arrays.asList(new Object[][]{
+                    {
+                        castCombination[0] + type[0] + " $a; $a " + castCombination[1] + " true;",
+                        new TypeCheckStruct[]{struct("=", (EBuiltInType) type[1], 1, 1, 0)}
+                    },
+                    {
+                        castCombination[0] + type[0] + " $a; $a " + castCombination[1] + " false;",
+                        new TypeCheckStruct[]{struct("=", (EBuiltInType) type[1], 1, 1, 0)}
+                    },
+                    {
+                        castCombination[0] + type[0] + " $a; $a " + castCombination[1] + " 1;",
+                        new TypeCheckStruct[]{struct("=", (EBuiltInType) type[1], 1, 1, 0)}
+                    },
+                    {
+                        castCombination[0] + type[0] + " $a; $a " + castCombination[1] + " 1.2;",
+                        new TypeCheckStruct[]{struct("=", (EBuiltInType) type[1], 1, 1, 0)}
+                    },
+                    {
+                        castCombination[0] + type[0] + " $a; $a " + castCombination[1] + " 'hello';",
+                        new TypeCheckStruct[]{struct("=", (EBuiltInType) type[1], 1, 1, 0)
+                        }},
+                    {
+                        castCombination[0] + type[0] + " $a; $a " + castCombination[1] + " [1,2];",
+                        new TypeCheckStruct[]{struct("=", (EBuiltInType) type[1], 1, 1, 0)}
+                    },
+                    {
+                        castCombination[0] + type[0] + " $a; resource $b; $a " + castCombination[1] + " $b;",
+                        new TypeCheckStruct[]{struct("=", (EBuiltInType) type[1], 1, 2, 0)}
+                    },
+                    {
+                        castCombination[0] + type[0] + " $a; object $b; $a " + castCombination[1] + " $b;",
+                        new TypeCheckStruct[]{struct("=", (EBuiltInType) type[1], 1, 2, 0)}
+                    },
+                    {
+                        castCombination[0] + type[0] + " $a; bool? $b; $a " + castCombination[1] + " $b;",
+                        new TypeCheckStruct[]{struct("=", (EBuiltInType) type[1], 1, 2, 0)}
+                    },
+                    {
+                        castCombination[0] + type[0] + " $a; int? $b; $a " + castCombination[1] + " $b;",
+                        new TypeCheckStruct[]{struct("=", (EBuiltInType) type[1], 1, 2, 0)}
+                    },
+                    {
+                        castCombination[0] + type[0] + " $a; float? $b; $a " + castCombination[1] + " $b;",
+                        new TypeCheckStruct[]{struct("=", (EBuiltInType) type[1], 1, 2, 0)}
+                    },
+                    {
+                        castCombination[0] + type[0] + " $a; string? $b; $a " + castCombination[1] + " $b;",
+                        new TypeCheckStruct[]{struct("=", (EBuiltInType) type[1], 1, 2, 0)}
+                    }
+                }));
+            }
+            collection.add(new Object[]{
+                castCombination[0] + "resource $a; object $b; $a " + castCombination[1] + " $b;",
+                new TypeCheckStruct[]{struct("=", Resource, 1, 2, 0)}
+            });
         }
     }
 

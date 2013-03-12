@@ -156,20 +156,28 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
         return message;
     }
 
-    protected String getOverloadSignatures(List<String[]> ambiguousFormalParameterTypes) {
+    protected String getOverloadSignatures(List<List<String>> ambiguousFormalParameterTypes) {
         StringBuilder stringBuilder = new StringBuilder();
-        for (String[] parameterTypes : ambiguousFormalParameterTypes) {
-            stringBuilder.append(Arrays.toString(parameterTypes));
+        for (List<String> parameterTypes : ambiguousFormalParameterTypes) {
+            boolean isNotFirst = false;
+            for (String type : parameterTypes) {
+                if (isNotFirst) {
+                    stringBuilder.append(", ");
+                }
+                isNotFirst = true;
+                stringBuilder.append(type);
+            }
+
             stringBuilder.append("\n");
         }
         return stringBuilder.toString();
     }
 
-    protected String getAmbiguousCastsSequences(List<String[]> castingTypes) {
+    protected String getAmbiguousCastsSequences(List<List<String>> castingTypes) {
 
         StringBuilder stringBuilder = new StringBuilder();
         if (castingTypes != null && !castingTypes.isEmpty()) {
-            for (String[] types : castingTypes) {
+            for (List<String> types : castingTypes) {
                 stringBuilder.append(getCastsSequence(types));
                 stringBuilder.append("\n");
             }
@@ -179,7 +187,7 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
         return stringBuilder.toString();
     }
 
-    protected String getCastsSequence(String[] castTypes) {
+    protected String getCastsSequence(List<String> castTypes) {
         StringBuilder stringBuilder = new StringBuilder();
         boolean isNotFirst = false;
         for (String type : castTypes) {

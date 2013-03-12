@@ -18,6 +18,7 @@ package ch.tutteli.tsphp.typechecker;
 
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IArrayTypeSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.INullTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IPseudoTypeSymbol;
@@ -63,6 +64,8 @@ public interface ISymbolTable
     IPseudoTypeSymbol getResourceTypeSymbol();
 
     IPseudoTypeSymbol getObjectTypeSymbol();
+
+    IClassTypeSymbol getExceptionTypeSymbol();
 
     ICastingMethod getStandardCastingMethod(ITypeSymbol formalParameter);
 }

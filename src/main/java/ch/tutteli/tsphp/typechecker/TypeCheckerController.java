@@ -531,21 +531,21 @@ public class TypeCheckerController implements ITypeCheckerController
             if (leftToRight != null && rightToLeft != null) {
 
                 ErrorReporterRegistry.get().operatorAmbiguousCasts(operator, left, right, leftToRight, rightToLeft,
-                        leftToRight.ambigousCasts, rightToLeft.ambigousCasts);
+                        leftToRight.ambiguousCasts, rightToLeft.ambiguousCasts);
 
             } else if (leftToRight == null && rightToLeft == null) {
 
                 ErrorReporterRegistry.get().wrongEqualityUsage(operator, left, right);
 
             } else if (leftToRight == null
-                    && rightToLeft.ambigousCasts != null && !rightToLeft.ambigousCasts.isEmpty()) {
+                    && rightToLeft.ambiguousCasts != null && !rightToLeft.ambiguousCasts.isEmpty()) {
 
-                ErrorReporterRegistry.get().ambiguousCasts(operator, left, right, rightToLeft.ambigousCasts);
+                ErrorReporterRegistry.get().ambiguousCasts(operator, left, right, rightToLeft.ambiguousCasts);
 
             } else if (rightToLeft == null
-                    && leftToRight.ambigousCasts != null && !leftToRight.ambigousCasts.isEmpty()) {
+                    && leftToRight.ambiguousCasts != null && !leftToRight.ambiguousCasts.isEmpty()) {
 
-                ErrorReporterRegistry.get().ambiguousCasts(operator, left, right, leftToRight.ambigousCasts);
+                ErrorReporterRegistry.get().ambiguousCasts(operator, left, right, leftToRight.ambiguousCasts);
 
             }
         }
@@ -574,8 +574,8 @@ public class TypeCheckerController implements ITypeCheckerController
                     if (castingDto.castingMethods != null) {
                         astHelper.prependCasting(castingDto);
                     }
-                    if (castingDto.ambigousCasts != null) {
-                        ErrorReporterRegistry.get().ambiguousCasts(operator, left, right, castingDto.ambigousCasts);
+                    if (castingDto.ambiguousCasts != null) {
+                        ErrorReporterRegistry.get().ambiguousCasts(operator, left, right, castingDto.ambiguousCasts);
                     }
                 } else {
                     ErrorReporterRegistry.get().wrongAssignment(operator, left, right);
@@ -623,16 +623,18 @@ public class TypeCheckerController implements ITypeCheckerController
 
     @Override
     public void checkCast(final ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right) {
-        operator.setText("==");
+        if (right.getEvalType() instanceof IErroneousSymbol) {
+            operator.setText("==");
 
-        IVariableSymbol leftSymbol = getVariableSymbolFromExpression(left);
-        CastingDto rightToLeft = overloadResolver.getCastingDtoAlwaysCasting(leftSymbol, right);
-        if (rightToLeft == null) {
-            ErrorReporterRegistry.get().wrongCast(operator, left, right);
-        } else if (rightToLeft.ambigousCasts != null && !rightToLeft.ambigousCasts.isEmpty()) {
-            ErrorReporterRegistry.get().ambiguousCasts(operator, left, right, rightToLeft.ambigousCasts);
+            IVariableSymbol leftSymbol = getVariableSymbolFromExpression(left);
+            CastingDto rightToLeft = overloadResolver.getCastingDtoAlwaysCasting(leftSymbol, right);
+            if (rightToLeft == null) {
+                ErrorReporterRegistry.get().wrongCast(operator, left, right);
+            } else if (rightToLeft.ambiguousCasts != null && !rightToLeft.ambiguousCasts.isEmpty()) {
+                ErrorReporterRegistry.get().ambiguousCasts(operator, left, right, rightToLeft.ambiguousCasts);
+            }
+            operator.setText("casting");
         }
-        operator.setText("casting");
     }
 
     @Override

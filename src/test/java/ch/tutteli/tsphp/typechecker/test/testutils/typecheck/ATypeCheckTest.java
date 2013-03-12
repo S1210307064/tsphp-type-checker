@@ -43,6 +43,7 @@ public class ATypeCheckTest extends AReferenceTest
     public static EBuiltInType String = EBuiltInType.String;
     public static EBuiltInType StringNullable = EBuiltInType.StringNullable;
     public static EBuiltInType Array = EBuiltInType.Array;
+    public static EBuiltInType Resource = EBuiltInType.Resource;
     public static EBuiltInType Object = EBuiltInType.Object;
     //
     protected TSPHPTypeCheckWalker typeCheckWalker;
@@ -95,6 +96,9 @@ public class ATypeCheckTest extends AReferenceTest
                 break;
             case Array:
                 typeSymbol = symbolTable.getArrayTypeSymbol();
+                break;
+            case Resource:
+                typeSymbol = symbolTable.getResourceTypeSymbol();
                 break;
             case Object:
             default:

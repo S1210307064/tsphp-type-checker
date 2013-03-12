@@ -21,6 +21,7 @@ import ch.tutteli.tsphp.common.ITypeSymbol;
 import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.*;
 import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.symbols.IArrayTypeSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.INullTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IPseudoTypeSymbol;
@@ -62,6 +63,7 @@ public class SymbolTable implements ISymbolTable
     private IArrayTypeSymbol arrayTypeSymbol;
     private IPseudoTypeSymbol resourceTypeSymbol;
     private IPseudoTypeSymbol objectTypeSymbol;
+    private IClassTypeSymbol exceptionTypeSymbol;
     //
     private IGlobalNamespaceScope globalDefaultNamespace;
 
@@ -149,6 +151,11 @@ public class SymbolTable implements ISymbolTable
     }
 
     @Override
+    public IClassTypeSymbol getExceptionTypeSymbol() {
+        return exceptionTypeSymbol;
+    }
+
+    @Override
     public ICastingMethod getStandardCastingMethod(ITypeSymbol typeSymbol) {
         ICastingMethod castingMethod;
         if (typeSymbol instanceof ITypeSymbolWithPHPBuiltInCasting) {
@@ -222,12 +229,14 @@ public class SymbolTable implements ISymbolTable
         arrayTypeSymbol = symbolFactory.createArrayTypeSymbol("array", TypeArray, objectTypeSymbol);
         globalDefaultNamespace.define(arrayTypeSymbol);
 
-        globalDefaultNamespace.define(symbolFactory.createPseudoTypeSymbol("resource"));
+        resourceTypeSymbol = symbolFactory.createPseudoTypeSymbol("resource");
+        globalDefaultNamespace.define(resourceTypeSymbol);
 
         //predefiend classes
         ITSPHPAst classModifier = astHelper.createAst(CLASS_MODIFIER, "cMod");
         ITSPHPAst identifier = astHelper.createAst(TYPE_NAME, "Exception");
-        globalDefaultNamespace.define(symbolFactory.createClassTypeSymbol(classModifier, identifier, globalDefaultNamespace));
+        exceptionTypeSymbol = symbolFactory.createClassTypeSymbol(classModifier, identifier, globalDefaultNamespace);
+        globalDefaultNamespace.define(exceptionTypeSymbol);
     }
 
     private void initMaps() {
@@ -455,20 +464,28 @@ public class SymbolTable implements ISymbolTable
     }
 
     private void defineExplicitCastings() {
-        if (null instanceof SymbolTable) {
-        }
         ITypeSymbol[][] castings = new ITypeSymbol[][]{
             //everything is castable to bool and array
             {objectTypeSymbol, boolNullableTypeSymbol},
             {objectTypeSymbol, boolTypeSymbol},
             {objectTypeSymbol, arrayTypeSymbol},
-            //array conversion to float, int and string does not make sense therefore it is omitted here
+            //
             {boolNullableTypeSymbol, intTypeSymbol},
+            {boolNullableTypeSymbol, floatTypeSymbol},
+            {boolNullableTypeSymbol, stringTypeSymbol},
             {intNullableTypeSymbol, floatTypeSymbol},
+            {intNullableTypeSymbol, stringTypeSymbol},
             {floatNullableTypeSymbol, stringTypeSymbol},
+            //
             {intTypeSymbol, boolNullableTypeSymbol},
             {floatTypeSymbol, intNullableTypeSymbol},
-            {stringTypeSymbol, floatNullableTypeSymbol}
+            {stringTypeSymbol, floatNullableTypeSymbol},
+            //
+//            {arrayTypeSymbol, boolTypeSymbol},
+//            {arrayTypeSymbol, boolNullableTypeSymbol},
+//            {arrayTypeSymbol, intNullableTypeSymbol},
+//            {arrayTypeSymbol, floatNullableTypeSymbol},
+//            {arrayTypeSymbol, stringNullableTypeSymbol}
         };
 
         for (ITypeSymbol[] fromTo : castings) {

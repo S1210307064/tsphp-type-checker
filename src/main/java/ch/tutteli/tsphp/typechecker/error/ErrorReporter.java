@@ -25,9 +25,9 @@ import ch.tutteli.tsphp.common.exceptions.ReferenceException;
 import ch.tutteli.tsphp.common.exceptions.UnsupportedOperationException;
 import ch.tutteli.tsphp.typechecker.AmbiguousCallException;
 import ch.tutteli.tsphp.typechecker.CastingDto;
+import ch.tutteli.tsphp.typechecker.ICastingMethod;
 import ch.tutteli.tsphp.typechecker.OverloadDto;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
-import ch.tutteli.tsphp.typechecker.symbols.IScalarTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 import java.util.ArrayList;
 import java.util.List;
@@ -210,27 +210,30 @@ public class ErrorReporter implements IErrorReporter
             boolean doBothSideCast) {
 
         String leftType = getAbsoluteTypeName(left.getEvalType());
-        String[] leftToRightReturnTypes;
-        if (doBothSideCast) {
-            leftToRightReturnTypes = getReturnTypes(leftToRightCasts, leftType);
-        } else {
-            leftToRightReturnTypes = new String[]{leftType};
-        }
-        List<String[]> leftReturnTypes = new ArrayList<>();
-        if (leftAmbiguouities != null) {
-            addReturnTypes(leftReturnTypes, leftAmbiguouities, leftType);
-        }
-
         String rightType = getAbsoluteTypeName(right.getEvalType());
-        String[] rightToLeftReturnTypes;
+        
+        List<String> leftToRightReturnTypes;
         if (doBothSideCast) {
-            rightToLeftReturnTypes = getReturnTypes(rightToLeftCasts, rightType);
+            leftToRightReturnTypes = getReturnTypes(leftToRightCasts, leftType,rightType);
         } else {
-            rightToLeftReturnTypes = new String[]{rightType};
+            leftToRightReturnTypes = new ArrayList<>();
+            leftToRightReturnTypes.add(leftType);
         }
-        List<String[]> rightReturnTypes = new ArrayList<>();
+        List<List<String>> leftReturnTypes = new ArrayList<>();
+        if (leftAmbiguouities != null) {
+            addReturnTypes(leftReturnTypes, leftAmbiguouities, leftType, rightType);
+        }
+        
+        List<String> rightToLeftReturnTypes;
+        if (doBothSideCast) {
+            rightToLeftReturnTypes = getReturnTypes(rightToLeftCasts, rightType, leftType);
+        } else {
+            rightToLeftReturnTypes = new ArrayList<>();
+            rightToLeftReturnTypes.add(rightType);
+        }
+        List<List<String>> rightReturnTypes = new ArrayList<>();
         if (rightAmbiguouities != null) {
-            addReturnTypes(rightReturnTypes, rightAmbiguouities, rightType);
+            addReturnTypes(rightReturnTypes, rightAmbiguouities, rightType, leftType);
         }
 
         String errorMessage = errorMessageProvider.getOperatorAmbiguousCastingErrorMessage(key,
@@ -241,20 +244,26 @@ public class ErrorReporter implements IErrorReporter
         return exception;
     }
 
-    private void addReturnTypes(List<String[]> returnTypes, List<CastingDto> castingDtos, String startType) {
+    private void addReturnTypes(List<List<String>> returnTypes, List<CastingDto> castingDtos, String startType, String endType) {
         for (CastingDto castingDto : castingDtos) {
-            returnTypes.add(getReturnTypes(castingDto, startType));
+            returnTypes.add(getReturnTypes(castingDto, startType,endType));
         }
     }
 
-    private String[] getReturnTypes(CastingDto castingDto, String startType) {
-        int castingMethodsSize = castingDto.castingMethods.size();
-        String[] types = new String[castingMethodsSize + 1];
-        types[0] = startType;
-        for (int i = 0; i < castingMethodsSize; ++i) {
-            types[i + 1] = getAbsoluteTypeName(castingDto.castingMethods.get(i).getType());
+    private List<String> getReturnTypes(CastingDto castingDto, String startType, String endType) {
+        List<String> returnTypes = new ArrayList<>(castingDto.castingMethods.size() + 3);
+        returnTypes.add(startType);
+        for (ICastingMethod castingMethod : castingDto.castingMethods) {
+            ITypeSymbol parentTypeSymbol = castingMethod.getParentTypeWhichProvidesCast();
+            if (parentTypeSymbol != null) {
+                returnTypes.add(getAbsoluteTypeName(parentTypeSymbol));
+            }
+            returnTypes.add(getAbsoluteTypeName(castingMethod.getType()));
         }
-        return types;
+        if(!returnTypes.get(returnTypes.size()-1).equals(endType)){
+            returnTypes.add(endType);
+        }
+        return returnTypes;
     }
 
     @Override
@@ -304,7 +313,7 @@ public class ErrorReporter implements IErrorReporter
             actualParameterTypes[i] = getAbsoluteTypeName(actualParameters[i].getEvalType());
         }
 
-        List<String[]> existingOverloads = new ArrayList<>();
+        List<List<String>> existingOverloads = new ArrayList<>();
 
         for (IMethodSymbol method : existingMethodOverloads) {
             existingOverloads.add(getFormalParameters(method.getParameters()));
@@ -322,10 +331,10 @@ public class ErrorReporter implements IErrorReporter
         return definitionScope.getScopeName() + typeSymbol.getName();
     }
 
-    private String[] getFormalParameters(List<IVariableSymbol> formalParameters) {
-        String[] formalParameterTypes = new String[formalParameters.size()];
-        for (int i = 0; i < formalParameterTypes.length; ++i) {
-            formalParameterTypes[i] = getAbsoluteTypeName(formalParameters.get(i).getType());
+    private List<String> getFormalParameters(List<IVariableSymbol> formalParameters) {
+        List<String> formalParameterTypes = new ArrayList<>(formalParameters.size());
+        for (IVariableSymbol variableSymbol : formalParameters) {
+            formalParameterTypes.add(getAbsoluteTypeName(variableSymbol.getType()));
         }
         return formalParameterTypes;
     }

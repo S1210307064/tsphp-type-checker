@@ -76,7 +76,7 @@ topdown
  	|	methodCallStatic
  	|	methodCall
  	|	classConstantStaticMember
- 	|	casting
+ 	|	ing
  	|	instanceofStatement
  	|	newOperator
     	|	atom
@@ -141,7 +141,7 @@ classExtendsDeclaration[ITSPHPAst identifier]
 implementsDeclaration[ITSPHPAst identifier]
 	:	^('implements' 	
 			(allTypes[true]{
-				ITypeSymbol typeSymbol = $allTypes.type;
+			cast	ITypeSymbol typeSymbol = $allTypes.type;
 				if(controller.checkIfInterface($allTypes.start, typeSymbol)){
 				    ((IClassTypeSymbol)identifier.getSymbol()).addParentTypeSymbol((IInterfaceTypeSymbol)typeSymbol);
 				}

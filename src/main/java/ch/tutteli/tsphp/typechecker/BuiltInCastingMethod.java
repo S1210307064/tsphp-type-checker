@@ -25,7 +25,7 @@ import ch.tutteli.tsphp.typechecker.utils.IAstHelper;
  */
 public class BuiltInCastingMethod extends ACastingMethod implements ICastingMethod
 {
-
+    
     public BuiltInCastingMethod(IAstHelper theAstHelper, ITypeSymbolWithPHPBuiltInCasting theType) {
         super(theAstHelper, theType);
     }

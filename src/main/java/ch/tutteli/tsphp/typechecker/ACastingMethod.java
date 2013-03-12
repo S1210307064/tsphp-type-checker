@@ -31,6 +31,7 @@ public abstract class ACastingMethod implements ICastingMethod
 
     protected IAstHelper astHelper;
     protected ITypeSymbol typeSymbol;
+    protected ITypeSymbol parentTypeWhichProvidesCast;
 
     protected abstract int getTokenType();
 
@@ -42,6 +43,16 @@ public abstract class ACastingMethod implements ICastingMethod
     @Override
     public ITypeSymbol getType() {
         return typeSymbol;
+    }
+
+    @Override
+    public ITypeSymbol getParentTypeWhichProvidesCast() {
+        return parentTypeWhichProvidesCast;
+    }
+
+    @Override
+    public void setParentTypeWhichProvidesCast(ITypeSymbol parentTypeSymbol) {
+        parentTypeWhichProvidesCast = parentTypeSymbol;
     }
 
     @Override
