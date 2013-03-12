@@ -14,22 +14,23 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.error;
+package ch.tutteli.tsphp.typechecker.symbols;
+
+import ch.tutteli.tsphp.common.ISymbol;
+import java.util.Set;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public interface IErrorMessageProvider
+public interface ISymbolWithModifier extends ISymbol
 {
 
-    String getDefinitionErrorMessage(String key, DefinitionErrorDto dto);
+    void addModifier(Integer modifier);
+    
+    boolean removeModifier(Integer modifier);
 
-    String getReferenceErrorMessage(String key, ReferenceErrorDto referenceErrorDto);
+    Set<Integer> getModifiers();
 
-    String getWrongArgumentTypeErrorMessage(String key, WrongArgumentTypeErrorDto wrongArgumentTypeErrorDto);
-
-    String getTypeCheckErrorMessage(String identityOperator, TypeCheckErrorDto typeCheckErrorDto);
-
-    String getOperatorAmbiguousCastingErrorMessage(String key, AmbiguousCastsErrorDto ambiguousCastingErrorDto);
+    void setModifiers(Set<Integer> modifier);
 }

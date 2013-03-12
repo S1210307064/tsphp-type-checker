@@ -51,7 +51,7 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
 
     protected abstract String getStandardTypeCheckErrorMessage(String key, TypeCheckErrorDto dto);
 
-    protected abstract String getStandardAmbiguousCastsErrorMessage(String key, AmbiguousCastingErrorDto dto);
+    protected abstract String getStandardAmbiguousCastsErrorMessage(String key, AmbiguousCastsErrorDto dto);
 
     @Override
     public String getDefinitionErrorMessage(String key, DefinitionErrorDto dto) {
@@ -136,7 +136,7 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
     }
 
     @Override
-    public String getOperatorAmbiguousCastingErrorMessage(String key, AmbiguousCastingErrorDto dto) {
+    public String getOperatorAmbiguousCastingErrorMessage(String key, AmbiguousCastsErrorDto dto) {
         String message;
         if (ambiguousCastsErrors == null) {
             loadAmbiguousCastsErrorMessages();
@@ -146,8 +146,8 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
             message = message.replace("%id%", "" + dto.identifier);
             message = message.replace("%line%", "" + dto.line);
             message = message.replace("%pos%", "" + dto.position);
-            message = message.replace("%LHS%", dto.leftType);
-            message = message.replace("%RHS%", dto.rightType);
+            message = message.replace("%LHS%", getCastsSequence(dto.leftToRightCasts));
+            message = message.replace("%RHS%", getCastsSequence(dto.rightToLeftCasts));
             message = message.replace("%ambLHS%", getAmbiguousCastsSequences(dto.leftAmbiguouities));
             message = message.replace("%ambRHS%", getAmbiguousCastsSequences(dto.rightAmbiguouities));
         } else {
@@ -166,18 +166,28 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
     }
 
     protected String getAmbiguousCastsSequences(List<String[]> castingTypes) {
-        StringBuilder stringBuilder = new StringBuilder();
 
-        for (String[] types : castingTypes) {
-            boolean isNotFirst = false;
-            for (String type : types) {
-                if (isNotFirst) {
-                    stringBuilder.append(" -> ");
-                }
-                isNotFirst = true;
-                stringBuilder.append(type);
+        StringBuilder stringBuilder = new StringBuilder();
+        if (castingTypes != null && !castingTypes.isEmpty()) {
+            for (String[] types : castingTypes) {
+                stringBuilder.append(getCastsSequence(types));
+                stringBuilder.append("\n");
             }
-            stringBuilder.append("\n");
+        } else {
+            stringBuilder.append(" - ");
+        }
+        return stringBuilder.toString();
+    }
+
+    protected String getCastsSequence(String[] castTypes) {
+        StringBuilder stringBuilder = new StringBuilder();
+        boolean isNotFirst = false;
+        for (String type : castTypes) {
+            if (isNotFirst) {
+                stringBuilder.append(" -> ");
+            }
+            isNotFirst = true;
+            stringBuilder.append(type);
         }
         return stringBuilder.toString();
     }

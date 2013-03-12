@@ -16,7 +16,6 @@
  */
 package ch.tutteli.tsphp.typechecker.symbols;
 
-import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.typechecker.scopes.ICaseInsensitiveScope;
 
 /**

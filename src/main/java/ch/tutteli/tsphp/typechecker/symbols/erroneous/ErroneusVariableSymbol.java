@@ -18,6 +18,7 @@ package ch.tutteli.tsphp.typechecker.symbols.erroneous;
 
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
+import java.util.Set;
 
 /**
  *
@@ -38,5 +39,25 @@ public class ErroneusVariableSymbol extends AErroneousSymbol implements IErroneo
     @Override
     public boolean isAlwaysCasting() {
         return true;
+    }
+
+    @Override
+    public void addModifier(Integer modifier) {
+        throw new UnsupportedOperationException("ErroneusVariableSymbol is not a real symbol with modifier.");
+    }
+
+    @Override
+    public boolean removeModifier(Integer modifier) {
+        throw new UnsupportedOperationException("ErroneusVariableSymbol is not a real symbol with modifier.");
+    }
+
+    @Override
+    public Set<Integer> getModifiers() {
+        throw new UnsupportedOperationException("ErroneusVariableSymbol is not a real symbol with modifier.");
+    }
+
+    @Override
+    public void setModifiers(Set<Integer> modifier) {
+        throw new UnsupportedOperationException("ErroneusVariableSymbol is not a real symbol with modifier.");
     }
 }

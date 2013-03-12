@@ -24,7 +24,7 @@ import ch.tutteli.tsphp.common.ITypeSymbol;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public interface IPolymorphicTypeSymbol extends ITypeSymbol
+public interface IPolymorphicTypeSymbol extends ITypeSymbol, ISymbolWithModifier
 {
 
     ISymbol resolveWithFallbackToParent(ITSPHPAst ast);

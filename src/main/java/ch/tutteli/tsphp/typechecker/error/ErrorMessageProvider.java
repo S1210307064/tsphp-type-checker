@@ -70,10 +70,6 @@ public class ErrorMessageProvider extends AErrorMessageProvider
         wrongArgumentTypeErrors.put("ambiguousOperatorUsage", "Line %line%|%pos% - usage of operator %id% is ambiguous."
                 + "\ntypes LHS/RHS: %aParams%\n"
                 + "ambiguous overloads: %overloads%");
-        wrongArgumentTypeErrors.put("ambiguousCastOperator", "Line %line%|%pos% - ambiguous castings detected for operator"
-                + "%id% and LHS/RHS: %aParams%\n"
-                + "ambiguous castings LHS: %ambLHS%\n"
-                + "ambiguous castings RHS: %ambRHS%\n");
     }
 
     @Override
@@ -83,6 +79,7 @@ public class ErrorMessageProvider extends AErrorMessageProvider
                 + "LHS/RHS cannot be compared because they are not from the same type, non of them is a sub-type of "
                 + "the other and there does not exists an explicit cast from one type to the other.\n"
                 + "The following types where found: [%tExp%, %tFound%]");
+        typeCheckErrors.put("wrongCast", "Line %line%|%pos% - cannot cast %tFound% to %tExp%");
         typeCheckErrors.put("identityOperator", "Line %line%|%pos% - usage of operator %id% is wrong.\n"
                 + "LHS/RHS have to be from the same type or one has to be a sub-type of the other.\n"
                 + "The following types where found: [%tExp%, %tFound%]");
@@ -95,13 +92,19 @@ public class ErrorMessageProvider extends AErrorMessageProvider
     @Override
     protected void loadAmbiguousCastsErrorMessages() {
         ambiguousCastsErrors = new HashMap<>();
+        ambiguousCastsErrors.put("operatorBothSideCast", "Line %line%|%pos% - ambiguous cast detected in conjunction "
+                + "with the operator %id%. LHS can be casted to RHS and RHS can be casted to LHS.\n"
+                + "cast LHS to RHS: %LHS%\n"
+                + "cast RHS to LHS: %RHS%");
         ambiguousCastsErrors.put("operatorAmbiguousCasts", "Line %line%|%pos% - ambiguous cast detected in conjunction "
-                + "with the operator %id%.\n"
-                + "type LHS: %LHS%\n"
-                + "type RHS: %RHS%\n"
+                + "with the operator %id%. LHS can be casted to RHS and RHS can be casted to LHS.\n"
+                + "cast LHS to RHS: %LHS%\n"
+                + "cast RHS to LHS: %RHS%\n"
+                + "Further ambiguouities:\n"
                 + "ambiguous casts LHS to RHS: %ambLHS%\n"
                 + "ambiguous casts RHS to LHS: %ambRHS%");
-        ambiguousCastsErrors.put("ambiguousCasts", "Line %line%|%pos% - cast from %RHS% to %LHS% in %id% is "
+
+        ambiguousCastsErrors.put("ambiguousCasts", "Line %line%|%pos% - cast from %RHS% to %LHS% is "
                 + "ambiguous.\n"
                 + "The following ambiguous casts were found: %ambRHS%");
     }
@@ -145,13 +148,13 @@ public class ErrorMessageProvider extends AErrorMessageProvider
     }
 
     @Override
-    protected String getStandardAmbiguousCastsErrorMessage(String key, AmbiguousCastingErrorDto dto) {
+    protected String getStandardAmbiguousCastsErrorMessage(String key, AmbiguousCastsErrorDto dto) {
         return "AmbiguousCastsException occured, corresponding error message for \"" + key + "\" is not defined. "
                 + "Please report bug to http://tsphp.tutteli.ch\n"
                 + "However, the following information was gathered.\n"
                 + "Line " + dto.line + "|" + dto.position + " - usage of " + dto.identifier + " was wrong.\n"
-                + "type LHS: " + dto.leftType + "\n"
-                + "type RHS: " + dto.rightType + "\n"
+                + "casts LHS to RHS or LHS type: " + getCastsSequence(dto.leftToRightCasts) + "\n"
+                + "casts RHS to LHS or RHS type: " + getCastsSequence(dto.rightToLeftCasts) + "\n"
                 + "ambiguous casts LHS to RHS:" + getAmbiguousCastsSequences(dto.leftAmbiguouities) + "\n"
                 + "ambiguous casts RHS to LHS:" + getAmbiguousCastsSequences(dto.rightAmbiguouities);
     }

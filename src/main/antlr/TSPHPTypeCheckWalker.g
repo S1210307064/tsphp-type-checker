@@ -106,6 +106,7 @@ expression returns [ITypeSymbol type]
  	|	^('@' expr=expression)	{$type = $expr.start.getEvalType();}
       	|	equalityOperator	{$type = $equalityOperator.type;}
       	|	assignOperator		{$type = $assignOperator.type;}
+      	|	castOperator		{$type = $castOperator.type;}
     	;
     	
 symbol returns [ITypeSymbol type]
@@ -185,9 +186,30 @@ assignOperator returns [ITypeSymbol type]
 	 	    controller.checkAssignment($start, $left.start, $right.start);
 		}
 	;
-castOperator
+	
+castOperator returns [ITypeSymbol type]
 	:	^(CASTING_ASSIGN left=expression right=expression)
-	|	^(CASTING left=expression right=expression)
+		{
+		    $type = $left.start.getEvalType();
+		    controller.checkCastAssignment($start, $left.start, $right.start);
+		}
+		
+	|	^(CASTING ^(TYPE . identifier=allTypes) right=expression)
+		{
+		    $type = $identifier.start.getSymbol().getType();
+		    controller.checkCast($start, $identifier.start, $right.start);
+		}
+	;
+
+allTypes
+	:	'bool'
+	|	'int'
+	|	'float'
+	|	'string'
+	|	'array'
+	|	'resource'
+	|	'object'
+	|	TYPE_NAME
 	;
 
 

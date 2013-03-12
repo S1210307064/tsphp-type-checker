@@ -60,9 +60,11 @@ public class AssignmentOperatorTest extends AOperatorTypeCheckTest
     public static Collection<Object[]> testStrings() {
         collection = new ArrayList<>();
 
-        addSimpleAssignment();
+//        addSimpleAssignment();
 
-        addCompoundAssignment();
+        addCastingAssignment();
+
+//        addCompoundAssignment();
 
 
         return collection;
@@ -268,6 +270,110 @@ public class AssignmentOperatorTest extends AOperatorTypeCheckTest
                 new TypeCheckStruct[]{struct("=", Object, 1, 2, 0)}
             }
         }));
+    }
+
+    private static void addCastingAssignment() {
+        String[][] castCombinations = new String[][]{{"", "=()"}, {"cast ", "="}};
+        for (String[] castCombination : castCombinations) {
+            collection.addAll(Arrays.asList(new Object[][]{
+//                {
+//                    castCombination[0] + "bool $a; $a " + castCombination[1] + " true;",
+//                    new TypeCheckStruct[]{struct("=", Bool, 1, 1, 0)}
+//                },
+//                {
+//                    castCombination[0] + "bool $a; $a " + castCombination[1] + " false;",
+//                    new TypeCheckStruct[]{struct("=", Bool, 1, 1, 0)}
+//                },
+//                {
+//                    castCombination[0] + "bool $a; $a " + castCombination[1] + " 1;",
+//                    new TypeCheckStruct[]{struct("=", Bool, 1, 1, 0)}
+//                },
+//                {
+//                    castCombination[0] + "bool $a; $a " + castCombination[1] + " 1.2;",
+//                    new TypeCheckStruct[]{struct("=", Bool, 1, 1, 0)}
+//                },
+//                {
+//                    castCombination[0] + "bool $a; $a " + castCombination[1] + " 'hello';", 
+//                    new TypeCheckStruct[]{struct("=", Bool, 1, 1, 0)
+//                    }},
+                {
+                    castCombination[0] + "bool $a; $a " + castCombination[1] + " [1,2];", 
+                    new TypeCheckStruct[]{struct("=", Bool, 1, 1, 0)}
+                },
+                {
+                    castCombination[0] + "bool $a; resource $b; $a " + castCombination[1] + " $b;", 
+                    new TypeCheckStruct[]{struct("=", Bool, 1, 2, 0)}
+                },
+                {
+                    castCombination[0] + "bool $a; object $b; $a " + castCombination[1] + " $b;", 
+                    new TypeCheckStruct[]{struct("=", Bool, 1, 2, 0)}
+                },
+                {
+                    castCombination[0] + "bool $a; bool? $b; $a " + castCombination[1] + " $b;",
+                    new TypeCheckStruct[]{struct("=", Bool, 1, 2, 0)}
+                },
+                {
+                    castCombination[0] + "bool $a; int? $b; $a " + castCombination[1] + " $b;", 
+                    new TypeCheckStruct[]{struct("=", Bool, 1, 2, 0)}
+                },
+                {
+                    castCombination[0] + "bool $a; float? $b; $a " + castCombination[1] + " $b;",
+                    new TypeCheckStruct[]{struct("=", Bool, 1, 2, 0)}
+                },
+                {
+                    castCombination[0] + "bool $a; string? $b; $a " + castCombination[1] + " $b;", 
+                    new TypeCheckStruct[]{struct("=", Bool, 1, 2, 0)}
+                },
+                {
+                    castCombination[0] + "bool? $a; $a " + castCombination[1] + " true;",
+                    new TypeCheckStruct[]{struct("=", BoolNullable, 1, 1, 0)}
+                },
+                {
+                    castCombination[0] + "bool? $a; $a " + castCombination[1] + " false;", 
+                    new TypeCheckStruct[]{struct("=", BoolNullable, 1, 1, 0)}
+                },
+                {
+                    castCombination[0] + "bool? $a; $a " + castCombination[1] + " 1;",
+                    new TypeCheckStruct[]{struct("=", BoolNullable, 1, 1, 0)}
+                },
+                {
+                    castCombination[0] + "bool? $a; $a " + castCombination[1] + " 1.2;",
+                    new TypeCheckStruct[]{struct("=", BoolNullable, 1, 1, 0)}
+                },
+                {
+                    castCombination[0] + "bool? $a; $a " + castCombination[1] + " 'hello';",
+                    new TypeCheckStruct[]{struct("=", BoolNullable, 1, 1, 0)}
+                },
+                {
+                    castCombination[0] + "bool? $a; $a " + castCombination[1] + " [1,2];",
+                    new TypeCheckStruct[]{struct("=", BoolNullable, 1, 1, 0)}
+                },
+                {
+                    castCombination[0] + "bool? $a; resource $b; $a " + castCombination[1] + " $b;", 
+                    new TypeCheckStruct[]{struct("=", BoolNullable, 1, 2, 0)}
+                },
+                {
+                    castCombination[0] + "bool? $a; object $b; $a " + castCombination[1] + " $b;",
+                    new TypeCheckStruct[]{struct("=", BoolNullable, 1, 2, 0)}
+                },
+                {
+                    castCombination[0] + "bool? $a; bool? $b; $a " + castCombination[1] + " $b;", 
+                    new TypeCheckStruct[]{struct("=", BoolNullable, 1, 2, 0)}
+                },
+                {
+                    castCombination[0] + "bool? $a; int? $b; $a " + castCombination[1] + " $b;",
+                    new TypeCheckStruct[]{struct("=", BoolNullable, 1, 2, 0)}
+                },
+                {
+                    castCombination[0] + "bool? $a; float? $b; $a " + castCombination[1] + " $b;", 
+                    new TypeCheckStruct[]{struct("=", BoolNullable, 1, 2, 0)}
+                },
+                {
+                    castCombination[0] + "bool? $a; string? $b; $a " + castCombination[1] + " $b;", 
+                    new TypeCheckStruct[]{struct("=", BoolNullable, 1, 2, 0)}
+                }
+            }));
+        }
     }
 
     private static void addCompoundAssignment() {

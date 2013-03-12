@@ -175,55 +175,86 @@ public class ErrorReporter implements IErrorReporter
 
     @Override
     public ReferenceException operatorAmbiguousCasts(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right,
+            CastingDto leftToRightCasts, CastingDto rightToLeftCasts,
             List<CastingDto> leftAmbiguouities, List<CastingDto> rightAmbiguouties) {
-        return addAndGetOperatorAmbiguousCastsException("operatorAmbiguousCasting",
-                operator, leftAmbiguouities, rightAmbiguouties, left, right);
+
+        ReferenceException exception;
+        if (noAmbiguousCasts(leftAmbiguouities, rightAmbiguouties)) {
+            exception = addAndGetOperatorAmbiguousCastsException("operatorBothSideCast",
+                    operator, leftToRightCasts, rightToLeftCasts,
+                    leftAmbiguouities, rightAmbiguouties, left, right, true);
+        } else {
+            exception = addAndGetOperatorAmbiguousCastsException("operatorAmbiguousCasts",
+                    operator, leftToRightCasts, rightToLeftCasts,
+                    leftAmbiguouities, rightAmbiguouties, left, right, true);
+        }
+
+        return exception;
+    }
+
+    private boolean noAmbiguousCasts(List<CastingDto> leftAmbiguouities, List<CastingDto> rightAmbiguouties) {
+        return leftAmbiguouities == null || leftAmbiguouities.isEmpty()
+                && rightAmbiguouties == null || rightAmbiguouties.isEmpty();
     }
 
     @Override
-    public ReferenceException ambiguousCasts(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right, List<CastingDto> ambiguousCastings) {
-        return addAndGetOperatorAmbiguousCastsException("ambiguousCasting", operator, null, ambiguousCastings, left, right);
+    public ReferenceException ambiguousCasts(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right,
+            List<CastingDto> ambiguousCastings) {
+        return addAndGetOperatorAmbiguousCastsException("ambiguousCasts", operator, null, null, null, ambiguousCastings,
+                left, right, false);
     }
 
     private ReferenceException addAndGetOperatorAmbiguousCastsException(String key, ITSPHPAst operator,
-            List<CastingDto> leftAmbiguouities, List<CastingDto> rightAmbiguouities, ITSPHPAst left, ITSPHPAst right) {
+            CastingDto leftToRightCasts, CastingDto rightToLeftCasts,
+            List<CastingDto> leftAmbiguouities, List<CastingDto> rightAmbiguouities, ITSPHPAst left, ITSPHPAst right,
+            boolean doBothSideCast) {
 
         String leftType = getAbsoluteTypeName(left.getEvalType());
+        String[] leftToRightReturnTypes;
+        if (doBothSideCast) {
+            leftToRightReturnTypes = getReturnTypes(leftToRightCasts, leftType);
+        } else {
+            leftToRightReturnTypes = new String[]{leftType};
+        }
         List<String[]> leftReturnTypes = new ArrayList<>();
         if (leftAmbiguouities != null) {
-
-            for (CastingDto castingDto : leftAmbiguouities) {
-                int castingMethodsSize = castingDto.castingMethods.size();
-                String[] types = new String[castingMethodsSize + 1];
-                types[0] = leftType;
-                for (int i = 0; i < castingMethodsSize; ++i) {
-                    types[i + 1] = getAbsoluteTypeName(castingDto.castingMethods.get(i).getType());
-                }
-                leftReturnTypes.add(types);
-            }
+            addReturnTypes(leftReturnTypes, leftAmbiguouities, leftType);
         }
 
         String rightType = getAbsoluteTypeName(right.getEvalType());
+        String[] rightToLeftReturnTypes;
+        if (doBothSideCast) {
+            rightToLeftReturnTypes = getReturnTypes(rightToLeftCasts, rightType);
+        } else {
+            rightToLeftReturnTypes = new String[]{rightType};
+        }
         List<String[]> rightReturnTypes = new ArrayList<>();
         if (rightAmbiguouities != null) {
-
-            for (CastingDto castingDto : rightAmbiguouities) {
-                int castingMethodsSize = castingDto.castingMethods.size();
-                String[] types = new String[castingMethodsSize + 1];
-                types[0] = rightType;
-                for (int i = 0; i < castingMethodsSize; ++i) {
-                    types[i + 1] = getAbsoluteTypeName(castingDto.castingMethods.get(i).getType());
-                }
-                rightReturnTypes.add(types);
-            }
+            addReturnTypes(rightReturnTypes, rightAmbiguouities, rightType);
         }
 
         String errorMessage = errorMessageProvider.getOperatorAmbiguousCastingErrorMessage(key,
-                new AmbiguousCastingErrorDto(operator.getText(), operator.getLine(), operator.getCharPositionInLine(),
-                leftType, rightType, leftReturnTypes, rightReturnTypes));
+                new AmbiguousCastsErrorDto(operator.getText(), operator.getLine(), operator.getCharPositionInLine(),
+                leftToRightReturnTypes, rightToLeftReturnTypes, leftReturnTypes, rightReturnTypes));
         ReferenceException exception = new ReferenceException(errorMessage, operator);
         exceptions.add(exception);
         return exception;
+    }
+
+    private void addReturnTypes(List<String[]> returnTypes, List<CastingDto> castingDtos, String startType) {
+        for (CastingDto castingDto : castingDtos) {
+            returnTypes.add(getReturnTypes(castingDto, startType));
+        }
+    }
+
+    private String[] getReturnTypes(CastingDto castingDto, String startType) {
+        int castingMethodsSize = castingDto.castingMethods.size();
+        String[] types = new String[castingMethodsSize + 1];
+        types[0] = startType;
+        for (int i = 0; i < castingMethodsSize; ++i) {
+            types[i + 1] = getAbsoluteTypeName(castingDto.castingMethods.get(i).getType());
+        }
+        return types;
     }
 
     @Override
@@ -310,13 +341,18 @@ public class ErrorReporter implements IErrorReporter
     }
 
     @Override
-    public ReferenceException wrongEqualityUsage(ITSPHPAst statement, ITSPHPAst left, ITSPHPAst right) {
-        return addAndGetTypeCheckErrorMessage("equalityOperator", statement, left, right);
+    public ReferenceException wrongEqualityUsage(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right) {
+        return addAndGetTypeCheckErrorMessage("equalityOperator", operator, left, right);
     }
 
     @Override
-    public ReferenceException wrongIdentityUsage(ITSPHPAst statement, ITSPHPAst left, ITSPHPAst right) {
-        return addAndGetTypeCheckErrorMessage("identityOperator", statement, left, right);
+    public ReferenceException wrongCast(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right) {
+        return addAndGetTypeCheckErrorMessage("wrongCast", operator, left, right);
+    }
+
+    @Override
+    public ReferenceException wrongIdentityUsage(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right) {
+        return addAndGetTypeCheckErrorMessage("identityOperator", operator, left, right);
     }
 
     @Override

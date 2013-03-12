@@ -21,14 +21,16 @@ import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
+import ch.tutteli.tsphp.typechecker.symbols.ISymbolWithModifier;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public abstract class AErroneousScopedSymbol extends ASymbol implements IErroneousSymbol, IScope
+public abstract class AErroneousScopedSymbol extends ASymbol implements IErroneousSymbol, IScope, ISymbolWithModifier
 {
 
     private TypeCheckerException exception;
@@ -70,5 +72,25 @@ public abstract class AErroneousScopedSymbol extends ASymbol implements IErroneo
     @Override
     public Map<String, List<ISymbol>> getSymbols() {
         throw new UnsupportedOperationException("AErroneousScopedSymbol is not a real scope.");
+    }
+
+    @Override
+    public void addModifier(Integer modifier) {
+        throw new UnsupportedOperationException("AErroneousScopedSymbol is not a real symbol with modifier.");
+    }
+
+    @Override
+    public boolean removeModifier(Integer modifier) {
+        throw new UnsupportedOperationException("AErroneousScopedSymbol is not a real symbol with modifier.");
+    }
+
+    @Override
+    public Set<Integer> getModifiers() {
+        throw new UnsupportedOperationException("AErroneousScopedSymbol is not a real symbol with modifier.");
+    }
+
+    @Override
+    public void setModifiers(Set<Integer> modifier) {
+        throw new UnsupportedOperationException("AErroneousScopedSymbol is not a real symbol with modifier.");
     }
 }

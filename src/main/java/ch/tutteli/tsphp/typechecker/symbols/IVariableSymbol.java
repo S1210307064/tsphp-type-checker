@@ -16,13 +16,11 @@
  */
 package ch.tutteli.tsphp.typechecker.symbols;
 
-import ch.tutteli.tsphp.common.ISymbol;
-
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public interface IVariableSymbol extends ISymbol, ICanBeStatic, ICanAlwaysCast
+public interface IVariableSymbol extends ISymbolWithModifier, ICanBeStatic, ICanAlwaysCast
 {
 
 }

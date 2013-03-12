@@ -22,17 +22,20 @@ import java.util.List;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class AmbiguousCastingErrorDto extends ReferenceErrorDto
+public class AmbiguousCastsErrorDto extends ReferenceErrorDto
 {
 
-    public String leftType;
-    public String rightType;
+    public String[] leftToRightCasts;
+    public String[] rightToLeftCasts;
     public List<String[]> leftAmbiguouities;
     public List<String[]> rightAmbiguouities;
 
-    public AmbiguousCastingErrorDto(String theIdentifier, int theLine, int thePosition, String leftType,
-            String rightType, List<String[]> theLeftAmbiguouities, List<String[]> theRightAmbiguouities) {
+    public AmbiguousCastsErrorDto(String theIdentifier, int theLine, int thePosition,
+            String[] theLeftToRightCasts, String[] theRightToLeftCasts,
+            List<String[]> theLeftAmbiguouities, List<String[]> theRightAmbiguouities) {
         super(theIdentifier, theLine, thePosition);
+        leftToRightCasts = theLeftToRightCasts;
+        rightToLeftCasts = theRightToLeftCasts;
         leftAmbiguouities = theLeftAmbiguouities;
         rightAmbiguouities = theRightAmbiguouities;
     }

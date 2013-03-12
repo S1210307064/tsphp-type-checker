@@ -22,7 +22,6 @@ import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.exceptions.DefinitionException;
 import ch.tutteli.tsphp.common.exceptions.ReferenceException;
 import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
-import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasTypeSymbol;
@@ -526,13 +525,28 @@ public class TypeCheckerController implements ITypeCheckerController
             IVariableSymbol leftSymbol = getVariableSymbolFromExpression(left);
             IVariableSymbol rightSymbol = getVariableSymbolFromExpression(right);
 
-            CastingDto rightToLeft = overloadResolver.getCastingDtoAlwaysCasting(leftSymbol, right);
             CastingDto leftToRight = overloadResolver.getCastingDtoAlwaysCasting(rightSymbol, left);
-            if (rightToLeft != null && leftToRight != null) {
-                ErrorReporterRegistry.get().operatorAmbiguousCasts(operator, left, right,
+            CastingDto rightToLeft = overloadResolver.getCastingDtoAlwaysCasting(leftSymbol, right);
+
+            if (leftToRight != null && rightToLeft != null) {
+
+                ErrorReporterRegistry.get().operatorAmbiguousCasts(operator, left, right, leftToRight, rightToLeft,
                         leftToRight.ambigousCasts, rightToLeft.ambigousCasts);
-            } else if (rightToLeft == null && leftToRight == null) {
+
+            } else if (leftToRight == null && rightToLeft == null) {
+
                 ErrorReporterRegistry.get().wrongEqualityUsage(operator, left, right);
+
+            } else if (leftToRight == null
+                    && rightToLeft.ambigousCasts != null && !rightToLeft.ambigousCasts.isEmpty()) {
+
+                ErrorReporterRegistry.get().ambiguousCasts(operator, left, right, rightToLeft.ambigousCasts);
+
+            } else if (rightToLeft == null
+                    && leftToRight.ambigousCasts != null && !leftToRight.ambigousCasts.isEmpty()) {
+
+                ErrorReporterRegistry.get().ambiguousCasts(operator, left, right, leftToRight.ambigousCasts);
+
             }
         }
     }
@@ -607,6 +621,23 @@ public class TypeCheckerController implements ITypeCheckerController
 
     }
 
-    public void checkCast(ITSPHPAst left, ITSPHPAst right) {
+    @Override
+    public void checkCast(final ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right) {
+        operator.setText("==");
+
+        IVariableSymbol leftSymbol = getVariableSymbolFromExpression(left);
+        CastingDto rightToLeft = overloadResolver.getCastingDtoAlwaysCasting(leftSymbol, right);
+        if (rightToLeft == null) {
+            ErrorReporterRegistry.get().wrongCast(operator, left, right);
+        } else if (rightToLeft.ambigousCasts != null && !rightToLeft.ambigousCasts.isEmpty()) {
+            ErrorReporterRegistry.get().ambiguousCasts(operator, left, right, rightToLeft.ambigousCasts);
+        }
+        operator.setText("casting");
+    }
+
+    @Override
+    public void checkCastAssignment(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right) {
+        checkCast(operator, left, right);
+        operator.setText("=");
     }
 }

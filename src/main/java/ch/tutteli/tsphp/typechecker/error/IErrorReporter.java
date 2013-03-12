@@ -20,11 +20,9 @@ import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.exceptions.DefinitionException;
 import ch.tutteli.tsphp.common.exceptions.ReferenceException;
-import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
 import ch.tutteli.tsphp.common.exceptions.UnsupportedOperationException;
 import ch.tutteli.tsphp.typechecker.AmbiguousCallException;
 import ch.tutteli.tsphp.typechecker.CastingDto;
-import ch.tutteli.tsphp.typechecker.OverloadDto;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import java.util.List;
 
@@ -86,10 +84,11 @@ public interface IErrorReporter extends ch.tutteli.tsphp.common.IErrorReporter
             AmbiguousCallException ex);
 
     ReferenceException operatorAmbiguousCasts(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right,
+            CastingDto leftToRightCasts, CastingDto rightToLeftCasts,
             List<CastingDto> leftAmbiguouities, List<CastingDto> rightAmbiguouties);
 
     ReferenceException ambiguousCasts(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right,
-            List<CastingDto> ambiguousCastings);
+            List<CastingDto> ambiguousCasts);
 
     ReferenceException wrongBinaryOperatorUsage(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right,
             List<IMethodSymbol> existingMethodOverloads);
@@ -98,6 +97,8 @@ public interface IErrorReporter extends ch.tutteli.tsphp.common.IErrorReporter
             List<IMethodSymbol> existingMethodOverloads);
 
     ReferenceException wrongEqualityUsage(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
+
+    ReferenceException wrongCast(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
 
     ReferenceException wrongIdentityUsage(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
 

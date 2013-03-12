@@ -95,4 +95,6 @@ public class ErroneousClassTypeSymbol extends AErroneousScopedSymbol implements 
     public void setParent(IClassTypeSymbol theParent) {
         throw new UnsupportedOperationException("ErroneousClassSymbol is not a real class.");
     }
+
+   
 }
