@@ -103,6 +103,17 @@ public class ErrorMessageProvider extends AErrorMessageProvider
 
         typeCheckErrors.put("wrongTypeForeach", "Line %line%|%pos% - the given expression in the foreach statement "
                 + "evaluates to a wrong type. Type %tExp% or a sub-type expected but %tFound% found.");
+
+        typeCheckErrors.put("wrongTypeWhile", "Line %line%|%pos% - the condition in the while statement "
+                + "evaluates to a wrong type. Type %tExp% or a sub-type expected but %tFound% found.");
+        typeCheckErrors.put("wrongTypeDoWhile", "Line %line%|%pos% - the condition in the do-while statement "
+                + "evaluates to a wrong type. Type %tExp% or a sub-type expected but %tFound% found.");
+
+        typeCheckErrors.put("arrayExpected", "Line %line%|%pos% - the expression evaluates to a wrong type. "
+                + "Type %tExp% or a sub-type expected but %tFound% found.");
+
+        typeCheckErrors.put("wrongArrayIndexType", "Line %line%|%pos% - the index used to access the array evaluates "
+                + "to a wrong type. Type %tExp% or a sub-type expected but %tFound% found.");
     }
 
     @Override

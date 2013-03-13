@@ -78,7 +78,8 @@ expressionRoot
  	|	^(nil='return' expr=expression)
  	|	^(nil='throw' expr=expression)
  	
- 	|	^(nil=ARRAY_ACCESS expr=expression)
+ 	|	^(nil=ARRAY_ACCESS expr=expression index=expression)
+ 		{$nil.setEvalType(controller.getReturnTypeArrayAccess($nil, $expr.start, $index.start));}
  	|	^(nil=If expr=expression . .?)
  		{controller.checkIf($nil, $expr.start);}
  	|	^(nil=While expr=expression .)

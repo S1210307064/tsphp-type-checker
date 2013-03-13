@@ -121,4 +121,8 @@ public interface IErrorReporter extends ch.tutteli.tsphp.common.IErrorReporter
     ReferenceException wrongTypeWhile(ITSPHPAst whileRoot, ITSPHPAst expression, ITypeSymbol typeSymbol);
 
     ReferenceException wrongTypeDoWhile(ITSPHPAst doWhileRoot, ITSPHPAst expression, ITypeSymbol typeSymbol);
+
+    ReferenceException arrayExpected(ITSPHPAst expression, IArrayTypeSymbol arrayTypeSymbol);
+
+    ReferenceException wrongArrayIndexType(ITSPHPAst expression, ITSPHPAst index, ITypeSymbol typeSymbol);
 }

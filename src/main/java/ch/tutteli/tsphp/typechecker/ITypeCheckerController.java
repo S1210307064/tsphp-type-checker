@@ -90,7 +90,19 @@ public interface ITypeCheckerController
 
     void checkCastAssignment(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
 
-    void checkIsType(ITSPHPAst statement, ITSPHPAst expression, ITypeSymbol typeSymbol);
+    void checkIf(ITSPHPAst statement, ITSPHPAst expression);
+
+    void checkSwitch(ITSPHPAst statement, ITSPHPAst expression);
+
+    void checkSwitchCase(ITSPHPAst statement, ITSPHPAst expression);
+
+    void checkFor(ITSPHPAst statement, ITSPHPAst expression);
 
     void checkForeach(ITSPHPAst foreachRoot, ITSPHPAst array, ITSPHPAst keyVariableId, ITSPHPAst valueVariableId);
+
+    void checkWhile(ITSPHPAst whileRoot, ITSPHPAst expression);
+
+    void checkDoWhile(ITSPHPAst doWhileRoot, ITSPHPAst expression);
+    
+    ITypeSymbol getReturnTypeArrayAccess(ITSPHPAst statement, ITSPHPAst expression, ITSPHPAst index);
 }

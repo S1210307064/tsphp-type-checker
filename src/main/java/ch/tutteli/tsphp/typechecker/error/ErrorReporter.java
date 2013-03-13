@@ -420,6 +420,16 @@ public class ErrorReporter implements IErrorReporter
         return addAndGetStatementTypeCheckError("wrongTypeDoWhile", doWhileRoot, expression, typeSymbol);
     }
 
+    @Override
+    public ReferenceException arrayExpected(ITSPHPAst expression, IArrayTypeSymbol arrayTypeSymbol) {
+         return addAndGetStatementTypeCheckError("arrayExpected", expression, expression, arrayTypeSymbol);
+    }
+
+    @Override
+    public ReferenceException wrongArrayIndexType(ITSPHPAst expression, ITSPHPAst index, ITypeSymbol typeSymbol) {
+         return addAndGetStatementTypeCheckError("wrongArrayIndexType", expression, index, typeSymbol);
+    }
+
     private ReferenceException addAndGetStatementTypeCheckError(String key, ITSPHPAst statement,
             ITSPHPAst expression, ITypeSymbol typeSymbol) {
 

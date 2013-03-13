@@ -51,7 +51,7 @@ public class ArithmeticOperatorTest extends AOperatorTypeCheckTest
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
         collection = new ArrayList<>();
-//        addArithmeticUnaryOperators();
+        addArithmeticUnaryOperators();
         addArithmeticBinaryOperators();
         return collection;
     }
