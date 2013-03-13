@@ -499,7 +499,7 @@ public class TypeCheckerController implements ITypeCheckerController
     //TODO code duplication !!!!!!!!!!!!!!!!!
     private OverloadDto resolveUnaryOperator(ITSPHPAst operator, ITSPHPAst expression)
             throws AmbiguousCallException, TypeCheckerException {
-        
+
         List<ITSPHPAst> actualParameters = new ArrayList<>();
         actualParameters.add(expression);
 
@@ -614,12 +614,12 @@ public class TypeCheckerController implements ITypeCheckerController
     }
 
     @Override
-    public void checkPrePostIncrementDecrement(ITSPHPAst operator, ITSPHPAst expression){
-        if(!(expression.getSymbol() instanceof IVariableSymbol)){
+    public void checkPrePostIncrementDecrement(ITSPHPAst operator, ITSPHPAst expression) {
+        if (!(expression.getSymbol() instanceof IVariableSymbol)) {
             ErrorReporterRegistry.get().variableExpected(expression);
         }
     }
-    
+
     @Override
     public void checkIdentity(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right) {
         if (areNotSameAndNoneIsSubType(left, right)) {
@@ -649,11 +649,24 @@ public class TypeCheckerController implements ITypeCheckerController
         checkCast(operator, left, right);
         operator.setText("=");
     }
-    
+
     @Override
-    public void checkIfType(ITSPHPAst statement, ITSPHPAst expression, ITypeSymbol typeSymbol){
-        if(expression.getEvalType()!=typeSymbol){
+    public void checkIsType(ITSPHPAst statement, ITSPHPAst expression, ITypeSymbol typeSymbol) {
+        ITypeSymbol expressionType = expression.getEvalType();
+        areNotErroneousTypes(expressionType, typeSymbol);
+        int promotionCount = overloadResolver.getPromotionLevelFromTo(expressionType, typeSymbol);
+        if (!overloadResolver.isSameOrParentType(promotionCount)) {
             ErrorReporterRegistry.get().wrongType(statement, expression, typeSymbol);
+        }
+    }
+
+    @Override
+    public void checkIsNotType(ITSPHPAst statement, ITSPHPAst expression, ITypeSymbol typeSymbol) {
+        ITypeSymbol expressionType = expression.getEvalType();
+        areNotErroneousTypes(expressionType, typeSymbol);
+        int promotionCount = overloadResolver.getPromotionLevelFromTo(expressionType, typeSymbol);
+        if (overloadResolver.isSameOrParentType(promotionCount)) {
+            ErrorReporterRegistry.get().typeNotAllowed(statement, expression, typeSymbol);
         }
     }
 }

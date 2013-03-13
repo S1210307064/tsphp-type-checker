@@ -75,18 +75,27 @@ expressionLists
 		)
 	;
 expressionRoot 
-	:	(	^(nil=EXPRESSION expr=expression)
-    		|	^(nil='return' expr=expression)
-    		|	^(nil='throw' expr=expression)
-    		|	^(nil=ARRAY_ACCESS expr=expression)
-    		|	^(nil=If expr=expression . .?)
-    			{controller.checkIfType($nil, $expr.start, symbolTable.getBoolTypeSymbol());}
-    		|	^(nil=Foreach expr=expression)
-    		|	^(nil=While expr=expression)
-    		)
-		{$nil.setEvalType($expr.type);}
+	:	^(nil=EXPRESSION expr=expression)
+ 	|	^(nil='return' expr=expression)
+ 	|	^(nil='throw' expr=expression)
+ 	
+ 	|	^(nil=ARRAY_ACCESS expr=expression)
+ 	|	^(nil=If expr=expression . .?)
+ 		{controller.checkIsType($nil, $expr.start, symbolTable.getBoolTypeSymbol());}
+ 	|	switchCondition
+ 	|	^(nil=Foreach expr=expression)
+	|	^(nil=While expr=expression)
 	;
 	
+switchCondition
+	:	^(Switch condition=expression {controller.checkIsType($Switch,$condition.start,symbolTable.getStringNullableTypeSymbol());}
+			(
+				^(SWITCH_CASES (label=expression {controller.checkIsType($Switch,$label.start,$condition.type);})* Default?) 
+				.
+			)*
+		)
+	;
+
 variableInit
 	:	^(VariableId expression)
 	;
@@ -132,7 +141,7 @@ unaryOperator returns [ITypeSymbol type]
 		)
     		{$type = controller.getUnaryOperatorEvalType($start, $expr.start);}
    	;
-   	
+   	   	
 
 binaryOperator returns [ITypeSymbol type]
    	:	^(	(	'or' 

@@ -43,7 +43,9 @@ public interface IOverloadResolver
      * Return how many promotions have to be applied to the actualType to reach the formalType whereby -1 is returned in
      * the case where formalType is not the actualType or one of its parent types.
      */
-    int getPromotionCountFromTo(ITypeSymbol fromType, ITypeSymbol toType);
+    int getPromotionLevelFromTo(ITypeSymbol fromType, ITypeSymbol toType);
+
+    boolean isSameOrParentType(int promotionLevel);
 
     boolean isSameOrParentTypeConsiderNull(IVariableSymbol formalType, ITSPHPAst actualType);
 }

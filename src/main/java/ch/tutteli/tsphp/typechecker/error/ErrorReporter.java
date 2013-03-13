@@ -211,10 +211,10 @@ public class ErrorReporter implements IErrorReporter
 
         String leftType = getAbsoluteTypeName(left.getEvalType());
         String rightType = getAbsoluteTypeName(right.getEvalType());
-        
+
         List<String> leftToRightReturnTypes;
         if (doBothSideCast) {
-            leftToRightReturnTypes = getReturnTypes(leftToRightCasts, leftType,rightType);
+            leftToRightReturnTypes = getReturnTypes(leftToRightCasts, leftType, rightType);
         } else {
             leftToRightReturnTypes = new ArrayList<>();
             leftToRightReturnTypes.add(leftType);
@@ -223,7 +223,7 @@ public class ErrorReporter implements IErrorReporter
         if (leftAmbiguouities != null) {
             addReturnTypes(leftReturnTypes, leftAmbiguouities, leftType, rightType);
         }
-        
+
         List<String> rightToLeftReturnTypes;
         if (doBothSideCast) {
             rightToLeftReturnTypes = getReturnTypes(rightToLeftCasts, rightType, leftType);
@@ -246,7 +246,7 @@ public class ErrorReporter implements IErrorReporter
 
     private void addReturnTypes(List<List<String>> returnTypes, List<CastingDto> castingDtos, String startType, String endType) {
         for (CastingDto castingDto : castingDtos) {
-            returnTypes.add(getReturnTypes(castingDto, startType,endType));
+            returnTypes.add(getReturnTypes(castingDto, startType, endType));
         }
     }
 
@@ -260,7 +260,7 @@ public class ErrorReporter implements IErrorReporter
             }
             returnTypes.add(getAbsoluteTypeName(castingMethod.getType()));
         }
-        if(!returnTypes.get(returnTypes.size()-1).equals(endType)){
+        if (!returnTypes.get(returnTypes.size() - 1).equals(endType)) {
             returnTypes.add(endType);
         }
         return returnTypes;
@@ -369,21 +369,31 @@ public class ErrorReporter implements IErrorReporter
         return addAndGetTypeCheckErrorMessage("wrongAssignment", operator, left, right);
     }
 
-    @Override
-    public ReferenceException wrongType(ITSPHPAst statement,ITSPHPAst expression, ITypeSymbol typeSymbol){
-        String errorMessage = errorMessageProvider.getTypeCheckErrorMessage("wrongType",
-                new TypeCheckErrorDto(statement.getText(), statement.getLine(), statement.getCharPositionInLine(),
-                getAbsoluteTypeName(typeSymbol), getAbsoluteTypeName(expression.getEvalType())));
-        ReferenceException exception = new ReferenceException(errorMessage, statement);
-        exceptions.add(exception);
-        return exception;
-    }
-    
     private ReferenceException addAndGetTypeCheckErrorMessage(String key, ITSPHPAst statement, ITSPHPAst left,
             ITSPHPAst right) {
         String errorMessage = errorMessageProvider.getTypeCheckErrorMessage(key,
                 new TypeCheckErrorDto(statement.getText(), statement.getLine(), statement.getCharPositionInLine(),
                 getAbsoluteTypeName(left.getEvalType()), getAbsoluteTypeName(right.getEvalType())));
+        ReferenceException exception = new ReferenceException(errorMessage, statement);
+        exceptions.add(exception);
+        return exception;
+    }
+
+    @Override
+    public ReferenceException wrongType(ITSPHPAst statement, ITSPHPAst expression, ITypeSymbol typeSymbol) {
+        return addAndGetStatementTypeCheckError("wrongType", statement, expression, typeSymbol);
+    }
+
+    @Override
+    public ReferenceException typeNotAllowed(ITSPHPAst statement, ITSPHPAst expression, ITypeSymbol typeSymbol) {
+        return addAndGetStatementTypeCheckError("typeNotAllowed", statement, expression, typeSymbol);
+    }
+
+    private ReferenceException addAndGetStatementTypeCheckError(String key, ITSPHPAst statement,
+            ITSPHPAst expression, ITypeSymbol typeSymbol) {
+        String errorMessage = errorMessageProvider.getTypeCheckErrorMessage(key,
+                new TypeCheckErrorDto(statement.getText(), statement.getLine(), statement.getCharPositionInLine(),
+                getAbsoluteTypeName(typeSymbol), getAbsoluteTypeName(expression.getEvalType())));
         ReferenceException exception = new ReferenceException(errorMessage, statement);
         exceptions.add(exception);
         return exception;

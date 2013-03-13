@@ -83,12 +83,14 @@ public interface ITypeCheckerController
     void checkIdentity(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
 
     void checkAssignment(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
-    
+
     void checkPrePostIncrementDecrement(ITSPHPAst operator, ITSPHPAst expression);
 
     void checkCast(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
 
     void checkCastAssignment(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
-    
-    void checkIfType(ITSPHPAst statement, ITSPHPAst expression, ITypeSymbol typeSymbol);
+
+    void checkIsType(ITSPHPAst statement, ITSPHPAst expression, ITypeSymbol typeSymbol);
+
+    void checkIsNotType(ITSPHPAst statement, ITSPHPAst expression, ITypeSymbol typeSymbol);
 }

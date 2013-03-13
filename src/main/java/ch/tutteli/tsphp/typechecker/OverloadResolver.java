@@ -111,10 +111,10 @@ public class OverloadResolver implements IOverloadResolver
 
         CastingDto castingDto = null;
 
-        int promotionCount = getPromotionCountFromToConsiderNull(actualParameter, formalParameter);
+        int promotionLevel = getPromotionLevelFromToConsiderNull(actualParameter, formalParameter);
 
-        if (isSameOrParentType(promotionCount)) {
-            castingDto = new CastingDto(promotionCount, 0, null, actualParameter);
+        if (isSameOrParentType(promotionLevel)) {
+            castingDto = new CastingDto(promotionLevel, 0, null, actualParameter);
         } else if (formalParameter.isAlwaysCasting()) {
             castingDto = getCastingDtoAlwaysCasting(formalParameter, actualParameter);
         }
@@ -133,9 +133,9 @@ public class OverloadResolver implements IOverloadResolver
             castingDto = getStandardCastingDto(actualParameter, formalParameterType, 0, 1);
         } else {
             //check if actual parameter type is parent of formal parameter type
-            int promotionCount = getPromotionCountFromTo(formalParameterType, actualParameter.getEvalType());
-            if (isSameOrParentType(promotionCount)) {
-                castingDto = getStandardCastingDto(actualParameter, formalParameterType, promotionCount, 0);
+            int promotionLevel = getPromotionLevelFromTo(formalParameterType, actualParameter.getEvalType());
+            if (isSameOrParentType(promotionLevel)) {
+                castingDto = getStandardCastingDto(actualParameter, formalParameterType, promotionLevel, 0);
             } else {
                 castingDto = getCastingDtoFromExplicitCasting(formalParameter, actualParameter);
             }
@@ -144,10 +144,10 @@ public class OverloadResolver implements IOverloadResolver
     }
 
     private CastingDto getStandardCastingDto(ITSPHPAst actualParameter, ITypeSymbol formalParameterType,
-            int promotionCount, int explicitCastingCount) {
+            int promotionLevel, int explicitCastingLevel) {
         List<ICastingMethod> castingMethods = new ArrayList<>();
         castingMethods.add(symbolTable.getStandardCastingMethod(formalParameterType));
-        return new CastingDto(promotionCount, explicitCastingCount, castingMethods, actualParameter);
+        return new CastingDto(promotionLevel, explicitCastingLevel, castingMethods, actualParameter);
     }
 
     /**
@@ -155,14 +155,14 @@ public class OverloadResolver implements IOverloadResolver
      * the case where formalType is not the actualType or one of its parent types.
      */
     @Override
-    public int getPromotionCountFromTo(ITypeSymbol fromType, ITypeSymbol toType) {
+    public int getPromotionLevelFromTo(ITypeSymbol fromType, ITypeSymbol toType) {
         int count = 0;
         if (fromType != toType) {
             count = -1;
             Set<ITypeSymbol> parentTypes = fromType.getParentTypeSymbols();
             for (ITypeSymbol parentType : parentTypes) {
                 if (parentType != null) {
-                    int tmp = getPromotionCountFromTo(parentType, toType);
+                    int tmp = getPromotionLevelFromTo(parentType, toType);
                     if (tmp != -1) {
                         count += tmp + 2;
                         break;
@@ -176,11 +176,12 @@ public class OverloadResolver implements IOverloadResolver
 
     @Override
     public boolean isSameOrParentTypeConsiderNull(IVariableSymbol formalType, ITSPHPAst actualType) {
-        return isSameOrParentType(getPromotionCountFromToConsiderNull(actualType, formalType));
+        return isSameOrParentType(getPromotionLevelFromToConsiderNull(actualType, formalType));
     }
 
-    private boolean isSameOrParentType(int promotionCount) {
-        return promotionCount != -1;
+    @Override
+    public boolean isSameOrParentType(int promotionLevel) {
+        return promotionLevel != -1;
     }
 
     private CastingDto getCastingDtoFromExplicitCasting(IVariableSymbol formalParameter,
@@ -194,7 +195,7 @@ public class OverloadResolver implements IOverloadResolver
         if (castingDto != null) {
             castingDto.actualParameter = actualParameter;
         }
-
+        
         return castingDto;
     }
 
@@ -249,7 +250,7 @@ public class OverloadResolver implements IOverloadResolver
                 ++newDto.promotionLevel;
                 if (isNotYetVisitedOrHasBetterPath(newDto)) {
                     CastingDto castingDto = getCastingDtoFromExplicitCasting(newDto);
-                    if(castingDto!=null){
+                    if (castingDto != null) {
                         castingDto.castingMethods.get(0).setParentTypeWhichProvidesCast(typeSymbol);
                         castingDtos.add(castingDto);
                     }
@@ -278,10 +279,10 @@ public class OverloadResolver implements IOverloadResolver
 
         for (ITypeSymbol castedType : casts.keySet()) {
             ITypeSymbol formalParameterType = explicitCastingDto.formalParameter.getType();
-            int promotionCount = getPromotionCountFromTo(castedType, formalParameterType);
-            if (isSameOrParentType(promotionCount)) {
+            int promotionLevel = getPromotionLevelFromTo(castedType, formalParameterType);
+            if (isSameOrParentType(promotionLevel)) {
                 castingDtos.add(createCastingDtoFromExplicitCasting(casts.get(castedType),
-                        explicitCastingDto.promotionLevel + promotionCount,
+                        explicitCastingDto.promotionLevel + promotionLevel,
                         explicitCastingDto.explicitCastingLevel + 1));
             } else {
                 addExplicitCastingsOfExplicitCasting(castingDtos, castedType,
@@ -371,20 +372,20 @@ public class OverloadResolver implements IOverloadResolver
                 && mostSpecificMethodDto.promotionsTotal == methodDto.promotionsTotal;
     }
 
-    private int getPromotionCountFromToConsiderNull(ITSPHPAst actualParameter, IVariableSymbol formalParameter) {
+    private int getPromotionLevelFromToConsiderNull(ITSPHPAst actualParameter, IVariableSymbol formalParameter) {
         ITypeSymbol formalParameterType = formalParameter.getType();
         ITypeSymbol actualParameterType = actualParameter.getEvalType();
-        int promotionCount;
+        int promotionLevel;
         if (!(actualParameterType instanceof INullTypeSymbol)) {
-            promotionCount = getPromotionCountFromTo(actualParameterType, formalParameterType);
+            promotionLevel = getPromotionLevelFromTo(actualParameterType, formalParameterType);
         } else if (formalParameterType.isNullable()) {
             //same type if actual parameter is null and formal parameter type is nullable
-            promotionCount = 0;
+            promotionLevel = 0;
         } else {
             //if actual is null and formal parameter type is not nullable then we do not have a promotion.
-            promotionCount = -1;
+            promotionLevel = -1;
         }
-        return promotionCount;
+        return promotionLevel;
     }
 
     private CastingDto chainUpCastingMethods(ICastingMethod castingMethod, CastingDto castingDto) {

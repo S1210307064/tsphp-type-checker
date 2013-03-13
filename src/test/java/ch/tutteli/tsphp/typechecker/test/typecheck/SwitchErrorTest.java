@@ -16,11 +16,11 @@
  */
 package ch.tutteli.tsphp.typechecker.test.typecheck;
 
-import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest;
-import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ATypeCheckTest.Bool;
-import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.TypeCheckStruct;
-import java.util.Arrays;
+import ch.tutteli.tsphp.typechecker.error.ReferenceErrorDto;
+import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ATypeCheckErrorTest;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,11 +31,13 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class IfTest extends AOperatorTypeCheckTest
+public class SwitchErrorTest extends ATypeCheckErrorTest
 {
 
-    public IfTest(String testString, TypeCheckStruct[] struct) {
-        super(testString, struct);
+    private static List<Object[]> collection;
+
+    public SwitchErrorTest(String testString, ReferenceErrorDto[] expectedLinesAndPositions) {
+        super(testString, expectedLinesAndPositions);
     }
 
     @Test
@@ -45,19 +47,18 @@ public class IfTest extends AOperatorTypeCheckTest
 
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
-        return Arrays.asList(new Object[][]{
-            {"if(true);", new TypeCheckStruct[]{struct("true", Bool, 1, 0, 0)}},
-            {"if(false);", new TypeCheckStruct[]{struct("false", Bool, 1, 0, 0)}},
-            {"if(true);else if(false);", new TypeCheckStruct[]{
-                    struct("true", Bool, 1, 0, 0),
-                    struct("false", Bool, 1, 0, 2, 0, 0)
-                }
-            },
-            {"if(false);else if(true);", new TypeCheckStruct[]{
-                    struct("false", Bool, 1, 0, 0),
-                    struct("true", Bool, 1, 0, 2, 0, 0)
-                }
-            }
-        });
+        collection = new ArrayList<>();
+        ReferenceErrorDto[] errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto("if", 2, 1)};
+        
+        
+        String[] types = new String[]{"bool?", "int", "int?", "float", "float?", "string", "string?",
+            "array", "resource", "object"};
+        for (String type : types) {
+            collection.add(new Object[]{type + " $b;\n if($b);", errorDto});
+            collection.add(new Object[]{type + " $b;if(true);else\n if($b);", errorDto});
+            collection.add(new Object[]{"if(true){}else{"+type + " $b;\n if($b);}", errorDto});
+        }
+        
+        return collection;
     }
 }

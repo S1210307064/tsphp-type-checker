@@ -87,6 +87,8 @@ public class ErrorMessageProvider extends AErrorMessageProvider
                 + "types are not compatible.\n"
                 + "types LHS/RHS: [%tExp%, %tFound%]");
         typeCheckErrors.put("wrongType", "Line %line%|%pos% - type %tExp% expected for %id% but type %tFound% found.");
+        typeCheckErrors.put("typeNotAllowed", "Line %line%|%pos% - type %tExp% is not allowed for %id%. "
+                + "Type %tFound% found which is either the forbidden type or a sub-type.");
 
     }
 

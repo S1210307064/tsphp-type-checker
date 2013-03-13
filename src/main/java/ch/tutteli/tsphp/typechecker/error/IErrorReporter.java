@@ -106,4 +106,6 @@ public interface IErrorReporter extends ch.tutteli.tsphp.common.IErrorReporter
     ReferenceException wrongAssignment(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
 
     ReferenceException wrongType(ITSPHPAst statement,ITSPHPAst expression, ITypeSymbol typeSymbol);
+
+    ReferenceException typeNotAllowed(ITSPHPAst statement, ITSPHPAst expression, ITypeSymbol typeSymbol);
 }
