@@ -80,11 +80,17 @@ expressionRoot
  	|	^(nil='throw' expr=expression)
  	
  	|	^(nil=ARRAY_ACCESS expr=expression)
- 	|	^(nil=If expr=expression . .?)
- 		{controller.checkIsType($nil, $expr.start, symbolTable.getBoolTypeSymbol());}
+ 	|	booleanStatements
  	|	switchCondition
  	|	^(nil=Foreach expr=expression)
-	|	^(nil=While expr=expression)
+	;
+
+booleanStatements
+	:	(	^(nil=If expr=expression . .?)
+		|	^(nil=While expr=expression .)
+		|	^(nil=Do instr=. expr=expression)
+		)
+ 		{controller.checkIsType($nil, $expr.start, symbolTable.getBoolTypeSymbol());}	
 	;
 	
 switchCondition
