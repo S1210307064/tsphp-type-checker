@@ -45,7 +45,7 @@ public interface ISymbolFactory
     IScalarTypeSymbol createScalarTypeSymbol(String name, int tokenType, Set<ITypeSymbol> parentTypeSymbol,
             boolean isNullable);
 
-    IArrayTypeSymbol createArrayTypeSymbol(String name, int tokenType, ITypeSymbol baseType);
+    IArrayTypeSymbol createArrayTypeSymbol(String name, int tokenType, ITypeSymbol keyValue, ITypeSymbol valueType);
 
     IPseudoTypeSymbol createPseudoTypeSymbol(String name);
 

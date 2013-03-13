@@ -82,7 +82,7 @@ expressionRoot
  	|	^(nil=ARRAY_ACCESS expr=expression)
  	|	booleanStatements
  	|	switchCondition
- 	|	^(nil=Foreach expr=expression)
+ 	|	foreachLoop
 	;
 
 booleanStatements
@@ -100,6 +100,29 @@ switchCondition
 				.
 			)*
 		)
+	;
+
+foreachLoop
+	:	^(nil=Foreach expr=expression
+			
+			//key 
+			(	^(VARIABLE_DECLARATION_LIST
+					^(TYPE TYPE_MODIFIER type=.) 
+					keyVarId=VariableId
+				)
+			)?
+				
+			^(VARIABLE_DECLARATION_LIST type=. valueVarId=VariableId) 
+			.
+		)
+		{
+	    	    if ($keyVarId != null) {
+    		        $keyVarId.setEvalType($keyVarId.getSymbol().getType());
+    		    }
+		    $valueVarId.setEvalType($valueVarId.getSymbol().getType());
+
+		    controller.checkForeach($nil, $expr.start, $keyVarId, $valueVarId);
+		}
 	;
 
 variableInit

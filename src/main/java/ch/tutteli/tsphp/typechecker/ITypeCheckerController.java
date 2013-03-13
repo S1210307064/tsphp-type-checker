@@ -92,5 +92,5 @@ public interface ITypeCheckerController
 
     void checkIsType(ITSPHPAst statement, ITSPHPAst expression, ITypeSymbol typeSymbol);
 
-    void checkIsNotType(ITSPHPAst statement, ITSPHPAst expression, ITypeSymbol typeSymbol);
+    void checkForeach(ITSPHPAst foreachRoot, ITSPHPAst array, ITSPHPAst keyVariableId, ITSPHPAst valueVariableId);
 }

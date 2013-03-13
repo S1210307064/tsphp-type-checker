@@ -16,10 +16,14 @@
  */
 package ch.tutteli.tsphp.typechecker.symbols;
 
+import ch.tutteli.tsphp.common.ITypeSymbol;
+
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 public interface IArrayTypeSymbol extends ITypeSymbolWithPHPBuiltInCasting
 {
+    public ITypeSymbol getKeyTypeSymbol();
+    public ITypeSymbol getValueTypeSymbol();
 }

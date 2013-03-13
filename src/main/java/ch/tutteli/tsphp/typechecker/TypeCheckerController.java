@@ -25,6 +25,7 @@ import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasTypeSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IArrayTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ICanBeStatic;
 import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IInterfaceTypeSymbol;
@@ -50,7 +51,7 @@ public class TypeCheckerController implements ITypeCheckerController
 
     private ISymbolFactory symbolFactory;
     private ISymbolResolver symbolResolver;
-    private ISymbolTable typeSystemInitialiser;
+    private ISymbolTable symbolTable;
     private IDefiner definer;
     private IOverloadResolver overloadResolver;
     private IAstHelper astHelper;
@@ -60,19 +61,19 @@ public class TypeCheckerController implements ITypeCheckerController
     //
     private IGlobalNamespaceScope globalDefaultNamespace;
 
-    public TypeCheckerController(ISymbolFactory theSymbolFactory, ISymbolTable theTypeSystemInitialiser,
+    public TypeCheckerController(ISymbolFactory theSymbolFactory, ISymbolTable theSymbolTable,
             IDefiner theDefiner, ISymbolResolver theSymbolResolver, IOverloadResolver theMethodResolver,
             IAstHelper theAstHelper) {
         symbolFactory = theSymbolFactory;
-        typeSystemInitialiser = theTypeSystemInitialiser;
+        symbolTable = theSymbolTable;
         definer = theDefiner;
         symbolResolver = theSymbolResolver;
         overloadResolver = theMethodResolver;
         astHelper = theAstHelper;
 
-        typeSystemInitialiser.initTypeSystem();
-        unaryOperators = typeSystemInitialiser.getUnaryOperators();
-        binaryOperators = typeSystemInitialiser.getBinaryOperators();
+        symbolTable.initTypeSystem();
+        unaryOperators = symbolTable.getUnaryOperators();
+        binaryOperators = symbolTable.getBinaryOperators();
         globalDefaultNamespace = definer.getGlobalDefaultNamespace();
     }
 
@@ -83,7 +84,7 @@ public class TypeCheckerController implements ITypeCheckerController
 
     @Override
     public ISymbolTable getSymbolTable() {
-        return typeSystemInitialiser;
+        return symbolTable;
     }
 
     @Override
@@ -653,20 +654,50 @@ public class TypeCheckerController implements ITypeCheckerController
     @Override
     public void checkIsType(ITSPHPAst statement, ITSPHPAst expression, ITypeSymbol typeSymbol) {
         ITypeSymbol expressionType = expression.getEvalType();
-        areNotErroneousTypes(expressionType, typeSymbol);
-        int promotionCount = overloadResolver.getPromotionLevelFromTo(expressionType, typeSymbol);
-        if (!overloadResolver.isSameOrParentType(promotionCount)) {
-            ErrorReporterRegistry.get().wrongType(statement, expression, typeSymbol);
+        if (areNotErroneousTypes(expressionType, typeSymbol)) {
+            int promotionCount = overloadResolver.getPromotionLevelFromTo(expressionType, typeSymbol);
+            if (!overloadResolver.isSameOrParentType(promotionCount)) {
+                ErrorReporterRegistry.get().wrongType(statement, expression, typeSymbol);
+            }
         }
     }
 
     @Override
-    public void checkIsNotType(ITSPHPAst statement, ITSPHPAst expression, ITypeSymbol typeSymbol) {
+    public void checkForeach(ITSPHPAst foreachRoot, ITSPHPAst array,
+            ITSPHPAst keyVariableId, ITSPHPAst valueVariableId) {
+
+        ITypeSymbol keyTypeSymbol = null;
+        ITypeSymbol valueTypeSymbol = null;
+        ITypeSymbol evalType = array.getEvalType();
+        if (!(evalType instanceof IErroneousSymbol)) {
+            IArrayTypeSymbol arrayTypeSymbol = symbolTable.getArrayTypeSymbol();
+            int promotionCount = overloadResolver.getPromotionLevelFromTo(evalType, arrayTypeSymbol);
+            if (overloadResolver.isSameOrParentType(promotionCount)) {
+                IArrayTypeSymbol arrayType = (IArrayTypeSymbol) evalType;
+                keyTypeSymbol = arrayType.getKeyTypeSymbol();
+                valueTypeSymbol = arrayType.getValueTypeSymbol();
+            } else {
+                ErrorReporterRegistry.get().wrongType(foreachRoot, array, arrayTypeSymbol);
+            }
+        }
+        if (keyVariableId != null) {
+            if (keyTypeSymbol == null) {
+                keyTypeSymbol = symbolTable.getStringTypeSymbol();
+            }
+            checkIsTypeOrParent(keyVariableId, keyVariableId, keyTypeSymbol);
+        }
+        if (valueTypeSymbol != null) {
+            checkIsTypeOrParent(valueVariableId, valueVariableId, valueTypeSymbol);
+        }
+    }
+
+    private void checkIsTypeOrParent(ITSPHPAst statement, ITSPHPAst expression, ITypeSymbol typeSymbol) {
         ITypeSymbol expressionType = expression.getEvalType();
-        areNotErroneousTypes(expressionType, typeSymbol);
-        int promotionCount = overloadResolver.getPromotionLevelFromTo(expressionType, typeSymbol);
-        if (overloadResolver.isSameOrParentType(promotionCount)) {
-            ErrorReporterRegistry.get().typeNotAllowed(statement, expression, typeSymbol);
+        if (areNotErroneousTypes(expressionType, typeSymbol)) {
+            int promotionCount = overloadResolver.getPromotionLevelFromTo(typeSymbol, expressionType);
+            if (!overloadResolver.isSameOrParentType(promotionCount)) {
+                ErrorReporterRegistry.get().wrongType(statement, expression, typeSymbol);
+            }
         }
     }
 }

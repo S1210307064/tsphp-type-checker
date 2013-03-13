@@ -25,11 +25,16 @@ import ch.tutteli.tsphp.common.ITypeSymbol;
 public class ArrayTypeSymbol extends ATypeSymbol implements IArrayTypeSymbol
 {
 
+    private ITypeSymbol keyTypeSymbol;
+    private ITypeSymbol valueTypeSymbol;
     private int tokenType;
 
-    public ArrayTypeSymbol(String name, int theTokenType, ITypeSymbol baseType, ITypeSymbol parentTypeSymbol) {
+    public ArrayTypeSymbol(String name, int theTokenType, ITypeSymbol theKeyTypeSymbol, ITypeSymbol theValueTypeSymbol,
+            ITypeSymbol parentTypeSymbol) {
         super(null, name, parentTypeSymbol);
         tokenType = theTokenType;
+        keyTypeSymbol = theKeyTypeSymbol;
+        valueTypeSymbol = theValueTypeSymbol;
     }
 
     @Override
@@ -40,5 +45,15 @@ public class ArrayTypeSymbol extends ATypeSymbol implements IArrayTypeSymbol
     @Override
     public boolean isNullable() {
         return true;
+    }
+
+    @Override
+    public ITypeSymbol getKeyTypeSymbol() {
+        return keyTypeSymbol;
+    }
+
+    @Override
+    public ITypeSymbol getValueTypeSymbol() {
+        return valueTypeSymbol;
     }
 }

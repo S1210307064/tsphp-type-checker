@@ -226,7 +226,7 @@ public class SymbolTable implements ISymbolTable
         boolTypeSymbol = symbolFactory.createScalarTypeSymbol("bool", TypeBool, parentTypes, false);
         globalDefaultNamespace.define(boolTypeSymbol);
 
-        arrayTypeSymbol = symbolFactory.createArrayTypeSymbol("array", TypeArray, objectTypeSymbol);
+        arrayTypeSymbol = symbolFactory.createArrayTypeSymbol("array", TypeArray, stringTypeSymbol, objectTypeSymbol);
         globalDefaultNamespace.define(arrayTypeSymbol);
 
         resourceTypeSymbol = symbolFactory.createPseudoTypeSymbol("resource");

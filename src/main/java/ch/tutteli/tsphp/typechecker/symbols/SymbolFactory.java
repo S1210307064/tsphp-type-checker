@@ -72,8 +72,9 @@ public class SymbolFactory implements ISymbolFactory
     }
 
     @Override
-    public IArrayTypeSymbol createArrayTypeSymbol(String name, int tokenType, ITypeSymbol baseType) {
-        return new ArrayTypeSymbol(name, tokenType, baseType, objectTypeSymbol);
+    public IArrayTypeSymbol createArrayTypeSymbol(String name, int tokenType,
+            ITypeSymbol keyValue, ITypeSymbol valueType) {
+        return new ArrayTypeSymbol(name, tokenType, keyValue, valueType, objectTypeSymbol);
     }
 
     @Override
