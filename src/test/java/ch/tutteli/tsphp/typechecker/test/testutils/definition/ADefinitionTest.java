@@ -58,6 +58,7 @@ public abstract class ADefinitionTest extends ATest
     protected ITSPHPAst ast;
     protected CommonTreeNodeStream commonTreeNodeStream;
     protected ITSPHPAstAdaptor adaptor;
+    protected IAstHelper astHelper;
 
     protected abstract void verifyDefinitions();
 
@@ -70,7 +71,7 @@ public abstract class ADefinitionTest extends ATest
 
     private void init() {
         adaptor = new TSPHPAstAdaptor();
-        IAstHelper astHelper = new AstHelper(adaptor);
+        astHelper = new AstHelper(adaptor);
         scopeFactory = new TestScopeFactory();
         TestSymbolFactory symbolFactory = new TestSymbolFactory();
         definer = new TestDefiner(symbolFactory, scopeFactory);

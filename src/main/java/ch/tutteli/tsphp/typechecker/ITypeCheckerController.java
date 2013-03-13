@@ -104,5 +104,7 @@ public interface ITypeCheckerController
 
     void checkDoWhile(ITSPHPAst doWhileRoot, ITSPHPAst expression);
     
+    void checkThrow(ITSPHPAst throwRoot, ITSPHPAst expression);
+    
     ITypeSymbol getReturnTypeArrayAccess(ITSPHPAst statement, ITSPHPAst expression, ITSPHPAst index);
 }

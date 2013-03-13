@@ -17,13 +17,9 @@
 package ch.tutteli.tsphp.typechecker.test.testutils.typecheck;
 
 import ch.tutteli.tsphp.common.IErrorReporter;
-import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckWalker;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
-import ch.tutteli.tsphp.typechecker.test.testutils.ScopeTestHelper;
 import ch.tutteli.tsphp.typechecker.test.testutils.reference.AReferenceTest;
-import org.junit.Assert;
 import org.junit.Ignore;
 
 /**
@@ -34,18 +30,6 @@ import org.junit.Ignore;
 public abstract class ATypeCheckTest extends AReferenceTest
 {
 
-    public static EBuiltInType Bool = EBuiltInType.Bool;
-    public static EBuiltInType BoolNullable = EBuiltInType.BoolNullable;
-    public static EBuiltInType Int = EBuiltInType.Int;
-    public static EBuiltInType IntNullable = EBuiltInType.IntNullable;
-    public static EBuiltInType Float = EBuiltInType.Float;
-    public static EBuiltInType FloatNullable = EBuiltInType.FloatNullable;
-    public static EBuiltInType String = EBuiltInType.String;
-    public static EBuiltInType StringNullable = EBuiltInType.StringNullable;
-    public static EBuiltInType Array = EBuiltInType.Array;
-    public static EBuiltInType Resource = EBuiltInType.Resource;
-    public static EBuiltInType Object = EBuiltInType.Object;
-    //
     protected TSPHPTypeCheckWalker typeCheckWalker;
 
     protected abstract void verifyTypeCheck();

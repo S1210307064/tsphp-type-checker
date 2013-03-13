@@ -18,8 +18,6 @@ package ch.tutteli.tsphp.typechecker.test.typecheck;
 
 import ch.tutteli.tsphp.typechecker.error.ReferenceErrorDto;
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ATypeCheckErrorTest;
-import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ATypeCheckTest.Object;
-import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.TypeCheckStruct;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -50,7 +48,8 @@ public class ArrayAccessErrorTest extends ATypeCheckErrorTest
         List<Object[]> collection = new ArrayList<>();
         ReferenceErrorDto[] errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto("$a", 2, 1)};
 
-        String[] types = new String[]{"bool?", "int?", "float?", "string?", "array", "resource", "object"};
+        String[] types = new String[]{"bool?", "int?", "float?", "string?", "array", "resource",
+            "object", "Exception", "ErrorException"};
         for (String type : types) {
             collection.add(new Object[]{"array $a = [1,2];" + type + " $b; \n $a[$b];", errorDto});
         }

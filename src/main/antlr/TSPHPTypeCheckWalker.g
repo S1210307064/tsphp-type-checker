@@ -76,20 +76,28 @@ expressionLists
 expressionRoot 
 	:	^(nil=EXPRESSION expr=expression)
  	|	^(nil='return' expr=expression)
+ 	
  	|	^(nil='throw' expr=expression)
+ 		{controller.checkThrow($nil, $expr.start);}
  	
  	|	^(nil=ARRAY_ACCESS expr=expression index=expression)
  		{$nil.setEvalType(controller.getReturnTypeArrayAccess($nil, $expr.start, $index.start));}
+
  	|	^(nil=If expr=expression . .?)
  		{controller.checkIf($nil, $expr.start);}
+
  	|	^(nil=While expr=expression .)
  		{controller.checkWhile($nil, $expr.start);}
+
  	|	^(nil=Do instr=. expr=expression)
 	 	{controller.checkDoWhile($nil, $expr.start);}
+
 	|	^(nil=For . ^(EXPRESSION_LIST expr=expression+) . .)
 		{controller.checkFor($nil,$expr.start);}
+
  	|	switchCondition
  	|	foreachLoop
+ 	//|	tryCatch
 	;
 	
 switchCondition
@@ -127,9 +135,20 @@ foreachLoop
 		    controller.checkForeach($nil, $expr.start, $keyVarId, $valueVarId);
 		}
 	;
+	
+/*tryCatch
+	:	^(nil=Try .  (^(Catch
+			^(VARIABLE_DECLARATION_LIST[$classInterfaceTypeWithoutObject.start,"vars"] 
+				^(TYPE[$classInterfaceTypeWithoutObject.start,"type"] TYPE_MODIFIER[$classInterfaceTypeWithoutObject.start,"tMod"] classInterfaceTypeWithoutObject)
+				VariableId
+			)
+			^(BLOCK_CONDITIONAL[$instructionInclBreakContinue.start,"cBlock"] instructionInclBreakContinue*)
+		) catchBlock+)	
+	;*/
 
 variableInit
 	:	^(VariableId expression)
+//		{controller.checkInitialValue($VariableId, $expression);}
 	;
 	
 expression returns [ITypeSymbol type]

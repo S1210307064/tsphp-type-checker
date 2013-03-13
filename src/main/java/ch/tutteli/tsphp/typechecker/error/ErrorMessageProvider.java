@@ -109,6 +109,9 @@ public class ErrorMessageProvider extends AErrorMessageProvider
         typeCheckErrors.put("wrongTypeDoWhile", "Line %line%|%pos% - the condition in the do-while statement "
                 + "evaluates to a wrong type. Type %tExp% or a sub-type expected but %tFound% found.");
 
+        typeCheckErrors.put("wrongTypeThrow", "Line %line%|%pos% - the expression of the throw statement "
+                + "evaluates to a wrong type. Type %tExp% or a sub-type expected but %tFound% found.");
+
         typeCheckErrors.put("arrayExpected", "Line %line%|%pos% - the expression evaluates to a wrong type. "
                 + "Type %tExp% or a sub-type expected but %tFound% found.");
 

@@ -49,16 +49,16 @@ public class IfErrorTest extends ATypeCheckErrorTest
     public static Collection<Object[]> testStrings() {
         collection = new ArrayList<>();
         ReferenceErrorDto[] errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto("if", 2, 1)};
-        
-        
+
+
         String[] types = new String[]{"bool?", "int", "int?", "float", "float?", "string", "string?",
-            "array", "resource", "object"};
+            "array", "resource", "object", "Exception", "ErrorException"};
         for (String type : types) {
             collection.add(new Object[]{type + " $b;\n if($b);", errorDto});
             collection.add(new Object[]{type + " $b;if(true);else\n if($b);", errorDto});
-            collection.add(new Object[]{"if(true){}else{"+type + " $b;\n if($b);}", errorDto});
+            collection.add(new Object[]{"if(true){}else{" + type + " $b;\n if($b);}", errorDto});
         }
-        
+
         return collection;
     }
 }

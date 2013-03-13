@@ -17,13 +17,6 @@
 package ch.tutteli.tsphp.typechecker.test.typecheck;
 
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest;
-import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ATypeCheckTest.Bool;
-import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ATypeCheckTest.BoolNullable;
-import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ATypeCheckTest.Float;
-import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ATypeCheckTest.FloatNullable;
-import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ATypeCheckTest.Int;
-import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ATypeCheckTest.IntNullable;
-import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ATypeCheckTest.String;
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.EBuiltInType;
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.TypeCheckStruct;
 import java.util.ArrayList;

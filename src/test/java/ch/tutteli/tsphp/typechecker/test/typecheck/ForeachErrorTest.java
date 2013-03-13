@@ -54,7 +54,7 @@ public class ForeachErrorTest extends ATypeCheckErrorTest
             new ReferenceErrorDto("$k", 3, 1)
         };
         String[] types = new String[]{"bool", "bool?", "int", "int?", "float", "float?", "string", "string?",
-            "resource", "object"};
+            "resource", "object", "Exception", "ErrorException"};
         for (String type : types) {
             collection.add(new Object[]{type + " $b;\n foreach($b as object $v);", errorDto});
             collection.add(new Object[]{type + " $b;\n foreach($b as string $k => object $v);", errorDto});
@@ -63,7 +63,7 @@ public class ForeachErrorTest extends ATypeCheckErrorTest
             collection.add(new Object[]{type + " $b;\n foreach($b as bool\n $k => object $v);", twoErrorDto});
         }
         types = new String[]{"bool", "bool?", "int", "int?", "float", "float?", "string", "string?", "array",
-            "resource"};
+            "resource", "Exception", "ErrorException"};
         for (String type : types) {
             //only object is supported as type of the values at the moment
             collection.add(new Object[]{

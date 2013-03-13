@@ -131,7 +131,9 @@ classExtendsDeclaration[ITSPHPAst identifier]
 			allTypes[true]{
 				ITypeSymbol typeSymbol = $allTypes.type;
 				if(controller.checkIfClass($allTypes.start, typeSymbol)){
-				    ((IClassTypeSymbol)identifier.getSymbol()).setParent((IClassTypeSymbol)typeSymbol);
+				    IClassTypeSymbol classTypeSymbol = (IClassTypeSymbol) identifier.getSymbol();
+				    classTypeSymbol.setParent((IClassTypeSymbol)typeSymbol);
+				    classTypeSymbol.addParentTypeSymbol((IClassTypeSymbol)typeSymbol);
 				}
 			} 
 		)

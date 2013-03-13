@@ -18,6 +18,7 @@ package ch.tutteli.tsphp.typechecker.test.testutils.typecheck;
 
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
+import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tutteli.tsphp.typechecker.test.testutils.ScopeTestHelper;
 import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.EBuiltInType.Array;
 import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.EBuiltInType.Bool;
@@ -42,6 +43,19 @@ import org.junit.Ignore;
 public abstract class AOperatorTypeCheckTest extends ATypeCheckTest
 {
 
+    public static EBuiltInType Bool = EBuiltInType.Bool;
+    public static EBuiltInType BoolNullable = EBuiltInType.BoolNullable;
+    public static EBuiltInType Int = EBuiltInType.Int;
+    public static EBuiltInType IntNullable = EBuiltInType.IntNullable;
+    public static EBuiltInType Float = EBuiltInType.Float;
+    public static EBuiltInType FloatNullable = EBuiltInType.FloatNullable;
+    public static EBuiltInType String = EBuiltInType.String;
+    public static EBuiltInType StringNullable = EBuiltInType.StringNullable;
+    public static EBuiltInType Array = EBuiltInType.Array;
+    public static EBuiltInType Resource = EBuiltInType.Resource;
+    public static EBuiltInType Object = EBuiltInType.Object;
+    public static EBuiltInType Exception = EBuiltInType.Exception;
+    public static EBuiltInType ErrorException = EBuiltInType.ErrorException;
     protected TypeCheckStruct[] testStructs;
 
     public AOperatorTypeCheckTest(String testString, TypeCheckStruct[] structs) {
@@ -99,6 +113,13 @@ public abstract class AOperatorTypeCheckTest extends ATypeCheckTest
                 break;
             case Resource:
                 typeSymbol = symbolTable.getResourceTypeSymbol();
+                break;
+            case Exception:
+                typeSymbol = symbolTable.getExceptionTypeSymbol();
+                break;
+            case ErrorException:
+                typeSymbol = (ITypeSymbol) definer.getGlobalDefaultNamespace().resolve(
+                        astHelper.createAst(TSPHPDefinitionWalker.TYPE_NAME, "ErrorException"));
                 break;
             case Object:
             default:

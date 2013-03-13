@@ -51,26 +51,27 @@ public class SwitchErrorTest extends ATypeCheckErrorTest
         ReferenceErrorDto[] errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto("switch", 2, 1)};
 
 
-        String[] types = new String[]{"array", "resource", "object"};
+        String[] types = new String[]{"array", "resource", "object", "Exception", "ErrorException"};
         for (String type : types) {
             collection.add(new Object[]{type + " $b;\n switch($b){}", errorDto});
         }
 
         errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto("$b", 2, 1)};
-        
+
         types = new String[]{"bool?", "int", "int?", "float", "float?", "string", "string?",
-            "array", "resource", "object"};
+            "array", "resource", "object", "Exception", "ErrorException"};
         for (String type : types) {
             collection.add(new Object[]{"bool $a; " + type + " $b;switch($a){case\n $b:}", errorDto});
         }
 
         types = new String[]{"int", "int?", "float", "float?", "string", "string?",
-            "array", "resource", "object"};
+            "array", "resource", "object", "Exception", "ErrorException"};
         for (String type : types) {
             collection.add(new Object[]{"bool? $a; " + type + " $b;switch($a){case\n $b:}", errorDto});
         }
 
-        types = new String[]{"bool?", "int?", "float", "float?", "string", "string?", "array", "resource", "object"};
+        types = new String[]{"bool?", "int?", "float", "float?", "string", "string?", "array", "resource",
+            "object", "Exception", "ErrorException"};
         for (String type : types) {
             collection.add(new Object[]{"int $a; " + type + " $b;switch($a){case\n $b:}", errorDto});
         }

@@ -772,6 +772,19 @@ public class TypeCheckerController implements ITypeCheckerController
         });
     }
 
+    
+    @Override
+    public void checkThrow(final ITSPHPAst throwRoot, final ITSPHPAst expression) {
+        final ITypeSymbol typeSymbol = symbolTable.getExceptionTypeSymbol();
+        checkIsSameOrSubType(expression, typeSymbol, new IErrorReporterCaller()
+        {
+            @Override
+            public void callAppropriateMethod() {
+                ErrorReporterRegistry.get().wrongTypeThrow(throwRoot, expression, typeSymbol);
+            }
+        });
+    }
+ 
     @Override
     public ITypeSymbol getReturnTypeArrayAccess(ITSPHPAst statement, final ITSPHPAst expression, final ITSPHPAst index) {
 

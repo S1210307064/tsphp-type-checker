@@ -233,10 +233,20 @@ public class SymbolTable implements ISymbolTable
         globalDefaultNamespace.define(resourceTypeSymbol);
 
         //predefiend classes
-        ITSPHPAst classModifier = astHelper.createAst(CLASS_MODIFIER, "cMod");
-        ITSPHPAst identifier = astHelper.createAst(TYPE_NAME, "Exception");
-        exceptionTypeSymbol = symbolFactory.createClassTypeSymbol(classModifier, identifier, globalDefaultNamespace);
+        exceptionTypeSymbol = createClass("Exception");
+        //TODO TSPHP-401 Define predefined Exceptions 
         globalDefaultNamespace.define(exceptionTypeSymbol);
+
+        IClassTypeSymbol errorException = createClass("ErrorException");
+        errorException.setParent(exceptionTypeSymbol);
+        errorException.addParentTypeSymbol(exceptionTypeSymbol);        
+        globalDefaultNamespace.define(errorException);
+    }
+
+    private IClassTypeSymbol createClass(String className) {
+        ITSPHPAst classModifier = astHelper.createAst(CLASS_MODIFIER, "cMod");
+        ITSPHPAst identifier = astHelper.createAst(TYPE_NAME, className);
+        return symbolFactory.createClassTypeSymbol(classModifier, identifier, globalDefaultNamespace);
     }
 
     private void initMaps() {

@@ -17,6 +17,7 @@
 package ch.tutteli.tsphp.typechecker.test.typecheck;
 
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest;
+import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest.Exception;
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.TypeCheckStruct;
 import java.util.Arrays;
 import java.util.Collection;
@@ -30,10 +31,10 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class ErrorHandlerOperatorTest extends AOperatorTypeCheckTest
+public class ThrowTest extends AOperatorTypeCheckTest
 {
 
-    public ErrorHandlerOperatorTest(String testString, TypeCheckStruct[] struct) {
+    public ThrowTest(String testString, TypeCheckStruct[] struct) {
         super(testString, struct);
     }
 
@@ -44,13 +45,10 @@ public class ErrorHandlerOperatorTest extends AOperatorTypeCheckTest
 
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
-
-        return Arrays.asList(new Object[][]{
-            {"@true;", new TypeCheckStruct[]{struct("@", Bool, 1, 0, 0)}},
-            {"@1;", new TypeCheckStruct[]{struct("@", Int, 1, 0, 0)}},
-            {"@1.2;", new TypeCheckStruct[]{struct("@", Float, 1, 0, 0)}},
-            {"@'hello';", new TypeCheckStruct[]{struct("@", String, 1, 0, 0)}},
-            {"@[1];", new TypeCheckStruct[]{struct("@", Array, 1, 0, 0)}}
+         return Arrays.asList(new Object[][]{
+            {"Exception $a; throw $a;", new TypeCheckStruct[]{struct("$a", Exception, 1, 1, 0)}},
+            {"ErrorException $a; throw $a;", new TypeCheckStruct[]{struct("$a", ErrorException, 1, 1, 0)}},
+           
         });
     }
 }

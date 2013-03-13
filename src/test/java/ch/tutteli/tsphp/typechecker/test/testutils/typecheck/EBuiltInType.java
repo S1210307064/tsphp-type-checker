@@ -33,5 +33,7 @@ public enum EBuiltInType
     BoolNullable,
     IntNullable,
     FloatNullable,
-    StringNullable
+    StringNullable,
+    Exception,
+    ErrorException
 }
