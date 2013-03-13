@@ -27,6 +27,7 @@ import ch.tutteli.tsphp.typechecker.AmbiguousCallException;
 import ch.tutteli.tsphp.typechecker.CastingDto;
 import ch.tutteli.tsphp.typechecker.ICastingMethod;
 import ch.tutteli.tsphp.typechecker.OverloadDto;
+import ch.tutteli.tsphp.typechecker.symbols.IArrayTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 import java.util.ArrayList;
@@ -39,8 +40,8 @@ import java.util.List;
 public class ErrorReporter implements IErrorReporter
 {
 
-    List<Exception> exceptions = new ArrayList<>();
-    IErrorMessageProvider errorMessageProvider;
+    private List<Exception> exceptions = new ArrayList<>();
+    private IErrorMessageProvider errorMessageProvider;
 
     public ErrorReporter(IErrorMessageProvider anErrorMessageProvider) {
         errorMessageProvider = anErrorMessageProvider;
@@ -380,17 +381,48 @@ public class ErrorReporter implements IErrorReporter
     }
 
     @Override
-    public ReferenceException wrongType(ITSPHPAst statement, ITSPHPAst expression, ITypeSymbol typeSymbol) {
-        return addAndGetStatementTypeCheckError("wrongType", statement, expression, typeSymbol);
+    public ReferenceException notSameOrParentType(ITSPHPAst statement, ITSPHPAst expression, ITypeSymbol typeSymbol) {
+        return addAndGetStatementTypeCheckError("notSameOrParentType", statement, expression, typeSymbol);
     }
 
     @Override
-    public ReferenceException typeNotAllowed(ITSPHPAst statement, ITSPHPAst expression, ITypeSymbol typeSymbol) {
-        return addAndGetStatementTypeCheckError("typeNotAllowed", statement, expression, typeSymbol);
+    public ReferenceException wrongTypeIf(ITSPHPAst ifRoot, ITSPHPAst expression, ITypeSymbol typeSymbol) {
+        return addAndGetStatementTypeCheckError("wrongTypeIf", ifRoot, expression, typeSymbol);
+    }
+
+    @Override
+    public ReferenceException wrongTypeSwitch(ITSPHPAst switchRoot, ITSPHPAst expression, ITypeSymbol typeSymbol) {
+        return addAndGetStatementTypeCheckError("wrongTypeSwitch", switchRoot, expression, typeSymbol);
+    }
+
+    @Override
+    public ReferenceException wrongTypeSwitchCase(ITSPHPAst switchCase, ITSPHPAst expression, ITypeSymbol typeSymbol) {
+        return addAndGetStatementTypeCheckError("wrongTypeSwitchCase", expression, expression, typeSymbol);
+    }
+
+    @Override
+    public ReferenceException wrongTypeFor(ITSPHPAst forRoot, ITSPHPAst expression, ITypeSymbol typeSymbol) {
+        return addAndGetStatementTypeCheckError("wrongTypeFor", forRoot, expression, typeSymbol);
+    }
+
+    @Override
+    public ReferenceException wrongTypeForeach(ITSPHPAst foreachRoot, ITSPHPAst array, IArrayTypeSymbol arrayTypeSymbol) {
+        return addAndGetStatementTypeCheckError("wrongTypForeach", foreachRoot, array, arrayTypeSymbol);
+    }
+
+    @Override
+    public ReferenceException wrongTypeWhile(ITSPHPAst whileRoot, ITSPHPAst expression, ITypeSymbol typeSymbol) {
+        return addAndGetStatementTypeCheckError("wrongTypeWhile", whileRoot, expression, typeSymbol);
+    }
+
+    @Override
+    public ReferenceException wrongTypeDoWhile(ITSPHPAst doWhileRoot, ITSPHPAst expression, ITypeSymbol typeSymbol) {
+        return addAndGetStatementTypeCheckError("wrongTypeDoWhile", doWhileRoot, expression, typeSymbol);
     }
 
     private ReferenceException addAndGetStatementTypeCheckError(String key, ITSPHPAst statement,
             ITSPHPAst expression, ITypeSymbol typeSymbol) {
+
         String errorMessage = errorMessageProvider.getTypeCheckErrorMessage(key,
                 new TypeCheckErrorDto(statement.getText(), statement.getLine(), statement.getCharPositionInLine(),
                 getAbsoluteTypeName(typeSymbol), getAbsoluteTypeName(expression.getEvalType())));

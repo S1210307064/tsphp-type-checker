@@ -48,4 +48,6 @@ public interface IOverloadResolver
     boolean isSameOrParentType(int promotionLevel);
 
     boolean isSameOrParentTypeConsiderNull(IVariableSymbol formalType, ITSPHPAst actualType);
+
+    boolean isSameOrParentTypeConsiderNull(ITypeSymbol formalParameterType, ITypeSymbol actualParameterType);
 }

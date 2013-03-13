@@ -48,17 +48,58 @@ public class SwitchErrorTest extends ATypeCheckErrorTest
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
         collection = new ArrayList<>();
-        ReferenceErrorDto[] errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto("if", 2, 1)};
+        ReferenceErrorDto[] errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto("switch", 2, 1)};
+
+
+        String[] types = new String[]{"array", "resource", "object"};
+        for (String type : types) {
+            collection.add(new Object[]{type + " $b;\n switch($b){}", errorDto});
+        }
+
+        errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto("$b", 2, 1)};
         
-        
-        String[] types = new String[]{"bool?", "int", "int?", "float", "float?", "string", "string?",
+        types = new String[]{"bool?", "int", "int?", "float", "float?", "string", "string?",
             "array", "resource", "object"};
         for (String type : types) {
-            collection.add(new Object[]{type + " $b;\n if($b);", errorDto});
-            collection.add(new Object[]{type + " $b;if(true);else\n if($b);", errorDto});
-            collection.add(new Object[]{"if(true){}else{"+type + " $b;\n if($b);}", errorDto});
+            collection.add(new Object[]{"bool $a; " + type + " $b;switch($a){case\n $b:}", errorDto});
         }
-        
+
+        types = new String[]{"int", "int?", "float", "float?", "string", "string?",
+            "array", "resource", "object"};
+        for (String type : types) {
+            collection.add(new Object[]{"bool? $a; " + type + " $b;switch($a){case\n $b:}", errorDto});
+        }
+
+        types = new String[]{"bool?", "int?", "float", "float?", "string", "string?", "array", "resource", "object"};
+        for (String type : types) {
+            collection.add(new Object[]{"int $a; " + type + " $b;switch($a){case\n $b:}", errorDto});
+        }
+
+        types = new String[]{"float", "float?", "string", "string?", "array", "resource", "object"};
+        for (String type : types) {
+            collection.add(new Object[]{"int? $a; " + type + " $b;switch($a){case\n $b:}", errorDto});
+        }
+
+        types = new String[]{"bool?", "int?", "float?", "string", "string?", "array", "resource", "object"};
+        for (String type : types) {
+            collection.add(new Object[]{"float $a; " + type + " $b;switch($a){case\n $b:}", errorDto});
+        }
+
+        types = new String[]{"string", "string?", "array", "resource", "object"};
+        for (String type : types) {
+            collection.add(new Object[]{"float? $a; " + type + " $b;switch($a){case\n $b:}", errorDto});
+        }
+
+        types = new String[]{"bool?", "int?", "string?", "array", "resource", "object"};
+        for (String type : types) {
+            collection.add(new Object[]{"string $a; " + type + " $b;switch($a){case\n $b:}", errorDto});
+        }
+
+        types = new String[]{"array", "resource", "object"};
+        for (String type : types) {
+            collection.add(new Object[]{"string? $a; " + type + " $b;switch($a){case\n $b:}", errorDto});
+        }
+
         return collection;
     }
 }

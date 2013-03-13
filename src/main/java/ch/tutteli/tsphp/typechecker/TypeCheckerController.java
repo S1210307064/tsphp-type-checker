@@ -651,15 +651,63 @@ public class TypeCheckerController implements ITypeCheckerController
         operator.setText("=");
     }
 
-    @Override
-    public void checkIsType(ITSPHPAst statement, ITSPHPAst expression, ITypeSymbol typeSymbol) {
+    private void checkIsType(ITSPHPAst expression, ITypeSymbol typeSymbol,
+            IErrorReporterCaller caller) {
         ITypeSymbol expressionType = expression.getEvalType();
         if (areNotErroneousTypes(expressionType, typeSymbol)) {
             int promotionCount = overloadResolver.getPromotionLevelFromTo(expressionType, typeSymbol);
             if (!overloadResolver.isSameOrParentType(promotionCount)) {
-                ErrorReporterRegistry.get().wrongType(statement, expression, typeSymbol);
+                caller.callAppropriateMethod();
             }
         }
+    }
+
+    @Override
+    public void checkIf(final ITSPHPAst ifRoot, final ITSPHPAst expression) {
+        final ITypeSymbol typeSymbol = symbolTable.getBoolTypeSymbol();
+        checkIsType(expression, typeSymbol, new IErrorReporterCaller()
+        {
+            @Override
+            public void callAppropriateMethod() {
+                ErrorReporterRegistry.get().wrongTypeIf(ifRoot, expression, typeSymbol);
+            }
+        });
+    }
+    
+    @Override
+    public void checkSwitch(final ITSPHPAst switchRoot, final ITSPHPAst expression) {
+        final ITypeSymbol typeSymbol = symbolTable.getStringNullableTypeSymbol();
+        checkIsType(expression, typeSymbol, new IErrorReporterCaller()
+        {
+            @Override
+            public void callAppropriateMethod() {
+                ErrorReporterRegistry.get().wrongTypeSwitch(switchRoot, expression, typeSymbol);
+            }
+        });
+    }
+    
+      @Override
+    public void checkSwitchCase(final ITSPHPAst switchRoot, final ITSPHPAst switchCase) {
+        final ITypeSymbol typeSymbol = switchRoot.getEvalType();
+        checkIsType(switchCase, typeSymbol, new IErrorReporterCaller()
+        {
+            @Override
+            public void callAppropriateMethod() {
+                ErrorReporterRegistry.get().wrongTypeSwitchCase(switchRoot, switchCase, typeSymbol);
+            }
+        });
+    }
+
+    @Override
+    public void checkFor(final ITSPHPAst forRoot, final ITSPHPAst expression) {
+        final ITypeSymbol typeSymbol = symbolTable.getBoolTypeSymbol();
+        checkIsType(expression, typeSymbol, new IErrorReporterCaller()
+        {
+            @Override
+            public void callAppropriateMethod() {
+                ErrorReporterRegistry.get().wrongTypeFor(forRoot, expression, typeSymbol);
+            }
+        });
     }
 
     @Override
@@ -677,27 +725,59 @@ public class TypeCheckerController implements ITypeCheckerController
                 keyTypeSymbol = arrayType.getKeyTypeSymbol();
                 valueTypeSymbol = arrayType.getValueTypeSymbol();
             } else {
-                ErrorReporterRegistry.get().wrongType(foreachRoot, array, arrayTypeSymbol);
+                ErrorReporterRegistry.get().wrongTypeForeach(foreachRoot, array, arrayTypeSymbol);
             }
         }
         if (keyVariableId != null) {
             if (keyTypeSymbol == null) {
                 keyTypeSymbol = symbolTable.getStringTypeSymbol();
             }
-            checkIsTypeOrParent(keyVariableId, keyVariableId, keyTypeSymbol);
+            checkIsSameOrParentType(keyVariableId, keyVariableId, keyTypeSymbol);
         }
         if (valueTypeSymbol != null) {
-            checkIsTypeOrParent(valueVariableId, valueVariableId, valueTypeSymbol);
+            checkIsSameOrParentType(valueVariableId, valueVariableId, valueTypeSymbol);
         }
     }
 
-    private void checkIsTypeOrParent(ITSPHPAst statement, ITSPHPAst expression, ITypeSymbol typeSymbol) {
+    private void checkIsSameOrParentType(ITSPHPAst statement, ITSPHPAst expression, ITypeSymbol typeSymbol) {
         ITypeSymbol expressionType = expression.getEvalType();
         if (areNotErroneousTypes(expressionType, typeSymbol)) {
-            int promotionCount = overloadResolver.getPromotionLevelFromTo(typeSymbol, expressionType);
-            if (!overloadResolver.isSameOrParentType(promotionCount)) {
-                ErrorReporterRegistry.get().wrongType(statement, expression, typeSymbol);
+            if (!overloadResolver.isSameOrParentTypeConsiderNull(expressionType, typeSymbol)) {
+                ErrorReporterRegistry.get().notSameOrParentType(statement, expression, typeSymbol);
             }
         }
+    }
+
+    @Override
+    public void checkWhile(final ITSPHPAst whileRoot, final ITSPHPAst expression) {
+        final ITypeSymbol typeSymbol = symbolTable.getBoolTypeSymbol();
+        checkIsType(expression, typeSymbol, new IErrorReporterCaller()
+        {
+            @Override
+            public void callAppropriateMethod() {
+                ErrorReporterRegistry.get().wrongTypeWhile(whileRoot, expression, typeSymbol);
+            }
+        });
+    }
+    
+     @Override
+    public void checkDoWhile(final ITSPHPAst doWhileRoot, final ITSPHPAst expression) {
+        final ITypeSymbol typeSymbol = symbolTable.getBoolTypeSymbol();
+        checkIsType(expression, typeSymbol, new IErrorReporterCaller()
+        {
+            @Override
+            public void callAppropriateMethod() {
+                ErrorReporterRegistry.get().wrongTypeDoWhile(doWhileRoot, expression, typeSymbol);
+            }
+        });
+    }
+    
+    /**
+     * A "Delegate" which represents a call of a method of an IErrrorReporter
+     */
+    private interface IErrorReporterCaller
+    {
+
+        void callAppropriateMethod();
     }
 }

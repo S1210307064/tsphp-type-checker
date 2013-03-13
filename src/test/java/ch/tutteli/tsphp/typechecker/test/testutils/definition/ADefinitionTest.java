@@ -28,6 +28,8 @@ import ch.tutteli.tsphp.typechecker.SymbolResolver;
 import ch.tutteli.tsphp.typechecker.SymbolTable;
 import ch.tutteli.tsphp.typechecker.TypeCheckerController;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
+import ch.tutteli.tsphp.typechecker.error.ErrorReporter;
+import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.test.testutils.ATest;
 import ch.tutteli.tsphp.typechecker.test.testutils.TestDefiner;
 import ch.tutteli.tsphp.typechecker.test.testutils.TestScopeFactory;

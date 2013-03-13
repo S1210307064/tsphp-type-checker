@@ -17,7 +17,7 @@
 package ch.tutteli.tsphp.typechecker.test.typecheck;
 
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest;
-import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ATypeCheckTest.*;
+import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ATypeCheckTest.Bool;
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.TypeCheckStruct;
 import java.util.Arrays;
 import java.util.Collection;
@@ -31,10 +31,10 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class ForeachTest extends AOperatorTypeCheckTest
+public class ForTest extends AOperatorTypeCheckTest
 {
 
-    public ForeachTest(String testString, TypeCheckStruct[] struct) {
+    public ForTest(String testString, TypeCheckStruct[] struct) {
         super(testString, struct);
     }
 
@@ -46,30 +46,9 @@ public class ForeachTest extends AOperatorTypeCheckTest
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
         return Arrays.asList(new Object[][]{
-            {"foreach([1,2] as object $v);", new TypeCheckStruct[]{
-                    struct("array", Array, 1, 0, 0),
-                    struct("$v", Object, 1, 0, 1, 1)
-                }
-            },
-            {"foreach([1,2] as string $k => object $v);", new TypeCheckStruct[]{
-                    struct("array", Array, 1, 0, 0),
-                    struct("$k", String, 1, 0, 1, 1),
-                    struct("$v", Object, 1, 0, 2, 1)
-                }
-            },
-            //TODO TSPHP-400
-//            {"foreach([1,2] as string? $k => object $v);", new TypeCheckStruct[]{
-//                    struct("array", Array, 1, 0, 0),
-//                    struct("$k", String, 1, 0, 1, 1),
-//                    struct("$v", Object, 1, 0, 2, 1)
-//                }
-//            },
-//            {"foreach([1,2] as object $k => object $v);", new TypeCheckStruct[]{
-//                    struct("array", Array, 1, 0, 0),
-//                    struct("$k", String, 1, 0, 1, 1),
-//                    struct("$v", Object, 1, 0, 2, 1)
-//                }
-//            }
+            {"for(int $i=0;$i < 2;++$i);", new TypeCheckStruct[]{struct("<", Bool, 1, 0,1, 0)}},
+            {"for(int $i=0;$i, $i < 2;++$i);", new TypeCheckStruct[]{struct("<", Bool, 1, 0, 1, 1)}},
+            {"for(int $i=0;$i, 1+1, true;++$i);", new TypeCheckStruct[]{struct("true", Bool, 1, 0, 1, 2)}},
         });
     }
 }

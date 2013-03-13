@@ -24,6 +24,7 @@ import ch.tutteli.tsphp.common.exceptions.ReferenceException;
 import ch.tutteli.tsphp.common.exceptions.UnsupportedOperationException;
 import ch.tutteli.tsphp.typechecker.AmbiguousCallException;
 import ch.tutteli.tsphp.typechecker.CastingDto;
+import ch.tutteli.tsphp.typechecker.symbols.IArrayTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import java.util.List;
 
@@ -105,7 +106,19 @@ public interface IErrorReporter extends ch.tutteli.tsphp.common.IErrorReporter
 
     ReferenceException wrongAssignment(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
 
-    ReferenceException wrongType(ITSPHPAst statement,ITSPHPAst expression, ITypeSymbol typeSymbol);
+    ReferenceException notSameOrParentType(ITSPHPAst statement, ITSPHPAst expression, ITypeSymbol typeSymbol);
 
-    ReferenceException typeNotAllowed(ITSPHPAst statement, ITSPHPAst expression, ITypeSymbol typeSymbol);
+    ReferenceException wrongTypeIf(ITSPHPAst ifRoot, ITSPHPAst expression, ITypeSymbol typeSymbol);
+
+    ReferenceException wrongTypeSwitch(ITSPHPAst switchRoot, ITSPHPAst expression, ITypeSymbol typeSymbol);
+
+    ReferenceException wrongTypeSwitchCase(ITSPHPAst switchCase, ITSPHPAst expression, ITypeSymbol typeSymbol);
+
+    ReferenceException wrongTypeFor(ITSPHPAst forRoot, ITSPHPAst expression, ITypeSymbol typeSymbol);
+
+    ReferenceException wrongTypeForeach(ITSPHPAst foreachRoot, ITSPHPAst array, IArrayTypeSymbol arrayTypeSymbol);
+
+    ReferenceException wrongTypeWhile(ITSPHPAst whileRoot, ITSPHPAst expression, ITypeSymbol typeSymbol);
+
+    ReferenceException wrongTypeDoWhile(ITSPHPAst doWhileRoot, ITSPHPAst expression, ITypeSymbol typeSymbol);
 }

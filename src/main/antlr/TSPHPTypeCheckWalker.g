@@ -66,8 +66,7 @@ bottomup
 	;
     
 expressionLists
-	:	^(	(	EXPRESSION_LIST
-		    	|	ACTUAL_PARAMETERS	
+	:	^(	(	ACTUAL_PARAMETERS	
 	   		|	TypeArray
 	    		|	'echo'
 		    	)
@@ -80,23 +79,26 @@ expressionRoot
  	|	^(nil='throw' expr=expression)
  	
  	|	^(nil=ARRAY_ACCESS expr=expression)
- 	|	booleanStatements
+ 	|	^(nil=If expr=expression . .?)
+ 		{controller.checkIf($nil, $expr.start);}
+ 	|	^(nil=While expr=expression .)
+ 		{controller.checkWhile($nil, $expr.start);}
+ 	|	^(nil=Do instr=. expr=expression)
+	 	{controller.checkDoWhile($nil, $expr.start);}
+	|	^(nil=For . ^(EXPRESSION_LIST expr=expression+) . .)
+		{controller.checkFor($nil,$expr.start);}
  	|	switchCondition
  	|	foreachLoop
 	;
-
-booleanStatements
-	:	(	^(nil=If expr=expression . .?)
-		|	^(nil=While expr=expression .)
-		|	^(nil=Do instr=. expr=expression)
-		)
- 		{controller.checkIsType($nil, $expr.start, symbolTable.getBoolTypeSymbol());}	
-	;
 	
 switchCondition
-	:	^(Switch condition=expression {controller.checkIsType($Switch,$condition.start,symbolTable.getStringNullableTypeSymbol());}
+	:	^(Switch condition=expression 
+		{
+		    $Switch.setEvalType($condition.type);
+		    controller.checkSwitch($Switch,$condition.start);
+		}
 			(
-				^(SWITCH_CASES (label=expression {controller.checkIsType($Switch,$label.start,$condition.type);})* Default?) 
+				^(SWITCH_CASES (label=expression {controller.checkSwitchCase($Switch,$label.start);})* Default?) 
 				.
 			)*
 		)

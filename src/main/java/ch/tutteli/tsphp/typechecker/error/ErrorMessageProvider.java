@@ -86,10 +86,23 @@ public class ErrorMessageProvider extends AErrorMessageProvider
         typeCheckErrors.put("wrongAssignment", "Line %line%|%pos% - cannot assign RHS to LHS using the operator %id% "
                 + "types are not compatible.\n"
                 + "types LHS/RHS: [%tExp%, %tFound%]");
-        typeCheckErrors.put("wrongType", "Line %line%|%pos% - type %tExp% expected for %id% but type %tFound% found.");
-        typeCheckErrors.put("typeNotAllowed", "Line %line%|%pos% - type %tExp% is not allowed for %id%. "
-                + "Type %tFound% found which is either the forbidden type or a sub-type.");
+        typeCheckErrors.put("notSameOrParentType", "Line %line%|%pos% - %id% has a wrong type. "
+                + "Type %tExp% or a parent-type expected but %tFound% found.");
 
+        typeCheckErrors.put("wrongTypeIf", "Line %line%|%pos% - the condition in the if statement "
+                + "evaluates to a wrong type. Type %tExp% or a sub-type expected but %tFound% found.");
+
+        typeCheckErrors.put("wrongTypeSwitch", "Line %line%|%pos% - switch cannot be used for the given "
+                + "type %tFound%. %tExp% or one of its sub-types can be used.");
+        typeCheckErrors.put("wrongTypeSwitchCase", "Line %line%|%pos% - The type of the switch case does not "
+                + "correspond to the type specified in the switch header. "
+                + "Type %tExp% or a sub-type expected but %tFound% found.");
+
+        typeCheckErrors.put("wrongTypeFor", "Line %line%|%pos% - the condition in the for statement "
+                + "evaluates to a wrong type. Type %tExp% or a sub-type expected but %tFound% found.");
+
+        typeCheckErrors.put("wrongTypeForeach", "Line %line%|%pos% - the given expression in the foreach statement "
+                + "evaluates to a wrong type. Type %tExp% or a sub-type expected but %tFound% found.");
     }
 
     @Override

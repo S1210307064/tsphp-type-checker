@@ -180,6 +180,11 @@ public class OverloadResolver implements IOverloadResolver
     }
 
     @Override
+    public boolean isSameOrParentTypeConsiderNull(ITypeSymbol formalParameterType, ITypeSymbol actualParameterType) {
+        return isSameOrParentType(getPromotionLevelFromToConsiderNull(actualParameterType, formalParameterType));
+    }
+
+    @Override
     public boolean isSameOrParentType(int promotionLevel) {
         return promotionLevel != -1;
     }
@@ -195,7 +200,7 @@ public class OverloadResolver implements IOverloadResolver
         if (castingDto != null) {
             castingDto.actualParameter = actualParameter;
         }
-        
+
         return castingDto;
     }
 
@@ -375,6 +380,10 @@ public class OverloadResolver implements IOverloadResolver
     private int getPromotionLevelFromToConsiderNull(ITSPHPAst actualParameter, IVariableSymbol formalParameter) {
         ITypeSymbol formalParameterType = formalParameter.getType();
         ITypeSymbol actualParameterType = actualParameter.getEvalType();
+        return getPromotionLevelFromToConsiderNull(actualParameterType, formalParameterType);
+    }
+
+    private int getPromotionLevelFromToConsiderNull(ITypeSymbol actualParameterType, ITypeSymbol formalParameterType) {
         int promotionLevel;
         if (!(actualParameterType instanceof INullTypeSymbol)) {
             promotionLevel = getPromotionLevelFromTo(actualParameterType, formalParameterType);
