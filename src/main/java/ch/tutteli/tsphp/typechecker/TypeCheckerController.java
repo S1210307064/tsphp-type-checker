@@ -36,6 +36,7 @@ import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousTypeSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousVariableSymbol;
 import ch.tutteli.tsphp.typechecker.utils.IAstHelper;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -518,6 +519,44 @@ public class TypeCheckerController implements ITypeCheckerController
         }
         return methodDto;
     }
+    
+    @Override
+    public ITypeSymbol getReturnTypeArrayAccess(ITSPHPAst statement, final ITSPHPAst expression, final ITSPHPAst index) {
+
+        ITypeSymbol returnTypeArrayAccess;
+
+        ITypeSymbol keyTypeSymbol = null;
+        ITypeSymbol evalType = expression.getEvalType();
+        if (!(evalType instanceof IErroneousSymbol)) {
+            IArrayTypeSymbol arrayTypeSymbol = symbolTable.getArrayTypeSymbol();
+            int promotionCount = overloadResolver.getPromotionLevelFromTo(evalType, arrayTypeSymbol);
+            if (overloadResolver.isSameOrParentType(promotionCount)) {
+                IArrayTypeSymbol arrayType = (IArrayTypeSymbol) evalType;
+                keyTypeSymbol = arrayType.getKeyTypeSymbol();
+                returnTypeArrayAccess = arrayType.getValueTypeSymbol();
+            } else {
+                ReferenceException exception = ErrorReporterRegistry.get().arrayExpected(expression, arrayTypeSymbol);
+                returnTypeArrayAccess = symbolFactory.createErroneousTypeSymbol(statement, exception);
+            }
+        } else {
+            returnTypeArrayAccess = evalType;
+        }
+
+        if (keyTypeSymbol == null) {
+            keyTypeSymbol = symbolTable.getStringTypeSymbol();
+        }
+
+        final ITypeSymbol typeSymbol = keyTypeSymbol;
+        checkIsSameOrSubType(index, typeSymbol, new IErrorReporterCaller()
+        {
+            @Override
+            public void callAppropriateMethod() {
+                ErrorReporterRegistry.get().wrongArrayIndexType(expression, index, typeSymbol);
+            }
+        });
+
+        return returnTypeArrayAccess;
+    }
 
     @Override
     public void checkEquality(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right) {
@@ -772,7 +811,6 @@ public class TypeCheckerController implements ITypeCheckerController
         });
     }
 
-    
     @Override
     public void checkThrow(final ITSPHPAst throwRoot, final ITSPHPAst expression) {
         final ITypeSymbol typeSymbol = symbolTable.getExceptionTypeSymbol();
@@ -784,44 +822,23 @@ public class TypeCheckerController implements ITypeCheckerController
             }
         });
     }
- 
+
     @Override
-    public ITypeSymbol getReturnTypeArrayAccess(ITSPHPAst statement, final ITSPHPAst expression, final ITSPHPAst index) {
-
-        ITypeSymbol returnTypeArrayAccess;
-
-        ITypeSymbol keyTypeSymbol = null;
-        ITypeSymbol evalType = expression.getEvalType();
-        if (!(evalType instanceof IErroneousSymbol)) {
-            IArrayTypeSymbol arrayTypeSymbol = symbolTable.getArrayTypeSymbol();
-            int promotionCount = overloadResolver.getPromotionLevelFromTo(evalType, arrayTypeSymbol);
-            if (overloadResolver.isSameOrParentType(promotionCount)) {
-                IArrayTypeSymbol arrayType = (IArrayTypeSymbol) evalType;
-                keyTypeSymbol = arrayType.getKeyTypeSymbol();
-                returnTypeArrayAccess = arrayType.getValueTypeSymbol();
-            } else {
-                ReferenceException exception = ErrorReporterRegistry.get().arrayExpected(expression, arrayTypeSymbol);
-                returnTypeArrayAccess = symbolFactory.createErroneousTypeSymbol(statement, exception);
-            }
-        } else {
-            returnTypeArrayAccess = evalType;
+    public void checkCatch(final ITSPHPAst castRoot, final ITSPHPAst variableId) {
+        IVariableSymbol variableSymbol = (IVariableSymbol) variableId.getSymbol();
+        if (!(variableSymbol instanceof IErroneousSymbol)) {
+            final ITypeSymbol typeSymbol = symbolTable.getExceptionTypeSymbol();
+            checkIsSameOrSubType(variableId, typeSymbol, new IErrorReporterCaller()
+            {
+                @Override
+                public void callAppropriateMethod() {
+                    ErrorReporterRegistry.get().wrongTypeCatch(castRoot, variableId, typeSymbol);
+                }
+            });
         }
-
-        if (keyTypeSymbol == null) {
-            keyTypeSymbol = symbolTable.getStringTypeSymbol();
-        }
-
-        final ITypeSymbol typeSymbol = keyTypeSymbol;
-        checkIsSameOrSubType(index, typeSymbol, new IErrorReporterCaller()
-        {
-            @Override
-            public void callAppropriateMethod() {
-                ErrorReporterRegistry.get().wrongArrayIndexType(expression, index, typeSymbol);
-            }
-        });
-
-        return returnTypeArrayAccess;
     }
+
+    
 
     /**
      * A "Delegate" which represents a call of a method of an IErrrorReporter

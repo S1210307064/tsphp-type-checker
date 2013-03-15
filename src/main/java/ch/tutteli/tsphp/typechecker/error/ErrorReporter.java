@@ -424,6 +424,13 @@ public class ErrorReporter implements IErrorReporter
     public ReferenceException wrongTypeThrow(ITSPHPAst throwRoot, ITSPHPAst expression, ITypeSymbol typeSymbol) {
         return addAndGetStatementTypeCheckError("wrongTypeThrow", throwRoot, expression, typeSymbol);
     }
+    
+    
+    @Override
+    public ReferenceException wrongTypeCatch(ITSPHPAst castRoot, ITSPHPAst variableId, ITypeSymbol typeSymbol) {
+        return addAndGetStatementTypeCheckError("wrongTypeCatch", castRoot, variableId, typeSymbol);
+    }
+    
 
     @Override
     public ReferenceException arrayExpected(ITSPHPAst expression, IArrayTypeSymbol arrayTypeSymbol) {
@@ -435,6 +442,7 @@ public class ErrorReporter implements IErrorReporter
         return addAndGetStatementTypeCheckError("wrongArrayIndexType", expression, index, typeSymbol);
     }
 
+    
     private ReferenceException addAndGetStatementTypeCheckError(String key, ITSPHPAst statement,
             ITSPHPAst expression, ITypeSymbol typeSymbol) {
 
@@ -445,4 +453,5 @@ public class ErrorReporter implements IErrorReporter
         exceptions.add(exception);
         return exception;
     }
+
 }

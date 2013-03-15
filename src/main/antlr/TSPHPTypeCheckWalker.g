@@ -97,7 +97,7 @@ expressionRoot
 
  	|	switchCondition
  	|	foreachLoop
- 	//|	tryCatch
+ 	|	tryCatch
 	;
 	
 switchCondition
@@ -136,15 +136,17 @@ foreachLoop
 		}
 	;
 	
-/*tryCatch
-	:	^(nil=Try .  (^(Catch
-			^(VARIABLE_DECLARATION_LIST[$classInterfaceTypeWithoutObject.start,"vars"] 
-				^(TYPE[$classInterfaceTypeWithoutObject.start,"type"] TYPE_MODIFIER[$classInterfaceTypeWithoutObject.start,"tMod"] classInterfaceTypeWithoutObject)
-				VariableId
-			)
-			^(BLOCK_CONDITIONAL[$instructionInclBreakContinue.start,"cBlock"] instructionInclBreakContinue*)
-		) catchBlock+)	
-	;*/
+tryCatch
+	:	^(Try . 
+			(^(nil=Catch
+				^(VARIABLE_DECLARATION_LIST type=. variableId=VariableId) .
+				{
+				    $variableId.setEvalType($variableId.getSymbol().getType());
+				    controller.checkCatch($nil, $variableId);
+				}
+			))+
+		)	
+	;
 
 variableInit
 	:	^(VariableId expression)

@@ -31,6 +31,8 @@ public interface ITypeCheckerController
 
     IDefiner getDefiner();
 
+    ISymbolTable getSymbolTable();
+
     boolean checkIfInterface(ITSPHPAst typeAst, ITypeSymbol symbol);
 
     boolean checkIfClass(ITSPHPAst typeAst, ITypeSymbol symbol);
@@ -76,7 +78,7 @@ public interface ITypeCheckerController
 
     ITypeSymbol getUnaryOperatorEvalType(ITSPHPAst operator, ITSPHPAst expression);
 
-    ISymbolTable getSymbolTable();
+    ITypeSymbol getReturnTypeArrayAccess(ITSPHPAst statement, ITSPHPAst expression, ITSPHPAst index);
 
     void checkEquality(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
 
@@ -103,8 +105,8 @@ public interface ITypeCheckerController
     void checkWhile(ITSPHPAst whileRoot, ITSPHPAst expression);
 
     void checkDoWhile(ITSPHPAst doWhileRoot, ITSPHPAst expression);
-    
+
     void checkThrow(ITSPHPAst throwRoot, ITSPHPAst expression);
-    
-    ITypeSymbol getReturnTypeArrayAccess(ITSPHPAst statement, ITSPHPAst expression, ITSPHPAst index);
+
+    void checkCatch(ITSPHPAst castRoot, ITSPHPAst variableId);
 }
