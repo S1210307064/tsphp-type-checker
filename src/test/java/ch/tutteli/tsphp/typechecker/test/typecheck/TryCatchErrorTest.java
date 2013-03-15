@@ -16,9 +16,8 @@
  */
 package ch.tutteli.tsphp.typechecker.test.typecheck;
 
-import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest;
-import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest.Exception;
-import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.TypeCheckStruct;
+import ch.tutteli.tsphp.typechecker.error.ReferenceErrorDto;
+import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ATypeCheckErrorTest;
 import java.util.Arrays;
 import java.util.Collection;
 import org.antlr.runtime.RecognitionException;
@@ -31,11 +30,12 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class ThrowTest extends AOperatorTypeCheckTest
+public class TryCatchErrorTest extends ATypeCheckErrorTest
 {
 
-    public ThrowTest(String testString, TypeCheckStruct[] struct) {
-        super(testString, struct);
+
+    public TryCatchErrorTest(String testString, ReferenceErrorDto[] expectedLinesAndPositions) {
+        super(testString, expectedLinesAndPositions);
     }
 
     @Test
@@ -45,10 +45,20 @@ public class ThrowTest extends AOperatorTypeCheckTest
 
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
-         return Arrays.asList(new Object[][]{
-            {"Exception $a; throw $a;", new TypeCheckStruct[]{struct("$a", Exception, 1, 1, 0)}},
-            {"ErrorException $a; throw $a;", new TypeCheckStruct[]{struct("$a", ErrorException, 1, 1, 0)}},
-           
+        ReferenceErrorDto[] errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto("catch", 2, 1)};
+        return Arrays.asList(new Object[][]{
+            {"class A{} try{}\n catch(A $b){};", errorDto},
+            {"class A{} try{}catch(Exception $e){}\n catch(A $b){};", errorDto},
+            {"class A{} try{}catch(ErrorException $e){}catch(Exception $e2){}\n catch(A $b){};", errorDto},
+            
+            {
+                "class A{} class B{} try{}\n catch(A $b){}catch(Exception $e){}\n catch(B $c){};",
+                new ReferenceErrorDto[]{
+                    new ReferenceErrorDto("catch", 2, 1),
+                    new ReferenceErrorDto("catch", 3, 1),
+                }
+            },
         });
+
     }
 }
