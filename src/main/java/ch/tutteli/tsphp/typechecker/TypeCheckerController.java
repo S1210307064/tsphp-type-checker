@@ -34,6 +34,8 @@ import ch.tutteli.tsphp.typechecker.symbols.IPolymorphicTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IScalarTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IVoidTypeSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousVariableSymbol;
@@ -363,6 +365,15 @@ public class TypeCheckerController implements ITypeCheckerController
         return classTypeSymbol;
     }
 
+    private IMethodSymbol getEnclosingMethod(ITSPHPAst ast) {
+        IMethodSymbol methodSymbol = symbolResolver.getEnclosingMethod(ast);
+        if (methodSymbol == null) {
+            ReferenceException ex = ErrorReporterRegistry.get().notInMethod(ast);
+            methodSymbol = symbolFactory.createErroneousMethodSymbol(ast, ex);
+        }
+        return methodSymbol;
+    }
+
     private IClassTypeSymbol getParent(ITSPHPAst ast) {
         IClassTypeSymbol classTypeSymbol = getEnclosingClass(ast);
         IClassTypeSymbol parent = classTypeSymbol.getParent();
@@ -519,7 +530,7 @@ public class TypeCheckerController implements ITypeCheckerController
         }
         return methodDto;
     }
-    
+
     @Override
     public ITypeSymbol getReturnTypeArrayAccess(ITSPHPAst statement, final ITSPHPAst expression, final ITSPHPAst index) {
 
@@ -825,20 +836,41 @@ public class TypeCheckerController implements ITypeCheckerController
 
     @Override
     public void checkCatch(final ITSPHPAst castRoot, final ITSPHPAst variableId) {
-        IVariableSymbol variableSymbol = (IVariableSymbol) variableId.getSymbol();
-        if (!(variableSymbol instanceof IErroneousSymbol)) {
-            final ITypeSymbol typeSymbol = symbolTable.getExceptionTypeSymbol();
-            checkIsSameOrSubType(variableId, typeSymbol, new IErrorReporterCaller()
-            {
-                @Override
-                public void callAppropriateMethod() {
-                    ErrorReporterRegistry.get().wrongTypeCatch(castRoot, variableId, typeSymbol);
-                }
-            });
-        }
+        final ITypeSymbol typeSymbol = symbolTable.getExceptionTypeSymbol();
+        checkIsSameOrSubType(variableId, typeSymbol, new IErrorReporterCaller()
+        {
+            @Override
+            public void callAppropriateMethod() {
+                ErrorReporterRegistry.get().wrongTypeCatch(castRoot, variableId, typeSymbol);
+            }
+        });
     }
 
-    
+    @Override
+    public void checkReturn(final ITSPHPAst returnRoot, final ITSPHPAst expression) {
+        IMethodSymbol methodSymbol = getEnclosingMethod(returnRoot);
+
+        if (!(methodSymbol instanceof IErroneousMethodSymbol)) {
+            final ITypeSymbol typeSymbol = methodSymbol.getType();
+            if (typeSymbol instanceof IVoidTypeSymbol) {
+                if (expression != null) {
+                    ErrorReporterRegistry.get().noReturnValueExpected(returnRoot, expression, typeSymbol);
+                }
+            } else {
+                if (expression == null) {
+                    ErrorReporterRegistry.get().returnValueExpected(returnRoot, expression, typeSymbol);
+                } else {
+                    checkIsSameOrSubType(expression, typeSymbol, new IErrorReporterCaller()
+                    {
+                        @Override
+                        public void callAppropriateMethod() {
+                            ErrorReporterRegistry.get().wrongTypeReturn(returnRoot, expression, typeSymbol);
+                        }
+                    });
+                }
+            }
+        }
+    }
 
     /**
      * A "Delegate" which represents a call of a method of an IErrrorReporter

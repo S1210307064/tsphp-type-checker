@@ -55,6 +55,8 @@ public class ErrorMessageProvider extends AErrorMessageProvider
         referenceErrors.put("variableExpected", "Line %line%|%pos% - assignments can only be made to variables,"
                 + " \"%id%\" is not a variable.");
         referenceErrors.put("notInClass", "Line %line%|%pos% - %id% is used outside a class.");
+        
+        referenceErrors.put("notInMethod", "Line %line%|%pos% - %id% is used outside a method or function.");
 
         referenceErrors.put("noParentClass", "Line %line%|%pos% - class %id% has no parent class.");
         referenceErrors.put("notDefined", "Line %line%|%pos% - %id% was never defined.");
@@ -118,8 +120,17 @@ public class ErrorMessageProvider extends AErrorMessageProvider
         typeCheckErrors.put("arrayExpected", "Line %line%|%pos% - the expression evaluates to a wrong type. "
                 + "Type %tExp% or a sub-type expected but %tFound% found.");
 
-        typeCheckErrors.put("wrongArrayIndexType", "Line %line%|%pos% - the index used to access the array evaluates "
-                + "to a wrong type. Type %tExp% or a sub-type expected but %tFound% found.");
+
+        typeCheckErrors.put("noReturnValueExpected", "Line %line%|%pos% - the enclosing method has not specified a "
+                + "return value but a value of type %tFound% was found.");
+
+        typeCheckErrors.put("returnValueExpected", "Line %line%|%pos% - the enclosing method has specified a return "
+                + "value but none was given.");
+
+        typeCheckErrors.put("wrongTypeReturn", "Line %line%|%pos% - the return statement evaluates to wrong type. "
+                + "Type %tExp% or a sub-type expected but %tFound% found.");
+
+
     }
 
     @Override
@@ -157,7 +168,7 @@ public class ErrorMessageProvider extends AErrorMessageProvider
         return "ReferenceException occured, corresponding error message for \"" + key + "\" is not defined. "
                 + "Please report bug to http://tsphp.tutteli.ch\n"
                 + "However, the following information was gathered.\n"
-                + "Line " + dto.line + "|" + dto.position + " - " + dto.identifier + " could not been resolved to its"
+                + "Line " + dto.line + "|" + dto.position + " - " + dto.identifier + " could not been resolved to its "
                 + "corresponding reference.";
     }
 

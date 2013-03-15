@@ -77,6 +77,7 @@ topdown
 	|	methodFunctionCall
 	|	atom
 	|	constant
+	|	returnBreakContinue
     	;
 
 bottomup
@@ -220,6 +221,16 @@ constant
 		{
 			$cst.setText($cst.text+"#");
 			$cst.setScope(currentScope);
+		}
+	;
+
+returnBreakContinue
+	:	(	Return
+		|	Break
+		|	Continue	
+		)
+		{
+			$start.setScope(currentScope);
 		}
 	;
 

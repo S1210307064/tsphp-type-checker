@@ -109,4 +109,6 @@ public interface ITypeCheckerController
     void checkThrow(ITSPHPAst throwRoot, ITSPHPAst expression);
 
     void checkCatch(ITSPHPAst castRoot, ITSPHPAst variableId);
+    
+    void checkReturn(ITSPHPAst returnRoot, ITSPHPAst expression);
 }

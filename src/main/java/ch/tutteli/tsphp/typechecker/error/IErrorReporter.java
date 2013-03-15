@@ -73,6 +73,8 @@ public interface IErrorReporter extends ch.tutteli.tsphp.common.IErrorReporter
 
     ReferenceException notInClass(ITSPHPAst ast);
 
+    ReferenceException notInMethod(ITSPHPAst ast);
+
     ReferenceException notDefined(ITSPHPAst ast);
 
     ReferenceException notStatic(ITSPHPAst callee);
@@ -129,4 +131,10 @@ public interface IErrorReporter extends ch.tutteli.tsphp.common.IErrorReporter
     ReferenceException arrayExpected(ITSPHPAst expression, IArrayTypeSymbol arrayTypeSymbol);
 
     ReferenceException wrongArrayIndexType(ITSPHPAst expression, ITSPHPAst index, ITypeSymbol typeSymbol);
+
+    ReferenceException noReturnValueExpected(ITSPHPAst returnRoot, ITSPHPAst expression, ITypeSymbol typeSymbol);
+
+    ReferenceException returnValueExpected(ITSPHPAst returnRoot, ITSPHPAst expression, ITypeSymbol typeSymbol);
+
+    ReferenceException wrongTypeReturn(ITSPHPAst returnRoot, ITSPHPAst expression, ITypeSymbol typeSymbol);
 }

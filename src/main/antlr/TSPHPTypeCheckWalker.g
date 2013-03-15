@@ -75,7 +75,15 @@ expressionLists
 	;
 expressionRoot 
 	:	^(nil=EXPRESSION expr=expression)
- 	|	^(nil='return' expr=expression)
+	
+ 	|	^(nil='return' expr=expression?)
+ 		{
+ 		    ITSPHPAst exprAst = $expr.start;
+ 		    if (exprAst != null) {
+		    	$nil.setEvalType(exprAst.getEvalType());
+		    }
+		    controller.checkReturn($nil, exprAst);
+ 		}
  	
  	|	^(nil='throw' expr=expression)
  		{controller.checkThrow($nil, $expr.start);}

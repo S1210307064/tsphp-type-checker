@@ -31,12 +31,12 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class ThrowErrorTest extends ATypeCheckErrorTest
+public class ReturnErrorTest extends ATypeCheckErrorTest
 {
 
     private static List<Object[]> collection;
 
-    public ThrowErrorTest(String testString, ReferenceErrorDto[] expectedLinesAndPositions) {
+    public ReturnErrorTest(String testString, ReferenceErrorDto[] expectedLinesAndPositions) {
         super(testString, expectedLinesAndPositions);
     }
 
@@ -48,15 +48,26 @@ public class ThrowErrorTest extends ATypeCheckErrorTest
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
         collection = new ArrayList<>();
-        ReferenceErrorDto[] errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto("throw", 2, 1)};
-
+        ReferenceErrorDto[] errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto("return", 2, 1)};
 
         String[] types = new String[]{"bool", "bool?", "int", "int?", "float", "float?", "string", "string?",
-            "array", "resource", "object"};
+            "array", "resource", "ErrorException","Exception"};
+
         for (String type : types) {
-            collection.add(new Object[]{type + " $b;\n throw $b;", errorDto});
+            collection.add(new Object[]{"function void foo(){" + type + " $b;\n return $b;}", errorDto});
+            collection.add(new Object[]{"class A{function void foo(){" + type + " $b;\n return $b;}}", errorDto});
         }
 
+        for (int i = 0; i < types.length - 1; ++i) {
+            collection.add(new Object[]{
+                "function " + types[i] + " foo(){" + types[i + 1] + " $b;\n return $b;}",
+                errorDto
+            });
+        }
+        collection.add(new Object[]{
+            "function " + types[types.length - 1] + " foo(){" + types[0] + " $b;\n return $b;}",
+            errorDto
+        });
         return collection;
     }
 }

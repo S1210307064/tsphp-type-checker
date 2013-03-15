@@ -30,6 +30,7 @@ import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.ScopeHelperRegistry;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 
@@ -270,6 +271,19 @@ public class SymbolResolver implements ISymbolResolver
             classTypeSymbol = (IClassTypeSymbol) scope;
         }
         return classTypeSymbol;
+    }
+
+    @Override
+    public IMethodSymbol getEnclosingMethod(ITSPHPAst ast) {
+        IMethodSymbol methodSymbol = null;
+        IScope scope = ast.getScope();
+        while (scope != null && !(scope instanceof IMethodSymbol)) {
+            scope = scope.getEnclosingScope();
+        }
+        if (scope != null) {
+            methodSymbol = (IMethodSymbol) scope;
+        }
+        return methodSymbol;
     }
 
     @Override

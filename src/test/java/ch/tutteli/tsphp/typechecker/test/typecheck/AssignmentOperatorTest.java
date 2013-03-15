@@ -291,7 +291,8 @@ public class AssignmentOperatorTest extends AOperatorTypeCheckTest
             {"float", Float},
             {"float?", FloatNullable},
             {"string", String},
-            {"string?", StringNullable},};
+            {"string?", StringNullable}
+        };
         Object[][] typesWithBuiltInTypes2 = new Object[][]{
             {"bool", Bool},
             {"bool?", BoolNullable},
