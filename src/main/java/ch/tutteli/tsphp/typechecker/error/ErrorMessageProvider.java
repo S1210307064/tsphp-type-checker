@@ -62,6 +62,7 @@ public class ErrorMessageProvider extends AErrorMessageProvider
         referenceErrors.put("noParentClass", "Line %line%|%pos% - class %id% has no parent class.");
         referenceErrors.put("notDefined", "Line %line%|%pos% - %id% was never defined.");
         referenceErrors.put("notStatic", "Line %line%|%pos% - %id% is not static.");
+        referenceErrors.put("toManyBreakContinueLevels", "Line %line%|%pos% - cannot %id% so many levels.");
     }
 
     @Override
@@ -130,7 +131,8 @@ public class ErrorMessageProvider extends AErrorMessageProvider
         typeCheckErrors.put("wrongTypeReturn", "Line %line%|%pos% - the return statement evaluates to wrong type. "
                 + "Type %tExp% or a sub-type expected but %tFound% found.");
 
-
+        typeCheckErrors.put("wrongTypeVariableId", "Line %line%|%pos% - cannot assign RHS to LHS. "
+                + "Type %tExp% or a sub-type expected but %tFound% found.");
     }
 
     @Override

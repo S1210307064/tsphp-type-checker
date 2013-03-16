@@ -40,7 +40,6 @@ import ch.tutteli.tsphp.typechecker.symbols.IVoidTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousTypeSymbol;
-import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousVariableSymbol;
 import ch.tutteli.tsphp.typechecker.utils.IAstHelper;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -93,7 +92,7 @@ public class TypeCheckerController implements ITypeCheckerController
     }
 
     @Override
-    public boolean checkIfInterface(ITSPHPAst typeAst, ITypeSymbol symbol) {
+    public boolean checkIsInterface(ITSPHPAst typeAst, ITypeSymbol symbol) {
         boolean isInterface = symbol instanceof IInterfaceTypeSymbol || symbol instanceof IErroneousTypeSymbol;
         if (!isInterface) {
             ErrorReporterRegistry.get().interfaceExpected(typeAst);
@@ -102,7 +101,7 @@ public class TypeCheckerController implements ITypeCheckerController
     }
 
     @Override
-    public boolean checkIfClass(ITSPHPAst typeAst, ITypeSymbol symbol) {
+    public boolean checkIsClass(ITSPHPAst typeAst, ITypeSymbol symbol) {
         boolean isClass = symbol instanceof IClassTypeSymbol || symbol instanceof IErroneousTypeSymbol;
         if (!isClass) {
             ErrorReporterRegistry.get().classExpected(typeAst);
@@ -703,10 +702,20 @@ public class TypeCheckerController implements ITypeCheckerController
 
     @Override
     public void checkCast(final ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right) {
-        if (right.getEvalType() instanceof IErroneousSymbol) {
+        if (!(right.getEvalType() instanceof IErroneousSymbol)) {
             operator.setText("==");
 
-            IVariableSymbol leftSymbol = getVariableSymbolFromExpression(left);
+            ISymbol symbol = left.getSymbol();
+            IVariableSymbol leftSymbol;
+            if (symbol instanceof IVariableSymbol) {
+                leftSymbol = (IVariableSymbol) symbol;
+            }else{
+                ITypeSymbol typeSymbol = (ITypeSymbol) symbol;
+                left.setEvalType(typeSymbol);
+                leftSymbol = symbolFactory.createVariableSymbol(null, left);
+                leftSymbol.setType(typeSymbol);
+            }
+
             CastingDto rightToLeft = overloadResolver.getCastingDtoAlwaysCasting(leftSymbol, right);
             if (rightToLeft == null) {
                 ErrorReporterRegistry.get().wrongCast(operator, left, right);
@@ -739,7 +748,7 @@ public class TypeCheckerController implements ITypeCheckerController
             IErrorReporterCaller caller) {
         ITypeSymbol expressionType = expression.getEvalType();
         if (areNotErroneousTypes(expressionType, typeSymbol)) {
-            int promotionCount = overloadResolver.getPromotionLevelFromTo(expressionType, typeSymbol);
+            int promotionCount = overloadResolver.getPromotionLevelFromToConsiderNull(expressionType, typeSymbol);
             if (!overloadResolver.isSameOrParentType(promotionCount)) {
                 caller.callAppropriateMethod();
             }
@@ -892,6 +901,14 @@ public class TypeCheckerController implements ITypeCheckerController
                 }
             }
         }
+    }
+
+    @Override
+    public void checkInitialValue(final ITSPHPAst variableId, final ITSPHPAst expression) {
+        ITSPHPAst operator = astHelper.createAst(variableId);
+        operator.setText("=");
+        operator.getToken().setType(TSPHPDefinitionWalker.Assign);
+        checkAssignment(operator, variableId, expression);
     }
 
     /**

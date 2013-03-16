@@ -110,7 +110,7 @@ interfaceExtendsDeclaration[ITSPHPAst identifier]
 	:	^('extends' 	
 			(allTypes[true]{	
 				ITypeSymbol typeSymbol = $allTypes.type;
-				if(controller.checkIfInterface($allTypes.start, typeSymbol)){
+				if(controller.checkIsInterface($allTypes.start, typeSymbol)){
 				    ((IPolymorphicTypeSymbol)identifier.getSymbol()).addParentTypeSymbol((IPolymorphicTypeSymbol)typeSymbol);
 				}
 			})+
@@ -131,7 +131,7 @@ classExtendsDeclaration[ITSPHPAst identifier]
 	:	^('extends' 
 			allTypes[true]{
 				ITypeSymbol typeSymbol = $allTypes.type;
-				if(controller.checkIfClass($allTypes.start, typeSymbol)){
+				if(controller.checkIsClass($allTypes.start, typeSymbol)){
 				    IClassTypeSymbol classTypeSymbol = (IClassTypeSymbol) identifier.getSymbol();
 				    classTypeSymbol.setParent((IClassTypeSymbol)typeSymbol);
 				    classTypeSymbol.addParentTypeSymbol((IClassTypeSymbol)typeSymbol);
@@ -145,7 +145,7 @@ implementsDeclaration[ITSPHPAst identifier]
 	:	^('implements' 	
 			(allTypes[true]{
 				ITypeSymbol typeSymbol = $allTypes.type;
-				if(controller.checkIfInterface($allTypes.start, typeSymbol)){
+				if(controller.checkIsInterface($allTypes.start, typeSymbol)){
 				    ((IClassTypeSymbol)identifier.getSymbol()).addParentTypeSymbol((IInterfaceTypeSymbol)typeSymbol);
 				}
 			})+

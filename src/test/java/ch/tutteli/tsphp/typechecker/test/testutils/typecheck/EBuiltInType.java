@@ -35,5 +35,6 @@ public enum EBuiltInType
     FloatNullable,
     StringNullable,
     Exception,
-    ErrorException
+    ErrorException,
+    Null
 }

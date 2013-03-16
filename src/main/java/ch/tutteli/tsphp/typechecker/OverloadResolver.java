@@ -111,11 +111,12 @@ public class OverloadResolver implements IOverloadResolver
 
         CastingDto castingDto = null;
 
-        int promotionLevel = getPromotionLevelFromToConsiderNull(actualParameter, formalParameter);
-
-        if (isSameOrParentType(promotionLevel)) {
-            castingDto = new CastingDto(promotionLevel, 0, null, actualParameter);
-        } else if (formalParameter.isAlwaysCasting()) {
+        if (!formalParameter.isAlwaysCasting()) {
+            int promotionLevel = getPromotionLevelFromToConsiderNull(actualParameter, formalParameter);
+            if (isSameOrParentType(promotionLevel)) {
+                castingDto = new CastingDto(promotionLevel, 0, null, actualParameter);
+            }
+        } else {
             castingDto = getCastingDtoAlwaysCasting(formalParameter, actualParameter);
         }
 
@@ -128,12 +129,15 @@ public class OverloadResolver implements IOverloadResolver
 
         ITypeSymbol formalParameterType = formalParameter.getType();
 
-        //null is castable to everything with the standard casting operator
-        if (actualParameter.getEvalType() instanceof INullTypeSymbol) {
+        int promotionLevel = getPromotionLevelFromToConsiderNull(actualParameter, formalParameter);
+        if (isSameOrParentType(promotionLevel)) {
+            castingDto = new CastingDto(promotionLevel, 0, null, actualParameter);
+        } //null is castable to everything with the standard casting operator
+        else if (actualParameter.getEvalType() instanceof INullTypeSymbol) {
             castingDto = getStandardCastingDto(actualParameter, formalParameterType, 0, 1);
         } else {
             //check if actual parameter type is parent of formal parameter type
-            int promotionLevel = getPromotionLevelFromTo(formalParameterType, actualParameter.getEvalType());
+            promotionLevel = getPromotionLevelFromTo(formalParameterType, actualParameter.getEvalType());
             if (isSameOrParentType(promotionLevel)) {
                 castingDto = getStandardCastingDto(actualParameter, formalParameterType, promotionLevel, 0);
             } else {
@@ -383,7 +387,8 @@ public class OverloadResolver implements IOverloadResolver
         return getPromotionLevelFromToConsiderNull(actualParameterType, formalParameterType);
     }
 
-    private int getPromotionLevelFromToConsiderNull(ITypeSymbol actualParameterType, ITypeSymbol formalParameterType) {
+    @Override
+    public int getPromotionLevelFromToConsiderNull(ITypeSymbol actualParameterType, ITypeSymbol formalParameterType) {
         int promotionLevel;
         if (!(actualParameterType instanceof INullTypeSymbol)) {
             promotionLevel = getPromotionLevelFromTo(actualParameterType, formalParameterType);

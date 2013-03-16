@@ -63,6 +63,8 @@ bottomup
     	:	expressionLists
    	|	expressionRoot 
    	|	variableInit
+//	|	constantInit
+//   	|	parameterDefaultValue
 	;
     
 expressionLists
@@ -157,9 +159,18 @@ tryCatch
 	;
 
 variableInit
-	:	^(VariableId expression)
-//		{controller.checkInitialValue($VariableId, $expression);}
+	:	^(VARIABLE_DECLARATION_LIST type=. ^(VariableId expression))
+		{
+		    $VariableId.setEvalType($VariableId.getSymbol().getType());
+		    controller.checkInitialValue($VariableId, $expression.start);
+		}
 	;
+	
+/*parameterDefaultValue
+	:	
+	|	^(PARAMETER_DECLARATION type=. ^(VariableId expression))
+		{controller.checkDefaultValue($VariableId, $expression);}
+	;*/
 	
 expression returns [ITypeSymbol type]
 @after { $start.setEvalType($type); } // do after any alternative
@@ -169,6 +180,7 @@ expression returns [ITypeSymbol type]
     	|   	String			{$type =  symbolTable.getStringTypeSymbol();}
     	|	^(TypeArray .*)		{$type = symbolTable.getArrayTypeSymbol();}
     	|	Null			{$type = symbolTable.getNullTypeSymbol();}
+//    	|	CONSTANT
     	|  	symbol			{$type = $symbol.type;}
 	|	unaryOperator 		{$type = $unaryOperator.type;}
 	|	binaryOperator 		{$type = $binaryOperator.type;}
@@ -267,7 +279,7 @@ castOperator returns [ITypeSymbol type]
 		
 	|	^(CASTING ^(TYPE . identifier=allTypes) right=expression)
 		{
-		    $type = $identifier.start.getSymbol().getType();
+		    $type = (ITypeSymbol) $identifier.start.getSymbol();
 		    controller.checkCast($start, $identifier.start, $right.start);
 		}
 	;

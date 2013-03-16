@@ -56,6 +56,8 @@ public abstract class AOperatorTypeCheckTest extends ATypeCheckTest
     public static EBuiltInType Object = EBuiltInType.Object;
     public static EBuiltInType Exception = EBuiltInType.Exception;
     public static EBuiltInType ErrorException = EBuiltInType.ErrorException;
+    public static EBuiltInType Null = EBuiltInType.Null;
+    //
     protected TypeCheckStruct[] testStructs;
 
     public AOperatorTypeCheckTest(String testString, TypeCheckStruct[] structs) {
@@ -120,6 +122,9 @@ public abstract class AOperatorTypeCheckTest extends ATypeCheckTest
             case ErrorException:
                 typeSymbol = (ITypeSymbol) definer.getGlobalDefaultNamespace().resolve(
                         astHelper.createAst(TSPHPDefinitionWalker.TYPE_NAME, "ErrorException"));
+                break;
+            case Null:
+                typeSymbol = symbolTable.getNullTypeSymbol();
                 break;
             case Object:
             default:

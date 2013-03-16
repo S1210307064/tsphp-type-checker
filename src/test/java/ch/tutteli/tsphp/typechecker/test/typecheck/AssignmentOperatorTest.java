@@ -20,6 +20,8 @@ import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckT
 import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest.Array;
 import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest.Bool;
 import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest.BoolNullable;
+import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest.Exception;
+import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest.Object;
 import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest.Resource;
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.EBuiltInType;
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.TypeCheckStruct;
@@ -268,16 +270,32 @@ public class AssignmentOperatorTest extends AOperatorTypeCheckTest
                 new TypeCheckStruct[]{struct("=", Object, 1, 2, 0)}
             },
             {
-                "object $a; array $b; $a = $b;",
-                new TypeCheckStruct[]{struct("=", Object, 1, 2, 0)}
-            },
-            {
                 "object $a; resource $b; $a = $b;",
                 new TypeCheckStruct[]{struct("=", Object, 1, 2, 0)}
             },
             {
                 "object $a; object $b; $a = $b;",
                 new TypeCheckStruct[]{struct("=", Object, 1, 2, 0)}
+            },
+            {
+                "object $a; Exception $b; $a = $b;",
+                new TypeCheckStruct[]{struct("=", Object, 1, 2, 0)}
+            },
+            {
+                "object $a; ErrorException $b; $a = $b;",
+                new TypeCheckStruct[]{struct("=", Object, 1, 2, 0)}
+            },
+            {
+                "ErrorException $a; ErrorException $b; $a = $b;",
+                new TypeCheckStruct[]{struct("=", ErrorException, 1, 2, 0)}
+            },
+            {
+                "Exception $a; ErrorException $b; $a = $b;",
+                new TypeCheckStruct[]{struct("=", Exception, 1, 2, 0)}
+            },
+            {
+                "Exception $a; Exception $b; $a = $b;",
+                new TypeCheckStruct[]{struct("=", Exception, 1, 2, 0)}
             }
         }));
     }

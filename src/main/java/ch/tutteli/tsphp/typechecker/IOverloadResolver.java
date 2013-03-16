@@ -45,6 +45,8 @@ public interface IOverloadResolver
      */
     int getPromotionLevelFromTo(ITypeSymbol fromType, ITypeSymbol toType);
 
+    int getPromotionLevelFromToConsiderNull(ITypeSymbol actualParameterType, ITypeSymbol formalParameterType);
+
     boolean isSameOrParentType(int promotionLevel);
 
     boolean isSameOrParentTypeConsiderNull(IVariableSymbol formalType, ITSPHPAst actualType);

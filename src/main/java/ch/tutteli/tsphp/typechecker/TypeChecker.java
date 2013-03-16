@@ -16,9 +16,11 @@
  */
 package ch.tutteli.tsphp.typechecker;
 
+import ch.tutteli.tsphp.common.IErrorLogger;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITSPHPAstAdaptor;
 import ch.tutteli.tsphp.common.ITypeChecker;
+import ch.tutteli.tsphp.common.exceptions.TSPHPException;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPReferenceWalker;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckWalker;
@@ -32,6 +34,8 @@ import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
 import ch.tutteli.tsphp.typechecker.symbols.SymbolFactory;
 import ch.tutteli.tsphp.typechecker.utils.AstHelper;
 import ch.tutteli.tsphp.typechecker.utils.IAstHelper;
+import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.List;
 import org.antlr.runtime.tree.TreeNodeStream;
 
@@ -39,10 +43,11 @@ import org.antlr.runtime.tree.TreeNodeStream;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class TypeChecker implements ITypeChecker
+public class TypeChecker implements ITypeChecker, IErrorLogger
 {
 
     private ITypeCheckerController controller;
+    private Collection<IErrorLogger> errorLoggers = new ArrayDeque<>();
 
     public TypeChecker(ITSPHPAstAdaptor astAdaptor) {
         ScopeHelperRegistry.set(new ScopeHelper());
@@ -88,6 +93,18 @@ public class TypeChecker implements ITypeChecker
     @Override
     public List<Exception> getExceptions() {
         return ErrorReporterRegistry.get().getExceptions();
+    }
+
+    @Override
+    public void addErrorLogger(IErrorLogger errorLogger) {
+        errorLoggers.add(errorLogger);
+    }
+
+    @Override
+    public void log(TSPHPException exception) {
+        for (IErrorLogger logger : errorLoggers) {
+            logger.log(exception);
+        }
     }
 
     @Override

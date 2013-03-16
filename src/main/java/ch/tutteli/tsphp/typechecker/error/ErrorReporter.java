@@ -16,12 +16,15 @@
  */
 package ch.tutteli.tsphp.typechecker.error;
 
+import ch.tutteli.tsphp.common.IErrorLogger;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.exceptions.DefinitionException;
 import ch.tutteli.tsphp.common.exceptions.ReferenceException;
+import ch.tutteli.tsphp.common.exceptions.TSPHPException;
+import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
 import ch.tutteli.tsphp.common.exceptions.UnsupportedOperationException;
 import ch.tutteli.tsphp.typechecker.AmbiguousCallException;
 import ch.tutteli.tsphp.typechecker.CastingDto;
@@ -30,8 +33,11 @@ import ch.tutteli.tsphp.typechecker.OverloadDto;
 import ch.tutteli.tsphp.typechecker.symbols.IArrayTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import org.antlr.runtime.RecognitionException;
 
 /**
  *
@@ -42,6 +48,7 @@ public class ErrorReporter implements IErrorReporter
 
     private List<Exception> exceptions = new ArrayList<>();
     private IErrorMessageProvider errorMessageProvider;
+    private Collection<IErrorLogger> errorLoggers = new ArrayDeque<>();
 
     public ErrorReporter(IErrorMessageProvider anErrorMessageProvider) {
         errorMessageProvider = anErrorMessageProvider;
@@ -55,6 +62,18 @@ public class ErrorReporter implements IErrorReporter
     @Override
     public List<Exception> getExceptions() {
         return exceptions;
+    }
+
+    private void reportError(TypeCheckerException exception) {
+        exceptions.add(exception);
+        for (IErrorLogger logger : errorLoggers) {
+            logger.log(new TSPHPException(exception));
+        }
+    }
+
+    @Override
+    public void addErrorLogger(IErrorLogger errorLogger) {
+        errorLoggers.add(errorLogger);
     }
 
     @Override
@@ -121,7 +140,7 @@ public class ErrorReporter implements IErrorReporter
                 newDefinition.getText(), newDefinition.getLine(), newDefinition.getCharPositionInLine()));
 
         DefinitionException exception = new DefinitionException(errorMessage, existingDefintion, newDefinition);
-        exceptions.add(exception);
+        reportError(exception);
         return exception;
     }
 
@@ -180,7 +199,7 @@ public class ErrorReporter implements IErrorReporter
         String errorMessage = errorMessageProvider.getReferenceErrorMessage(key,
                 new ReferenceErrorDto(typeAst.getText(), typeAst.getLine(), typeAst.getCharPositionInLine()));
         ReferenceException exception = new ReferenceException(errorMessage, typeAst);
-        exceptions.add(exception);
+        reportError(exception);
         return exception;
     }
 
@@ -251,7 +270,7 @@ public class ErrorReporter implements IErrorReporter
                 new AmbiguousCastsErrorDto(operator.getText(), operator.getLine(), operator.getCharPositionInLine(),
                 leftToRightReturnTypes, rightToLeftReturnTypes, leftReturnTypes, rightReturnTypes));
         ReferenceException exception = new ReferenceException(errorMessage, operator);
-        exceptions.add(exception);
+        reportError(exception);
         return exception;
     }
 
@@ -333,7 +352,7 @@ public class ErrorReporter implements IErrorReporter
                 new WrongArgumentTypeErrorDto(call.getText(), call.getLine(), call.getCharPositionInLine(),
                 actualParameterTypes, existingOverloads));
         ReferenceException exception = new ReferenceException(errorMessage, call);
-        exceptions.add(exception);
+        reportError(exception);
         return exception;
     }
 
@@ -356,7 +375,7 @@ public class ErrorReporter implements IErrorReporter
                 "Unsupported operator exception occured. Please report bug to http://tsphp.tutteli.ch\nException "
                 + "was caused by operator \"" + operator.getText()
                 + " on line " + operator.getLine() + "|" + operator.getCharPositionInLine(), operator);
-        exceptions.add(exception);
+        reportError(exception);
         return exception;
     }
 
@@ -386,7 +405,7 @@ public class ErrorReporter implements IErrorReporter
                 new TypeCheckErrorDto(statement.getText(), statement.getLine(), statement.getCharPositionInLine(),
                 getAbsoluteTypeName(left.getEvalType()), getAbsoluteTypeName(right.getEvalType())));
         ReferenceException exception = new ReferenceException(errorMessage, statement);
-        exceptions.add(exception);
+        reportError(exception);
         return exception;
     }
 
@@ -465,6 +484,11 @@ public class ErrorReporter implements IErrorReporter
         return addAndGetStatementTypeCheckError("wrongTypeReturn", returnRoot, expression, typeSymbol);
     }
 
+    @Override
+    public ReferenceException wrongTypeVariableId(ITSPHPAst variableId, ITSPHPAst expression, ITypeSymbol typeSymbol) {
+        return addAndGetStatementTypeCheckError("wrongTypeVariableId", variableId, expression, typeSymbol);
+    }
+
     private ReferenceException addAndGetStatementTypeCheckError(String key, ITSPHPAst statement,
             ITSPHPAst expression, ITypeSymbol typeSymbol) {
 
@@ -472,7 +496,7 @@ public class ErrorReporter implements IErrorReporter
                 new TypeCheckErrorDto(statement.getText(), statement.getLine(), statement.getCharPositionInLine(),
                 getAbsoluteTypeName(typeSymbol), getAbsoluteTypeName(expression.getEvalType())));
         ReferenceException exception = new ReferenceException(errorMessage, statement);
-        exceptions.add(exception);
+        reportError(exception);
         return exception;
     }
 }

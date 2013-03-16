@@ -33,9 +33,9 @@ public interface ITypeCheckerController
 
     ISymbolTable getSymbolTable();
 
-    boolean checkIfInterface(ITSPHPAst typeAst, ITypeSymbol symbol);
+    boolean checkIsInterface(ITSPHPAst typeAst, ITypeSymbol symbol);
 
-    boolean checkIfClass(ITSPHPAst typeAst, ITypeSymbol symbol);
+    boolean checkIsClass(ITSPHPAst typeAst, ITypeSymbol symbol);
 
     boolean checkForwardReference(ITSPHPAst ast);
 
@@ -74,6 +74,8 @@ public interface ITypeCheckerController
 
     ITypeSymbol resolvePrimitiveType(ITSPHPAst typeASt);
 
+    void checkBreakContinueLevel(ITSPHPAst root, ITSPHPAst expression);
+
     ITypeSymbol getBinaryOperatorEvalType(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
 
     ITypeSymbol getUnaryOperatorEvalType(ITSPHPAst operator, ITSPHPAst expression);
@@ -109,8 +111,8 @@ public interface ITypeCheckerController
     void checkThrow(ITSPHPAst throwRoot, ITSPHPAst expression);
 
     void checkCatch(ITSPHPAst castRoot, ITSPHPAst variableId);
-    
+
     void checkReturn(ITSPHPAst returnRoot, ITSPHPAst expression);
-    
-    void checkBreakContinueLevel(ITSPHPAst root, ITSPHPAst expression);
+
+    void checkInitialValue(ITSPHPAst variableId, ITSPHPAst expression);
 }
