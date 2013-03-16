@@ -44,6 +44,7 @@ public class ErrorMessageProvider extends AErrorMessageProvider
         definitionErrors.put("methodNotDefined", "Line %lineN%|%posN% - method %idN% is not defined in %id%");
         definitionErrors.put("memberNotDefined", "Line %lineN%|%posN% - class member %idN% is not defined in %id%");
         definitionErrors.put("objectExpected", "Line %lineN%|%posN% - object expected but %idN% is of type %id%");
+        definitionErrors.put("objectExpected", "Line %lineN%|%posN% - object expected but %idN% is of type %id%");
     }
 
     @Override
@@ -55,7 +56,7 @@ public class ErrorMessageProvider extends AErrorMessageProvider
         referenceErrors.put("variableExpected", "Line %line%|%pos% - assignments can only be made to variables,"
                 + " \"%id%\" is not a variable.");
         referenceErrors.put("notInClass", "Line %line%|%pos% - %id% is used outside a class.");
-        
+
         referenceErrors.put("notInMethod", "Line %line%|%pos% - %id% is used outside a method or function.");
 
         referenceErrors.put("noParentClass", "Line %line%|%pos% - class %id% has no parent class.");
@@ -119,7 +120,6 @@ public class ErrorMessageProvider extends AErrorMessageProvider
 
         typeCheckErrors.put("arrayExpected", "Line %line%|%pos% - the expression evaluates to a wrong type. "
                 + "Type %tExp% or a sub-type expected but %tFound% found.");
-
 
         typeCheckErrors.put("noReturnValueExpected", "Line %line%|%pos% - the enclosing method has not specified a "
                 + "return value but a value of type %tFound% was found.");

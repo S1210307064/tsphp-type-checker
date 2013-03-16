@@ -170,6 +170,11 @@ public class ErrorReporter implements IErrorReporter
         return addAndGetReferenceException("notStatic", (ITSPHPAst) callee.getParent());
     }
 
+    @Override
+    public ReferenceException toManyBreakContinueLevels(ITSPHPAst root) {
+        return addAndGetReferenceException("toManyBreakContinueLevels", root);
+    }
+
     private ReferenceException addAndGetReferenceException(String key,
             ITSPHPAst typeAst) {
         String errorMessage = errorMessageProvider.getReferenceErrorMessage(key,

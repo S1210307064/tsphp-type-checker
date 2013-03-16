@@ -19,9 +19,11 @@ package ch.tutteli.tsphp.typechecker;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
+import ch.tutteli.tsphp.common.TSPHPAst;
 import ch.tutteli.tsphp.common.exceptions.DefinitionException;
 import ch.tutteli.tsphp.common.exceptions.ReferenceException;
 import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
+import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasTypeSymbol;
@@ -354,6 +356,26 @@ public class TypeCheckerController implements ITypeCheckerController
 
         }
         return typeSymbol;
+    }
+
+    @Override
+    public void checkBreakContinueLevel(ITSPHPAst root, ITSPHPAst expression) {
+        int levels = expression == null ? 1 : Integer.parseInt(expression.getText());
+        int count = 0;
+        List<ITSPHPAst> ancestors = (List<ITSPHPAst>) root.getAncestors();
+        for (ITSPHPAst ancestor : ancestors) {
+            int type = ancestor.getType();
+            if (type == TSPHPDefinitionWalker.Switch
+                    || type == TSPHPDefinitionWalker.For
+                    || type == TSPHPDefinitionWalker.Foreach
+                    || type == TSPHPDefinitionWalker.Do
+                    || type == TSPHPDefinitionWalker.While) {
+                ++count;
+            }
+        }
+        if (count < levels) {
+            ErrorReporterRegistry.get().toManyBreakContinueLevels(root);
+        }
     }
 
     private IClassTypeSymbol getEnclosingClass(ITSPHPAst ast) {

@@ -79,6 +79,8 @@ public interface IErrorReporter extends ch.tutteli.tsphp.common.IErrorReporter
 
     ReferenceException notStatic(ITSPHPAst callee);
 
+    ReferenceException toManyBreakContinueLevels(ITSPHPAst root);
+
     UnsupportedOperationException unsupportedOperator(ITSPHPAst operator);
 
     ReferenceException ambiguousUnaryOperatorUsage(ITSPHPAst operator, ITSPHPAst expression,

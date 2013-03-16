@@ -80,6 +80,7 @@ topdown
  	|	instanceofStatement
  	|	newOperator
     	|	atom
+    	|	breakContinue
     	;
 
 useDeclarationList
@@ -387,4 +388,13 @@ scalarTypes[boolean isNullable] returns [ITypeSymbol type]
 			$type = controller.resolveScalarType($start, isNullable);
 			$start.setSymbol($type);
 		}
+	;
+
+breakContinue
+	:	(	nil=Break
+		|	^(nil=Break level=Int)
+		|	nil=Continue
+		|	^(nil=Continue level=Int)
+		)
+		{controller.checkBreakContinueLevel($nil, $level);}
 	;

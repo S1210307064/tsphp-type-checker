@@ -111,4 +111,6 @@ public interface ITypeCheckerController
     void checkCatch(ITSPHPAst castRoot, ITSPHPAst variableId);
     
     void checkReturn(ITSPHPAst returnRoot, ITSPHPAst expression);
+    
+    void checkBreakContinueLevel(ITSPHPAst root, ITSPHPAst expression);
 }

@@ -290,4 +290,3 @@ specialOperators
     	|	^('new' type=TYPE_NAME args=.)
     	|	^('clone' expression)
 	;
-    	

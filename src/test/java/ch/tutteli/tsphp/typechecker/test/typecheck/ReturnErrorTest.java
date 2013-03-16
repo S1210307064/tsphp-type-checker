@@ -34,8 +34,6 @@ import org.junit.runners.Parameterized;
 public class ReturnErrorTest extends ATypeCheckErrorTest
 {
 
-    private static List<Object[]> collection;
-
     public ReturnErrorTest(String testString, ReferenceErrorDto[] expectedLinesAndPositions) {
         super(testString, expectedLinesAndPositions);
     }
@@ -47,11 +45,16 @@ public class ReturnErrorTest extends ATypeCheckErrorTest
 
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
-        collection = new ArrayList<>();
+        List<Object[]> collection = new ArrayList<>();
         ReferenceErrorDto[] errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto("return", 2, 1)};
 
+        collection.add(new Object[]{
+            "int $b; \n return $b;",
+            errorDto
+        });
+
         String[] types = new String[]{"bool", "bool?", "int", "int?", "float", "float?", "string", "string?",
-            "array", "resource", "ErrorException","Exception"};
+            "array", "resource", "ErrorException", "Exception"};
 
         for (String type : types) {
             collection.add(new Object[]{"function void foo(){" + type + " $b;\n return $b;}", errorDto});
