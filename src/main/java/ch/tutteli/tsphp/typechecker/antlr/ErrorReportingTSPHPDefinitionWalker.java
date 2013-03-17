@@ -47,8 +47,9 @@ public class ErrorReportingTSPHPDefinitionWalker extends TSPHPDefinitionWalker i
     @Override
     public void reportError(RecognitionException exception) {
         hasFoundError = true;
-        for (IErrorLogger logger : errorLoggers) {
-            logger.log(new TSPHPException(exception));
+         for (IErrorLogger logger : errorLoggers) {
+            logger.log(new TSPHPException("Line " + exception.line + "|" + exception.charPositionInLine
+                    + "definition phase exception occured. Unexpected token: " + exception.token.getText(), exception));
         }
     }
 
