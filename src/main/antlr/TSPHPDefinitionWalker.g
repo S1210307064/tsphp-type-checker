@@ -187,9 +187,6 @@ methodFunctionCall
 		|	^(FUNCTION_CALL identifier=TYPE_NAME ACTUAL_PARAMETERS)
 			{$identifier.setScope(currentScope);}
 		)
-		{
-			$identifier.setText($identifier.text+"()");
-		}
 	;
 
 atom	
@@ -218,10 +215,7 @@ allTypesWithoutObjectAndResource
 
 constant
 	:	cst=CONSTANT
-		{
-			$cst.setText($cst.text+"#");
-			$cst.setScope(currentScope);
-		}
+		{$cst.setScope(currentScope);}
 	;
 
 returnBreakContinue

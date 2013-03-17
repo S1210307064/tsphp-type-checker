@@ -142,9 +142,6 @@ public class Definer implements IDefiner
             ITSPHPAst returnTypeModifier, ITSPHPAst returnType, ITSPHPAst identifier) {
         returnType.setScope(currentScope);
 
-        // () prevent clashes with class and const identifier
-        identifier.getToken().setText(identifier.getText() + "()");
-
         IMethodSymbol methodSymbol = symbolFactory.createMethodSymbol(methodModifier,
                 returnTypeModifier, identifier, currentScope);
 
