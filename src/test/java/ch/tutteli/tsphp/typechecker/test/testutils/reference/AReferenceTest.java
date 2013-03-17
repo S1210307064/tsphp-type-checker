@@ -41,7 +41,7 @@ public abstract class AReferenceTest extends ADefinitionTest
 
     protected void checkReferences() {
         IErrorReporter errorHelper = ErrorReporterRegistry.get();
-        Assert.assertFalse(testString + " failed. Exceptions occured." + errorHelper.getExceptions(),
+        Assert.assertFalse(testString + " failed. Exceptions occured." + exceptions,
                 errorHelper.hasFoundError());
 
         verifyReferences();
@@ -50,6 +50,7 @@ public abstract class AReferenceTest extends ADefinitionTest
 
     @Override
     protected final void verifyDefinitions() {
+        super.verifyDefinitions();
         commonTreeNodeStream.reset();
         reference = new TSPHPReferenceWalker(commonTreeNodeStream, controller);
         reference.downup(ast);

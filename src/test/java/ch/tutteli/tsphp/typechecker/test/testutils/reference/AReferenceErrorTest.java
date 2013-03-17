@@ -20,8 +20,7 @@ import ch.tutteli.tsphp.common.IErrorReporter;
 import ch.tutteli.tsphp.common.exceptions.ReferenceException;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.error.ReferenceErrorDto;
-import java.util.List;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Ignore;
 
 /**
@@ -49,9 +48,8 @@ public abstract class AReferenceErrorTest extends AReferenceTest
         IErrorReporter errorReporter = ErrorReporterRegistry.get();
         Assert.assertTrue(errorMessagePrefix + " failed. No exception occured.", errorReporter.hasFoundError());
 
-        List<Exception> exceptions = errorReporter.getExceptions();
-        Assert.assertEquals(errorMessagePrefix + " failed. More or less exceptions occured." + exceptions.toString(), errorDtos.length,
-                exceptions.size());
+        Assert.assertEquals(errorMessagePrefix + " failed. More or less exceptions occured." + exceptions.toString(),
+                errorDtos.length, exceptions.size());
 
         for (int i = 0; i < errorDtos.length; ++i) {
             ReferenceException exception = (ReferenceException) exceptions.get(i);

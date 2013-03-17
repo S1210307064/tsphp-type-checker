@@ -48,7 +48,7 @@ public abstract class ATypeCheckTest extends AReferenceTest
 
     protected void checkErrors() {
         IErrorReporter errorHelper = ErrorReporterRegistry.get();
-        junit.framework.Assert.assertFalse(testString + " failed. Exceptions occured." + errorHelper.getExceptions(),
+        junit.framework.Assert.assertFalse(testString + " failed. Exceptions occured." + exceptions,
                 errorHelper.hasFoundError());
 
         verifyTypeCheck();

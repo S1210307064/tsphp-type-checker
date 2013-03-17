@@ -21,9 +21,9 @@ import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITSPHPAstAdaptor;
 import ch.tutteli.tsphp.common.ITypeChecker;
 import ch.tutteli.tsphp.common.exceptions.TSPHPException;
-import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
-import ch.tutteli.tsphp.typechecker.antlr.TSPHPReferenceWalker;
-import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckWalker;
+import ch.tutteli.tsphp.typechecker.antlr.ErrorReportingTSPHPDefinitionWalker;
+import ch.tutteli.tsphp.typechecker.antlr.ErrorReportingTSPHPReferenceWalker;
+import ch.tutteli.tsphp.typechecker.antlr.ErrorReportingTSPHPTypeCheckWalker;
 import ch.tutteli.tsphp.typechecker.error.ErrorMessageProvider;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporter;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
@@ -36,7 +36,6 @@ import ch.tutteli.tsphp.typechecker.utils.AstHelper;
 import ch.tutteli.tsphp.typechecker.utils.IAstHelper;
 import java.util.ArrayDeque;
 import java.util.Collection;
-import java.util.List;
 import org.antlr.runtime.tree.TreeNodeStream;
 
 /**
@@ -48,12 +47,21 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
 
     private ITypeCheckerController controller;
     private Collection<IErrorLogger> errorLoggers = new ArrayDeque<>();
+    private boolean hasFoundError = false;
+    private IAstHelper astHelper;
 
     public TypeChecker(ITSPHPAstAdaptor astAdaptor) {
+
+        astHelper = new AstHelper(astAdaptor);
         ScopeHelperRegistry.set(new ScopeHelper());
         ErrorReporterRegistry.set(new ErrorReporter(new ErrorMessageProvider()));
+
+        init();
+    }
+
+    private void init() {
         ISymbolFactory symbolFactory = new SymbolFactory();
-        IAstHelper astHelper = new AstHelper(astAdaptor);
+
         IDefiner definer = new Definer(symbolFactory, new ScopeFactory());
         ISymbolTable symbolTable = new SymbolTable(symbolFactory, astHelper,
                 definer.getGlobalDefaultNamespace());
@@ -74,43 +82,60 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
 
     @Override
     public void enrichWithDefinitions(ITSPHPAst ast, TreeNodeStream treeNodeStream) {
-        TSPHPDefinitionWalker definition = new TSPHPDefinitionWalker(treeNodeStream, controller.getDefiner());
+        ErrorReportingTSPHPDefinitionWalker definition =
+                new ErrorReportingTSPHPDefinitionWalker(treeNodeStream, controller.getDefiner());
+        for (IErrorLogger logger : errorLoggers) {
+            definition.addErrorLogger(logger);
+        }
+        definition.addErrorLogger(this);
         definition.downup(ast);
     }
 
     @Override
     public void enrichWithReferences(ITSPHPAst ast, TreeNodeStream treeNodeStream) {
         treeNodeStream.reset();
-        TSPHPReferenceWalker reference = new TSPHPReferenceWalker(treeNodeStream, controller);
+        ErrorReportingTSPHPReferenceWalker reference =
+                new ErrorReportingTSPHPReferenceWalker(treeNodeStream, controller);
+        for (IErrorLogger logger : errorLoggers) {
+            reference.addErrorLogger(logger);
+        }
+        reference.addErrorLogger(this);
         reference.downup(ast);
     }
 
     @Override
     public boolean hasFoundError() {
-        return ErrorReporterRegistry.get().hasFoundError();
-    }
-
-    @Override
-    public List<Exception> getExceptions() {
-        return ErrorReporterRegistry.get().getExceptions();
+        return hasFoundError || ErrorReporterRegistry.get().hasFoundError();
     }
 
     @Override
     public void addErrorLogger(IErrorLogger errorLogger) {
         errorLoggers.add(errorLogger);
-    }
-
-    @Override
-    public void log(TSPHPException exception) {
-        for (IErrorLogger logger : errorLoggers) {
-            logger.log(exception);
-        }
+        ErrorReporterRegistry.get().addErrorLogger(errorLogger);
     }
 
     @Override
     public void doTypeChecking(ITSPHPAst ast, TreeNodeStream treeNodeStream) {
         treeNodeStream.reset();
-        TSPHPTypeCheckWalker typeCheckWalker = new TSPHPTypeCheckWalker(treeNodeStream, controller);
+        ErrorReportingTSPHPTypeCheckWalker typeCheckWalker =
+                new ErrorReportingTSPHPTypeCheckWalker(treeNodeStream, controller);
+        for (IErrorLogger logger : errorLoggers) {
+            typeCheckWalker.addErrorLogger(logger);
+        }
+        typeCheckWalker.addErrorLogger(this);
         typeCheckWalker.downup(ast);
+    }
+
+    @Override
+    public void reset() {
+        hasFoundError = false;
+        init();
+
+        ErrorReporterRegistry.get().reset();
+    }
+
+    @Override
+    public void log(TSPHPException tsphpe) {
+        hasFoundError = true;
     }
 }

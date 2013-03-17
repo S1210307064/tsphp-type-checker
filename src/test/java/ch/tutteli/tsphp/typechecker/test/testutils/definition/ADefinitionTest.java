@@ -16,9 +16,12 @@
  */
 package ch.tutteli.tsphp.typechecker.test.testutils.definition;
 
+import ch.tutteli.tsphp.common.IErrorLogger;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITSPHPAstAdaptor;
+import ch.tutteli.tsphp.common.ParserUnitDto;
 import ch.tutteli.tsphp.common.TSPHPAstAdaptor;
+import ch.tutteli.tsphp.common.exceptions.TSPHPException;
 import ch.tutteli.tsphp.typechecker.IOverloadResolver;
 import ch.tutteli.tsphp.typechecker.ISymbolResolver;
 import ch.tutteli.tsphp.typechecker.ISymbolTable;
@@ -27,6 +30,7 @@ import ch.tutteli.tsphp.typechecker.OverloadResolver;
 import ch.tutteli.tsphp.typechecker.SymbolResolver;
 import ch.tutteli.tsphp.typechecker.SymbolTable;
 import ch.tutteli.tsphp.typechecker.TypeCheckerController;
+import ch.tutteli.tsphp.typechecker.antlr.ErrorReportingTSPHPDefinitionWalker;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporter;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
@@ -36,6 +40,8 @@ import ch.tutteli.tsphp.typechecker.test.testutils.TestScopeFactory;
 import ch.tutteli.tsphp.typechecker.test.testutils.TestSymbolFactory;
 import ch.tutteli.tsphp.typechecker.utils.AstHelper;
 import ch.tutteli.tsphp.typechecker.utils.IAstHelper;
+import java.util.ArrayList;
+import java.util.List;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.CommonTreeNodeStream;
 import org.junit.Assert;
@@ -59,8 +65,11 @@ public abstract class ADefinitionTest extends ATest
     protected CommonTreeNodeStream commonTreeNodeStream;
     protected ITSPHPAstAdaptor adaptor;
     protected IAstHelper astHelper;
+    ErrorReportingTSPHPDefinitionWalker definition;
 
-    protected abstract void verifyDefinitions();
+    protected void verifyDefinitions() {
+        Assert.assertFalse(testString.replaceAll("\n", " ") + " failed - definition phase throw exception", definition.hasFoundError());
+    }
 
     public ADefinitionTest(String theTestString) {
         super();
@@ -90,14 +99,16 @@ public abstract class ADefinitionTest extends ATest
     }
 
     public void check() throws RecognitionException {
-        ast = parser.parse(testString);
+        ParserUnitDto parserUnit = parser.parse(testString);
+        ast = parserUnit.compilationUnit;
 
         Assert.assertFalse(testString.replaceAll("\n", " ") + " failed - parser throw exception", parser.hasFoundError());
 
         commonTreeNodeStream = new CommonTreeNodeStream(adaptor, ast);
-        commonTreeNodeStream.setTokenStream(parser.getTokenStream());
+        commonTreeNodeStream.setTokenStream(parserUnit.tokenStream);
 
-        TSPHPDefinitionWalker definition = new TSPHPDefinitionWalker(commonTreeNodeStream, controller.getDefiner());
+        definition = new ErrorReportingTSPHPDefinitionWalker(commonTreeNodeStream, controller.getDefiner());
+
         definition.downup(ast);
 
         verifyDefinitions();

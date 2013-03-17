@@ -37,7 +37,6 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import org.antlr.runtime.RecognitionException;
 
 /**
  *
@@ -46,9 +45,9 @@ import org.antlr.runtime.RecognitionException;
 public class ErrorReporter implements IErrorReporter
 {
 
-    private List<Exception> exceptions = new ArrayList<>();
     private IErrorMessageProvider errorMessageProvider;
     private Collection<IErrorLogger> errorLoggers = new ArrayDeque<>();
+    private boolean hasFoundError;
 
     public ErrorReporter(IErrorMessageProvider anErrorMessageProvider) {
         errorMessageProvider = anErrorMessageProvider;
@@ -56,24 +55,24 @@ public class ErrorReporter implements IErrorReporter
 
     @Override
     public boolean hasFoundError() {
-        return !exceptions.isEmpty();
-    }
-
-    @Override
-    public List<Exception> getExceptions() {
-        return exceptions;
+        return hasFoundError;
     }
 
     private void reportError(TypeCheckerException exception) {
-        exceptions.add(exception);
+        hasFoundError = true;
         for (IErrorLogger logger : errorLoggers) {
-            logger.log(new TSPHPException(exception));
+            logger.log(exception);
         }
     }
 
     @Override
     public void addErrorLogger(IErrorLogger errorLogger) {
         errorLoggers.add(errorLogger);
+    }
+
+    @Override
+    public void reset() {
+        hasFoundError = false;
     }
 
     @Override

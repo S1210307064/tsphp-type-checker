@@ -17,15 +17,9 @@
 package ch.tutteli.tsphp.typechecker.test.testutils.typecheck;
 
 import ch.tutteli.tsphp.common.IErrorReporter;
-import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.exceptions.ReferenceException;
-import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckWalker;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.error.ReferenceErrorDto;
-import ch.tutteli.tsphp.typechecker.test.testutils.ScopeTestHelper;
-import ch.tutteli.tsphp.typechecker.test.testutils.reference.AReferenceTest;
-import java.util.List;
 import org.junit.Assert;
 import org.junit.Ignore;
 
@@ -41,36 +35,36 @@ public class ATypeCheckErrorTest extends ATypeCheckTest
 
     public ATypeCheckErrorTest(String testString, ReferenceErrorDto[] theErrorDtos) {
         super(testString);
-         errorDtos = theErrorDtos;
+        errorDtos = theErrorDtos;
 
     }
 
     @Override
-     protected void checkErrors() {
-     
+    protected void checkErrors() {
+
 
         verifyTypeCheck();
     }
-    
+
     @Override
     protected void verifyTypeCheck() {
         IErrorReporter errorReporter = ErrorReporterRegistry.get();
-        junit.framework.Assert.assertTrue(errorMessagePrefix + " failed. No exception occured.", errorReporter.hasFoundError());
+        Assert.assertTrue(errorMessagePrefix + " failed. No exception occured.", errorReporter.hasFoundError());
 
-        List<Exception> exceptions = errorReporter.getExceptions();
-        junit.framework.Assert.assertEquals(errorMessagePrefix + " failed. More or less exceptions occured." + exceptions.toString(), errorDtos.length,
-                exceptions.size());
+
+        Assert.assertEquals(errorMessagePrefix + " failed. More or less exceptions occured." + exceptions.toString(),
+                errorDtos.length, exceptions.size());
 
         for (int i = 0; i < errorDtos.length; ++i) {
             ReferenceException exception = (ReferenceException) exceptions.get(i);
 
-            junit.framework.Assert.assertEquals(errorMessagePrefix + " failed. wrong identifier.",
+            Assert.assertEquals(errorMessagePrefix + " failed. wrong identifier.",
                     errorDtos[i].identifier, exception.getDefinition().getText());
 
-            junit.framework.Assert.assertEquals(errorMessagePrefix + " failed. wrong line.",
+            Assert.assertEquals(errorMessagePrefix + " failed. wrong line.",
                     errorDtos[i].line, exception.getDefinition().getLine());
 
-            junit.framework.Assert.assertEquals(errorMessagePrefix + " failed. wrong position.",
+            Assert.assertEquals(errorMessagePrefix + " failed. wrong position.",
                     errorDtos[i].position, exception.getDefinition().getCharPositionInLine());
         }
     }

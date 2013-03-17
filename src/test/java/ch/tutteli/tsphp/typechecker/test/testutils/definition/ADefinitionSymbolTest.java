@@ -41,6 +41,7 @@ public abstract class ADefinitionSymbolTest extends ADefinitionTest
 
     @Override
     protected void verifyDefinitions() {
+        super.verifyDefinitions();
         Assert.assertEquals(testString + " failed.", expectedResult, getSymbolsAsString());
     }
     

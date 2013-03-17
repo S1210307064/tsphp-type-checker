@@ -16,7 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker.test.error;
 
-import ch.tutteli.tsphp.common.IErrorReporter;
+import ch.tutteli.tsphp.common.IErrorLogger;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.TSPHPAst;
 import ch.tutteli.tsphp.common.exceptions.DefinitionException;
@@ -26,7 +26,6 @@ import ch.tutteli.tsphp.typechecker.test.testutils.ATest;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import org.antlr.runtime.CommonToken;
 import org.antlr.runtime.Token;
 import org.junit.Assert;
@@ -39,7 +38,7 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class ErrorReporterTest extends ATest
+public class ErrorReporterTest extends ATest implements IErrorLogger
 {
 
     private String identifier;
@@ -77,6 +76,7 @@ public class ErrorReporterTest extends ATest
         ITSPHPAst ast2 = createAst(identifier, lineNew, positionNew);
         ast1.setSymbol(new VariableSymbol(ast1, new HashSet<Integer>(), "$a"));
         ast2.setSymbol(new VariableSymbol(ast2, new HashSet<Integer>(), "$a"));
+
         ErrorReporterRegistry.get().alreadyDefined(ast1.getSymbol(), ast2.getSymbol());
         check(ast1, ast2, ast1, ast2);
     }
@@ -87,9 +87,7 @@ public class ErrorReporterTest extends ATest
 
     protected void check(ITSPHPAst ast1, ITSPHPAst ast2,
             ITSPHPAst[][] expectedExceptions) {
-        IErrorReporter errorHelper = ErrorReporterRegistry.get();
-        Assert.assertTrue(failed + ", exceptions was empty.", errorHelper.hasFoundError());
-        List<Exception> exceptions = errorHelper.getExceptions();
+        Assert.assertTrue(failed + ", exceptions was empty.", ErrorReporterRegistry.get().hasFoundError());
 
         Assert.assertEquals(failed + ", more than 1 exception occured.", expectedExceptions.length, exceptions.size());
 
@@ -116,9 +114,9 @@ public class ErrorReporterTest extends ATest
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
         return Arrays.asList(new Object[][]{
-                    {"$a", 1, 0, 1, 1},
-                    {"$a", 1, 0, 2, 0},
-                    {"$a", 1, 10, 2, 0}
-                });
+            {"$a", 1, 0, 1, 1},
+            {"$a", 1, 0, 2, 0},
+            {"$a", 1, 10, 2, 0}
+        });
     }
 }
