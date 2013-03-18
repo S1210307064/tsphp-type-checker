@@ -477,6 +477,12 @@ public class VariableInitTest extends AOperatorTypeCheckTest
                     struct("$b", (EBuiltInType) type2[1], 1, 1, 1, 0, 1)
                 }
             });
+            collection.add(new Object[]{
+                type2[0] + " $b; cast " + typeName + " $a =  $b;",
+                new TypeCheckStruct[]{
+                    struct("$b", (EBuiltInType) type2[1], 1, 1, 1, 0)
+                }
+            });
         }
 
         for (Object[] type2 : castTypes) {
@@ -484,6 +490,7 @@ public class VariableInitTest extends AOperatorTypeCheckTest
                 type2[0] + " $b; cast " + typeName + " $a =  $b;",
                 new TypeCheckStruct[]{
                     struct("casting", type, 1, 1, 1, 0),
+                    struct(typeNameWithoutNullable, type, 1, 1, 1, 0, 0, 1),
                     struct("$b", (EBuiltInType) type2[1], 1, 1, 1, 0, 1)
                 }
             });
@@ -491,6 +498,7 @@ public class VariableInitTest extends AOperatorTypeCheckTest
                 type2[0] + " $b; " + typeName + " $a =()  $b;",
                 new TypeCheckStruct[]{
                     struct("casting", type, 1, 1, 1, 0),
+                    struct(typeNameWithoutNullable, type, 1, 1, 1, 0, 0, 1),
                     struct("$b", (EBuiltInType) type2[1], 1, 1, 1, 0, 1)
                 }
             });
@@ -501,6 +509,7 @@ public class VariableInitTest extends AOperatorTypeCheckTest
                 type2[0] + " $b; cast " + typeName + " $a =  $b;",
                 new TypeCheckStruct[]{
                     struct("casting", boolType, 1, 1, 1, 0),
+                    struct("bool", boolType, 1, 1, 1, 0, 0, 1),
                     struct("$b", (EBuiltInType) type2[1], 1, 1, 1, 0, 1)
                 }
             });
@@ -508,6 +517,7 @@ public class VariableInitTest extends AOperatorTypeCheckTest
                 type2[0] + " $b; " + typeName + " $a =()  $b;",
                 new TypeCheckStruct[]{
                     struct("casting", type, 1, 1, 1, 0),
+                    struct(typeNameWithoutNullable, type, 1, 1, 1, 0, 0, 1),
                     struct("$b", (EBuiltInType) type2[1], 1, 1, 1, 0, 1)
                 }
             });

@@ -68,11 +68,12 @@ public abstract class ACastingMethod implements ICastingMethod
         ITSPHPAst typeModifier = astHelper.createAst(TSPHPDefinitionWalker.TYPE_MODIFIER, "tMod");
 
         String typeName = typeSymbol.getName();
-        if (typeSymbol.isNullable()) {
+        if (typeName.endsWith("?")) {
             typeModifier.addChild(astHelper.createAst(TSPHPDefinitionWalker.QuestionMark, "?"));
             typeName = typeName.substring(0, typeName.length() - 1);
         }
         ITSPHPAst type = astHelper.createAst(getTokenType(), typeName);
+        type.setEvalType(typeSymbol);
         typeRoot.addChild(typeModifier);
         typeRoot.addChild(type);
         cast.addChild(typeRoot);
