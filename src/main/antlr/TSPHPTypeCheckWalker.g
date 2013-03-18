@@ -198,7 +198,6 @@ expression returns [ITypeSymbol type]
     	|   	String			{$type =  symbolTable.getStringTypeSymbol();}
     	|	^(TypeArray .*)		{$type = symbolTable.getArrayTypeSymbol();}
     	|	Null			{$type = symbolTable.getNullTypeSymbol();}
-//    	|	CONSTANT
     	|  	symbol			{$type = $symbol.type;}
 	|	unaryOperator 		{$type = $unaryOperator.type;}
 	|	binaryOperator 		{$type = $binaryOperator.type;}
@@ -210,6 +209,7 @@ expression returns [ITypeSymbol type]
     	
 symbol returns [ITypeSymbol type]
 	:	(	identifier=VariableId	
+	    	|	identifier=CONSTANT
 		|   	^(FUNCTION_CALL	identifier=TYPE_NAME .)
 		|	^(METHOD_CALL_STATIC TYPE_NAME identifier=Identifier .)	
 		|	^(METHOD_CALL . identifier=Identifier .)

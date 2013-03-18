@@ -21,8 +21,14 @@ import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTyp
 import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest.Bool;
 import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest.BoolNullable;
 import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest.Exception;
+import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest.Float;
+import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest.FloatNullable;
+import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest.Int;
+import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest.IntNullable;
 import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest.Object;
 import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest.Resource;
+import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest.String;
+import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest.StringNullable;
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.EBuiltInType;
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.TypeCheckStruct;
 import java.util.ArrayList;
@@ -73,12 +79,20 @@ public class AssignmentOperatorTest extends AOperatorTypeCheckTest
                 new TypeCheckStruct[]{struct("=", Bool, 1, 1, 0)}
             },
             {
+                "const bool a = false; bool $a; $a = a;",
+                new TypeCheckStruct[]{struct("=", Bool, 1, 2, 0)}
+            },
+            {
                 "bool $a; $a = true;",
                 new TypeCheckStruct[]{struct("=", Bool, 1, 1, 0)}
             },
             {
                 "bool? $a; $a = false;",
                 new TypeCheckStruct[]{struct("=", BoolNullable, 1, 1, 0)}
+            },
+            {
+                "const bool a = false; bool? $a; $a = a;",
+                new TypeCheckStruct[]{struct("=", BoolNullable, 1, 2, 0)}
             },
             {
                 "bool? $a; $a = true;",
@@ -101,12 +115,20 @@ public class AssignmentOperatorTest extends AOperatorTypeCheckTest
                 new TypeCheckStruct[]{struct("=", Int, 1, 1, 0)}
             },
             {
+                "const int a = 2; int $a; $a = a;",
+                new TypeCheckStruct[]{struct("=", Int, 1, 2, 0)}
+            },
+            {
                 "int? $a; $a = true;",
                 new TypeCheckStruct[]{struct("=", IntNullable, 1, 1, 0)}
             },
             {
                 "int? $a; $a = 1;",
                 new TypeCheckStruct[]{struct("=", IntNullable, 1, 1, 0)}
+            },
+            {
+                "const int a = 1; int? $a; $a = a;",
+                new TypeCheckStruct[]{struct("=", IntNullable, 1, 2, 0)}
             },
             {
                 "int? $a; $a = null;",
@@ -133,6 +155,10 @@ public class AssignmentOperatorTest extends AOperatorTypeCheckTest
                 new TypeCheckStruct[]{struct("=", Float, 1, 1, 0)}
             },
             {
+                "const float a = 1.2; float $a; $a = a;",
+                new TypeCheckStruct[]{struct("=", Float, 1, 2, 0)}
+            },
+            {
                 "float? $a; $a = true;",
                 new TypeCheckStruct[]{struct("=", FloatNullable, 1, 1, 0)}
             },
@@ -143,6 +169,10 @@ public class AssignmentOperatorTest extends AOperatorTypeCheckTest
             {
                 "float? $a; $a = 2.56;",
                 new TypeCheckStruct[]{struct("=", FloatNullable, 1, 1, 0)}
+            },
+            {
+                "const float a = 0.1e2; float? $a; $a = a;",
+                new TypeCheckStruct[]{struct("=", FloatNullable, 1, 2, 0)}
             },
             {
                 "float? $a; $a = null;",
@@ -177,6 +207,10 @@ public class AssignmentOperatorTest extends AOperatorTypeCheckTest
                 new TypeCheckStruct[]{struct("=", String, 1, 1, 0)}
             },
             {
+                "const string a = 'hello'; string $a; $a = a;",
+                new TypeCheckStruct[]{struct("=", String, 1, 2, 0)}
+            },
+            {
                 "string $a; $a = \"yellow\";",
                 new TypeCheckStruct[]{struct("=", String, 1, 1, 0)}
             },
@@ -195,6 +229,10 @@ public class AssignmentOperatorTest extends AOperatorTypeCheckTest
             {
                 "string? $a; $a = 'hello';",
                 new TypeCheckStruct[]{struct("=", StringNullable, 1, 1, 0)}
+            },
+            {
+                "const string a = 'velo'; string? $a; $a = a;",
+                new TypeCheckStruct[]{struct("=", StringNullable, 1, 2, 0)}
             },
             {
                 "string? $a; $a = \"yellow\";",

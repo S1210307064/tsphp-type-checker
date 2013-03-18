@@ -79,12 +79,20 @@ public class VariableInitTest extends AOperatorTypeCheckTest
                 new TypeCheckStruct[]{struct("false", Bool, 1, 0, 1, 0)}
             },
             {
+                "const bool a = true; bool $a = a;",
+                new TypeCheckStruct[]{struct("a#", Bool, 1, 1, 1, 0)}
+            },
+            {
                 "bool $a = true;",
                 new TypeCheckStruct[]{struct("true", Bool, 1, 0, 1, 0)}
             },
             {
                 "bool? $a = false;",
                 new TypeCheckStruct[]{struct("false", Bool, 1, 0, 1, 0)}
+            },
+            {
+                "const bool a = true; bool? $a = a;",
+                new TypeCheckStruct[]{struct("a#", Bool, 1, 1, 1, 0)}
             },
             {
                 "bool? $a = true;",
@@ -107,12 +115,20 @@ public class VariableInitTest extends AOperatorTypeCheckTest
                 new TypeCheckStruct[]{struct("1", Int, 1, 0, 1, 0)}
             },
             {
+                "const int a = 1; int $a = a;",
+                new TypeCheckStruct[]{struct("a#", Int, 1, 1, 1, 0)}
+            },
+            {
                 "int? $a = true;",
                 new TypeCheckStruct[]{struct("true", Bool, 1, 0, 1, 0)}
             },
             {
                 "int? $a = 1;",
                 new TypeCheckStruct[]{struct("1", Int, 1, 0, 1, 0)}
+            },
+            {
+                "const int a = 1; int? $a = a;",
+                new TypeCheckStruct[]{struct("a#", Int, 1, 1, 1, 0)}
             },
             {
                 "int? $a = null;",
@@ -139,6 +155,10 @@ public class VariableInitTest extends AOperatorTypeCheckTest
                 new TypeCheckStruct[]{struct("2.56", Float, 1, 0, 1, 0)}
             },
             {
+                "const float a = 1; float $a = a;",
+                new TypeCheckStruct[]{struct("a#", Float, 1, 1, 1, 0)}
+            },
+            {
                 "float? $a = true;",
                 new TypeCheckStruct[]{struct("true", Bool, 1, 0, 1, 0)}
             },
@@ -149,6 +169,10 @@ public class VariableInitTest extends AOperatorTypeCheckTest
             {
                 "float? $a = 2.56;",
                 new TypeCheckStruct[]{struct("2.56", Float, 1, 0, 1, 0)}
+            },
+            {
+                "const float a = 2.12; float? $a = a;",
+                new TypeCheckStruct[]{struct("a#", Float, 1, 1, 1, 0)}
             },
             {
                 "float? $a = null;",
@@ -183,6 +207,10 @@ public class VariableInitTest extends AOperatorTypeCheckTest
                 new TypeCheckStruct[]{struct("'hello'", String, 1, 0, 1, 0)}
             },
             {
+                "const string a = 'hello'; string $a = a;",
+                new TypeCheckStruct[]{struct("a#", String, 1, 1, 1, 0)}
+            },
+            {
                 "string $a = \"yellow\";",
                 new TypeCheckStruct[]{struct("\"yellow\"", String, 1, 0, 1, 0)}
             },
@@ -201,6 +229,10 @@ public class VariableInitTest extends AOperatorTypeCheckTest
             {
                 "string? $a = 'hello';",
                 new TypeCheckStruct[]{struct("'hello'", String, 1, 0, 1, 0)}
+            },
+            {
+                "const string a = 'hello'; string? $a = a;",
+                new TypeCheckStruct[]{struct("a#", String, 1, 1, 1, 0)}
             },
             {
                 "string? $a = \"yellow\";",
