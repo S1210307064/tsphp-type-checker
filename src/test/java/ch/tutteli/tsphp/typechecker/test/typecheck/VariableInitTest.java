@@ -64,7 +64,7 @@ public class VariableInitTest extends AOperatorTypeCheckTest
     public static Collection<Object[]> testStrings() {
         collection = new ArrayList<>();
 
-//        addSimpleAssignment();
+        addSimpleAssignment();
 
         addCastingAssignment();
 
@@ -311,38 +311,6 @@ public class VariableInitTest extends AOperatorTypeCheckTest
 
     private static void addCastingAssignment() {
 
-
-        Object[][] types2 = new Object[][]{
-            {"bool", Bool},
-            {"bool?", BoolNullable},
-            {"int", Int},
-            {"int?", IntNullable},
-            {"float", Float},
-            {"float?", FloatNullable},
-            {"string", String},
-            {"string?", StringNullable},
-            {"array", Array},
-            {"resource", Resource},
-            {"object", Object},
-            {"Exception", Exception},
-            {"ErrorException", ErrorException}
-        };
-
-        Object[][] typesWithBuiltInTypes = new Object[][]{
-            {"int", Int},
-            {"int?", IntNullable},
-            {"float", Float},
-            {"float?", FloatNullable},
-            {"string", String},
-            {"string?", StringNullable}
-        };
-        Object[][] typesWithBuiltInTypes2 = new Object[][]{
-            {"bool", Bool},
-            {"bool?", BoolNullable},
-            {"array", Array}
-        };
-
-
         Object[][] noCastNeededTypes = new Object[][]{
             {"bool", Bool}
         };
@@ -362,7 +330,7 @@ public class VariableInitTest extends AOperatorTypeCheckTest
             {"Exception", Exception},
             {"ErrorException", ErrorException}
         };
-//        addVariations(noCastNeededTypes, castTypes, castToBoolTypes, "bool", Bool, Bool);
+        addVariations(noCastNeededTypes, castTypes, castToBoolTypes, "bool", Bool, Bool);
 
         noCastNeededTypes = new Object[][]{
             {"bool", Bool},
@@ -377,7 +345,7 @@ public class VariableInitTest extends AOperatorTypeCheckTest
             {"string?", StringNullable},
             {"object", Object}
         };
-//        addVariations(noCastNeededTypes, castTypes, castToBoolTypes, "int", Int, Bool);
+        addVariations(noCastNeededTypes, castTypes, castToBoolTypes, "int", Int, Bool);
 
         noCastNeededTypes = new Object[][]{
             {"bool", Bool},
@@ -392,7 +360,7 @@ public class VariableInitTest extends AOperatorTypeCheckTest
             {"string?", StringNullable},
             {"object", Object}
         };
-//        addVariations(noCastNeededTypes, castTypes, castToBoolTypes, "float", Float, Bool);
+        addVariations(noCastNeededTypes, castTypes, castToBoolTypes, "float", Float, Bool);
 
         noCastNeededTypes = new Object[][]{
             {"bool", Bool},
@@ -407,7 +375,7 @@ public class VariableInitTest extends AOperatorTypeCheckTest
             {"string?", StringNullable},
             {"object", Object}
         };
-//        addVariations(noCastNeededTypes, castTypes, castToBoolTypes, "string", String, Bool);
+        addVariations(noCastNeededTypes, castTypes, castToBoolTypes, "string", String, Bool);
 
         noCastNeededTypes = new Object[][]{
             {"bool", Bool},
@@ -422,7 +390,7 @@ public class VariableInitTest extends AOperatorTypeCheckTest
             {"string?", StringNullable},
             {"object", Object}
         };
-//        addVariations(noCastNeededTypes, castTypes, castToBoolTypes, "bool?", BoolNullable, BoolNullable);
+        addVariations(noCastNeededTypes, castTypes, castToBoolTypes, "bool?", BoolNullable, BoolNullable);
 
         noCastNeededTypes = new Object[][]{
             {"bool", Bool},
@@ -431,13 +399,13 @@ public class VariableInitTest extends AOperatorTypeCheckTest
             {"int?", IntNullable}
         };
         castTypes = new Object[][]{
-//            {"float", Float},
-//            {"float?", FloatNullable},
-//            {"string", String},
+            {"float", Float},
+            {"float?", FloatNullable},
+            {"string", String},
             {"string?", StringNullable},
             {"object", Object}
         };
-        
+
         addVariations(noCastNeededTypes, castTypes, castToBoolTypes, "int?", IntNullable, BoolNullable);
 
         noCastNeededTypes = new Object[][]{
@@ -490,73 +458,26 @@ public class VariableInitTest extends AOperatorTypeCheckTest
         castToBoolTypes = new Object[][]{};
         addVariations(noCastNeededTypes, castTypes, castToBoolTypes, "array", Array, BoolNullable);
 
-
-        //
-        //
-        //        collection.addAll(Arrays.asList(new Object[][]{
-        //            {"bool $b; cast int $a = $b;", new TypeCheckStruct[]{struct("$b", Bool, 1, 1, 1, 0)}},
-        //            {"bool? $b; cast int $a = $b;", new TypeCheckStruct[]{
-        //                    struct("casting", Int, 1, 1, 1, 0),
-        //                    struct("$b", BoolNullable, 1, 1, 1, 0, 1)
-        //                }
-        //            },
-        //            {"int $b; cast int $a = $b;", new TypeCheckStruct[]{struct("$b", Int, 1, 1, 1, 0)}},
-        //            {"int? $b; cast int $a = $b;", new TypeCheckStruct[]{struct("$b", IntNullable, 1, 1, 1, 0, 1)}},
-        //            {"bool $b; cast int $a = $b;", new TypeCheckStruct[]{struct("$b", Bool, 1, 1, 1, 0)}},
-        //            {"bool? $b; cast int $a = $b;", new TypeCheckStruct[]{
-        //                    struct("casting", Int, 1, 1, 1, 0),
-        //                    struct("$b", BoolNullable, 1, 1, 1, 0, 1)
-        //                }
-        //            },}));
-        //
-        //
-        //
-        //        for (Object[] type : typesWithBuiltInTypes2) {
-        //            for (Object[] type2 : types2) {
-        //                collection.add(new Object[]{
-        //                    type2[0] + " $b; " + type[0] + " $a =()  $b;",
-        //                    new TypeCheckStruct[]{
-        //                        struct("casting", (EBuiltInType) type[1], 1, 1, 1, 0),
-        //                        struct("$b", (EBuiltInType) type2[1], 1, 1, 1, 0, 1)
-        //                    }
-        //                });
-        //            }
-        //        }
-        //
-        //        types = new Object[][]{
-        //            {"object", Object},
-        //            {"resource", Resource},
-        //            {"Exception", Exception},
-        //            {"ErrorException", ErrorException}
-        //        };
-        //
-        //        for (Object[] type : types) {
-        //            collection.add(new Object[]{
-        //                "object $b; cast " + type[0] + " $a = $b;",
-        //                new TypeCheckStruct[]{struct("$b", Object, 1, 1, 1, 0)}
-        //            });
-        //            collection.add(new Object[]{
-        //                "object $b; " + type[0] + " $a =() $b;",
-        //                new TypeCheckStruct[]{
-        //                    struct("casting", (EBuiltInType) type[1], 1, 1, 1, 0),
-        //                    struct("$b", (EBuiltInType) Object, 1, 1, 1, 0, 1)
-        //                }
-        //            });
-        //        }
     }
 
     private static void addVariations(Object[][] noCastTypes, Object[][] castTypes, Object[][] castToBoolTypes,
             String typeName, EBuiltInType type, EBuiltInType boolType) {
-//
-//        for (Object[] type2 : noCastTypes) {
-//            collection.add(new Object[]{
-//                type2[0] + " $b; " + typeName + " $a =()  $b;",
-//                new TypeCheckStruct[]{
-//                    struct("casting", type, 1, 1, 1, 0),
-//                    struct("$b", (EBuiltInType) type2[1], 1, 1, 1, 0, 1)
-//                }
-//            });
-//        }
+
+        String typeNameWithoutNullable = typeName;
+        if (typeName.endsWith("?")) {
+            typeNameWithoutNullable = typeName.substring(0, typeName.length() - 1);
+        }
+
+        for (Object[] type2 : noCastTypes) {
+            collection.add(new Object[]{
+                type2[0] + " $b; " + typeName + " $a =()  $b;",
+                new TypeCheckStruct[]{
+                    struct("casting", type, 1, 1, 1, 0),
+                    struct(typeNameWithoutNullable, type, 1, 1, 1, 0, 0, 1),
+                    struct("$b", (EBuiltInType) type2[1], 1, 1, 1, 0, 1)
+                }
+            });
+        }
 
         for (Object[] type2 : castTypes) {
             collection.add(new Object[]{

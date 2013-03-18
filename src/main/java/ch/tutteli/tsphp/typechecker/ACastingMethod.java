@@ -60,12 +60,22 @@ public abstract class ACastingMethod implements ICastingMethod
         //create the cast based on the given (to take the given position etc.)
         ITSPHPAst cast = astHelper.createAst(ast);
 
-        //^(CASTING Type expression
+        //^(CASTING ^(TYPE (TYPE_MODIFIER ?) type) expression)
         Token token = cast.getToken();
         token.setType(TSPHPDefinitionWalker.CASTING);
         token.setText("casting");
-        ITSPHPAst type = astHelper.createAst(getTokenType(), typeSymbol.getName());
-        cast.addChild(type);
+        ITSPHPAst typeRoot = astHelper.createAst(TSPHPDefinitionWalker.TYPE, "type");
+        ITSPHPAst typeModifier = astHelper.createAst(TSPHPDefinitionWalker.TYPE_MODIFIER, "tMod");
+
+        String typeName = typeSymbol.getName();
+        if (typeSymbol.isNullable()) {
+            typeModifier.addChild(astHelper.createAst(TSPHPDefinitionWalker.QuestionMark, "?"));
+            typeName = typeName.substring(0, typeName.length() - 1);
+        }
+        ITSPHPAst type = astHelper.createAst(getTokenType(), typeName);
+        typeRoot.addChild(typeModifier);
+        typeRoot.addChild(type);
+        cast.addChild(typeRoot);
         cast.addChild(ast);
         return cast;
     }
