@@ -17,7 +17,7 @@
 package ch.tutteli.tsphp.typechecker.test.definition;
 
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
-import ch.tutteli.tsphp.typechecker.test.testutils.ConstantHelper;
+import ch.tutteli.tsphp.typechecker.test.testutils.definition.ConstantHelper;
 import ch.tutteli.tsphp.typechecker.test.testutils.definition.ADefinitionSymbolTest;
 import java.util.ArrayList;
 import java.util.Collection;

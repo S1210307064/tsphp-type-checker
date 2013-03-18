@@ -47,9 +47,12 @@ public class ErrorReportingTSPHPReferenceWalker extends TSPHPReferenceWalker imp
     @Override
     public void reportError(RecognitionException exception) {
         hasFoundError = true;
+        String tokenText = exception.token != null
+                ? "Unexpected token: " + exception.token.getText()
+                : "Unknown token";
         for (IErrorLogger logger : errorLoggers) {
             logger.log(new TSPHPException("Line " + exception.line + "|" + exception.charPositionInLine
-                    + " reference phase exception occured. Unexpected token: " + exception.token.getText(), exception));
+                    + " reference phase exception occured. " + tokenText, exception));
         }
     }
 

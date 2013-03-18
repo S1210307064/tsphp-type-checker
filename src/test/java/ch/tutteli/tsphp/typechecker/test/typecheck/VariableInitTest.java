@@ -235,8 +235,16 @@ public class VariableInitTest extends AOperatorTypeCheckTest
                 new TypeCheckStruct[]{struct("array", Array, 1, 0, 1, 0)}
             },
             {
+                "array $a = null;",
+                new TypeCheckStruct[]{struct("null", Null, 1, 0, 1, 0)}
+            },
+            {
                 "resource $b; resource $a = $b;",
                 new TypeCheckStruct[]{struct("$b", Resource, 1, 1, 1, 0)}
+            },
+            {
+                "resource $a = null;",
+                new TypeCheckStruct[]{struct("null", Null, 1, 0, 1, 0)}
             },
             {
                 "object $a = true;",
@@ -295,8 +303,16 @@ public class VariableInitTest extends AOperatorTypeCheckTest
                 new TypeCheckStruct[]{struct("$b", ErrorException, 1, 1, 1, 0)}
             },
             {
+                "object $a = null;",
+                new TypeCheckStruct[]{struct("null", Null, 1, 0, 1, 0)}
+            },
+            {
                 "ErrorException $b; ErrorException $a = $b;",
                 new TypeCheckStruct[]{struct("$b", ErrorException, 1, 1, 1, 0)}
+            },
+            {
+                "ErrorException $a = null;",
+                new TypeCheckStruct[]{struct("null", Null, 1, 0, 1, 0)}
             },
             {
                 "ErrorException $b; Exception $a = $b;",
@@ -305,6 +321,10 @@ public class VariableInitTest extends AOperatorTypeCheckTest
             {
                 "Exception $b; Exception $a = $b;",
                 new TypeCheckStruct[]{struct("$b", Exception, 1, 1, 1, 0)}
+            },
+            {
+                "Exception $a = null;",
+                new TypeCheckStruct[]{struct("null", Null, 1, 0, 1, 0)}
             }
         }));
     }

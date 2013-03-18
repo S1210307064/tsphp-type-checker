@@ -47,9 +47,12 @@ public class ErrorReportingTSPHPTypeCheckWalker extends TSPHPTypeCheckWalker imp
     @Override
     public void reportError(RecognitionException exception) {
         hasFoundError = true;
+        String tokenText = exception.token != null
+                ? "Unexpected token: " + exception.token.getText()
+                : "Unknown token";
         for (IErrorLogger logger : errorLoggers) {
             logger.log(new TSPHPException("Line " + exception.line + "|" + exception.charPositionInLine
-                    + " type checker exception occured. Unexpected token: " + exception.token.getText(), exception));
+                    + " type checker exception occured. " + tokenText, exception));
         }
     }
 

@@ -488,6 +488,16 @@ public class ErrorReporter implements IErrorReporter
         return addAndGetStatementTypeCheckError("wrongTypeVariableId", variableId, expression, typeSymbol);
     }
 
+    @Override
+    public ReferenceException onlySingleValue(ITSPHPAst variableId, ITSPHPAst expression) {
+        return addAndGetStatementTypeCheckError("onlySingleValue", variableId, expression, variableId.getEvalType());
+    }
+
+    @Override
+    public ReferenceException onlyConstantValue(ITSPHPAst variableId, ITSPHPAst expression) {
+        return addAndGetStatementTypeCheckError("onlyConstantValue", variableId, expression, variableId.getEvalType());
+    }
+
     private ReferenceException addAndGetStatementTypeCheckError(String key, ITSPHPAst statement,
             ITSPHPAst expression, ITypeSymbol typeSymbol) {
 

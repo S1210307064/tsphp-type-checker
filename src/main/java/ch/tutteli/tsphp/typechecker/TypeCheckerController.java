@@ -708,7 +708,7 @@ public class TypeCheckerController implements ITypeCheckerController
             IVariableSymbol leftSymbol;
             if (symbol instanceof IVariableSymbol) {
                 leftSymbol = (IVariableSymbol) symbol;
-            }else{
+            } else {
                 ITypeSymbol typeSymbol = (ITypeSymbol) symbol;
                 left.setEvalType(typeSymbol);
                 leftSymbol = symbolFactory.createVariableSymbol(null, left);
@@ -908,6 +908,39 @@ public class TypeCheckerController implements ITypeCheckerController
         operator.setText("=");
         operator.getToken().setType(TSPHPDefinitionWalker.Assign);
         checkAssignment(operator, variableId, expression);
+    }
+
+    @Override
+    public void checkConstantInitialValue(ITSPHPAst variableId, ITSPHPAst expression) {
+        if (expression.getType() != TSPHPDefinitionWalker.TypeArray && expression.getChildCount() > 1) {
+            ErrorReporterRegistry.get().onlySingleValue(variableId, expression);
+        } else if (isNotConstantValue(expression)) {
+            ErrorReporterRegistry.get().onlyConstantValue(variableId, expression);
+        } else {
+            checkInitialValue(variableId, expression);
+        }
+    }
+
+    private boolean isNotConstantValue(ITSPHPAst expression) {
+        boolean isNotConstantValue = true;
+        switch (expression.getType()) {
+            case TSPHPDefinitionWalker.Bool:
+            case TSPHPDefinitionWalker.Int:
+            case TSPHPDefinitionWalker.Float:
+            case TSPHPDefinitionWalker.String:
+            case TSPHPDefinitionWalker.TypeArray:
+            case TSPHPDefinitionWalker.CONSTANT:
+            case TSPHPDefinitionWalker.Null:
+                isNotConstantValue = false;
+                break;
+            case TSPHPDefinitionWalker.UNARY_MINUS:
+            case TSPHPDefinitionWalker.UNARY_PLUS:
+                isNotConstantValue = isNotConstantValue(expression.getChild(0));
+                break;
+            case TSPHPDefinitionWalker.CLASS_STATIC_ACCESS:
+                isNotConstantValue = expression.getChild(1).getType() == TSPHPDefinitionWalker.CONSTANT;
+        }
+        return isNotConstantValue;
     }
 
     /**

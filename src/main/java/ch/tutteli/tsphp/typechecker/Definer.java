@@ -89,9 +89,6 @@ public class Definer implements IDefiner
 
     @Override
     public void defineConstant(IScope currentScope, ITSPHPAst modifier, ITSPHPAst type, ITSPHPAst identifier) {
-        // # prevent clashes with class and const identifier
-        identifier.getToken().setText(identifier.getText() + "#");
-
         defineVariable(currentScope, modifier, type, identifier);
     }
 

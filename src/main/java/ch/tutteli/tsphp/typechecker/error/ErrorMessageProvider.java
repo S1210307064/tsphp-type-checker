@@ -131,8 +131,11 @@ public class ErrorMessageProvider extends AErrorMessageProvider
         typeCheckErrors.put("wrongTypeReturn", "Line %line%|%pos% - the return statement evaluates to wrong type. "
                 + "Type %tExp% or a sub-type expected but %tFound% found.");
 
-        typeCheckErrors.put("wrongTypeVariableId", "Line %line%|%pos% - cannot assign RHS to LHS. "
-                + "Type %tExp% or a sub-type expected but %tFound% found.");
+        typeCheckErrors.put("onlySingleValue", "Line %line%|%pos% - expressions are not allowed at this point. Only "
+                + "a single constant value of type %tExp% can be used (type %tFound% found).");
+
+        typeCheckErrors.put("onlyConstantValue", "Line %line%|%pos% - Only a constant value of type %tExp% is allowed "
+                + "at this point. Non constant value of type %tFound% found.");
     }
 
     @Override

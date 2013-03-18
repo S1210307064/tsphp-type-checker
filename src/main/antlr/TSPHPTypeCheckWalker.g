@@ -63,8 +63,8 @@ bottomup
     	:	expressionLists
    	|	expressionRoot 
    	|	variableInit
-//	|	constantInit
-//   	|	parameterDefaultValue
+	|	constantInit
+   	|	parameterDefaultValue
 	;
     
 expressionLists
@@ -159,18 +159,36 @@ tryCatch
 	;
 
 variableInit
-	:	^(VARIABLE_DECLARATION_LIST type=. ^(VariableId expression))
-		{
-		    $VariableId.setEvalType($VariableId.getSymbol().getType());
-		    controller.checkInitialValue($VariableId, $expression.start);
-		}
+	:	{$start.getParent().getType()!=Catch && $start.getParent().getType()!=Foreach}?
+		^(list=VARIABLE_DECLARATION_LIST 
+			type=. 
+			(	^(VariableId expression)
+				{
+		   		    $VariableId.setEvalType($VariableId.getSymbol().getType());
+				    if($list.getParent().getType() != CLASS_MEMBER){
+				         controller.checkInitialValue($VariableId, $expression.start);
+				    } else {
+				        controller.checkConstantInitialValue($VariableId, $expression.start);
+				    }
+				}
+			)+
+		)
+		
 	;
 	
-/*parameterDefaultValue
+constantInit
+	:	^(CONSTANT_DECLARATION_LIST type=.
+			(	^(Identifier expression)
+				{controller.checkConstantInitialValue($Identifier, $expression.start);}
+			)+
+		)	
+	;
+	
+parameterDefaultValue
 	:	
 	|	^(PARAMETER_DECLARATION type=. ^(VariableId expression))
-		{controller.checkDefaultValue($VariableId, $expression);}
-	;*/
+		{controller.checkConstantInitialValue($VariableId, $expression.start);}
+	;
 	
 expression returns [ITypeSymbol type]
 @after { $start.setEvalType($type); } // do after any alternative
@@ -293,7 +311,7 @@ allTypes
 	|	'resource'
 	|	'object'
 	|	TYPE_NAME
-	;
+		;
 
 
 specialOperators

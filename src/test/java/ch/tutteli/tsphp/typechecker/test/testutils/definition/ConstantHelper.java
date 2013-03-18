@@ -14,10 +14,11 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.test.testutils;
+package ch.tutteli.tsphp.typechecker.test.testutils.definition;
 
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tutteli.tsphp.typechecker.symbols.ModifierHelper;
+import ch.tutteli.tsphp.typechecker.test.testutils.TypeHelper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;

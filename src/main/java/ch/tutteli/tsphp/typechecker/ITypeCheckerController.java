@@ -115,4 +115,7 @@ public interface ITypeCheckerController
     void checkReturn(ITSPHPAst returnRoot, ITSPHPAst expression);
 
     void checkInitialValue(ITSPHPAst variableId, ITSPHPAst expression);
+    
+    void checkConstantInitialValue(ITSPHPAst variableId, ITSPHPAst expression);
+    
 }
