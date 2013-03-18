@@ -70,7 +70,6 @@ bottomup
 expressionLists
 	:	^(	(	ACTUAL_PARAMETERS	
 	   		|	TypeArray
-	    		|	'echo'
 		    	)
 			expression+
 		)
@@ -108,6 +107,7 @@ expressionRoot
  	|	switchCondition
  	|	foreachLoop
  	|	tryCatch
+ 	|	echo
 	;
 	
 switchCondition
@@ -156,6 +156,9 @@ tryCatch
 				}
 			))+
 		)	
+	;
+
+echo 	:	^('echo' (expression {controller.checkEcho($expression.start);})+)
 	;
 
 variableInit

@@ -116,7 +116,7 @@ public class ErrorMessageProvider extends AErrorMessageProvider
         typeCheckErrors.put("wrongTypeThrow", "Line %line%|%pos% - the expression of the throw statement "
                 + "evaluates to a wrong type. Type %tExp% or a sub-type expected but %tFound% found.");
 
-        typeCheckErrors.put("wrongTypeCatch", "Line %line%|%pos% - Only %tExp% or a sub-type can be caugth with a"
+        typeCheckErrors.put("wrongTypeCatch", "Line %line%|%pos% - Only %tExp% or a sub-type can be caugth with a "
                 + "catch statement but %tFound% found.");
 
         typeCheckErrors.put("arrayExpected", "Line %line%|%pos% - the expression evaluates to a wrong type. "

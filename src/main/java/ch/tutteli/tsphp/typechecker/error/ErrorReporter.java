@@ -459,6 +459,11 @@ public class ErrorReporter implements IErrorReporter
     }
 
     @Override
+    public ReferenceException wrongTypeEcho(ITSPHPAst expression, ITypeSymbol typeSymbol) {
+        return addAndGetStatementTypeCheckError("wrongTypeEcho", expression, expression, typeSymbol);
+    }
+
+    @Override
     public ReferenceException arrayExpected(ITSPHPAst expression, IArrayTypeSymbol arrayTypeSymbol) {
         return addAndGetStatementTypeCheckError("arrayExpected", expression, expression, arrayTypeSymbol);
     }

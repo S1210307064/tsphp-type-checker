@@ -943,6 +943,19 @@ public class TypeCheckerController implements ITypeCheckerController
         return isNotConstantValue;
     }
 
+    @Override
+    public void checkEcho( final ITSPHPAst expression) {
+        final ITypeSymbol typeSymbol = symbolTable.getStringNullableTypeSymbol();
+        checkIsSameOrSubType(expression, typeSymbol, new IErrorReporterCaller()
+        {
+            @Override
+            public void callAppropriateMethod() {
+                ErrorReporterRegistry.get().wrongTypeEcho(expression, typeSymbol);
+            }
+        });
+
+    }
+
     /**
      * A "Delegate" which represents a call of a method of an IErrrorReporter
      */
