@@ -31,10 +31,10 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class AssignmentOperatorErrorTest extends ATypeCheckErrorTest
+public class VariableInitOperatorErrorTest extends ATypeCheckErrorTest
 {
 
-    public AssignmentOperatorErrorTest(String testString, ReferenceErrorDto[] expectedLinesAndPositions) {
+    public VariableInitOperatorErrorTest(String testString, ReferenceErrorDto[] expectedLinesAndPositions) {
         super(testString, expectedLinesAndPositions);
     }
 
@@ -47,18 +47,19 @@ public class AssignmentOperatorErrorTest extends ATypeCheckErrorTest
     public static Collection<Object[]> testStrings() {
         List<Object[]> collection = new ArrayList<>();
         ReferenceErrorDto[] errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto("=", 2, 1)};
+        ReferenceErrorDto[] errorCastAssignDto = new ReferenceErrorDto[]{new ReferenceErrorDto("casting", 2, 1)};
 
         String[] types = new String[]{"bool", "bool?", "int", "int?", "float", "float?", "string", "string?",
             "array", "resource", "ErrorException", "Exception"};
 
         for (int i = 0; i < types.length - 1; ++i) {
             collection.add(new Object[]{
-                types[i + 1] + " $b; " + types[i] + " $a;$a\n = $b;",
+                types[i + 1] + " $b; " + types[i] + "\n $a = $b;",
                 errorDto
             });
         }
         collection.add(new Object[]{
-            types[0] + " $b; "+types[types.length - 1] + " $a;$a\n = $b;",
+            types[0] + " $b; "+types[types.length - 1] + "\n $a = $b;",
             errorDto
         });
 
@@ -66,12 +67,12 @@ public class AssignmentOperatorErrorTest extends ATypeCheckErrorTest
             "array", "ErrorException", "Exception"};
         for (String type : types) {
             collection.add(new Object[]{
-                type + " $b; cast resource $a;$a\n = $b;",
+                type + " $b; cast resource\n $a = $b;",
                 errorDto
             });
             collection.add(new Object[]{
-                type + " $b; resource $a; $a\n =() $b;",
-                errorDto
+                type + " $b; resource $a\n =() $b;",
+                errorCastAssignDto
             });
         }
 

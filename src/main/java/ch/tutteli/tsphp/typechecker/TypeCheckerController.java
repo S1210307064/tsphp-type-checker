@@ -701,6 +701,16 @@ public class TypeCheckerController implements ITypeCheckerController
 
     @Override
     public void checkCast(final ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right) {
+        CastingDto castingDto = checkAndGetCast(operator, left, right);
+        if (castingDto != null && castingDto.castingMethods != null) {
+            ITSPHPAst newRoot = astHelper.prependCasting(castingDto);
+            int childIndex = operator.getChildIndex();
+            operator.getParent().replaceChildren(childIndex, childIndex, newRoot);
+        }
+    }
+
+    private CastingDto checkAndGetCast(final ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right) {
+        CastingDto castingDto = null;
         if (!(right.getEvalType() instanceof IErroneousSymbol)) {
             operator.setText("==");
 
@@ -715,20 +725,31 @@ public class TypeCheckerController implements ITypeCheckerController
                 leftSymbol.setType(typeSymbol);
             }
 
-            CastingDto rightToLeft = overloadResolver.getCastingDtoAlwaysCasting(leftSymbol, right);
-            if (rightToLeft == null) {
+            castingDto = overloadResolver.getCastingDtoAlwaysCasting(leftSymbol, right);
+            if (castingDto == null) {
                 ErrorReporterRegistry.get().wrongCast(operator, left, right);
-            } else if (rightToLeft.ambiguousCasts != null && !rightToLeft.ambiguousCasts.isEmpty()) {
-                ErrorReporterRegistry.get().ambiguousCasts(operator, left, right, rightToLeft.ambiguousCasts);
+            } else if (castingDto.ambiguousCasts != null && !castingDto.ambiguousCasts.isEmpty()) {
+                ErrorReporterRegistry.get().ambiguousCasts(operator, left, right, castingDto.ambiguousCasts);
             }
             operator.setText("casting");
         }
+        return castingDto;
     }
 
     @Override
     public void checkCastAssignment(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right) {
-        checkCast(operator, left, right);
+        CastingDto castingDto = checkAndGetCast(operator, left, right);
+        if (castingDto != null) {
+            if (castingDto.castingMethods == null) {
+                //even thought a casting is not really necessary we do one to be consistent
+                ICastingMethod castingMethod = symbolTable.getStandardCastingMethod(left.getEvalType());
+                castingDto.castingMethods = new ArrayList<>();
+                castingDto.castingMethods.add(castingMethod);
+            }
+            astHelper.prependCasting(castingDto);
+        }
         operator.setText("=");
+        operator.getToken().setType(TSPHPDefinitionWalker.Assign);
     }
 
     @Override
@@ -944,7 +965,7 @@ public class TypeCheckerController implements ITypeCheckerController
     }
 
     @Override
-    public void checkEcho( final ITSPHPAst expression) {
+    public void checkEcho(final ITSPHPAst expression) {
         final ITypeSymbol typeSymbol = symbolTable.getStringNullableTypeSymbol();
         checkIsSameOrSubType(expression, typeSymbol, new IErrorReporterCaller()
         {

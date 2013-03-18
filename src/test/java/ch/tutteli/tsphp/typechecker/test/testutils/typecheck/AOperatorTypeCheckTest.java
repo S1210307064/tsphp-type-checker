@@ -70,10 +70,10 @@ public abstract class AOperatorTypeCheckTest extends ATypeCheckTest
         for (int i = 0; i < testStructs.length; ++i) {
             TypeCheckStruct testStruct = testStructs[i];
             ITSPHPAst testCandidate = ScopeTestHelper.getAst(ast, testString, testStruct.accessOrderToNode);
-            Assert.assertNotNull(testString + " failed. testCandidate is null. should be " + testStruct.evalType, testCandidate);
-            Assert.assertEquals(testString + " failed. wrong ast text,", testStruct.astText,
+            Assert.assertNotNull(testString + " -> " + testStruct.astText + " failed. testCandidate is null. should be " + testStruct.evalType, testCandidate);
+            Assert.assertEquals(testString + " -> " + testStruct.astText + " failed. wrong ast text,", testStruct.astText,
                     testCandidate.getText());
-            Assert.assertEquals(testString + " failed. wrong type,", getTypeSymbol(testStruct.evalType),
+            Assert.assertEquals(testString + " -> " + testStruct.astText + " failed. wrong type,", getTypeSymbol(testStruct.evalType),
                     testCandidate.getEvalType());
         }
     }

@@ -16,12 +16,12 @@
  */
 package ch.tutteli.tsphp.typechecker.test.typecheck;
 
+import ch.tutteli.tsphp.typechecker.error.ReferenceErrorDto;
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest;
+import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ATypeCheckErrorTest;
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ConstantInitialValueHelper;
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.TypeCheckStruct;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,11 +32,11 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class ClassMemberInitTest extends AOperatorTypeCheckTest
+public class ClassMemberInitErrorTest extends ATypeCheckErrorTest
 {
 
-    public ClassMemberInitTest(String testString, TypeCheckStruct[] struct) {
-        super(testString, struct);
+    public ClassMemberInitErrorTest(String testString, ReferenceErrorDto[] expectedLinesAndPositions) {
+        super(testString, expectedLinesAndPositions);
     }
 
     @Test
@@ -46,6 +46,6 @@ public class ClassMemberInitTest extends AOperatorTypeCheckTest
 
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
-        return ConstantInitialValueHelper.testStrings("class A{", ";}", "$a", true, false, 1, 0, 4, 0);
+        return ConstantInitialValueHelper.errorTestStrings("class A{", ";}", "$a", true, false);
     }
 }

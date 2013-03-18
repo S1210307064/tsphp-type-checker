@@ -16,6 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker.test.testutils.typecheck;
 
+import ch.tutteli.tsphp.typechecker.error.ReferenceErrorDto;
 import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest.Array;
 import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest.Bool;
 import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest.Float;
@@ -33,6 +34,146 @@ import java.util.List;
  */
 public class ConstantInitialValueHelper
 {
+
+    public static Collection<Object[]> errorTestStrings(String prefix, String appendix, String identifier,
+            boolean isNotConstant, boolean isParameter) {
+        List<Object[]> collection = new ArrayList<>();
+        ReferenceErrorDto[] errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto("=", 2, 1)};
+
+        collection.addAll(Arrays.asList(new Object[][]{
+            {
+                prefix + "bool\n " + identifier + " = 1" + appendix,
+                errorDto
+            },
+            {
+                prefix + "bool\n " + identifier + " = 1.0" + appendix,
+                errorDto
+            },
+            {
+                prefix + "bool\n " + identifier + " = 'hello'" + appendix,
+                errorDto
+            },
+            {
+                prefix + "bool\n " + identifier + " = [1,2]" + appendix,
+                errorDto
+            },
+            {
+                prefix + "bool\n " + identifier + " = null" + appendix,
+                errorDto
+            },
+            {
+                prefix + "int\n " + identifier + " = 1.0" + appendix,
+                errorDto
+            },
+            {
+                prefix + "int\n " + identifier + " = 'hello'" + appendix,
+                errorDto
+            },
+            {
+                prefix + "int\n " + identifier + " = [1,2]" + appendix,
+                errorDto
+            },
+            {
+                prefix + "int\n " + identifier + " = null" + appendix,
+                errorDto
+            },
+            {
+                prefix + "float\n " + identifier + " = 'hello'" + appendix,
+                errorDto
+            },
+            {
+                prefix + "float\n " + identifier + " = [0,1]" + appendix,
+                errorDto
+            },
+            {
+                prefix + "float\n " + identifier + " = null" + appendix,
+                errorDto
+            },
+            {
+                prefix + "string\n " + identifier + " = [0,1]" + appendix,
+                errorDto
+            },
+            {
+                prefix + "string\n " + identifier + " = null" + appendix,
+                errorDto
+            }
+        }));
+        if (isNotConstant) {
+            collection.addAll(Arrays.asList(new Object[][]{
+                {
+                    prefix + "bool?\n " + identifier + " = 1" + appendix,
+                    errorDto
+                },
+                {
+                    prefix + "bool?\n " + identifier + " = 1.0" + appendix,
+                    errorDto
+                },
+                {
+                    prefix + "bool?\n " + identifier + " = 'hello'" + appendix,
+                    errorDto
+                },
+                {
+                    prefix + "bool?\n " + identifier + " = [1,2]" + appendix,
+                    errorDto
+                },
+                {
+                    prefix + "int?\n " + identifier + " = 1.0" + appendix,
+                    errorDto
+                },
+                {
+                    prefix + "int?\n " + identifier + " = 'hello'" + appendix,
+                    errorDto
+                },
+                {
+                    prefix + "int?\n " + identifier + " = [1,2]" + appendix,
+                    errorDto
+                },
+                {
+                    prefix + "float?\n " + identifier + " = 'hello'" + appendix,
+                    errorDto
+                },
+                {
+                    prefix + "string?\n " + identifier + " = [0,1]" + appendix,
+                    errorDto
+                },
+                {
+                    prefix + "array\n " + identifier + " = true" + appendix,
+                    errorDto
+                }, {
+                    prefix + "array\n " + identifier + " = 1" + appendix,
+                    errorDto
+                },
+                {
+                    prefix + "array\n " + identifier + " = 1.0" + appendix,
+                    errorDto
+                }, {
+                    prefix + "array\n " + identifier + " = 'hello'" + appendix,
+                    errorDto
+                },
+                {
+                    prefix + "resource\n " + identifier + " = true" + appendix,
+                    errorDto
+                },
+                {
+                    prefix + "resource\n " + identifier + " = 1" + appendix,
+                    errorDto
+                },
+                {
+                    prefix + "resource\n " + identifier + " = 1.0" + appendix,
+                    errorDto
+                },
+                {
+                    prefix + "resource\n " + identifier + " = 'hello'" + appendix,
+                    errorDto
+                },
+                {
+                    prefix + "resource\n " + identifier + " = [1,2]" + appendix,
+                    errorDto
+                },}));
+        }
+
+        return collection;
+    }
 
     public static Collection<Object[]> testStrings(String prefix, String appendix, String identifier,
             boolean isNotConstant, boolean isParameter, Integer... accessOrder) {

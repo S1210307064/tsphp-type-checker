@@ -286,22 +286,31 @@ equalityOperator returns [ITypeSymbol type]
 assignOperator returns [ITypeSymbol type]
 	:	^('=' left=expression right=expression )	
 		{
-		    $type = $left.start.getEvalType();
 	 	    controller.checkAssignment($start, $left.start, $right.start);
+	 	    ITSPHPAst casting = (ITSPHPAst) $start.getChild(1);
+    		    $type = casting.getType() == CASTING 
+		         ? casting.getEvalType() 
+		         : $right.start.getEvalType();
 		}
 	;
 	
 castOperator returns [ITypeSymbol type]
 	:	^(CASTING_ASSIGN left=expression right=expression)
 		{
-		    $type = $left.start.getEvalType();
 		    controller.checkCastAssignment($start, $left.start, $right.start);
+		    ITSPHPAst casting = (ITSPHPAst) $start.getChild(1);
+    		    $type = casting.getType() == CASTING 
+		         ? casting.getEvalType() 
+		         : $right.start.getEvalType();
 		}
 		
 	|	^(CASTING ^(TYPE . identifier=allTypes) right=expression)
 		{
-		    $type = (ITypeSymbol) $identifier.start.getSymbol();
 		    controller.checkCast($start, $identifier.start, $right.start);
+		    ITSPHPAst casting = (ITSPHPAst) $start.getChild(1);
+		    $type = casting.getType() == CASTING 
+		         ? casting.getEvalType() 
+		         : (ITypeSymbol) $identifier.start.getSymbol();
 		}
 	;
 
@@ -322,4 +331,5 @@ specialOperators
 	|	^('instanceof' variable=expression type=(TYPE_NAME|VariableId))
     	|	^('new' type=TYPE_NAME args=.)
     	|	^('clone' expression)
+    		//{controller.checkClone($expression.start);}
 	;

@@ -29,6 +29,7 @@ import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTyp
 import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest.Resource;
 import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest.String;
 import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest.StringNullable;
+import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AssignHelper;
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.EBuiltInType;
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.TypeCheckStruct;
 import java.util.ArrayList;
@@ -63,325 +64,31 @@ public class AssignmentOperatorTest extends AOperatorTypeCheckTest
     public static Collection<Object[]> testStrings() {
         collection = new ArrayList<>();
 
-        addSimpleAssignment();
-
-        addCastingAssignment();
+        AssignHelper.getAssignments(collection, false);
 
         addCompoundAssignment();
 
-        return collection;
-    }
-
-    private static void addSimpleAssignment() {
+        //see TSPHP - 433
         collection.addAll(Arrays.asList(new Object[][]{
-            {
-                "bool $a; $a = false;",
-                new TypeCheckStruct[]{struct("=", Bool, 1, 1, 0)}
+            {"bool? $b; int $i = $b = true;", new TypeCheckStruct[]{
+                    struct("$i", Int, 1, 1, 1),
+                    struct("=", Bool, 1, 1, 1, 0),
+                    struct("$b", BoolNullable, 1, 1, 1, 0, 0),
+                    struct("true", Bool, 1, 1, 1, 0, 1)
+                }
             },
-            {
-                "const bool a = false; bool $a; $a = a;",
-                new TypeCheckStruct[]{struct("=", Bool, 1, 2, 0)}
-            },
-            {
-                "bool $a; $a = true;",
-                new TypeCheckStruct[]{struct("=", Bool, 1, 1, 0)}
-            },
-            {
-                "bool? $a; $a = false;",
-                new TypeCheckStruct[]{struct("=", BoolNullable, 1, 1, 0)}
-            },
-            {
-                "const bool a = false; bool? $a; $a = a;",
-                new TypeCheckStruct[]{struct("=", BoolNullable, 1, 2, 0)}
-            },
-            {
-                "bool? $a; $a = true;",
-                new TypeCheckStruct[]{struct("=", BoolNullable, 1, 1, 0)}
-            },
-            {
-                "bool? $a; $a = null;",
-                new TypeCheckStruct[]{struct("=", BoolNullable, 1, 1, 0)}
-            },
-            {
-                "bool? $a; bool? $b; $a = $b;",
-                new TypeCheckStruct[]{struct("=", BoolNullable, 1, 2, 0)}
-            },
-            {
-                "int $a; $a = true;",
-                new TypeCheckStruct[]{struct("=", Int, 1, 1, 0)}
-            },
-            {
-                "int $a; $a = 1;",
-                new TypeCheckStruct[]{struct("=", Int, 1, 1, 0)}
-            },
-            {
-                "const int a = 2; int $a; $a = a;",
-                new TypeCheckStruct[]{struct("=", Int, 1, 2, 0)}
-            },
-            {
-                "int? $a; $a = true;",
-                new TypeCheckStruct[]{struct("=", IntNullable, 1, 1, 0)}
-            },
-            {
-                "int? $a; $a = 1;",
-                new TypeCheckStruct[]{struct("=", IntNullable, 1, 1, 0)}
-            },
-            {
-                "const int a = 1; int? $a; $a = a;",
-                new TypeCheckStruct[]{struct("=", IntNullable, 1, 2, 0)}
-            },
-            {
-                "int? $a; $a = null;",
-                new TypeCheckStruct[]{struct("=", IntNullable, 1, 1, 0)}
-            },
-            {
-                "int? $a; bool? $b; $a = $b;",
-                new TypeCheckStruct[]{struct("=", IntNullable, 1, 2, 0)}
-            },
-            {
-                "int? $a; int? $b; $a = $b;",
-                new TypeCheckStruct[]{struct("=", IntNullable, 1, 2, 0)}
-            },
-            {
-                "float $a; $a = true;",
-                new TypeCheckStruct[]{struct("=", Float, 1, 1, 0)}
-            },
-            {
-                "float $a; $a = 6;",
-                new TypeCheckStruct[]{struct("=", Float, 1, 1, 0)}
-            },
-            {
-                "float $a; $a = 2.56;",
-                new TypeCheckStruct[]{struct("=", Float, 1, 1, 0)}
-            },
-            {
-                "const float a = 1.2; float $a; $a = a;",
-                new TypeCheckStruct[]{struct("=", Float, 1, 2, 0)}
-            },
-            {
-                "float? $a; $a = true;",
-                new TypeCheckStruct[]{struct("=", FloatNullable, 1, 1, 0)}
-            },
-            {
-                "float? $a; $a = 6;",
-                new TypeCheckStruct[]{struct("=", FloatNullable, 1, 1, 0)}
-            },
-            {
-                "float? $a; $a = 2.56;",
-                new TypeCheckStruct[]{struct("=", FloatNullable, 1, 1, 0)}
-            },
-            {
-                "const float a = 0.1e2; float? $a; $a = a;",
-                new TypeCheckStruct[]{struct("=", FloatNullable, 1, 2, 0)}
-            },
-            {
-                "float? $a; $a = null;",
-                new TypeCheckStruct[]{struct("=", FloatNullable, 1, 1, 0)}
-            },
-            {
-                "float? $a; bool? $b; $a = $b;",
-                new TypeCheckStruct[]{struct("=", FloatNullable, 1, 2, 0)}
-            },
-            {
-                "float? $a; int? $b; $a = $b;",
-                new TypeCheckStruct[]{struct("=", FloatNullable, 1, 2, 0)}
-            },
-            {
-                "float? $a; float? $b; $a = $b;",
-                new TypeCheckStruct[]{struct("=", FloatNullable, 1, 2, 0)}
-            },
-            {
-                "string $a; $a = true;",
-                new TypeCheckStruct[]{struct("=", String, 1, 1, 0)}
-            },
-            {
-                "string $a; $a = 1;",
-                new TypeCheckStruct[]{struct("=", String, 1, 1, 0)}
-            },
-            {
-                "string $a; $a = 5.6;",
-                new TypeCheckStruct[]{struct("=", String, 1, 1, 0)}
-            },
-            {
-                "string $a; $a = 'hello';",
-                new TypeCheckStruct[]{struct("=", String, 1, 1, 0)}
-            },
-            {
-                "const string a = 'hello'; string $a; $a = a;",
-                new TypeCheckStruct[]{struct("=", String, 1, 2, 0)}
-            },
-            {
-                "string $a; $a = \"yellow\";",
-                new TypeCheckStruct[]{struct("=", String, 1, 1, 0)}
-            },
-            {
-                "string? $a; $a = true;",
-                new TypeCheckStruct[]{struct("=", StringNullable, 1, 1, 0)}
-            },
-            {
-                "string? $a; $a = 1;",
-                new TypeCheckStruct[]{struct("=", StringNullable, 1, 1, 0)}
-            },
-            {
-                "string? $a; $a = 5.6;",
-                new TypeCheckStruct[]{struct("=", StringNullable, 1, 1, 0)}
-            },
-            {
-                "string? $a; $a = 'hello';",
-                new TypeCheckStruct[]{struct("=", StringNullable, 1, 1, 0)}
-            },
-            {
-                "const string a = 'velo'; string? $a; $a = a;",
-                new TypeCheckStruct[]{struct("=", StringNullable, 1, 2, 0)}
-            },
-            {
-                "string? $a; $a = \"yellow\";",
-                new TypeCheckStruct[]{struct("=", StringNullable, 1, 1, 0)}
-            },
-            {
-                "string? $a; $a = null;",
-                new TypeCheckStruct[]{struct("=", StringNullable, 1, 1, 0)}
-            },
-            {
-                "string? $a; bool? $b; $a = $b;",
-                new TypeCheckStruct[]{struct("=", StringNullable, 1, 2, 0)}
-            },
-            {
-                "string? $a; int? $b; $a = $b;",
-                new TypeCheckStruct[]{struct("=", StringNullable, 1, 2, 0)}
-            },
-            {
-                "string? $a; float? $b; $a = $b;",
-                new TypeCheckStruct[]{struct("=", StringNullable, 1, 2, 0)}
-            },
-            {
-                "string? $a; string? $b; $a = $b;",
-                new TypeCheckStruct[]{struct("=", StringNullable, 1, 2, 0)}
-            },
-            {
-                "array $a; $a = [0];",
-                new TypeCheckStruct[]{struct("=", Array, 1, 1, 0)}
-            },
-            {
-                "array $a; $a = array(1,2);",
-                new TypeCheckStruct[]{struct("=", Array, 1, 1, 0)}
-            },
-            {
-                "resource $a; resource $b; $a = $b;",
-                new TypeCheckStruct[]{struct("=", Resource, 1, 2, 0)}
-            },
-            {
-                "object $a; $a = true;",
-                new TypeCheckStruct[]{struct("=", Object, 1, 1, 0)}
-            },
-            {
-                "object $a; $a = false;",
-                new TypeCheckStruct[]{struct("=", Object, 1, 1, 0)}
-            },
-            {
-                "object $a; $a = 1;",
-                new TypeCheckStruct[]{struct("=", Object, 1, 1, 0)}
-            }, {
-                "object $a; $a = 1.0;",
-                new TypeCheckStruct[]{struct("=", Object, 1, 1, 0)}
-            }, {
-                "object $a; $a = 'hello';",
-                new TypeCheckStruct[]{struct("=", Object, 1, 1, 0)}
-            }, {
-                "object $a; $a = [1,2];",
-                new TypeCheckStruct[]{struct("=", Object, 1, 1, 0)}
-            },
-            {
-                "object $a; bool? $b; $a = $b;",
-                new TypeCheckStruct[]{struct("=", Object, 1, 2, 0)}
-            },
-            {
-                "object $a; int? $b; $a = $b;",
-                new TypeCheckStruct[]{struct("=", Object, 1, 2, 0)}
-            },
-            {
-                "object $a; float? $b; $a = $b;",
-                new TypeCheckStruct[]{struct("=", Object, 1, 2, 0)}
-            },
-            {
-                "object $a; string? $b; $a = $b;",
-                new TypeCheckStruct[]{struct("=", Object, 1, 2, 0)}
-            },
-            {
-                "object $a; resource $b; $a = $b;",
-                new TypeCheckStruct[]{struct("=", Object, 1, 2, 0)}
-            },
-            {
-                "object $a; object $b; $a = $b;",
-                new TypeCheckStruct[]{struct("=", Object, 1, 2, 0)}
-            },
-            {
-                "object $a; Exception $b; $a = $b;",
-                new TypeCheckStruct[]{struct("=", Object, 1, 2, 0)}
-            },
-            {
-                "object $a; ErrorException $b; $a = $b;",
-                new TypeCheckStruct[]{struct("=", Object, 1, 2, 0)}
-            },
-            {
-                "ErrorException $a; ErrorException $b; $a = $b;",
-                new TypeCheckStruct[]{struct("=", ErrorException, 1, 2, 0)}
-            },
-            {
-                "Exception $a; ErrorException $b; $a = $b;",
-                new TypeCheckStruct[]{struct("=", Exception, 1, 2, 0)}
-            },
-            {
-                "Exception $a; Exception $b; $a = $b;",
-                new TypeCheckStruct[]{struct("=", Exception, 1, 2, 0)}
+            {"float $b; string $c; int $i = $b = $c = false;", new TypeCheckStruct[]{
+                    struct("$i", Int, 1, 2, 1),
+                    struct("=", Bool, 1, 2, 1, 0),
+                    struct("$b", Float, 1, 2, 1, 0, 0),
+                    struct("=", Bool, 1, 2, 1, 0, 1),
+                    struct("$c", String, 1, 2, 1, 0, 1, 0),
+                    struct("false", Bool, 1, 2, 1, 0, 1, 1)
+                }
             }
         }));
-    }
 
-    private static void addCastingAssignment() {
-        String[][] castCombinations = new String[][]{{"", "=()"}, {"cast ", "="}};
-
-        Object[][] typesWithBuiltInTypes = new Object[][]{
-            {"int", Int},
-            {"int?", IntNullable},
-            {"float", Float},
-            {"float?", FloatNullable},
-            {"string", String},
-            {"string?", StringNullable}
-        };
-        Object[][] typesWithBuiltInTypes2 = new Object[][]{
-            {"bool", Bool},
-            {"bool?", BoolNullable},
-            {"array", Array}
-        };
-
-        String[] types = new String[]{"bool", "bool?", "int", "int?", "float", "float?", "string", "string?"};
-
-        String[] types2 = new String[]{"bool", "bool?", "int", "int?", "float", "float?", "string", "string?",
-            "array", "resource", "object", "Exception", "ErrorException"};
-        for (String[] castCombination : castCombinations) {
-            for (Object[] type : typesWithBuiltInTypes) {
-                for (String type2 : types) {
-                    collection.add(new Object[]{
-                        castCombination[0] + type[0] + " $a; " + type2 + " $b; $a " + castCombination[1] + " $b;",
-                        new TypeCheckStruct[]{struct("=", (EBuiltInType) type[1], 1, 2, 0)}
-                    });
-                }
-            }
-
-            for (Object[] type : typesWithBuiltInTypes2) {
-                for (String type2 : types2) {
-                    collection.add(new Object[]{
-                        castCombination[0] + type[0] + " $a; " + type2 + " $b; $a " + castCombination[1] + " $b;",
-                        new TypeCheckStruct[]{struct("=", (EBuiltInType) type[1], 1, 2, 0)}
-                    });
-                }
-            }
-            collection.add(new Object[]{
-                castCombination[0] + "resource $a; object $b; $a " + castCombination[1] + " $b;",
-                new TypeCheckStruct[]{struct("=", Resource, 1, 2, 0)}
-            });
-        }
+        return collection;
     }
 
     private static void addCompoundAssignment() {
@@ -394,14 +101,14 @@ public class AssignmentOperatorTest extends AOperatorTypeCheckTest
                 {"int $a; bool? $b; $a " + operator + " $b;", new TypeCheckStruct[]{struct("=", Int, 1, 2, 0)}},
                 {"int $a; $a " + operator + " 1;", new TypeCheckStruct[]{struct("=", Int, 1, 1, 0)}},
                 {"int $a; int? $b; $a " + operator + " $b;", new TypeCheckStruct[]{struct("=", Int, 1, 2, 0)}},
-                {"int? $a; $a " + operator + " true;", new TypeCheckStruct[]{struct("=", IntNullable, 1, 1, 0)}},
-                {"int? $a; $a " + operator + " false;", new TypeCheckStruct[]{struct("=", IntNullable, 1, 1, 0)}},
+                {"int? $a; $a " + operator + " true;", new TypeCheckStruct[]{struct("=", Int, 1, 1, 0)}},
+                {"int? $a; $a " + operator + " false;", new TypeCheckStruct[]{struct("=", Int, 1, 1, 0)}},
                 {
                     "int? $a; bool? $b; $a " + operator + " $b;",
-                    new TypeCheckStruct[]{struct("=", IntNullable, 1, 2, 0)}
+                    new TypeCheckStruct[]{struct("=", Int, 1, 2, 0)}
                 },
-                {"int? $a; $a " + operator + " 1;", new TypeCheckStruct[]{struct("=", IntNullable, 1, 1, 0)}},
-                {"int? $a; int? $b; $a " + operator + " $b;", new TypeCheckStruct[]{struct("=", IntNullable, 1, 2, 0)}},}));
+                {"int? $a; $a " + operator + " 1;", new TypeCheckStruct[]{struct("=", Int, 1, 1, 0)}},
+                {"int? $a; int? $b; $a " + operator + " $b;", new TypeCheckStruct[]{struct("=", Int, 1, 2, 0)}},}));
         }
         String[] floatCompatibleAssignOperators = new String[]{"+=", "-=", "/=", "*=", "%="};
         for (String operator : floatCompatibleAssignOperators) {
@@ -413,19 +120,20 @@ public class AssignmentOperatorTest extends AOperatorTypeCheckTest
                 {"float $a; int? $b; $a " + operator + " $b;", new TypeCheckStruct[]{struct("=", Float, 1, 2, 0)}},
                 {"float $a; $a " + operator + " 1.0;", new TypeCheckStruct[]{struct("=", Float, 1, 1, 0)}},
                 {"float $a; float? $b; $a " + operator + " $b;", new TypeCheckStruct[]{struct("=", Float, 1, 2, 0)}},
-                {"float? $a; $a " + operator + " true;", new TypeCheckStruct[]{struct("=", FloatNullable, 1, 1, 0)}},
-                {"float? $a; $a " + operator + " false;", new TypeCheckStruct[]{struct("=", FloatNullable, 1, 1, 0)}},
+                {"float? $a; $a " + operator + " true;", new TypeCheckStruct[]{struct("=", Float, 1, 1, 0)}},
+                {"float? $a; $a " + operator + " false;", new TypeCheckStruct[]{struct("=", Float, 1, 1, 0)}},
                 {
                     "float? $a; bool? $b; $a " + operator + " $b;",
-                    new TypeCheckStruct[]{struct("=", FloatNullable, 1, 2, 0)}
+                    new TypeCheckStruct[]{struct("=", Float, 1, 2, 0)}
                 },
-                {"float? $a; $a " + operator + " 1;", new TypeCheckStruct[]{struct("=", FloatNullable, 1, 1, 0)}},
+                {"float? $a; $a " + operator + " 1;", new TypeCheckStruct[]{struct("=", Float, 1, 1, 0)}},
                 {
                     "float? $a; int? $b; $a " + operator + " $b;",
-                    new TypeCheckStruct[]{struct("=", FloatNullable, 1, 2, 0)}
+                    new TypeCheckStruct[]{struct("=", Float, 1, 2, 0)}
                 },
-                {"float? $a; $a " + operator + " 1.0;", new TypeCheckStruct[]{struct("=", FloatNullable, 1, 1, 0)}},
-                {"float? $a; float? $b; $a " + operator + " $b;", new TypeCheckStruct[]{struct("=", FloatNullable, 1, 2, 0)}},}));
+                {"float? $a; $a " + operator + " 1.0;", new TypeCheckStruct[]{struct("=", Float, 1, 1, 0)}},
+                {"float? $a; float? $b; $a " + operator + " $b;", new TypeCheckStruct[]{struct("=", Float, 1, 2, 0)}}
+            }));
         }
         collection.addAll(Arrays.asList(new Object[][]{
             {"string $a; $a .= true;", new TypeCheckStruct[]{struct("=", String, 1, 1, 0)}},
@@ -434,12 +142,12 @@ public class AssignmentOperatorTest extends AOperatorTypeCheckTest
             {"string $a; $a .= 1.0;", new TypeCheckStruct[]{struct("=", String, 1, 1, 0)}},
             {"string $a; $a .= 'hello';", new TypeCheckStruct[]{struct("=", String, 1, 1, 0)}},
             {"string $a; string? $b; $a .= $b;", new TypeCheckStruct[]{struct("=", String, 1, 2, 0)}},
-            {"string? $a; $a .= false;", new TypeCheckStruct[]{struct("=", StringNullable, 1, 1, 0)}},
-            {"string? $a; $a .= false;", new TypeCheckStruct[]{struct("=", StringNullable, 1, 1, 0)}},
-            {"string? $a; $a .= 1;", new TypeCheckStruct[]{struct("=", StringNullable, 1, 1, 0)}},
-            {"string? $a; $a .= 1.0;", new TypeCheckStruct[]{struct("=", StringNullable, 1, 1, 0)}},
-            {"string? $a; $a .= 'hello';", new TypeCheckStruct[]{struct("=", StringNullable, 1, 1, 0)}},
-            {"string? $a; string? $b; $a .= $b;", new TypeCheckStruct[]{struct("=", StringNullable, 1, 2, 0)}}
+            {"string? $a; $a .= false;", new TypeCheckStruct[]{struct("=", String, 1, 1, 0)}},
+            {"string? $a; $a .= false;", new TypeCheckStruct[]{struct("=", String, 1, 1, 0)}},
+            {"string? $a; $a .= 1;", new TypeCheckStruct[]{struct("=", String, 1, 1, 0)}},
+            {"string? $a; $a .= 1.0;", new TypeCheckStruct[]{struct("=", String, 1, 1, 0)}},
+            {"string? $a; $a .= 'hello';", new TypeCheckStruct[]{struct("=", String, 1, 1, 0)}},
+            {"string? $a; string? $b; $a .= $b;", new TypeCheckStruct[]{struct("=", String, 1, 2, 0)}}
         }));
 
     }
