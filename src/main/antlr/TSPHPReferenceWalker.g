@@ -300,10 +300,10 @@ casting	:	^(CASTING ^(TYPE typeModifier allTypes[$typeModifier.isNullable]) .)
 	;
 	
 instanceofStatement
-	:	(	^('instanceof' . identifier=VariableId)
-		|	^('instanceof' . identifier=TYPE_NAME)
-		)
+	:	^('instanceof' . identifier=TYPE_NAME)
 		{$identifier.setSymbol(controller.resolveType($identifier));}
+	//no need to do the same for VariableId since this symbol is resolved with rule variable
+	//|	^('instanceof' . identifier=VariableId)
 	;
 	
 newOperator
