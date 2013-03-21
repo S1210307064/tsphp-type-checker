@@ -16,6 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker.test.testutils.typecheck;
 
+import ch.tutteli.tsphp.typechecker.error.ReferenceErrorDto;
 import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest.Array;
 import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest.Bool;
 import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest.BoolNullable;
@@ -30,8 +31,10 @@ import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTyp
 import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest.Null;
 import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest.ErrorException;
 import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest.Exception;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 /**
  *
@@ -579,7 +582,7 @@ public class AssignHelper
         };
     }
 
-    private static java.lang.Object structCastBool(String typeName, EBuiltInType leftType,
+    private static Object structCastBool(String typeName, EBuiltInType leftType,
             EBuiltInType boolType, EBuiltInType initType) {
 
         return isDeclaration
@@ -595,5 +598,70 @@ public class AssignHelper
             AOperatorTypeCheckTest.struct(typeName, boolType, 1, 2, 0, 1, 0, 1),
             AOperatorTypeCheckTest.struct("$b", initType, 1, 2, 0, 1, 1)
         };
+    }
+
+    public static Collection<Object[]> getAssignmentErrorTestStrings(String operator, boolean isDeclaration) {
+        List<Object[]> collection = new ArrayList<>();
+        ReferenceErrorDto[] errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto(operator, 2, 1)};
+        String[] types = new String[]{"bool?", "int", "int?", "float", "float?", "string", "string?", "array",
+            "resource", "object", "Exception", "ErrorException"};
+        String $a = isDeclaration ? "\n $a " + operator : "$a; $a\n " + operator;
+        for (String type : types) {
+            collection.add(new Object[]{type + " $b; bool " + $a + " $b;", errorDto});
+        }
+        types = new String[]{"int", "int?", "float", "float?", "string", "string?", "array", "resource",
+            "object", "Exception", "ErrorException"};
+        for (String type : types) {
+            collection.add(new Object[]{type + " $b;bool? " + $a + " $b;", errorDto});
+        }
+        types = new String[]{"bool?", "int?", "float", "float?", "string", "string?", "array", "resource",
+            "object", "Exception", "ErrorException"};
+        for (String type : types) {
+            collection.add(new Object[]{type + " $b;int " + $a + " $b;", errorDto});
+        }
+        types = new String[]{"float", "float?", "string", "string?", "array", "resource",
+            "object", "Exception", "ErrorException"};
+        for (String type : types) {
+            collection.add(new Object[]{type + " $b;int? " + $a + "  $b;", errorDto});
+        }
+        types = new String[]{"bool?", "int?", "float?", "string", "string?", "array", "resource",
+            "object", "Exception", "ErrorException"};
+        for (String type : types) {
+            collection.add(new Object[]{type + " $b;float " + $a + "  $b;", errorDto});
+        }
+        types = new String[]{"string", "string?", "array", "resource", "object", "Exception", "ErrorException"};
+        for (String type : types) {
+            collection.add(new Object[]{type + " $b;float? " + $a + "  $b;", errorDto});
+        }
+        types = new String[]{"bool?", "int?", "float?", "string?", "array", "resource",
+            "object", "Exception", "ErrorException"};
+        for (String type : types) {
+            collection.add(new Object[]{type + " $b;string " + $a + "  $b;", errorDto});
+        }
+        types = new String[]{"array", "resource", "object", "Exception", "ErrorException"};
+        for (String type : types) {
+            collection.add(new Object[]{type + " $b;string? " + $a + "  $b;", errorDto});
+        }
+        types = new String[]{"bool", "bool?", "int", "int?", "float", "float?", "string", "string?", "resource",
+            "object", "Exception", "ErrorException"};
+        for (String type : types) {
+            collection.add(new Object[]{type + " $b;array " + $a + "  $b;", errorDto});
+        }
+        types = new String[]{"bool", "bool?", "int", "int?", "float", "float?", "string", "string?", "array",
+            "object", "Exception", "ErrorException"};
+        for (String type : types) {
+            collection.add(new Object[]{type + " $b;resource " + $a + "  $b;", errorDto});
+        }
+        types = new String[]{"bool", "bool?", "int", "int?", "float", "float?", "string", "string?", "array",
+            "resource", "object", "Exception"};
+        for (String type : types) {
+            collection.add(new Object[]{type + " $b;ErrorException " + $a + "  $b;", errorDto});
+        }
+        types = new String[]{"bool", "bool?", "int", "int?", "float", "float?", "string", "string?", "array",
+            "resource", "object"};
+        for (String type : types) {
+            collection.add(new Object[]{type + " $b;Exception " + $a + "  $b;", errorDto});
+        }
+        return collection;
     }
 }

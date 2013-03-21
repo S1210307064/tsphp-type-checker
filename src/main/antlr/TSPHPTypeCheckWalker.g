@@ -330,14 +330,26 @@ allTypes
 
 specialOperators returns [ITypeSymbol type]
 	:	^('?' condition=expression caseTrue=expression caseFalse=expression)
-	|	^('instanceof' variable=expression identifier=(TYPE_NAME|VariableId))
+	|	^('instanceof' 
+			expr=expression 
+			(	identifier=TYPE_NAME 
+				{$identifier.setEvalType((ITypeSymbol)$identifier.getSymbol());}
+			|	identifier=VariableId
+				{$identifier.setEvalType($identifier.getSymbol().getType());}
+			)
+		)
+		{
+		    
+		    $type = symbolTable.getBoolTypeSymbol();
+		    controller.checkInstanceof($start, $expr.start, $identifier);
+		}
     	|	^('new' identifier=TYPE_NAME args=.)
     		{
-    		    type = (ITypeSymbol) $identifier.getSymbol();
+    		    $type = (ITypeSymbol) $identifier.getSymbol();
     		}
     	|	^(nil='clone' expression)
     		{
     		    controller.checkClone($nil, $expression.start);
-    		    type = $expression.type;
+    		    $type = $expression.type;
     		}
 	;

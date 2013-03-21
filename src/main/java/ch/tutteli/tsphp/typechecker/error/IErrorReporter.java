@@ -153,4 +153,6 @@ public interface IErrorReporter extends ch.tutteli.tsphp.common.IErrorReporter
     ReferenceException wrongTypeClone(ITSPHPAst clone, ITSPHPAst expression);
 
     ReferenceException wrongTypeMethodCall(ITSPHPAst callee);
+
+    ReferenceException wrongTypeInstanceof(ITSPHPAst expression);
 }

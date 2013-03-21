@@ -656,7 +656,7 @@ public class TypeCheckerController implements ITypeCheckerController
         IVariableSymbol variableSymbol;
 
         ISymbol symbol = expression.getSymbol();
-        if (symbol != null) {
+        if (symbol != null && symbol instanceof IVariableSymbol) {
             variableSymbol = (IVariableSymbol) symbol;
         } else {
             variableSymbol = symbolFactory.createVariableSymbol(null, expression);
@@ -1009,8 +1009,27 @@ public class TypeCheckerController implements ITypeCheckerController
     @Override
     public void checkClone(ITSPHPAst clone, ITSPHPAst expression) {
         ITypeSymbol typeSymbol = expression.getEvalType();
-        if (!(typeSymbol instanceof IPolymorphicTypeSymbol)) {
+        if (!(typeSymbol instanceof IErroneousSymbol) && !(typeSymbol instanceof IPolymorphicTypeSymbol)) {
             ErrorReporterRegistry.get().wrongTypeClone(clone, expression);
+        }
+    }
+
+    @Override
+    public void checkInstanceof(ITSPHPAst operator, ITSPHPAst expression, ITSPHPAst typeAst) {
+        ITypeSymbol leftType = expression.getEvalType();
+        ITypeSymbol rightType = typeAst.getEvalType();
+
+        if (leftType instanceof IPolymorphicTypeSymbol && rightType instanceof IPolymorphicTypeSymbol) {
+            checkIdentity(operator, expression, typeAst);
+        } else {
+            if (areNotErroneousTypes(leftType, rightType)) {
+                if (!(leftType instanceof IPolymorphicTypeSymbol)) {
+                    ErrorReporterRegistry.get().wrongTypeInstanceof(expression);
+                }
+                if (!(rightType instanceof IPolymorphicTypeSymbol)) {
+                    ErrorReporterRegistry.get().wrongTypeInstanceof(typeAst);
+                }
+            }
         }
     }
 

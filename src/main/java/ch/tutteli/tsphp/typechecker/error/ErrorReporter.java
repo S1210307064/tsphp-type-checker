@@ -528,6 +528,11 @@ public class ErrorReporter implements IErrorReporter
         return addAndGetClassInterfaceExpectedError("wrongTypeMethodCall", callee, callee.getSymbol().getType());
     }
 
+    @Override
+    public ReferenceException wrongTypeInstanceof(ITSPHPAst expression) {
+        return addAndGetClassInterfaceExpectedError("wrongTypeInstanceof", expression, expression.getEvalType());
+    }
+
     private ReferenceException addAndGetClassInterfaceExpectedError(String key, ITSPHPAst operator,
             ITypeSymbol typeSymbol) {
         String errorMessage = errorMessageProvider.getTypeCheckErrorMessage(key,

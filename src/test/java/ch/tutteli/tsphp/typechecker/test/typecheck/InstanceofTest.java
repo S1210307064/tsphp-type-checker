@@ -16,10 +16,9 @@
  */
 package ch.tutteli.tsphp.typechecker.test.typecheck;
 
-import ch.tutteli.tsphp.typechecker.error.ReferenceErrorDto;
-import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ATypeCheckErrorTest;
-import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AssignHelper;
+import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest;
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.IdentityHelper;
+import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.TypeCheckStruct;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -33,11 +32,11 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class VariableInitOperatorErrorTest extends ATypeCheckErrorTest
+public class InstanceofTest extends AOperatorTypeCheckTest
 {
 
-    public VariableInitOperatorErrorTest(String testString, ReferenceErrorDto[] expectedLinesAndPositions) {
-        super(testString, expectedLinesAndPositions);
+    public InstanceofTest(String testString, TypeCheckStruct[] struct) {
+        super(testString, struct);
     }
 
     @Test
@@ -47,6 +46,11 @@ public class VariableInitOperatorErrorTest extends ATypeCheckErrorTest
 
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
-        return AssignHelper.getAssignmentErrorTestStrings("=", true);
+        List<Object[]> collection = new ArrayList<>();
+
+        collection.addAll(IdentityHelper.getIdentityTestStrings("instanceof", false));
+
+        return collection;
+
     }
 }

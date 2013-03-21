@@ -18,7 +18,6 @@ package ch.tutteli.tsphp.typechecker.test.typecheck;
 
 import ch.tutteli.tsphp.typechecker.error.ReferenceErrorDto;
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ATypeCheckErrorTest;
-import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AssignHelper;
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.IdentityHelper;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,10 +32,10 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class VariableInitOperatorErrorTest extends ATypeCheckErrorTest
+public class IdentityOperatorErrorTest extends ATypeCheckErrorTest
 {
 
-    public VariableInitOperatorErrorTest(String testString, ReferenceErrorDto[] expectedLinesAndPositions) {
+    public IdentityOperatorErrorTest(String testString, ReferenceErrorDto[] expectedLinesAndPositions) {
         super(testString, expectedLinesAndPositions);
     }
 
@@ -47,6 +46,9 @@ public class VariableInitOperatorErrorTest extends ATypeCheckErrorTest
 
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
-        return AssignHelper.getAssignmentErrorTestStrings("=", true);
+        List<Object[]> collection = new ArrayList<>();
+        collection.addAll(IdentityHelper.getIdentityErrorTestStrings("===", false));
+        collection.addAll(IdentityHelper.getIdentityErrorTestStrings("!==", false));
+        return collection;
     }
 }

@@ -18,9 +18,9 @@ package ch.tutteli.tsphp.typechecker.test.typecheck;
 
 import ch.tutteli.tsphp.typechecker.error.ReferenceErrorDto;
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ATypeCheckErrorTest;
-import java.util.ArrayList;
+import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AssignHelper;
+import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.IdentityHelper;
 import java.util.Collection;
-import java.util.List;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,36 +45,6 @@ public class AssignmentOperatorErrorTest extends ATypeCheckErrorTest
 
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
-        List<Object[]> collection = new ArrayList<>();
-        ReferenceErrorDto[] errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto("=", 2, 1)};
-
-        String[] types = new String[]{"bool", "bool?", "int", "int?", "float", "float?", "string", "string?",
-            "array", "resource", "ErrorException", "Exception"};
-
-        for (int i = 0; i < types.length - 1; ++i) {
-            collection.add(new Object[]{
-                types[i + 1] + " $b; " + types[i] + " $a;$a\n = $b;",
-                errorDto
-            });
-        }
-        collection.add(new Object[]{
-            types[0] + " $b; "+types[types.length - 1] + " $a;$a\n = $b;",
-            errorDto
-        });
-
-        types = new String[]{"bool", "bool?", "int", "int?", "float", "float?", "string", "string?",
-            "array", "ErrorException", "Exception"};
-        for (String type : types) {
-            collection.add(new Object[]{
-                type + " $b; cast resource $a;$a\n = $b;",
-                errorDto
-            });
-            collection.add(new Object[]{
-                type + " $b; resource $a; $a\n =() $b;",
-                errorDto
-            });
-        }
-
-        return collection;
+       return AssignHelper.getAssignmentErrorTestStrings("=", false);
     }
 }

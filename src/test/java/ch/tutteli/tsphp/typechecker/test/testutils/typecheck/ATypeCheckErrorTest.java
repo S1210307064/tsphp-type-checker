@@ -58,13 +58,13 @@ public class ATypeCheckErrorTest extends ATypeCheckTest
         for (int i = 0; i < errorDtos.length; ++i) {
             ReferenceException exception = (ReferenceException) exceptions.get(i);
 
-            Assert.assertEquals(errorMessagePrefix + " failed. wrong identifier.",
+            Assert.assertEquals(errorMessagePrefix + " - " + errorDtos[i].identifier + " failed. wrong identifier.",
                     errorDtos[i].identifier, exception.getDefinition().getText());
 
-            Assert.assertEquals(errorMessagePrefix + " failed. wrong line.",
+            Assert.assertEquals(errorMessagePrefix + " - " + errorDtos[i].identifier + " failed. wrong line.",
                     errorDtos[i].line, exception.getDefinition().getLine());
 
-            Assert.assertEquals(errorMessagePrefix + " failed. wrong position.",
+            Assert.assertEquals(errorMessagePrefix + " - " + errorDtos[i].identifier + " failed. wrong position.",
                     errorDtos[i].position, exception.getDefinition().getCharPositionInLine());
         }
     }

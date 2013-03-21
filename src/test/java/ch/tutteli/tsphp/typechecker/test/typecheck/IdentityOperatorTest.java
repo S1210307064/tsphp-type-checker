@@ -18,9 +18,9 @@ package ch.tutteli.tsphp.typechecker.test.typecheck;
 
 import ch.tutteli.tsphp.typechecker.test.testutils.TypeHelper;
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest;
+import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.IdentityHelper;
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.TypeCheckStruct;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import org.antlr.runtime.RecognitionException;
@@ -48,86 +48,9 @@ public class IdentityOperatorTest extends AOperatorTypeCheckTest
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
         List<Object[]> collection = new ArrayList<>();
-        String[] operators = new String[]{"===", "!=="};
 
-
-        String[] scalarTypes = TypeHelper.getScalarTypes();
-        String[] nullableScalarTypes = TypeHelper.getNullableScalarTypes();
-
-        String[] nullableTypes = new String[]{"array", "resource"};
-
-        for (String operator : operators) {
-            for (String type : scalarTypes) {
-                for (String type2 : scalarTypes) {
-                    collection.add(new Object[]{
-                                type + " $a; " + type2 + " $b; $a " + operator + " $b;",
-                                new TypeCheckStruct[]{struct(operator, Bool, 1, 2, 0)}
-                            });
-                }
-                collection.add(new Object[]{
-                            type + " $a; object $b; $a " + operator + " $b;",
-                            new TypeCheckStruct[]{struct(operator, Bool, 1, 2, 0)}
-                        });
-                collection.add(new Object[]{
-                            "object $a; " + type + " $b; $a " + operator + " $b;",
-                            new TypeCheckStruct[]{struct(operator, Bool, 1, 2, 0)}
-                        });
-            }
-            for (String type : nullableScalarTypes) {
-                for (String type2 : nullableScalarTypes) {
-                    collection.add(new Object[]{
-                                type + " $a; " + type2 + " $b; $a " + operator + " $b;",
-                                new TypeCheckStruct[]{struct(operator, Bool, 1, 2, 0)}
-                            });
-                }
-                collection.add(new Object[]{
-                            type + " $a; object $b; $a " + operator + " $b;",
-                            new TypeCheckStruct[]{struct(operator, Bool, 1, 2, 0)}
-                        });
-                collection.add(new Object[]{
-                            "object $a; " + type + " $b; $a " + operator + " $b;",
-                            new TypeCheckStruct[]{struct(operator, Bool, 1, 2, 0)}
-                        });
-                collection.add(new Object[]{
-                            type + " $a; $a " + operator + " null;",
-                            new TypeCheckStruct[]{struct(operator, Bool, 1, 1, 0)}
-                        });
-                collection.add(new Object[]{
-                            type + " $b; null " + operator + " $b;",
-                            new TypeCheckStruct[]{struct(operator, Bool, 1, 1, 0)}
-                        });
-            }
-
-            for (String type : nullableTypes) {
-                collection.add(new Object[]{
-                            type + " $a; " + type + "$b; $a " + operator + " $b;",
-                            new TypeCheckStruct[]{struct(operator, Bool, 1, 2, 0)}
-                        });
-                collection.add(new Object[]{
-                            type + " $a; object $b; $a " + operator + " $b;",
-                            new TypeCheckStruct[]{struct(operator, Bool, 1, 2, 0)}
-                        });
-                collection.add(new Object[]{
-                            "object $a; " + type + " $b; $a " + operator + " $b;",
-                            new TypeCheckStruct[]{struct(operator, Bool, 1, 2, 0)}
-                        });
-                collection.add(new Object[]{
-                            type + " $a; $a " + operator + " null;",
-                            new TypeCheckStruct[]{struct(operator, Bool, 1, 1, 0)}
-                        });
-                collection.add(new Object[]{
-                            type + " $b; null " + operator + " $b;",
-                            new TypeCheckStruct[]{struct(operator, Bool, 1, 1, 0)}
-                        });
-
-
-            }
-            collection.add(new Object[]{
-                        "object $a; object $b; $a " + operator + " $b;",
-                        new TypeCheckStruct[]{struct(operator, Bool, 1, 2, 0)}
-                    });
-        }
-
+        collection.addAll(IdentityHelper.getIdentityTestStrings("===", true));
+        collection.addAll(IdentityHelper.getIdentityTestStrings("!==", true));
 
         return collection;
 

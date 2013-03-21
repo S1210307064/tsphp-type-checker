@@ -147,6 +147,9 @@ public class ErrorMessageProvider extends AErrorMessageProvider
         
          typeCheckErrors.put("wrongTypeClone", "Line %line%|%pos% - the clone statement evaluates to "
                 + "a wrong type. Class-/Interface-type expected but %tFound% found.");
+         
+         typeCheckErrors.put("wrongTypeInstanceof", "Line %line%|%pos% - %id% evaluates to "
+                + "a wrong type. The instanceof operator expects a class-/Interface-type but %tFound% found.");
 
     }
 

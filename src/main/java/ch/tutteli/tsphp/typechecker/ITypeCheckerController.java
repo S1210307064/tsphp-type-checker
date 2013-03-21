@@ -123,4 +123,6 @@ public interface ITypeCheckerController
     void checkEcho(ITSPHPAst expression);
 
     void checkClone(ITSPHPAst clone, ITSPHPAst expression);
+    
+    void checkInstanceof(ITSPHPAst operator, ITSPHPAst expression, ITSPHPAst typeAst);
 }
