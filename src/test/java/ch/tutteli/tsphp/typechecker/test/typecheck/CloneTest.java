@@ -49,6 +49,7 @@ public class CloneTest extends AOperatorTypeCheckTest
          return Arrays.asList(new Object[][]{
             {"ErrorException $a; clone $a;", new TypeCheckStruct[]{struct("clone", ErrorException, 1, 1, 0)}},
             {"Exception $a; clone $a;", new TypeCheckStruct[]{struct("clone", Exception, 1, 1, 0)}},
-        });
+            {"object $a; clone (Exception) $a;", new TypeCheckStruct[]{struct("clone", Exception, 1, 1, 0)}},
+        }); 
     }
 }
