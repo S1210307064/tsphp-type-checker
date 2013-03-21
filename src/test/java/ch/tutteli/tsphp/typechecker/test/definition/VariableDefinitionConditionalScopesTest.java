@@ -62,27 +62,28 @@ public class VariableDefinitionConditionalScopesTest extends ADefinitionSymbolTe
             {"for(;;)", ";"},
             {"for(;;){", ";}"},
             {"while(true)", ";"},
-            {"while(true){", ";}"},
-            {"do ", ";while(true);"},
-            {"do{ ", ";}while(true);"},};
+            {"while(true){", ";}"},};
         for (String[] condition : conditions) {
             collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
                     condition[0], condition[1], "", "", defaultNamespace + "cScope.", null));
             collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase("namespace a{" + condition[0],
-                    condition[1] + "}", "", "", "\\a\\.\\a\\.cScope.", null));
+                    condition[1] + "}", "", "", "" + aNamespace + "cScope.", null));
         }
 
         collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
-                "try{ ", ";}catch(\\Exception $e){}", "", " \\.\\.\\Exception \\.\\.$e", 
+                "try{ ", ";}catch(\\Exception $e){}", "",
+                " " + defaultNamespace + "\\Exception " + defaultNamespace + "$e",
                 defaultNamespace + "cScope.", null));
         collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase("namespace a{try{ ",
-                ";}catch(\\Exception $e){}}", ""," \\a\\.\\a\\.\\Exception \\a\\.\\a\\.$e", 
-                "\\a\\.\\a\\.cScope.", null));
-        
+                ";}catch(\\Exception $e){}}", "", " " + aNamespace + "\\Exception " + aNamespace + "$e",
+                "" + aNamespace + "cScope.", null));
+
         collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
-                "try{}catch(\\Exception $e){", ";}", "\\.\\.\\Exception \\.\\.$e ","", defaultNamespace + "cScope.", null));
-        collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase("namespace a{" + "try{}catch(\\Exception $e){",
-               ";}}", "\\a\\.\\a\\.\\Exception \\a\\.\\a\\.$e ","",  "\\a\\.\\a\\.cScope.", null));
+                "try{}catch(\\Exception $e){", ";}",
+                defaultNamespace + "\\Exception " + defaultNamespace + "$e ", "", defaultNamespace + "cScope.", null));
+        collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
+                "namespace a{" + "try{}catch(\\Exception $e){",
+                ";}}", "" + aNamespace + "\\Exception " + aNamespace + "$e ", "", aNamespace + "cScope.", null));
 
         //definition in for  header
         collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
@@ -90,48 +91,55 @@ public class VariableDefinitionConditionalScopesTest extends ADefinitionSymbolTe
         collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase("namespace a{for(",
                 ";;){}}", "", "", aNamespace, null));
 
+        //definition in do while - do while is not a conditional scope
+        collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
+                "do ", ";while(true);", "", "", defaultNamespace, null));
+        collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
+                "namespace a{do{ ", ";}while(true);}", "", "", aNamespace, null));
+
+
 
         //definition in foreach header
         TypeHelper.getAllTypesInclModifier(
                 new IAdder()
-                {
-                    @Override
-                    public void add(String type, String typeExpected, SortedSet<Integer> modifiers) {
-                        String typeModifiers = ModifierHelper.getModifiers(modifiers);
-                        collection.add(new Object[]{
-                                    "foreach($a as " + type + " $v);",
-                                    defaultNamespace + typeExpected + " " + defaultNamespace + "$v" + typeModifiers
-                                });
-                        collection.add(new Object[]{
-                                    "namespace a{foreach($a as " + type + " $v){}}",
-                                    aNamespace + typeExpected + " " + aNamespace + "$v" + typeModifiers
-                                });
-                    }
+        {
+            @Override
+            public void add(String type, String typeExpected, SortedSet<Integer> modifiers) {
+                String typeModifiers = ModifierHelper.getModifiers(modifiers);
+                collection.add(new Object[]{
+                    "foreach($a as " + type + " $v);",
+                    defaultNamespace + "cScope." + typeExpected + " " + defaultNamespace + "cScope." + "$v" + typeModifiers
                 });
+                collection.add(new Object[]{
+                    "namespace a{foreach($a as " + type + " $v){}}",
+                    aNamespace + "cScope." + typeExpected + " " + aNamespace + "cScope." + "$v" + typeModifiers
+                });
+            }
+        });
         collection.add(
                 new Object[]{
-                    "foreach($a as string $k => object $v){}",
-                    defaultNamespace + "string " + defaultNamespace + "$k "
-                    + defaultNamespace + "object " + defaultNamespace + "$v"
-                });
+            "foreach($a as string $k => object $v){}",
+            defaultNamespace + "cScope.string " + defaultNamespace + "cScope.$k "
+            + defaultNamespace + "cScope.object " + defaultNamespace + "cScope.$v"
+        });
         collection.add(
                 new Object[]{
-                    "namespace a{foreach($a as string $k => object $v);}",
-                    aNamespace + "string " + aNamespace + "$k "
-                    + aNamespace + "object " + aNamespace + "$v"
-                });
+            "namespace a{foreach($a as string $k => object $v);}",
+            aNamespace + "cScope.string " + aNamespace + "cScope.$k "
+            + aNamespace + "cScope.object " + aNamespace + "cScope.$v"
+        });
 
         //definition in catch header
         String[] types = TypeHelper.getClassInterfaceTypes();
         for (String type : types) {
             collection.add(new Object[]{
-                        "try{}catch(" + type + " $e){}",
-                        defaultNamespace + type + " " + defaultNamespace + "$e"
-                    });
+                "try{}catch(" + type + " $e){}",
+                defaultNamespace + type + " " + defaultNamespace + "$e"
+            });
             collection.add(new Object[]{
-                        "namespace a{ try{}catch(" + type + " $e){}}",
-                        aNamespace + type + " " + aNamespace + "$e"
-                    });
+                "namespace a{ try{}catch(" + type + " $e){}}",
+                aNamespace + type + " " + aNamespace + "$e"
+            });
         }
         return collection;
     }

@@ -41,7 +41,7 @@ public class ConditionalScope extends AScope implements IConditionalScope
     @Override
     public boolean doubleDefinitionCheck(ISymbol symbol) {
         IScope scope = getEnclosingNonConditionalScope(symbol);
-        if(scope instanceof INamespaceScope){
+        if (scope instanceof INamespaceScope) {
             scope = scope.getEnclosingScope();
         }
         return ScopeHelperRegistry.get().doubleDefinitionCheck(scope.getSymbols(), symbol, new IAlreadyDefinedMethodCaller()
@@ -53,16 +53,16 @@ public class ConditionalScope extends AScope implements IConditionalScope
         });
     }
 
-    @Override
-    public ISymbol resolve(ITSPHPAst ast) {
-        return enclosingScope.resolve(ast);
-    }
-
     private IScope getEnclosingNonConditionalScope(ISymbol symbol) {
         IScope scope = symbol.getDefinitionAst().getScope();
         while (scope != null && scope instanceof IConditionalScope) {
             scope = scope.getEnclosingScope();
         }
         return scope;
+    }
+
+    @Override
+    public ISymbol resolve(ITSPHPAst ast) {
+        return enclosingScope.resolve(ast);
     }
 }

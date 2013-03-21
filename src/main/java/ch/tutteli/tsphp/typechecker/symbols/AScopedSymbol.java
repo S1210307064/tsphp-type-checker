@@ -43,7 +43,7 @@ public abstract class AScopedSymbol extends ASymbolWithModifier implements IScop
     }
 
     @Override
-    public Map<String,List<ISymbol>>  getSymbols() {
+    public Map<String,List<ISymbol>> getSymbols() {
         return members;
     }
 

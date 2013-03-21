@@ -61,6 +61,10 @@ public interface IErrorReporter extends ch.tutteli.tsphp.common.IErrorReporter
 
     DefinitionException objectExpected(ITSPHPAst callee, ITSPHPAst definitionAst);
 
+    DefinitionException variableDefinedInOtherConditionalScope(ITSPHPAst definitionAst, ITSPHPAst variable);
+
+    DefinitionException variableDefinedInConditionalScope(ITSPHPAst definitionAst, ITSPHPAst variable);
+
     ReferenceException unkownType(ITSPHPAst typeAst);
 
     ReferenceException interfaceExpected(ITSPHPAst typeAst);

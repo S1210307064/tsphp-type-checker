@@ -16,6 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker;
 
+import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
@@ -24,6 +25,7 @@ import ch.tutteli.tsphp.common.exceptions.ReferenceException;
 import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
+import ch.tutteli.tsphp.typechecker.scopes.IConditionalScope;
 import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IArrayTypeSymbol;
@@ -123,6 +125,36 @@ public class TypeCheckerController implements ITypeCheckerController
             }
         }
         return isNotUsedBefore;
+    }
+
+    @Override
+    public boolean checkOutOfConditionalScope(ITSPHPAst ast) {
+        boolean ok = true;
+        ISymbol symbol = ast.getSymbol();
+        if (symbol.getDefinitionScope() instanceof IConditionalScope) {
+            IScope currentScope = ast.getScope();
+            if (!(currentScope instanceof IConditionalScope)) {
+                ok = false;
+                ErrorReporterRegistry.get().variableDefinedInConditionalScope(ast.getSymbol().getDefinitionAst(), ast);
+            } else if (isNotDefinedInThisNorOuterScope(symbol, currentScope)) {
+                ok = false;
+                ErrorReporterRegistry.get().variableDefinedInOtherConditionalScope(symbol.getDefinitionAst(), ast);
+            }
+        }
+        return ok;
+    }
+
+    private boolean isNotDefinedInThisNorOuterScope(ISymbol symbol, IScope scope) {
+        boolean isNotDefinedInThisNorOuterScope = true;
+        IScope definitionScope = symbol.getDefinitionScope();
+        while (scope != null && scope instanceof IConditionalScope) {
+            if (scope == definitionScope) {
+                isNotDefinedInThisNorOuterScope = false;
+                break;
+            }
+            scope = scope.getEnclosingScope();
+        }
+        return isNotDefinedInThisNorOuterScope;
     }
 
     @Override

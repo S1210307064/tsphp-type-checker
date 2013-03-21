@@ -69,6 +69,7 @@ topdown
     	|	constructDeclaration
     	|	methodFunctionDeclaration
     	|	conditionalBlock
+    	|	foreachLoop
     
     		//symbols
 	|	constantDeclarationList
@@ -97,6 +98,7 @@ exitScope
 		|	METHOD_DECLARATION
 		|	Function
 		|	BLOCK_CONDITIONAL
+		|	Foreach
 		) 
 		{currentScope = currentScope.getEnclosingScope();}
 	;   
@@ -141,6 +143,11 @@ methodFunctionDeclaration
 	
 conditionalBlock
 	:	^(BLOCK_CONDITIONAL .*) 
+		{currentScope = definer.defineConditionalScope(currentScope); }	
+	;
+	
+foreachLoop
+	:	^(Foreach .*)
 		{currentScope = definer.defineConditionalScope(currentScope); }	
 	;
 	

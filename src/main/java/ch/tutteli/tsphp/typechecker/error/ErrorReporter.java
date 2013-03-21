@@ -23,7 +23,6 @@ import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.exceptions.DefinitionException;
 import ch.tutteli.tsphp.common.exceptions.ReferenceException;
-import ch.tutteli.tsphp.common.exceptions.TSPHPException;
 import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
 import ch.tutteli.tsphp.common.exceptions.UnsupportedOperationException;
 import ch.tutteli.tsphp.typechecker.AmbiguousCallException;
@@ -128,6 +127,16 @@ public class ErrorReporter implements IErrorReporter
     @Override
     public DefinitionException objectExpected(ITSPHPAst callee, ITSPHPAst actualType) {
         return addAndGetDefinitionException("objectExpected", callee, actualType);
+    }
+
+    @Override
+    public DefinitionException variableDefinedInOtherConditionalScope(ITSPHPAst definitionAst, ITSPHPAst variable) {
+        return addAndGetDefinitionException("variableDefinedInOtherConditionalScope", definitionAst, variable);
+    }
+
+    @Override
+    public DefinitionException variableDefinedInConditionalScope(ITSPHPAst definitionAst, ITSPHPAst variable) {
+        return addAndGetDefinitionException("variableDefinedInConditionalScope", definitionAst, variable);
     }
 
     private DefinitionException addAndGetDefinitionException(String key,

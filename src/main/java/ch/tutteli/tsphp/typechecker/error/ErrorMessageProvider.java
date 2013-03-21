@@ -44,7 +44,12 @@ public class ErrorMessageProvider extends AErrorMessageProvider
         definitionErrors.put("methodNotDefined", "Line %lineN%|%posN% - method %idN% is not defined in %id%");
         definitionErrors.put("memberNotDefined", "Line %lineN%|%posN% - class member %idN% is not defined in %id%");
         definitionErrors.put("objectExpected", "Line %lineN%|%posN% - object expected but %idN% is of type %id%");
-        definitionErrors.put("objectExpected", "Line %lineN%|%posN% - object expected but %idN% is of type %id%");
+        definitionErrors.put("variableDefinedInOtherConditionalScope", "Line %lineN%|%posN% - variable %idN% is "
+                + "defined in another conditional scope which is not an outer scope of the current conditional scope.\n"
+                + "The definition was on line %line%|%pos%");
+        definitionErrors.put("variableDefinedInConditionalScope", "Line %lineN%|%posN% - variable %idN% is defined in "
+                + "a nested conditional scope and can therefore not be used in the current (outer) scope.\n"
+                + "The definition was on line %line%|%pos% ");
     }
 
     @Override
