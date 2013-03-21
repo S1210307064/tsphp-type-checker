@@ -309,13 +309,13 @@ public class TypeCheckerController implements ITypeCheckerController
         if (symbol == null) {
             rewriteToAbsoluteNotFoundType(typeAst);
             ReferenceException ex = ErrorReporterRegistry.get().unkownType(typeAst);
-            symbol = symbolFactory.createErroneousTypeSymbol(typeAst, ex);
+            symbol = symbolFactory.createErroneousClassTypeSymbol(typeAst, ex);
 
         } else if (symbol instanceof IAliasTypeSymbol) {
 
             typeAst.setText(symbol.getName());
             ReferenceException ex = ErrorReporterRegistry.get().unkownType(typeAst);
-            symbol = symbolFactory.createErroneousTypeSymbol(symbol.getDefinitionAst(), ex);
+            symbol = symbolFactory.createErroneousClassTypeSymbol(symbol.getDefinitionAst(), ex);
         }
         return symbol;
     }
@@ -380,7 +380,7 @@ public class TypeCheckerController implements ITypeCheckerController
         IClassTypeSymbol classTypeSymbol = symbolResolver.getEnclosingClass(ast);
         if (classTypeSymbol == null) {
             ReferenceException ex = ErrorReporterRegistry.get().notInClass(ast);
-            classTypeSymbol = symbolFactory.createErroneousClassSymbol(ast, ex);
+            classTypeSymbol = symbolFactory.createErroneousClassTypeSymbol(ast, ex);
         }
         return classTypeSymbol;
     }
@@ -399,7 +399,7 @@ public class TypeCheckerController implements ITypeCheckerController
         IClassTypeSymbol parent = classTypeSymbol.getParent();
         if (parent == null) {
             TypeCheckerException ex = ErrorReporterRegistry.get().noParentClass(classTypeSymbol.getDefinitionAst());
-            parent = symbolFactory.createErroneousClassSymbol(ast, ex);
+            parent = symbolFactory.createErroneousClassTypeSymbol(ast, ex);
         }
         return parent;
     }

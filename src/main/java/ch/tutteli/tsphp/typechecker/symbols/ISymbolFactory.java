@@ -68,7 +68,7 @@ public interface ISymbolFactory
 
     IErroneousAccessSymbol createErroneousAccessSymbol(ITSPHPAst ast, TypeCheckerException exception);
 
-    IErroneousClassTypeSymbol createErroneousClassSymbol(ITSPHPAst ast, TypeCheckerException ex);
+    IErroneousClassTypeSymbol createErroneousClassTypeSymbol(ITSPHPAst ast, TypeCheckerException ex);
 
     IErroneousMethodSymbol createErroneousMethodSymbol(ITSPHPAst ast, TypeCheckerException ex);
 

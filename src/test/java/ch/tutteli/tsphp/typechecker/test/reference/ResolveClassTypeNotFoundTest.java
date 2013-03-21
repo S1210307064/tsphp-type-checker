@@ -84,7 +84,14 @@ public class ResolveClassTypeNotFoundTest extends AReferenceErrorTest
                             new ReferenceErrorDto("\\a\\b\\c\\d", 2, 1),
                             new ReferenceErrorDto("\\a\\b\\c\\d", 3, 1)
                         }
-                    }
+                    },
+                     //See bug TSPHP-417
+                    {
+                        "class a extends\n b{}",
+                        new ReferenceErrorDto[]{
+                            new ReferenceErrorDto("\\b", 2, 1),
+                        }
+                    },
                 }));
 
         return collection;

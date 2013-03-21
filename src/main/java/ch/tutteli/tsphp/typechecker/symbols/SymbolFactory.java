@@ -130,7 +130,7 @@ public class SymbolFactory implements ISymbolFactory
     }
 
     @Override
-    public IErroneousClassTypeSymbol createErroneousClassSymbol(ITSPHPAst ast, TypeCheckerException ex) {
+    public IErroneousClassTypeSymbol createErroneousClassTypeSymbol(ITSPHPAst ast, TypeCheckerException ex) {
         IMethodSymbol methodSymbol = createErroneousMethodSymbol(ast, ex);
         return new ErroneousClassTypeSymbol(ast, ex, methodSymbol);
     }
