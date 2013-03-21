@@ -59,8 +59,6 @@ public interface IErrorReporter extends ch.tutteli.tsphp.common.IErrorReporter
 
     DefinitionException memberNotDefined(ITSPHPAst callee, ITSPHPAst id);
 
-    DefinitionException objectExpected(ITSPHPAst callee, ITSPHPAst definitionAst);
-
     DefinitionException variableDefinedInOtherConditionalScope(ITSPHPAst definitionAst, ITSPHPAst variable);
 
     DefinitionException variableDefinedInConditionalScope(ITSPHPAst definitionAst, ITSPHPAst variable);
@@ -151,4 +149,8 @@ public interface IErrorReporter extends ch.tutteli.tsphp.common.IErrorReporter
     ReferenceException onlySingleValue(ITSPHPAst variableId, ITSPHPAst expression);
 
     ReferenceException onlyConstantValue(ITSPHPAst variableId, ITSPHPAst expression);
+
+    ReferenceException wrongTypeClone(ITSPHPAst clone, ITSPHPAst expression);
+
+    ReferenceException wrongTypeMethodCall(ITSPHPAst callee);
 }

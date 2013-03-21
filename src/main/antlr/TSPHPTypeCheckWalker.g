@@ -204,6 +204,7 @@ expression returns [ITypeSymbol type]
     	|  	symbol			{$type = $symbol.type;}
 	|	unaryOperator 		{$type = $unaryOperator.type;}
 	|	binaryOperator 		{$type = $binaryOperator.type;}
+	|	specialOperators	{$type = $specialOperators.type;}
  	|	^('@' expr=expression)	{$type = $expr.start.getEvalType();}
       	|	equalityOperator	{$type = $equalityOperator.type;}
       	|	assignOperator		{$type = $assignOperator.type;}
@@ -217,6 +218,7 @@ symbol returns [ITypeSymbol type]
 		|	^(METHOD_CALL_STATIC TYPE_NAME identifier=Identifier .)	
 		|	^(METHOD_CALL . identifier=Identifier .)
 		|	^(CLASS_STATIC_ACCESS . identifier=(CLASS_STATIC_ACCESS_VARIABLE_ID|CONSTANT))
+		|	^(CLASS_MEMBER_ACCESS . identifier=Identifier)
 		)
 		{$type = $identifier.getSymbol().getType();}		
 	;
@@ -323,13 +325,19 @@ allTypes
 	|	'resource'
 	|	'object'
 	|	TYPE_NAME
-		;
+	;
 
 
-specialOperators
+specialOperators returns [ITypeSymbol type]
 	:	^('?' condition=expression caseTrue=expression caseFalse=expression)
-	|	^('instanceof' variable=expression type=(TYPE_NAME|VariableId))
-    	|	^('new' type=TYPE_NAME args=.)
-    	|	^('clone' expression)
-    		//{controller.checkClone($expression.start);}
+	|	^('instanceof' variable=expression identifier=(TYPE_NAME|VariableId))
+    	|	^('new' identifier=TYPE_NAME args=.)
+    		{
+    		    type = (ITypeSymbol) $identifier.getSymbol();
+    		}
+    	|	^(nil='clone' expression)
+    		{
+    		    controller.checkClone($nil, $expression.start);
+    		    type = $expression.type;
+    		}
 	;

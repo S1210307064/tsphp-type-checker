@@ -276,16 +276,14 @@ public class TypeCheckerController implements ITypeCheckerController
         return methodSymbol;
     }
 
-    private IMethodSymbol resolveMethod(ITypeSymbol typeSymbol, ITSPHPAst callee, ITSPHPAst id) {
+    private IMethodSymbol resolveMethod(ITypeSymbol typeSymbol, ITSPHPAst callee, ITSPHPAst identifier) {
         IMethodSymbol methodSymbol;
         if (typeSymbol instanceof IPolymorphicTypeSymbol) {
             IPolymorphicTypeSymbol inheritableTypeSymbol = (IPolymorphicTypeSymbol) typeSymbol;
-            methodSymbol = (IMethodSymbol) inheritableTypeSymbol.resolveWithFallbackToParent(id);
+            methodSymbol = (IMethodSymbol) inheritableTypeSymbol.resolveWithFallbackToParent(identifier);
         } else {
-            DefinitionException exception = ErrorReporterRegistry.get().objectExpected(callee,
-                    typeSymbol.getDefinitionAst());
-
-            methodSymbol = symbolFactory.createErroneousMethodSymbol(id, exception);
+            ReferenceException exception = ErrorReporterRegistry.get().wrongTypeMethodCall(callee);
+            methodSymbol = symbolFactory.createErroneousMethodSymbol(identifier, exception);
         }
         return methodSymbol;
     }
@@ -1006,7 +1004,14 @@ public class TypeCheckerController implements ITypeCheckerController
                 ErrorReporterRegistry.get().wrongTypeEcho(expression, typeSymbol);
             }
         });
+    }
 
+    @Override
+    public void checkClone(ITSPHPAst clone, ITSPHPAst expression) {
+        ITypeSymbol typeSymbol = expression.getEvalType();
+        if (!(typeSymbol instanceof IPolymorphicTypeSymbol)) {
+            ErrorReporterRegistry.get().wrongTypeClone(clone, expression);
+        }
     }
 
     /**

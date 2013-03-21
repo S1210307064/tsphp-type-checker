@@ -43,7 +43,7 @@ public class ErrorMessageProvider extends AErrorMessageProvider
                 + "on line %line%|%pos%");
         definitionErrors.put("methodNotDefined", "Line %lineN%|%posN% - method %idN% is not defined in %id%");
         definitionErrors.put("memberNotDefined", "Line %lineN%|%posN% - class member %idN% is not defined in %id%");
-        definitionErrors.put("objectExpected", "Line %lineN%|%posN% - object expected but %idN% is of type %id%");
+       
         definitionErrors.put("variableDefinedInOtherConditionalScope", "Line %lineN%|%posN% - variable %idN% is "
                 + "defined in another conditional scope which is not an outer scope of the current conditional scope.\n"
                 + "The definition was on line %line%|%pos%");
@@ -141,6 +141,13 @@ public class ErrorMessageProvider extends AErrorMessageProvider
 
         typeCheckErrors.put("onlyConstantValue", "Line %line%|%pos% - Only a constant value of type %tExp% is allowed "
                 + "at this point. Non constant value of type %tFound% found.");
+        
+         typeCheckErrors.put("wrongTypeMethodCall", "Line %line%|%pos% - the callee evaluates to "
+                + "a wrong type. Class-/Interface-type expected but %tFound% found.");
+        
+         typeCheckErrors.put("wrongTypeClone", "Line %line%|%pos% - the clone statement evaluates to "
+                + "a wrong type. Class-/Interface-type expected but %tFound% found.");
+
     }
 
     @Override

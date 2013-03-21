@@ -38,7 +38,7 @@ public interface ITypeCheckerController
     boolean checkIsClass(ITSPHPAst typeAst, ITypeSymbol symbol);
 
     boolean checkForwardReference(ITSPHPAst ast);
-    
+
     boolean checkOutOfConditionalScope(ITSPHPAst ast);
 
     IVariableSymbol resolveConstant(ITSPHPAst ast);
@@ -121,4 +121,6 @@ public interface ITypeCheckerController
     void checkConstantInitialValue(ITSPHPAst variableId, ITSPHPAst expression);
 
     void checkEcho(ITSPHPAst expression);
+
+    void checkClone(ITSPHPAst clone, ITSPHPAst expression);
 }

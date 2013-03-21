@@ -16,10 +16,11 @@
  */
 package ch.tutteli.tsphp.typechecker.test.typecheck;
 
-import ch.tutteli.tsphp.typechecker.error.ReferenceErrorDto;
-import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ATypeCheckErrorTest;
-import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ConstantInitialValueHelper;
-import java.util.ArrayList;
+import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest;
+import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest.ErrorException;
+import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest.Exception;
+import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.TypeCheckStruct;
+import java.util.Arrays;
 import java.util.Collection;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
@@ -31,11 +32,11 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class ClassMemberInitErrorTest extends ATypeCheckErrorTest
+public class CloneTest extends AOperatorTypeCheckTest
 {
 
-    public ClassMemberInitErrorTest(String testString, ReferenceErrorDto[] expectedLinesAndPositions) {
-        super(testString, expectedLinesAndPositions);
+    public CloneTest(String testString, TypeCheckStruct[] struct) {
+        super(testString, struct);
     }
 
     @Test
@@ -45,15 +46,9 @@ public class ClassMemberInitErrorTest extends ATypeCheckErrorTest
 
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
-        Collection<Object[]> collection = 
-                ConstantInitialValueHelper.errorTestStrings("class A{", ";}", "$a", true, false);
-        
-        //cannot check this one yet, implementation of class member access is missing
-//        collection.add(new Object[]{
-//            "class A{private int $a;private int\n $b = $this->a;}",
-//            new ReferenceErrorDto[]{new ReferenceErrorDto("$b", 2, 1)}
-//        });
-
-        return collection;
+         return Arrays.asList(new Object[][]{
+            {"ErrorException $a; clone $a;", new TypeCheckStruct[]{struct("clone", ErrorException, 1, 1, 0)}},
+            {"Exception $a; clone $a;", new TypeCheckStruct[]{struct("clone", Exception, 1, 1, 0)}},
+        });
     }
 }

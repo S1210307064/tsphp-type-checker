@@ -14,13 +14,15 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.test.typecheck;
+package ch.tutteli.tsphp.typechecker.test.reference;
 
+import ch.tutteli.tsphp.typechecker.error.DefinitionErrorDto;
 import ch.tutteli.tsphp.typechecker.error.ReferenceErrorDto;
-import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ATypeCheckErrorTest;
-import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ConstantInitialValueHelper;
+import ch.tutteli.tsphp.typechecker.test.testutils.reference.AReferenceDefinitionErrorTest;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,10 +33,10 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class ClassMemberInitErrorTest extends ATypeCheckErrorTest
+public class MethodCallDefinitionErrorTest extends AReferenceDefinitionErrorTest
 {
 
-    public ClassMemberInitErrorTest(String testString, ReferenceErrorDto[] expectedLinesAndPositions) {
+    public MethodCallDefinitionErrorTest(String testString, DefinitionErrorDto[] expectedLinesAndPositions) {
         super(testString, expectedLinesAndPositions);
     }
 
@@ -45,15 +47,11 @@ public class ClassMemberInitErrorTest extends ATypeCheckErrorTest
 
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
-        Collection<Object[]> collection = 
-                ConstantInitialValueHelper.errorTestStrings("class A{", ";}", "$a", true, false);
-        
-        //cannot check this one yet, implementation of class member access is missing
-//        collection.add(new Object[]{
-//            "class A{private int $a;private int\n $b = $this->a;}",
-//            new ReferenceErrorDto[]{new ReferenceErrorDto("$b", 2, 1)}
-//        });
+        DefinitionErrorDto[] errorDto = new DefinitionErrorDto[]{new DefinitionErrorDto("$a", 2, 1, "foo()", 3, 1)};
+        return Arrays.asList(new Object[][]{
+            {"class A{} A\n $a; $a->\n foo();", errorDto},
+            {"class A{} class B extends A{function void foo(){}} B $b;A \n $a = $b; $a->\n foo();", errorDto},
+        });
 
-        return collection;
     }
 }

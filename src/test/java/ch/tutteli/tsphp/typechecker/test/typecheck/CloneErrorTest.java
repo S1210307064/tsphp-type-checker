@@ -18,9 +18,9 @@ package ch.tutteli.tsphp.typechecker.test.typecheck;
 
 import ch.tutteli.tsphp.typechecker.error.ReferenceErrorDto;
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ATypeCheckErrorTest;
-import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ConstantInitialValueHelper;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,10 +31,10 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class ClassMemberInitErrorTest extends ATypeCheckErrorTest
+public class CloneErrorTest extends ATypeCheckErrorTest
 {
 
-    public ClassMemberInitErrorTest(String testString, ReferenceErrorDto[] expectedLinesAndPositions) {
+    public CloneErrorTest(String testString, ReferenceErrorDto[] expectedLinesAndPositions) {
         super(testString, expectedLinesAndPositions);
     }
 
@@ -45,14 +45,16 @@ public class ClassMemberInitErrorTest extends ATypeCheckErrorTest
 
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
-        Collection<Object[]> collection = 
-                ConstantInitialValueHelper.errorTestStrings("class A{", ";}", "$a", true, false);
-        
-        //cannot check this one yet, implementation of class member access is missing
-//        collection.add(new Object[]{
-//            "class A{private int $a;private int\n $b = $this->a;}",
-//            new ReferenceErrorDto[]{new ReferenceErrorDto("$b", 2, 1)}
-//        });
+        List<Object[]> collection = new ArrayList<>();
+        ReferenceErrorDto[] errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto("clone", 2, 1)};
+
+
+        String[] types = new String[]{"bool", "bool?", "int", "int?", "float", "float?", "string", "string?",
+            "array", "resource","object"};
+
+        for (String type : types) {
+            collection.add(new Object[]{type + " $b;\n clone $b;", errorDto});
+        }
 
         return collection;
     }

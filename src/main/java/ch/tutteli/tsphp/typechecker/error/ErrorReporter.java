@@ -125,11 +125,6 @@ public class ErrorReporter implements IErrorReporter
     }
 
     @Override
-    public DefinitionException objectExpected(ITSPHPAst callee, ITSPHPAst actualType) {
-        return addAndGetDefinitionException("objectExpected", callee, actualType);
-    }
-
-    @Override
     public DefinitionException variableDefinedInOtherConditionalScope(ITSPHPAst definitionAst, ITSPHPAst variable) {
         return addAndGetDefinitionException("variableDefinedInOtherConditionalScope", definitionAst, variable);
     }
@@ -519,6 +514,26 @@ public class ErrorReporter implements IErrorReporter
                 new TypeCheckErrorDto(statement.getText(), statement.getLine(), statement.getCharPositionInLine(),
                 getAbsoluteTypeName(typeSymbol), getAbsoluteTypeName(expression.getEvalType())));
         ReferenceException exception = new ReferenceException(errorMessage, statement);
+        reportError(exception);
+        return exception;
+    }
+
+    @Override
+    public ReferenceException wrongTypeClone(ITSPHPAst clone, ITSPHPAst expression) {
+        return addAndGetClassInterfaceExpectedError("wrongTypeClone", clone, expression.getEvalType());
+    }
+
+    @Override
+    public ReferenceException wrongTypeMethodCall(ITSPHPAst callee) {
+        return addAndGetClassInterfaceExpectedError("wrongTypeMethodCall", callee, callee.getSymbol().getType());
+    }
+
+    private ReferenceException addAndGetClassInterfaceExpectedError(String key, ITSPHPAst operator,
+            ITypeSymbol typeSymbol) {
+        String errorMessage = errorMessageProvider.getTypeCheckErrorMessage(key,
+                new TypeCheckErrorDto(operator.getText(), operator.getLine(), operator.getCharPositionInLine(),
+                "class-/interface-type", getAbsoluteTypeName(typeSymbol)));
+        ReferenceException exception = new ReferenceException(errorMessage, operator);
         reportError(exception);
         return exception;
     }

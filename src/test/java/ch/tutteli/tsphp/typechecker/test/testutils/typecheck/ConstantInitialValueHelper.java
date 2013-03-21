@@ -39,6 +39,7 @@ public class ConstantInitialValueHelper
             boolean isNotConstant, boolean isParameter) {
         List<Object[]> collection = new ArrayList<>();
         ReferenceErrorDto[] errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto("=", 2, 1)};
+        ReferenceErrorDto[] errorDtoExpression = new ReferenceErrorDto[]{new ReferenceErrorDto("$a", 2, 1)};
 
         collection.addAll(Arrays.asList(new Object[][]{
             {
@@ -96,6 +97,15 @@ public class ConstantInitialValueHelper
             {
                 prefix + "string\n " + identifier + " = null" + appendix,
                 errorDto
+            },
+            //no expressions
+            {
+                prefix + "int\n " + identifier + " = 60*60" + appendix,
+                errorDtoExpression
+            },
+            {
+                prefix + "string\n " + identifier + " = 'hello '.' robert'" + appendix,
+                errorDtoExpression
             }
         }));
         if (isNotConstant) {
@@ -169,6 +179,23 @@ public class ConstantInitialValueHelper
                 {
                     prefix + "resource\n " + identifier + " = [1,2]" + appendix,
                     errorDto
+                },
+                //no expressions
+                {
+                    prefix + "ErrorException\n " + identifier + " = new ErrorException()" + appendix,
+                    errorDtoExpression
+                },
+                {
+                    prefix + "Exception\n " + identifier + " = new Exception()" + appendix,
+                    errorDtoExpression
+                },
+                {
+                    prefix + "Exception\n " + identifier + " = new ErrorException()" + appendix,
+                    errorDtoExpression
+                },
+                {
+                    prefix + "object\n " + identifier + " = new Exception()" + appendix,
+                    errorDtoExpression
                 },}));
         }
 
