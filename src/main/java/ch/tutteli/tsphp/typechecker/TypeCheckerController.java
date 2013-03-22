@@ -351,7 +351,7 @@ public class TypeCheckerController implements ITypeCheckerController
     }
 
     /**
-     * Return the absolute name of a type which could not be found (prefix the enclosing namespace)
+     * Return the absolute name of a type which could not be found (prefix the enclosing namespace).
      */
     private void rewriteToAbsoluteNotFoundType(ITSPHPAst typeAst) {
         String typeName = typeAst.getText();
@@ -403,12 +403,13 @@ public class TypeCheckerController implements ITypeCheckerController
     }
 
     private boolean isLoop(int type) {
-        //CHECKSTYLE IGNORE BooleanExpressionComplexity FOR NEXT 6 LINES
+        //CHECKSTYLE:OFF:BooleanExpressionComplexity
         return type == TSPHPDefinitionWalker.Switch
                 || type == TSPHPDefinitionWalker.For
                 || type == TSPHPDefinitionWalker.Foreach
                 || type == TSPHPDefinitionWalker.Do
                 || type == TSPHPDefinitionWalker.While;
+        //CHECKSTYLE:ON:BooleanExpressionComplexity
     }
 
     private IClassTypeSymbol getEnclosingClass(ITSPHPAst ast) {
@@ -498,8 +499,7 @@ public class TypeCheckerController implements ITypeCheckerController
     }
 
     private OverloadDto resolveBinaryOperator(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right)
-            throws AmbiguousCallException, TypeCheckerException {
-
+            throws TypeCheckerException {
 
         int tokenType = operator.getToken().getType();
         List<ITSPHPAst> actualParameterTypes = new ArrayList<>();
@@ -566,7 +566,7 @@ public class TypeCheckerController implements ITypeCheckerController
 
     //TODO code duplication !!!!!!!!!!!!!!!!!
     private OverloadDto resolveUnaryOperator(ITSPHPAst operator, ITSPHPAst expression)
-            throws AmbiguousCallException, TypeCheckerException {
+            throws TypeCheckerException {
 
         List<ITSPHPAst> actualParameters = new ArrayList<>();
         actualParameters.add(expression);
@@ -587,7 +587,8 @@ public class TypeCheckerController implements ITypeCheckerController
     }
 
     @Override
-    public ITypeSymbol getReturnTypeArrayAccess(ITSPHPAst statement, final ITSPHPAst expression, final ITSPHPAst index) {
+    public ITypeSymbol getReturnTypeArrayAccess(ITSPHPAst statement, final ITSPHPAst expression,
+            final ITSPHPAst index) {
 
         ITypeSymbol returnTypeArrayAccess;
 
@@ -978,7 +979,7 @@ public class TypeCheckerController implements ITypeCheckerController
     }
 
     private boolean isNotConstantValue(ITSPHPAst expression) {
-        boolean isNotConstantValue = true;
+        boolean isNotConstantValue;
         switch (expression.getType()) {
             case TSPHPDefinitionWalker.Bool:
             case TSPHPDefinitionWalker.Int:
@@ -995,6 +996,9 @@ public class TypeCheckerController implements ITypeCheckerController
                 break;
             case TSPHPDefinitionWalker.CLASS_STATIC_ACCESS:
                 isNotConstantValue = expression.getChild(1).getType() == TSPHPDefinitionWalker.CONSTANT;
+                break;
+            default:
+                isNotConstantValue = true;
         }
         return isNotConstantValue;
     }
@@ -1039,7 +1043,7 @@ public class TypeCheckerController implements ITypeCheckerController
     }
 
     /**
-     * A "Delegate" which represents a call of a method of an IErrrorReporter
+     * A "Delegate" which represents a call of a method of an IErrrorReporter.
      */
     private interface IErrorReporterCaller
     {

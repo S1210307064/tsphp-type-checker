@@ -77,7 +77,7 @@
     <property name="coverage.data" value="${coverage}/jacoco.exec" />
     <property name="checkstyle.config"
               value="${libdev}/checkstyle/cfg" />
-    <property name="pmd.config.file" value="${libdev}/pmd/cfg/pmd_hslu.xml" />
+    <property name="pmd.config" value="${libdev}/pmd/cfg" />
 
     <!-- define runtime libraries -->
     <path id="libset">
@@ -132,7 +132,6 @@
             <arg path="${antlr}"/>
             <arg value="-o"/>
             <arg path="${antlr.copyLocation}"/>
-            <arg path="${antlr}/TSPHPDefinitionWalker.g"/>
             <arg path="${antlr}/TSPHPReferenceWalker.g"/>
             <arg path="${antlr}/TSPHPTypeCheckWalker.g"/>
             <classpath>
@@ -314,11 +313,9 @@
     <!-- Target: checkstyle -->
     <!-- ================================================================== -->
     <target name="checkstyle" depends="init" description="checkstyle report">
-        <taskdef resource="checkstyletask.properties" classpathref="libsetdev" />
+        <taskdef resource="checkstyletask.properties" classpathref="libsetdev"/>
         <mkdir dir="${checkstyle}" />
-        <delete>
-            <fileset dir="${checkstyle.config}" includes="checkstyle.properties"/>
-        </delete> 
+        <delete file="${checkstyle.config}/checkstyle.properties"/>
         <copy file="${checkstyle.config}/checkstyle.properties.tpl" tofile="${checkstyle.config}/checkstyle.properties">
             <filterset>
                 <filter token="DIR" value="${checkstyle.config}"/>
@@ -342,7 +339,14 @@
                  classname="net.sourceforge.pmd.ant.PMDTask"
                  classpathref="libsetdev" />
         <mkdir dir="${pmd}" />
-        <pmd rulesetfiles="${pmd.config.file}">
+        <delete file="${pmd.config}/pmd_tsphp.xml"/>
+        <copy file="${pmd.config}/pmd_tsphp.xml.tpl" tofile="${pmd.config}/pmd_tsphp.xml">
+            <filterset>
+                <filter token="DIR" value="${pmd.config}"/>
+            </filterset>
+        </copy>
+        <replace file="${pmd.config}/pmd_tsphp.xml" token="\" value="/"/>
+        <pmd rulesetfiles="${pmd.config}/pmd_tsphp.xml">
             <formatter type="xml"
                        toFile="${pmd}/pmd.xml"
                        linkPrefix="../java2html/" />

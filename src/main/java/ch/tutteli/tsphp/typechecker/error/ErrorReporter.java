@@ -277,14 +277,15 @@ public class ErrorReporter implements IErrorReporter
         return exception;
     }
 
-    private void addReturnTypes(List<List<String>> returnTypes, List<CastingDto> castingDtos, String startType, String endType) {
+    private void addReturnTypes(List<List<String>> returnTypes, List<CastingDto> castingDtos,
+            String startType, String endType) {
         for (CastingDto castingDto : castingDtos) {
             returnTypes.add(getReturnTypes(castingDto, startType, endType));
         }
     }
 
     private List<String> getReturnTypes(CastingDto castingDto, String startType, String endType) {
-        List<String> returnTypes = new ArrayList<>(castingDto.castingMethods.size() + 3);
+        List<String> returnTypes = new ArrayList<>();
         returnTypes.add(startType);
         for (ICastingMethod castingMethod : castingDto.castingMethods) {
             ITypeSymbol parentTypeSymbol = castingMethod.getParentTypeWhichProvidesCast();
@@ -438,7 +439,8 @@ public class ErrorReporter implements IErrorReporter
     }
 
     @Override
-    public ReferenceException wrongTypeForeach(ITSPHPAst foreachRoot, ITSPHPAst array, IArrayTypeSymbol arrayTypeSymbol) {
+    public ReferenceException wrongTypeForeach(ITSPHPAst foreachRoot, ITSPHPAst array,
+            IArrayTypeSymbol arrayTypeSymbol) {
         return addAndGetStatementTypeCheckError("wrongTypForeach", foreachRoot, array, arrayTypeSymbol);
     }
 
@@ -478,7 +480,8 @@ public class ErrorReporter implements IErrorReporter
     }
 
     @Override
-    public ReferenceException noReturnValueExpected(ITSPHPAst returnRoot, ITSPHPAst expression, ITypeSymbol typeSymbol) {
+    public ReferenceException noReturnValueExpected(ITSPHPAst returnRoot, ITSPHPAst expression,
+            ITypeSymbol typeSymbol) {
         return addAndGetStatementTypeCheckError("noReturnValueExpected", returnRoot, expression, typeSymbol);
     }
 

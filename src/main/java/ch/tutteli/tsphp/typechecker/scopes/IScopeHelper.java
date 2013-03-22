@@ -42,7 +42,8 @@ public interface IScopeHelper
     boolean doubleDefinitionCheck(ISymbol firstDefinition, ISymbol symbolToCheck,
             IAlreadyDefinedMethodCaller errorMethodCaller);
 
-    IGlobalNamespaceScope getCorrespondingGlobalNamespace(ILowerCaseStringMap<IGlobalNamespaceScope> globalNamespaceScopes, String typeName);
+    IGlobalNamespaceScope getCorrespondingGlobalNamespace(
+            ILowerCaseStringMap<IGlobalNamespaceScope> globalNamespaceScopes, String typeName);
 
     ISymbol resolve(IScope scope, ITSPHPAst typeAst);
 }

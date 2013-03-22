@@ -20,7 +20,7 @@ import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
 
 /**
- * Marker interface for erroneous symbols
+ * Marker interface for erroneous symbols.
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 public interface IErroneousSymbol extends ISymbol

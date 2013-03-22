@@ -31,16 +31,16 @@ public class ScalarTypeSymbol extends ATypeSymbol implements IScalarTypeSymbol
     private int tokenType;
     private boolean isNullable;
 
-    public ScalarTypeSymbol(String name, Set<ITypeSymbol> parentTypeSymbol, int theTokenType, boolean isNullable) {
+    public ScalarTypeSymbol(String name, Set<ITypeSymbol> parentTypeSymbol, int theTokenType, boolean isItNullable) {
         super(null, name, parentTypeSymbol);
         tokenType = theTokenType;
-        this.isNullable = isNullable;
+        isNullable = isItNullable;
     }
 
-    public ScalarTypeSymbol(String name, ITypeSymbol parentTypeSymbol, int theTokenType, boolean isNullable) {
+    public ScalarTypeSymbol(String name, ITypeSymbol parentTypeSymbol, int theTokenType, boolean isItNullable) {
         super(null, name, parentTypeSymbol);
         tokenType = theTokenType;
-        this.isNullable = isNullable;
+        isNullable = isItNullable;
     }
 
     @Override

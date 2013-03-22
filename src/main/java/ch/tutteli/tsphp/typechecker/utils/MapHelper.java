@@ -24,13 +24,13 @@ import java.util.Map;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class MapHelper
+public final class MapHelper
 {
 
     private MapHelper() {
     }
 
-    static public <TKey, TValue> void addToListMap(Map<TKey, List<TValue>> map, TKey key, TValue value) {
+    public static <TKey, TValue> void addToListMap(Map<TKey, List<TValue>> map, TKey key, TValue value) {
         if (map.containsKey(key)) {
             map.get(key).add(value);
         } else {

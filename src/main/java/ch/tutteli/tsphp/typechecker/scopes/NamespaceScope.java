@@ -75,7 +75,8 @@ public class NamespaceScope extends AScope implements INamespaceScope
 
     @Override
     public boolean useDefinitionCheck(IAliasSymbol symbol) {
-        boolean isNotDoubleDefined = ScopeHelperRegistry.get().doubleDefinitionCheck(usesCaseInsensitive.get(symbol.getName()).get(0), symbol);
+        boolean isNotDoubleDefined = ScopeHelperRegistry.get().doubleDefinitionCheck(
+                usesCaseInsensitive.get(symbol.getName()).get(0), symbol);
         return isNotDoubleDefined && isNotAlreadyDefinedAsType(symbol);
 
     }
@@ -93,7 +94,7 @@ public class NamespaceScope extends AScope implements INamespaceScope
         boolean hasNoTypeNameClash = typeSymbol == null;
         if (!hasNoTypeNameClash) {
             boolean isUseDefinedEarlier = useDefinition.isDefinedEarlierThan(typeSymbol.getDefinitionAst());
-            boolean isUseInDifferentNamespaceStatement = !typeSymbol.getDefinitionScope().equals(this);
+            boolean isUseInDifferentNamespaceStatement = typeSymbol.getDefinitionScope() != this;
 
             //There is no type name clash in the following situation: namespace{use a as b;} namespace{ class b{}}
             //because: use is defined earlier and the use statement is in a different namespace statement

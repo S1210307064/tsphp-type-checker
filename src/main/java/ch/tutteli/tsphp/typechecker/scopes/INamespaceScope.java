@@ -17,7 +17,6 @@
 package ch.tutteli.tsphp.typechecker.scopes;
 
 import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IInterfaceTypeSymbol;

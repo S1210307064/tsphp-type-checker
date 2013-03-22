@@ -43,7 +43,7 @@ public class ErrorMessageProvider extends AErrorMessageProvider
                 + "on line %line%|%pos%");
         definitionErrors.put("methodNotDefined", "Line %lineN%|%posN% - method %idN% is not defined in %id%");
         definitionErrors.put("memberNotDefined", "Line %lineN%|%posN% - class member %idN% is not defined in %id%");
-       
+
         definitionErrors.put("variableDefinedInOtherConditionalScope", "Line %lineN%|%posN% - variable %idN% is "
                 + "defined in another conditional scope which is not an outer scope of the current conditional scope.\n"
                 + "The definition was on line %line%|%pos%");
@@ -56,7 +56,8 @@ public class ErrorMessageProvider extends AErrorMessageProvider
     protected void loadReferenceErrorMessages() {
         referenceErrors = new HashMap<>();
         referenceErrors.put("unkownType", "Line %line%|%pos% - The type \"%id%\" could not be resolved.");
-        referenceErrors.put("interfaceExpected", "Line %line%|%pos% - Interface expected, \"%id%\" is not an interface.");
+        referenceErrors.put("interfaceExpected", "Line %line%|%pos% - Interface expected, "
+                + "\"%id%\" is not an interface.");
         referenceErrors.put("classExpected", "Line %line%|%pos% - class expected, \"%id%\" is not a class.");
         referenceErrors.put("variableExpected", "Line %line%|%pos% - assignments can only be made to variables,"
                 + " \"%id%\" is not a variable.");
@@ -141,14 +142,14 @@ public class ErrorMessageProvider extends AErrorMessageProvider
 
         typeCheckErrors.put("onlyConstantValue", "Line %line%|%pos% - Only a constant value of type %tExp% is allowed "
                 + "at this point. Non constant value of type %tFound% found.");
-        
-         typeCheckErrors.put("wrongTypeMethodCall", "Line %line%|%pos% - the callee evaluates to "
+
+        typeCheckErrors.put("wrongTypeMethodCall", "Line %line%|%pos% - the callee evaluates to "
                 + "a wrong type. Class-/Interface-type expected but %tFound% found.");
-        
-         typeCheckErrors.put("wrongTypeClone", "Line %line%|%pos% - the clone statement evaluates to "
+
+        typeCheckErrors.put("wrongTypeClone", "Line %line%|%pos% - the clone statement evaluates to "
                 + "a wrong type. Class-/Interface-type expected but %tFound% found.");
-         
-         typeCheckErrors.put("wrongTypeInstanceof", "Line %line%|%pos% - %id% evaluates to "
+
+        typeCheckErrors.put("wrongTypeInstanceof", "Line %line%|%pos% - %id% evaluates to "
                 + "a wrong type. The instanceof operator expects a class-/Interface-type but %tFound% found.");
 
     }

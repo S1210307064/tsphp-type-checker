@@ -17,11 +17,8 @@
 package ch.tutteli.tsphp.typechecker.symbols;
 
 import ch.tutteli.tsphp.common.IScope;
-import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
-import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
-import ch.tutteli.tsphp.typechecker.scopes.ScopeHelperRegistry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;

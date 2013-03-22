@@ -20,10 +20,13 @@ package ch.tutteli.tsphp.typechecker.scopes;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class ScopeHelperRegistry
+public final class ScopeHelperRegistry
 {
 
     private static IScopeHelper scopeHelper;
+
+    private ScopeHelperRegistry() {
+    }
 
     public static IScopeHelper get() {
         return scopeHelper;

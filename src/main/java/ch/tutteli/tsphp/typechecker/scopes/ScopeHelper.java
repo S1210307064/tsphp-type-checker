@@ -65,7 +65,8 @@ public class ScopeHelper implements IScopeHelper
     }
 
     @Override
-    public IGlobalNamespaceScope getCorrespondingGlobalNamespace(ILowerCaseStringMap<IGlobalNamespaceScope> globalNamespaceScopes, String typeName) {
+    public IGlobalNamespaceScope getCorrespondingGlobalNamespace(
+            ILowerCaseStringMap<IGlobalNamespaceScope> globalNamespaceScopes, String typeName) {
         int lastBackslashPosition = typeName.lastIndexOf("\\") + 1;
         String namespaceName = typeName.substring(0, lastBackslashPosition);
         return globalNamespaceScopes.get(namespaceName);
@@ -81,6 +82,9 @@ public class ScopeHelper implements IScopeHelper
         return symbol;
     }
 
+    /**
+     * Represents a delegate which calls the appropriate method on ErrorReporter.
+     */
     private class StandardAlreadyDefinedMethodCaller implements IAlreadyDefinedMethodCaller
     {
 

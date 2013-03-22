@@ -23,7 +23,7 @@ import java.util.SortedSet;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class ModifierHelper
+public final class ModifierHelper
 {
 
     private ModifierHelper() {
@@ -31,7 +31,7 @@ public class ModifierHelper
 
     public static String getModifiers(SortedSet modifiers) {
         String typeModifiers;
-        if (modifiers==null || modifiers.size() == 0) {
+        if (modifiers == null || modifiers.size() == 0) {
             typeModifiers = "";
         } else {
             typeModifiers = Arrays.toString(modifiers.toArray());

@@ -20,7 +20,7 @@ package ch.tutteli.tsphp.typechecker.error;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class ErrorReporterRegistry
+public final class ErrorReporterRegistry
 {
 
     private static IErrorReporter errorHelper;

@@ -36,9 +36,10 @@ import java.util.Set;
 public abstract class AScopedTypeSymbol extends AScopedSymbol implements ICaseInsensitiveScope, IPolymorphicTypeSymbol
 {
 
-    private boolean isObjectTheParentTypeSymbol = false;
     protected Set<ITypeSymbol> parentTypeSymbols = new HashSet<>();
     protected ILowerCaseStringMap<List<ISymbol>> symbolsCaseInsensitive = new LowerCaseStringMap<>();
+    
+    private boolean isObjectTheParentTypeSymbol = false;
 
     public AScopedTypeSymbol(ITSPHPAst definitionAst, Set<Integer> modifiers, String name, IScope enclosingScope,
             ITypeSymbol theParentTypeSymbol) {
