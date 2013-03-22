@@ -144,7 +144,9 @@ public interface IErrorReporter extends ch.tutteli.tsphp.common.IErrorReporter
 
     ReferenceException wrongTypeReturn(ITSPHPAst returnRoot, ITSPHPAst expression, ITypeSymbol typeSymbol);
 
-    ReferenceException wrongTypeVariableId(ITSPHPAst variableId, ITSPHPAst expression, ITypeSymbol typeSymbol);
+    ReferenceException wrongTypeTernaryCondition(ITSPHPAst operator, ITSPHPAst condition, ITypeSymbol typeExpected);
+
+    ReferenceException wrongTypeTernaryCases(ITSPHPAst caseTrue, ITSPHPAst caseFalse);
 
     ReferenceException onlySingleValue(ITSPHPAst variableId, ITSPHPAst expression);
 

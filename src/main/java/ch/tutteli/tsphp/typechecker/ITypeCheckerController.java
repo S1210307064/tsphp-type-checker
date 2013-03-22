@@ -82,6 +82,9 @@ public interface ITypeCheckerController
 
     ITypeSymbol getUnaryOperatorEvalType(ITSPHPAst operator, ITSPHPAst expression);
 
+    ITypeSymbol getTernaryOperatorEvalType(ITSPHPAst operator, ITSPHPAst condition,
+            ITSPHPAst caseTrue, ITSPHPAst caseFalse);
+
     ITypeSymbol getReturnTypeArrayAccess(ITSPHPAst statement, ITSPHPAst expression, ITSPHPAst index);
 
     void checkEquality(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
@@ -123,6 +126,6 @@ public interface ITypeCheckerController
     void checkEcho(ITSPHPAst expression);
 
     void checkClone(ITSPHPAst clone, ITSPHPAst expression);
-    
+
     void checkInstanceof(ITSPHPAst operator, ITSPHPAst expression, ITSPHPAst typeAst);
 }

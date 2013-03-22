@@ -329,7 +329,9 @@ allTypes
 
 
 specialOperators returns [ITypeSymbol type]
-	:	^('?' condition=expression caseTrue=expression caseFalse=expression)
+	:	^(nil='?' condition=expression caseTrue=expression caseFalse=expression)
+		{$type = controller.getTernaryOperatorEvalType($nil, $condition.start, $caseTrue.start, $caseFalse.start);}
+		
 	|	^('instanceof' 
 			expr=expression 
 			(	identifier=TYPE_NAME 

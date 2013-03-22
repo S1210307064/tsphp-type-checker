@@ -137,6 +137,14 @@ public class ErrorMessageProvider extends AErrorMessageProvider
         typeCheckErrors.put("wrongTypeReturn", "Line %line%|%pos% - the return statement evaluates to wrong type. "
                 + "Type %tExp% or a sub-type expected but %tFound% found.");
 
+        typeCheckErrors.put("wrongTypeTernaryCondition", "Line %line%|%pos% - the condition of the operator ? "
+                + "(the ternary operator) evaluates to wrong type. "
+                + "Type %tExp% or a sub-type expected but %tFound% found.");
+
+        typeCheckErrors.put("wrongTypeTernaryCondition", "Line %line%|%pos% - the condition of the operator ? "
+                + "(the ternary operator) evaluates to wrong type. "
+                + "Type %tExp% or a sub-type expected but %tFound% found.");
+
         typeCheckErrors.put("onlySingleValue", "Line %line%|%pos% - expressions are not allowed at this point. Only "
                 + "a single constant value of type %tExp% can be used (type %tFound% found).");
 

@@ -496,8 +496,15 @@ public class ErrorReporter implements IErrorReporter
     }
 
     @Override
-    public ReferenceException wrongTypeVariableId(ITSPHPAst variableId, ITSPHPAst expression, ITypeSymbol typeSymbol) {
-        return addAndGetStatementTypeCheckError("wrongTypeVariableId", variableId, expression, typeSymbol);
+    public ReferenceException wrongTypeTernaryCondition(ITSPHPAst operator, ITSPHPAst condition,
+            ITypeSymbol typeExpected) {
+        return addAndGetStatementTypeCheckError("wrongTypeTernaryCondition", operator, condition, typeExpected);
+
+    }
+
+    @Override
+    public ReferenceException wrongTypeTernaryCases(ITSPHPAst caseTrue, ITSPHPAst caseFalse) {
+        return addAndGetStatementTypeCheckError("wrongTypeTernaryCases", caseFalse, caseFalse, caseTrue.getEvalType());
     }
 
     @Override

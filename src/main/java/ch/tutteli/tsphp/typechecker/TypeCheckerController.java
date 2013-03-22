@@ -587,6 +587,38 @@ public class TypeCheckerController implements ITypeCheckerController
     }
 
     @Override
+    public ITypeSymbol getTernaryOperatorEvalType(ITSPHPAst operator, ITSPHPAst condition,
+            ITSPHPAst caseTrue, ITSPHPAst caseFalse) {
+        ITypeSymbol typeSymbol = null;
+        checkTernaryCondition(operator, condition);
+        typeSymbol = caseTrue.getEvalType();
+
+        if (areNotSameAndNoneIsSubType(caseTrue, caseFalse)) {
+            ErrorReporterRegistry.get().wrongTypeTernaryCases(caseTrue, caseFalse);
+        } else {
+            ITypeSymbol caseFalseType = caseFalse.getEvalType();
+            int promotionLevel = overloadResolver.getPromotionLevelFromTo(typeSymbol, caseFalseType);
+            //caseFalse is parentType
+            if (promotionLevel > 0) {
+                typeSymbol = caseFalseType;
+            }
+        }
+
+        return typeSymbol;
+    }
+
+    private void checkTernaryCondition(final ITSPHPAst operator, final ITSPHPAst condition) {
+        final ITypeSymbol typeExpected = symbolTable.getBoolTypeSymbol();
+        checkIsSameOrSubType(condition, typeExpected, new IErrorReporterCaller()
+        {
+            @Override
+            public void callAppropriateMethod() {
+                ErrorReporterRegistry.get().wrongTypeTernaryCondition(operator, condition, typeExpected);
+            }
+        });
+    }
+
+    @Override
     public ITypeSymbol getReturnTypeArrayAccess(ITSPHPAst statement, final ITSPHPAst expression,
             final ITSPHPAst index) {
 

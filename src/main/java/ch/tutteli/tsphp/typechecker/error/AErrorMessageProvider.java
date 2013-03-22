@@ -67,12 +67,12 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
                 message = message.replace("%id%", "(" + dto.identifier + ")");
             }
 
-            message = message.replace("%line%", "" + dto.line);
-            message = message.replace("%pos%", "" + dto.position);
+            message = message.replace("%line%", Integer.toString(dto.line));
+            message = message.replace("%pos%", Integer.toString(dto.position));
 
             message = message.replace("%idN%", dto.identifierNewDefinition);
-            message = message.replace("%lineN%", "" + dto.lineNewDefinition);
-            message = message.replace("%posN%", "" + dto.positionNewDefinition);
+            message = message.replace("%lineN%", Integer.toString(dto.lineNewDefinition));
+            message = message.replace("%posN%", Integer.toString(dto.positionNewDefinition));
 
         } else {
             message = getStandardDefinitionErrorMessage(key, dto);
@@ -88,9 +88,8 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
         }
         if (referenceErrors.containsKey(key)) {
             message = referenceErrors.get(key);
-            message = message.replace("%id%", "" + dto.identifier);
-            message = message.replace("%line%", "" + dto.line);
-            message = message.replace("%pos%", "" + dto.position);
+            message = replaceStandardPlaceholders(dto, message);
+
         } else {
             message = getStandardReferenceErrorMessage(key, dto);
         }
@@ -105,9 +104,8 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
         }
         if (wrongArgumentTypeErrors.containsKey(key)) {
             message = wrongArgumentTypeErrors.get(key);
-            message = message.replace("%id%", "" + dto.identifier);
-            message = message.replace("%line%", "" + dto.line);
-            message = message.replace("%pos%", "" + dto.position);
+            message = replaceStandardPlaceholders(dto, message);
+
             message = message.replace("%aParams%", Arrays.toString(dto.actualParameterTypes));
             message = message.replace("%overloads%", getOverloadSignatures(dto.possibleOverloads));
         } else {
@@ -124,9 +122,8 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
         }
         if (typeCheckErrors.containsKey(key)) {
             message = typeCheckErrors.get(key);
-            message = message.replace("%id%", "" + dto.identifier);
-            message = message.replace("%line%", "" + dto.line);
-            message = message.replace("%pos%", "" + dto.position);
+            message = replaceStandardPlaceholders(dto, message);
+
             message = message.replace("%tExp%", dto.typeExpected);
             message = message.replace("%tFound%", dto.typeFound);
         } else {
@@ -143,9 +140,8 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
         }
         if (ambiguousCastsErrors.containsKey(key)) {
             message = ambiguousCastsErrors.get(key);
-            message = message.replace("%id%", "" + dto.identifier);
-            message = message.replace("%line%", "" + dto.line);
-            message = message.replace("%pos%", "" + dto.position);
+            message = replaceStandardPlaceholders(dto, message);
+
             message = message.replace("%LHS%", getCastsSequence(dto.leftToRightCasts));
             message = message.replace("%RHS%", getCastsSequence(dto.rightToLeftCasts));
             message = message.replace("%ambLHS%", getAmbiguousCastsSequences(dto.leftAmbiguouities));
@@ -154,6 +150,12 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
             message = getStandardAmbiguousCastsErrorMessage(key, dto);
         }
         return message;
+    }
+
+    private String replaceStandardPlaceholders(ReferenceErrorDto dto, String message) {
+        message = message.replace("%id%", dto.identifier);
+        message = message.replace("%line%", Integer.toString(dto.line));
+        return message.replace("%pos%", Integer.toString(dto.position));
     }
 
     protected String getOverloadSignatures(List<List<String>> ambiguousFormalParameterTypes) {
