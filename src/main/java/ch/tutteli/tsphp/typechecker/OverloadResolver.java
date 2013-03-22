@@ -132,8 +132,8 @@ public class OverloadResolver implements IOverloadResolver
         int promotionLevel = getPromotionLevelFromToConsiderNull(actualParameter, formalParameter);
         if (isSameOrParentType(promotionLevel)) {
             castingDto = new CastingDto(promotionLevel, 0, null, actualParameter);
-        } //null is castable to everything with the standard casting operator
-        else if (actualParameter.getEvalType() instanceof INullTypeSymbol) {
+        } else if (actualParameter.getEvalType() instanceof INullTypeSymbol) {
+            //null is castable to everything with the standard casting operator
             castingDto = getStandardCastingDto(actualParameter, formalParameterType, 0, 1);
         } else {
             //check if actual parameter type is parent of formal parameter type
@@ -198,7 +198,8 @@ public class OverloadResolver implements IOverloadResolver
 
         List<CastingDto> dtos = new ArrayList<>();
         Map<ITypeSymbol, PromotionExplicitCastingLevelDto> visitedTypes = new HashMap<>();
-        ExplicitCastingDto dto = new ExplicitCastingDto(0, 0, formalParameter, dtos, actualParameter.getEvalType(), visitedTypes);
+        ExplicitCastingDto dto = new ExplicitCastingDto(0, 0, formalParameter, dtos,
+                actualParameter.getEvalType(), visitedTypes);
 
         CastingDto castingDto = getCastingDtoFromExplicitCasting(dto);
         if (castingDto != null) {
@@ -315,7 +316,7 @@ public class OverloadResolver implements IOverloadResolver
 
     private List<CastingDto> getMostSpecificExplicitCast(List<CastingDto> castingDtos) {
 
-        List<CastingDto> castings = new ArrayList<>();;
+        List<CastingDto> castings = new ArrayList<>();
 
         CastingDto mostSpecificDto = castingDtos.get(0);
 

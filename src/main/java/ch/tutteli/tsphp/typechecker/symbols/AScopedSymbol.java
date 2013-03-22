@@ -35,7 +35,7 @@ public abstract class AScopedSymbol extends ASymbolWithModifier implements IScop
 {
 
     protected IScope enclosingScope;
-    protected Map<String,List<ISymbol>> members = new LowerCaseStringMap<>();
+    protected Map<String, List<ISymbol>> members = new LowerCaseStringMap<>();
 
     public AScopedSymbol(ITSPHPAst definitionAst, Set<Integer> modifiers, String name, IScope theEnclosingScope) {
         super(definitionAst, modifiers, name);
@@ -43,7 +43,7 @@ public abstract class AScopedSymbol extends ASymbolWithModifier implements IScop
     }
 
     @Override
-    public Map<String,List<ISymbol>> getSymbols() {
+    public Map<String, List<ISymbol>> getSymbols() {
         return members;
     }
 

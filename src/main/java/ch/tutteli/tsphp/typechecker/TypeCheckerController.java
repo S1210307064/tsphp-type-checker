@@ -393,17 +393,22 @@ public class TypeCheckerController implements ITypeCheckerController
         List<ITSPHPAst> ancestors = (List<ITSPHPAst>) root.getAncestors();
         for (ITSPHPAst ancestor : ancestors) {
             int type = ancestor.getType();
-            if (type == TSPHPDefinitionWalker.Switch
-                    || type == TSPHPDefinitionWalker.For
-                    || type == TSPHPDefinitionWalker.Foreach
-                    || type == TSPHPDefinitionWalker.Do
-                    || type == TSPHPDefinitionWalker.While) {
+            if (isLoop(type)) {
                 ++count;
             }
         }
         if (count < levels) {
             ErrorReporterRegistry.get().toManyBreakContinueLevels(root);
         }
+    }
+
+    private boolean isLoop(int type) {
+        //CHECKSTYLE IGNORE BooleanExpressionComplexity FOR NEXT 6 LINES
+        return type == TSPHPDefinitionWalker.Switch
+                || type == TSPHPDefinitionWalker.For
+                || type == TSPHPDefinitionWalker.Foreach
+                || type == TSPHPDefinitionWalker.Do
+                || type == TSPHPDefinitionWalker.While;
     }
 
     private IClassTypeSymbol getEnclosingClass(ITSPHPAst ast) {

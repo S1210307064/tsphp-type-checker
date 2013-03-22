@@ -305,7 +305,8 @@ public class SymbolTable implements ISymbolTable
         return createParameter(parameterName, type, null);
     }
 
-    private IVariableSymbol createParameter(String parameterName, ITypeSymbol type, Map<Integer, String> typeModifiers) {
+    private IVariableSymbol createParameter(String parameterName, ITypeSymbol type,
+            Map<Integer, String> typeModifiers) {
         ITSPHPAst typeModifier = astHelper.createAst(TYPE_MODIFIER, "tMod");
         addModifiers(typeModifier, typeModifiers);
         ITSPHPAst variableId = astHelper.createAst(VariableId, parameterName);
@@ -385,7 +386,8 @@ public class SymbolTable implements ISymbolTable
             {"<", LessThan},
             {"<=", LessEqualThan},
             {">", GreaterThan},
-            {">=", GreaterEqualThan},};
+            {">=", GreaterEqualThan}
+        };
         for (Object[] operator : operators) {
             IMethodSymbol methodSymbol = createInBuiltMethodSymbol((String) operator[0]);
             methodSymbol.addParameter(createParameter("left", floatNullableTypeSymbol));
@@ -401,7 +403,8 @@ public class SymbolTable implements ISymbolTable
             {"-", Minus},
             {"*", Multiply},
             {"/", Divide},
-            {"%", Modulo},};
+            {"%", Modulo}
+        };
 
         for (Object[] operator : operators) {
             addIntOperator(operator);
@@ -484,10 +487,9 @@ public class SymbolTable implements ISymbolTable
             {intTypeSymbol, boolNullableTypeSymbol},
             {floatTypeSymbol, boolNullableTypeSymbol},
             {floatTypeSymbol, intNullableTypeSymbol},
-            {stringTypeSymbol, boolNullableTypeSymbol}, 
-            {stringTypeSymbol, intNullableTypeSymbol}, 
-            {stringTypeSymbol, floatNullableTypeSymbol}, 
-            //
+            {stringTypeSymbol, boolNullableTypeSymbol},
+            {stringTypeSymbol, intNullableTypeSymbol},
+            {stringTypeSymbol, floatNullableTypeSymbol}, //
         };
 
         for (ITypeSymbol[] fromTo : castings) {

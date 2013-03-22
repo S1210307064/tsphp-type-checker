@@ -22,11 +22,14 @@ package ch.tutteli.tsphp.typechecker.scopes;
  */
 public class ScopeHelperRegistry
 {
+
     private static IScopeHelper scopeHelper;
-      public static IScopeHelper get(){
+
+    public static IScopeHelper get() {
         return scopeHelper;
     }
-    public static void set(IScopeHelper newScopeHelper){
+
+    public static void set(IScopeHelper newScopeHelper) {
         scopeHelper = newScopeHelper;
     }
 }

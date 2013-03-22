@@ -30,7 +30,7 @@ public class ClassTypeSymbol extends AScopedTypeSymbol implements IClassTypeSymb
 {
 
     private IMethodSymbol construct;
-    private IVariableSymbol $this;
+    private IVariableSymbol thiz;
     private IClassTypeSymbol parent;
 
     public ClassTypeSymbol(ITSPHPAst definitionAst, Set<Integer> modifiers, String name, IScope enclosingScope,
@@ -50,12 +50,12 @@ public class ClassTypeSymbol extends AScopedTypeSymbol implements IClassTypeSymb
 
     @Override
     public IVariableSymbol getThis() {
-        return $this;
+        return thiz;
     }
 
     @Override
     public void setThis(IVariableSymbol theThis) {
-        $this = theThis;
+        thiz = theThis;
     }
 
     @Override

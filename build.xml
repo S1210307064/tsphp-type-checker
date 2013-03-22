@@ -75,8 +75,8 @@
     <!-- calculated properties -->
     <property name="distname" value="${proj.name}-${proj.version}" />
     <property name="coverage.data" value="${coverage}/jacoco.exec" />
-    <property name="checkstyle.config.file"
-              value="${libdev}/checkstyle/cfg/tsphp_checks.xml" />
+    <property name="checkstyle.config"
+              value="${libdev}/checkstyle/cfg" />
     <property name="pmd.config.file" value="${libdev}/pmd/cfg/pmd_hslu.xml" />
 
     <!-- define runtime libraries -->
@@ -141,7 +141,7 @@
         </java>
     </target>
     
-     <target name="antlrworks">
+    <target name="antlrworks">
         <java classname="org.antlr.Tool" fork="true" failonerror="true">
             <arg value="-verbose"/>
             <arg value="-debug"/>
@@ -316,13 +316,22 @@
     <target name="checkstyle" depends="init" description="checkstyle report">
         <taskdef resource="checkstyletask.properties" classpathref="libsetdev" />
         <mkdir dir="${checkstyle}" />
-        <checkstyle config="${checkstyle.config.file}" failonviolation="false">
+        <delete>
+            <fileset dir="${checkstyle.config}" includes="checkstyle.properties"/>
+        </delete> 
+        <copy file="${checkstyle.config}/checkstyle.properties.tpl" tofile="${checkstyle.config}/checkstyle.properties">
+            <filterset>
+                <filter token="DIR" value="${checkstyle.config}"/>
+            </filterset>
+        </copy>
+        <replace file="${checkstyle.config}/checkstyle.properties" token="\" value="/"/>
+        <checkstyle config="${checkstyle.config}/tsphp_checks.xml" properties="${checkstyle.config}/checkstyle.properties" failonviolation="false">
             <fileset dir="${src.main}" includes="**/*.java" excludes="**/antlr/*" />
             <formatter type="xml" toFile="${checkstyle}/checkstyle.xml" />
         </checkstyle>
         <xslt in="${checkstyle}/checkstyle.xml"
               out="${checkstyle}/index.html"
-              style="${libdev}/checkstyle/style/checkstyle-noframes-severity-sorted.xsl" />
+              style="${libdev}/checkstyle/style/checkstyle-frames.xsl" />
     </target>
    
     <!-- ================================================================== -->

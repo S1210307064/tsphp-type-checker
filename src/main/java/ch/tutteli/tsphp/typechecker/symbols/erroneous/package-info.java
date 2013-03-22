@@ -15,7 +15,7 @@
  */
 
 /**
- * Contains the different erroneous symbols which are used for error handling
+ * Contains the different erroneous symbols which are used for error handling.
  */
 package ch.tutteli.tsphp.typechecker.symbols.erroneous;
 

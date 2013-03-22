@@ -24,6 +24,6 @@ import ch.tutteli.tsphp.common.ITypeSymbol;
  */
 public interface IArrayTypeSymbol extends ITypeSymbolWithPHPBuiltInCasting
 {
-    public ITypeSymbol getKeyTypeSymbol();
-    public ITypeSymbol getValueTypeSymbol();
+    ITypeSymbol getKeyTypeSymbol();
+    ITypeSymbol getValueTypeSymbol();
 }

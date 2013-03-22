@@ -41,17 +41,21 @@ public interface IDefiner
 
     void defineUse(INamespaceScope currentScope, ITSPHPAst type, ITSPHPAst alias);
 
-    IClassTypeSymbol defineClass(IScope currentScope, ITSPHPAst modifier, ITSPHPAst identifier, ITSPHPAst extendsIds, ITSPHPAst implementsIds);
+    IClassTypeSymbol defineClass(IScope currentScope, ITSPHPAst modifier, ITSPHPAst identifier,
+            ITSPHPAst extendsIds, ITSPHPAst implementsIds);
 
     IConditionalScope defineConditionalScope(IScope currentScope);
 
     void defineConstant(IScope currentScope, ITSPHPAst modifier, ITSPHPAst type, ITSPHPAst identifier);
 
-    IMethodSymbol defineConstruct(IScope currentScope, ITSPHPAst methodModifier, ITSPHPAst returnTypeModifier, ITSPHPAst returnType, ITSPHPAst identifier);
+    IMethodSymbol defineConstruct(IScope currentScope, ITSPHPAst methodModifier, ITSPHPAst returnTypeModifier,
+            ITSPHPAst returnType, ITSPHPAst identifier);
 
-    IInterfaceTypeSymbol defineInterface(IScope currentScope, ITSPHPAst modifier, ITSPHPAst identifier, ITSPHPAst extendsIds);
+    IInterfaceTypeSymbol defineInterface(IScope currentScope, ITSPHPAst modifier, ITSPHPAst identifier,
+            ITSPHPAst extendsIds);
 
-    IMethodSymbol defineMethod(IScope currentScope, ITSPHPAst methodModifier, ITSPHPAst returnTypeModifier, ITSPHPAst returnType, ITSPHPAst identifier);
+    IMethodSymbol defineMethod(IScope currentScope, ITSPHPAst methodModifier,
+            ITSPHPAst returnTypeModifier, ITSPHPAst returnType, ITSPHPAst identifier);
 
     void defineVariable(IScope currentScope, ITSPHPAst modifier, ITSPHPAst type, ITSPHPAst variableId);
 }

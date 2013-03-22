@@ -22,13 +22,17 @@ package ch.tutteli.tsphp.typechecker.error;
  */
 public class ErrorReporterRegistry
 {
+
     private static IErrorReporter errorHelper;
-    private ErrorReporterRegistry(){}
-    
-    public static IErrorReporter get(){
+
+    private ErrorReporterRegistry() {
+    }
+
+    public static IErrorReporter get() {
         return errorHelper;
     }
-    public static void set(IErrorReporter newErrorHelper){
+
+    public static void set(IErrorReporter newErrorHelper) {
         errorHelper = newErrorHelper;
     }
 }

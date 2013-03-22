@@ -15,7 +15,7 @@
  */
 
 /**
- * Contains the different scopes used by the type checker
+ * Contains the different scopes used by the type checker.
  */
 package ch.tutteli.tsphp.typechecker.scopes;
 
