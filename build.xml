@@ -132,6 +132,7 @@
             <arg path="${antlr}"/>
             <arg value="-o"/>
             <arg path="${antlr.copyLocation}"/>
+            <arg path="${antlr}/TSPHPDefinitionWalker.g"/>
             <arg path="${antlr}/TSPHPReferenceWalker.g"/>
             <arg path="${antlr}/TSPHPTypeCheckWalker.g"/>
             <classpath>
