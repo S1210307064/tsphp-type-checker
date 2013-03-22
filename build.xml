@@ -331,7 +331,7 @@
         </checkstyle>
         <xslt in="${checkstyle}/checkstyle.xml"
               out="${checkstyle}/index.html"
-              style="${libdev}/checkstyle/style/checkstyle-frames.xsl" />
+              style="${libdev}/checkstyle/style/checkstyle-noframes-severity-sorted.xsl" />
     </target>
    
     <!-- ================================================================== -->
