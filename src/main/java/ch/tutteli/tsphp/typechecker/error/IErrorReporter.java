@@ -26,6 +26,8 @@ import ch.tutteli.tsphp.typechecker.AmbiguousCallException;
 import ch.tutteli.tsphp.typechecker.CastingDto;
 import ch.tutteli.tsphp.typechecker.symbols.IArrayTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IPolymorphicTypeSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.ISymbolWithAccessModifier;
 import java.util.List;
 
 /**
@@ -134,7 +136,7 @@ public interface IErrorReporter extends ch.tutteli.tsphp.common.IErrorReporter
 
     ReferenceException wrongTypeEcho(ITSPHPAst expression, ITypeSymbol typeSymbol);
 
-    ReferenceException arrayExpected(ITSPHPAst expression, IArrayTypeSymbol arrayTypeSymbol);
+    ReferenceException wrongTypeArrayAccess(ITSPHPAst expression, IArrayTypeSymbol arrayTypeSymbol);
 
     ReferenceException wrongArrayIndexType(ITSPHPAst expression, ITSPHPAst index, ITypeSymbol typeSymbol);
 
@@ -157,4 +159,9 @@ public interface IErrorReporter extends ch.tutteli.tsphp.common.IErrorReporter
     ReferenceException wrongTypeMethodCall(ITSPHPAst callee);
 
     ReferenceException wrongTypeInstanceof(ITSPHPAst expression);
+
+    ReferenceException wrongTypeClassMemberAccess(ITSPHPAst expression);
+
+    ReferenceException visibilityViolationClassMemberAccess(ITSPHPAst identifier, ISymbolWithAccessModifier symbol,
+            int accessFrom);
 }

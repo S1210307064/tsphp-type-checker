@@ -60,4 +60,24 @@ public class ErroneusVariableSymbol extends AErroneousSymbol implements IErroneo
     public void setModifiers(Set<Integer> modifier) {
         throw new UnsupportedOperationException("ErroneusVariableSymbol is not a real symbol with modifier.");
     }
+
+    @Override
+    public boolean canBeAccessedFrom(int type) {
+        return true;
+    }
+
+    @Override
+    public boolean isPublic() {
+        return true;
+    }
+
+    @Override
+    public boolean isProtected() {
+        return false;
+    }
+
+    @Override
+    public boolean isPrivate() {
+        return false;
+    }
 }

@@ -16,10 +16,12 @@
  */
 package ch.tutteli.tsphp.typechecker.test.testutils.definition;
 
+import ch.tutteli.tsphp.common.IErrorLogger;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITSPHPAstAdaptor;
 import ch.tutteli.tsphp.common.ParserUnitDto;
 import ch.tutteli.tsphp.common.TSPHPAstAdaptor;
+import ch.tutteli.tsphp.common.exceptions.TSPHPException;
 import ch.tutteli.tsphp.typechecker.IOverloadResolver;
 import ch.tutteli.tsphp.typechecker.ISymbolResolver;
 import ch.tutteli.tsphp.typechecker.ISymbolTable;
@@ -58,7 +60,7 @@ public abstract class ADefinitionTest extends ATest
     protected CommonTreeNodeStream commonTreeNodeStream;
     protected ITSPHPAstAdaptor adaptor;
     protected IAstHelper astHelper;
-    ErrorReportingTSPHPDefinitionWalker definition;
+    protected ErrorReportingTSPHPDefinitionWalker definition;
 
     protected void verifyDefinitions() {
         Assert.assertFalse(testString.replaceAll("\n", " ") + " failed - definition phase throw exception", definition.hasFoundError());
@@ -101,8 +103,17 @@ public abstract class ADefinitionTest extends ATest
         commonTreeNodeStream.setTokenStream(parserUnit.tokenStream);
 
         definition = new ErrorReportingTSPHPDefinitionWalker(commonTreeNodeStream, controller.getDefiner());
-
+        definition.addErrorLogger(new IErrorLogger()
+        {
+            @Override
+            public void log(TSPHPException exception) {
+                System.out.println(exception.getMessage());
+            }
+        });
         definition.downup(ast);
+
+        Assert.assertFalse(testString.replaceAll("\n", " ") + " failed - definition throw exception",
+                definition.hasFoundError());
 
         verifyDefinitions();
     }

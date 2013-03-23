@@ -32,6 +32,7 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
     protected Map<String, String> wrongArgumentTypeErrors;
     protected Map<String, String> typeCheckErrors;
     protected Map<String, String> ambiguousCastsErrors;
+    protected Map<String, String> visbilityViolationErrors;
 
     protected abstract void loadDefinitionErrorMessages();
 
@@ -43,6 +44,8 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
 
     protected abstract void loadAmbiguousCastsErrorMessages();
 
+    protected abstract void loadVisibilityViolationErrorMessages();
+
     protected abstract String getStandardDefinitionErrorMessage(String key, DefinitionErrorDto dto);
 
     protected abstract String getStandardReferenceErrorMessage(String key, ReferenceErrorDto dto);
@@ -52,6 +55,8 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
     protected abstract String getStandardTypeCheckErrorMessage(String key, TypeCheckErrorDto dto);
 
     protected abstract String getStandardAmbiguousCastsErrorMessage(String key, AmbiguousCastsErrorDto dto);
+
+    protected abstract String getStandardVisibilityViolationErrorMessage(String key, VisbilityErrorDto dto);
 
     @Override
     public String getDefinitionErrorMessage(String key, DefinitionErrorDto dto) {
@@ -148,6 +153,25 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
             message = message.replace("%ambRHS%", getAmbiguousCastsSequences(dto.rightAmbiguouities));
         } else {
             message = getStandardAmbiguousCastsErrorMessage(key, dto);
+        }
+        return message;
+    }
+
+    @Override
+    public String getVisibilityErrorMessage(String key, VisbilityErrorDto dto) {
+        String message;
+        if (visbilityViolationErrors == null) {
+            loadVisibilityViolationErrorMessages();
+        }
+        if (visbilityViolationErrors.containsKey(key)) {
+            message = visbilityViolationErrors.get(key);
+            message = replaceStandardPlaceholders(dto, message);
+
+            message = message.replace("%vis%", dto.visibility);
+            message = message.replace("%access%", dto.accessedFrom);
+
+        } else {
+            message = getStandardVisibilityViolationErrorMessage(key, dto);
         }
         return message;
     }

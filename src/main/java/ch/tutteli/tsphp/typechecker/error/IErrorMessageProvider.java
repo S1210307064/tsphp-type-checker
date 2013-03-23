@@ -32,4 +32,6 @@ public interface IErrorMessageProvider
     String getTypeCheckErrorMessage(String identityOperator, TypeCheckErrorDto typeCheckErrorDto);
 
     String getOperatorAmbiguousCastingErrorMessage(String key, AmbiguousCastsErrorDto ambiguousCastingErrorDto);
+
+    String getVisibilityErrorMessage(String key, VisbilityErrorDto visbilityErrorDto);
 }

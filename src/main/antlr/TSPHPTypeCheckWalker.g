@@ -89,9 +89,6 @@ expressionRoot
  	|	^(nil='throw' expr=expression)
  		{controller.checkThrow($nil, $expr.start);}
  	
- 	|	^(nil=ARRAY_ACCESS expr=expression index=expression)
- 		{$nil.setEvalType(controller.getReturnTypeArrayAccess($nil, $expr.start, $index.start));}
-
  	|	^(nil=If expr=expression . .?)
  		{controller.checkIf($nil, $expr.start);}
 
@@ -204,11 +201,12 @@ expression returns [ITypeSymbol type]
     	|  	symbol			{$type = $symbol.type;}
 	|	unaryOperator 		{$type = $unaryOperator.type;}
 	|	binaryOperator 		{$type = $binaryOperator.type;}
-	|	specialOperators	{$type = $specialOperators.type;}
  	|	^('@' expr=expression)	{$type = $expr.start.getEvalType();}
       	|	equalityOperator	{$type = $equalityOperator.type;}
       	|	assignOperator		{$type = $assignOperator.type;}
       	|	castOperator		{$type = $castOperator.type;}
+   	|	specialOperators	{$type = $specialOperators.type;}
+   	|	postFixOperators	{$type = $postFixOperators.type;}
     	;
     	
 symbol returns [ITypeSymbol type]
@@ -218,7 +216,6 @@ symbol returns [ITypeSymbol type]
 		|	^(METHOD_CALL_STATIC TYPE_NAME identifier=Identifier .)	
 		|	^(METHOD_CALL . identifier=Identifier .)
 		|	^(CLASS_STATIC_ACCESS . identifier=(CLASS_STATIC_ACCESS_VARIABLE_ID|CONSTANT))
-		|	^(CLASS_MEMBER_ACCESS . identifier=Identifier)
 		)
 		{$type = $identifier.getSymbol().getType();}		
 	;
@@ -235,7 +232,7 @@ unaryOperator returns [ITypeSymbol type]
 			)
 			expr=expression
 		)
-    		{$type = controller.getUnaryOperatorEvalType($start, $expr.start);}
+    		{$type = controller.resolveUnaryOperatorEvalType($start, $expr.start);}
    	;
    	   	
 
@@ -263,7 +260,7 @@ binaryOperator returns [ITypeSymbol type]
 			)
 			left=expression right=expression
 		)
-		{$type = controller.getBinaryOperatorEvalType($start, $left.start, $right.start);}
+		{$type = controller.resolveBinaryOperatorEvalType($start, $left.start, $right.start);}
 	;
 
 equalityOperator returns [ITypeSymbol type]
@@ -330,7 +327,7 @@ allTypes
 
 specialOperators returns [ITypeSymbol type]
 	:	^(nil='?' condition=expression caseTrue=expression caseFalse=expression)
-		{$type = controller.getTernaryOperatorEvalType($nil, $condition.start, $caseTrue.start, $caseFalse.start);}
+		{$type = controller.resolveTernaryOperatorEvalType($nil, $condition.start, $caseTrue.start, $caseFalse.start);}
 		
 	|	^('instanceof' 
 			expr=expression 
@@ -355,3 +352,17 @@ specialOperators returns [ITypeSymbol type]
     		    $type = $expression.type;
     		}
 	;
+
+postFixOperators returns [ITypeSymbol type]
+	:	^(nil=CLASS_MEMBER_ACCESS accessor=. Identifier)
+		{
+		    $accessor.setEvalType($accessor.getSymbol().getType());
+		    $type = controller.resolveReturnTypeClassMemberAccess($nil, $accessor, $Identifier);
+		}	
+		
+	|	^(nil=ARRAY_ACCESS expr=expression index=expression)
+ 		{$type = controller.resolveReturnTypeArrayAccess($nil, $expr.start, $index.start);}	
+ 		
+ 	|	^(METHOD_CALL_POSTFIX expr=expression .)
+	;
+	

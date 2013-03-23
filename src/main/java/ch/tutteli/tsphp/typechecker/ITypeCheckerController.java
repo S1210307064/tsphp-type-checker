@@ -49,10 +49,6 @@ public interface ITypeCheckerController
 
     IMethodSymbol resolveFunction(ITSPHPAst ast);
 
-    IVariableSymbol resolveClassConstant(ITSPHPAst ast);
-
-    IVariableSymbol resolveClassMember(ITSPHPAst ast);
-
     IMethodSymbol resolveMethod(ITSPHPAst callee, ITSPHPAst id);
 
     IVariableSymbol resolveThisSelf(ITSPHPAst $this);
@@ -78,14 +74,16 @@ public interface ITypeCheckerController
 
     void checkBreakContinueLevel(ITSPHPAst root, ITSPHPAst expression);
 
-    ITypeSymbol getBinaryOperatorEvalType(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
+    ITypeSymbol resolveBinaryOperatorEvalType(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
 
-    ITypeSymbol getUnaryOperatorEvalType(ITSPHPAst operator, ITSPHPAst expression);
+    ITypeSymbol resolveUnaryOperatorEvalType(ITSPHPAst operator, ITSPHPAst expression);
 
-    ITypeSymbol getTernaryOperatorEvalType(ITSPHPAst operator, ITSPHPAst condition,
+    ITypeSymbol resolveTernaryOperatorEvalType(ITSPHPAst operator, ITSPHPAst condition,
             ITSPHPAst caseTrue, ITSPHPAst caseFalse);
 
-    ITypeSymbol getReturnTypeArrayAccess(ITSPHPAst statement, ITSPHPAst expression, ITSPHPAst index);
+    ITypeSymbol resolveReturnTypeArrayAccess(ITSPHPAst statement, ITSPHPAst expression, ITSPHPAst index);
+
+    ITypeSymbol resolveReturnTypeClassMemberAccess(ITSPHPAst statement, ITSPHPAst expression, ITSPHPAst identifier);
 
     void checkEquality(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
 

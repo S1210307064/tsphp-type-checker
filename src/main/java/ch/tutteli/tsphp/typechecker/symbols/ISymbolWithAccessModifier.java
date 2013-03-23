@@ -20,6 +20,14 @@ package ch.tutteli.tsphp.typechecker.symbols;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public interface IVariableSymbol extends ISymbolWithAccessModifier, ICanBeStatic, ICanAlwaysCast
+public interface ISymbolWithAccessModifier extends ISymbolWithModifier
 {
+
+    boolean isPublic();
+
+    boolean isProtected();
+
+    boolean isPrivate();
+
+    boolean canBeAccessedFrom(int type);
 }

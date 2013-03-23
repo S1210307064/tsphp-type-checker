@@ -22,7 +22,7 @@ import ch.tutteli.tsphp.typechecker.scopes.ICaseInsensitiveScope;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public interface IClassTypeSymbol extends IPolymorphicTypeSymbol, ICaseInsensitiveScope
+public interface IClassTypeSymbol extends IPolymorphicTypeSymbol, ICaseInsensitiveScope, ICanBeFinal, ICanBeAbstract
 {
 
     IMethodSymbol getConstruct();

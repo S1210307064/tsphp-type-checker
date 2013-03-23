@@ -18,7 +18,9 @@ package ch.tutteli.tsphp.typechecker.symbols.erroneous;
 
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
+import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.ModifierHelper;
 import java.util.List;
 
 /**
@@ -43,12 +45,42 @@ public class ErroneousMethodSymbol extends AErroneousScopedSymbol implements IEr
     }
 
     @Override
+    public boolean isFinal() {
+        return false;
+    }
+
+    @Override
+    public boolean isAbstract() {
+        return false;
+    }
+
+    @Override
     public boolean isStatic() {
         return true;
     }
-    
+
     @Override
     public boolean isAlwaysCasting() {
         return true;
+    }
+
+    @Override
+    public boolean canBeAccessedFrom(int type) {
+        return true;
+    }
+
+    @Override
+    public boolean isPublic() {
+        return true;
+    }
+
+    @Override
+    public boolean isProtected() {
+        return false;
+    }
+
+    @Override
+    public boolean isPrivate() {
+        return false;
     }
 }

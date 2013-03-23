@@ -14,12 +14,21 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.symbols;
+package ch.tutteli.tsphp.typechecker.error;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public interface IVariableSymbol extends ISymbolWithAccessModifier, ICanBeStatic, ICanAlwaysCast
+public class VisbilityErrorDto extends ReferenceErrorDto
 {
+    public String visibility;
+    public String accessedFrom;
+
+    public VisbilityErrorDto(String theIdentifier, int theLine, int thePosition,
+            String theVisibility, String wasAccessedFrom) {
+        super(theIdentifier, theLine, thePosition);
+        visibility = theVisibility;
+        accessedFrom = wasAccessedFrom;
+    }
 }

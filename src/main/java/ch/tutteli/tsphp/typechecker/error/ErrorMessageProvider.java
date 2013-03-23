@@ -160,6 +160,10 @@ public class ErrorMessageProvider extends AErrorMessageProvider
         typeCheckErrors.put("wrongTypeInstanceof", "Line %line%|%pos% - %id% evaluates to "
                 + "a wrong type. The instanceof operator expects a class-/Interface-type but %tFound% found.");
 
+        typeCheckErrors.put("wrongTypeClassMemberAccess", "Line %line%|%pos% - %id% evaluates to "
+                + "a wrong type. Can only retrieve class members from class-types but %tFound% found.");
+
+
     }
 
     @Override
@@ -181,6 +185,14 @@ public class ErrorMessageProvider extends AErrorMessageProvider
                 + "ambiguous.\n"
                 + "The following ambiguous casts were found:\n"
                 + "%ambRHS%");
+    }
+
+    @Override
+    protected void loadVisibilityViolationErrorMessages() {
+        visbilityViolationErrors = new HashMap<>();
+        visbilityViolationErrors.put("classMemberAccess", "Line %line%|%pos% - cannot access the class member %id%.\n"
+                + "%id%'s visibility is %vis% and it would need at least %access% access in order that you can "
+                + "access it from this location.");
     }
 
     @Override
@@ -214,7 +226,7 @@ public class ErrorMessageProvider extends AErrorMessageProvider
     @Override
     protected String getStandardTypeCheckErrorMessage(String key, TypeCheckErrorDto dto) {
         return "TypeCheckException occured, corresponding error message for \"" + key + "\" is not defined. "
-                + "Please report bug to http://tsphp.tutteli.ch\n"
+                + "Please report bug to http://tsphp.tutteli.ch/jira\n"
                 + "However, the following information was gathered.\n"
                 + "Line " + dto.line + "|" + dto.position + " - usage of " + dto.identifier + " was wrong.\n"
                 + "type expected: " + dto.typeExpected + "\n"
@@ -224,12 +236,22 @@ public class ErrorMessageProvider extends AErrorMessageProvider
     @Override
     protected String getStandardAmbiguousCastsErrorMessage(String key, AmbiguousCastsErrorDto dto) {
         return "AmbiguousCastsException occured, corresponding error message for \"" + key + "\" is not defined. "
-                + "Please report bug to http://tsphp.tutteli.ch\n"
+                + "Please report bug to http://tsphp.tutteli.ch/jira\n"
                 + "However, the following information was gathered.\n"
                 + "Line " + dto.line + "|" + dto.position + " - usage of " + dto.identifier + " was wrong.\n"
                 + "casts LHS to RHS or LHS type: " + getCastsSequence(dto.leftToRightCasts) + "\n"
                 + "casts RHS to LHS or RHS type: " + getCastsSequence(dto.rightToLeftCasts) + "\n"
                 + "ambiguous casts LHS to RHS:" + getAmbiguousCastsSequences(dto.leftAmbiguouities) + "\n"
                 + "ambiguous casts RHS to LHS:" + getAmbiguousCastsSequences(dto.rightAmbiguouities);
+    }
+
+    @Override
+    protected String getStandardVisibilityViolationErrorMessage(String key, VisbilityErrorDto dto) {
+        return "VisibilityViolationException occured, corresponding error message for \"" + key + "\" is not defined. "
+                + "Please report bug to http://tsphp.tutteli.ch/jira\n"
+                + "However, the following information was gathered.\n"
+                + "Line " + dto.line + "|" + dto.position + " - cannot access " + dto.identifier + ".\n"
+                + dto.identifier + "'s visibility is " + dto.visibility + " and it would need at least " + dto.accessedFrom + " "
+                + "access in order that you can access it from this location.";
     }
 }

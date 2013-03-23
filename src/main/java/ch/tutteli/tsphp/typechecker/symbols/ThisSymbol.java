@@ -22,7 +22,7 @@ import ch.tutteli.tsphp.common.ITSPHPAst;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class ThisSymbol extends ASymbolWithModifier implements IVariableSymbol
+public class ThisSymbol extends ASymbolWithAccessModifier implements IVariableSymbol
 {
 
     public ThisSymbol(ITSPHPAst definitionAst, String name, IPolymorphicTypeSymbol polymorphicTypeSymbol) {

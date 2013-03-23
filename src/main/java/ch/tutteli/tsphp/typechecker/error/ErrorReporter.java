@@ -29,8 +29,11 @@ import ch.tutteli.tsphp.typechecker.AmbiguousCallException;
 import ch.tutteli.tsphp.typechecker.CastingDto;
 import ch.tutteli.tsphp.typechecker.ICastingMethod;
 import ch.tutteli.tsphp.typechecker.OverloadDto;
+import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tutteli.tsphp.typechecker.symbols.IArrayTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IPolymorphicTypeSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.ISymbolWithAccessModifier;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -470,7 +473,7 @@ public class ErrorReporter implements IErrorReporter
     }
 
     @Override
-    public ReferenceException arrayExpected(ITSPHPAst expression, IArrayTypeSymbol arrayTypeSymbol) {
+    public ReferenceException wrongTypeArrayAccess(ITSPHPAst expression, IArrayTypeSymbol arrayTypeSymbol) {
         return addAndGetStatementTypeCheckError("arrayExpected", expression, expression, arrayTypeSymbol);
     }
 
@@ -543,12 +546,50 @@ public class ErrorReporter implements IErrorReporter
         return addAndGetClassInterfaceExpectedError("wrongTypeInstanceof", expression, expression.getEvalType());
     }
 
+    @Override
+    public ReferenceException wrongTypeClassMemberAccess(ITSPHPAst expression) {
+        return addAndGetClassInterfaceExpectedError("wrongTypeClassMemberAccess", expression, expression.getEvalType());
+    }
+
     private ReferenceException addAndGetClassInterfaceExpectedError(String key, ITSPHPAst operator,
             ITypeSymbol typeSymbol) {
         String errorMessage = errorMessageProvider.getTypeCheckErrorMessage(key,
                 new TypeCheckErrorDto(operator.getText(), operator.getLine(), operator.getCharPositionInLine(),
                 "class-/interface-type", getAbsoluteTypeName(typeSymbol)));
         ReferenceException exception = new ReferenceException(errorMessage, operator);
+        reportError(exception);
+        return exception;
+    }
+
+    @Override
+    public ReferenceException visibilityViolationClassMemberAccess(ITSPHPAst identifier,
+            ISymbolWithAccessModifier symbol, int accessFrom) {
+
+        return addAndGetVisibilityViolatedError("classMemberAccess", identifier,
+                symbol, accessFrom);
+    }
+
+    private ReferenceException addAndGetVisibilityViolatedError(String key, ITSPHPAst identifier,
+            ISymbolWithAccessModifier symbol, int accessedFrom) {
+
+        String visibility = symbol.isProtected() ? "protected" : "private";
+        String wasAccessedFrom;
+        switch (accessedFrom) {
+            case TSPHPDefinitionWalker.Public:
+                wasAccessedFrom = "public";
+                break;
+            case TSPHPDefinitionWalker.Protected:
+                wasAccessedFrom = "protected";
+                break;
+            case TSPHPDefinitionWalker.Private:
+            default:
+                wasAccessedFrom = "private";
+        }
+
+        String errorMessage = errorMessageProvider.getVisibilityErrorMessage(key,
+                new VisbilityErrorDto(symbol.getName(), identifier.getLine(),
+                identifier.getCharPositionInLine(), visibility, wasAccessedFrom));
+        ReferenceException exception = new ReferenceException(errorMessage, identifier);
         reportError(exception);
         return exception;
     }

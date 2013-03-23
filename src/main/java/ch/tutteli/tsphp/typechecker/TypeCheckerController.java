@@ -36,6 +36,7 @@ import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IPolymorphicTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IScalarTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
+import ch.tutteli.tsphp.typechecker.symbols.ISymbolWithAccessModifier;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IVoidTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousMethodSymbol;
@@ -223,33 +224,6 @@ public class TypeCheckerController implements ITypeCheckerController
             symbol = symbolFactory.createErroneousMethodSymbol(ast, exception);
         }
         return (IMethodSymbol) symbol;
-    }
-
-    @Override
-    public IVariableSymbol resolveClassConstant(ITSPHPAst ast) {
-        return resolveClassMember(ast);
-    }
-
-    private ISymbol resolveInClassSymbol(ITSPHPAst ast) {
-        IClassTypeSymbol classTypeSymbol = getEnclosingClass(ast);
-        ISymbol symbol;
-        if (classTypeSymbol != null) {
-            symbol = classTypeSymbol.resolveWithFallbackToParent(ast);
-        } else {
-            ReferenceException exception = ErrorReporterRegistry.get().notInClass(ast);
-            symbol = symbolFactory.createErroneousAccessSymbol(ast, exception);
-        }
-        return symbol;
-    }
-
-    @Override
-    public IVariableSymbol resolveClassMember(ITSPHPAst ast) {
-        ISymbol symbol = resolveInClassSymbol(ast);
-        if (symbol == null) {
-            ReferenceException exception = ErrorReporterRegistry.get().notDefined(ast);
-            symbol = symbolFactory.createErroneousVariableSymbol(ast, exception);
-        }
-        return (IVariableSymbol) symbol;
     }
 
     @Override
@@ -441,7 +415,7 @@ public class TypeCheckerController implements ITypeCheckerController
     }
 
     @Override
-    public ITypeSymbol getBinaryOperatorEvalType(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right) {
+    public ITypeSymbol resolveBinaryOperatorEvalType(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right) {
         ITypeSymbol typeSymbol;
 
         IErroneousTypeSymbol erroneousTypeSymbol = getFirstErroneousTypeSymbol(left.getEvalType(), right.getEvalType());
@@ -527,7 +501,7 @@ public class TypeCheckerController implements ITypeCheckerController
 
     //TODO code duplication !!!!!!!!!!!!!!!!!
     @Override
-    public ITypeSymbol getUnaryOperatorEvalType(ITSPHPAst operator, ITSPHPAst expression) {
+    public ITypeSymbol resolveUnaryOperatorEvalType(ITSPHPAst operator, ITSPHPAst expression) {
         ITypeSymbol typeSymbol;
         if (unaryOperators.containsKey(operator.getToken().getType())) {
             try {
@@ -587,9 +561,9 @@ public class TypeCheckerController implements ITypeCheckerController
     }
 
     @Override
-    public ITypeSymbol getTernaryOperatorEvalType(ITSPHPAst operator, ITSPHPAst condition,
+    public ITypeSymbol resolveTernaryOperatorEvalType(ITSPHPAst operator, ITSPHPAst condition,
             ITSPHPAst caseTrue, ITSPHPAst caseFalse) {
-        ITypeSymbol typeSymbol = null;
+        ITypeSymbol typeSymbol;
         checkTernaryCondition(operator, condition);
         typeSymbol = caseTrue.getEvalType();
 
@@ -619,7 +593,7 @@ public class TypeCheckerController implements ITypeCheckerController
     }
 
     @Override
-    public ITypeSymbol getReturnTypeArrayAccess(ITSPHPAst statement, final ITSPHPAst expression,
+    public ITypeSymbol resolveReturnTypeArrayAccess(ITSPHPAst statement, final ITSPHPAst expression,
             final ITSPHPAst index) {
 
         ITypeSymbol returnTypeArrayAccess;
@@ -634,7 +608,7 @@ public class TypeCheckerController implements ITypeCheckerController
                 keyTypeSymbol = arrayType.getKeyTypeSymbol();
                 returnTypeArrayAccess = arrayType.getValueTypeSymbol();
             } else {
-                ReferenceException exception = ErrorReporterRegistry.get().arrayExpected(expression, arrayTypeSymbol);
+                ReferenceException exception = ErrorReporterRegistry.get().wrongTypeArrayAccess(expression, arrayTypeSymbol);
                 returnTypeArrayAccess = symbolFactory.createErroneousTypeSymbol(statement, exception);
             }
         } else {
@@ -658,6 +632,53 @@ public class TypeCheckerController implements ITypeCheckerController
     }
 
     @Override
+    public ITypeSymbol resolveReturnTypeClassMemberAccess(ITSPHPAst statement, ITSPHPAst expression, ITSPHPAst identifier) {
+        ITypeSymbol returnType;
+        ITypeSymbol evalType = expression.getEvalType();
+        if (!(evalType instanceof IErroneousSymbol)) {
+            if (evalType instanceof IPolymorphicTypeSymbol) {
+                String variableName = identifier.getText();
+                identifier.setText("$" + variableName);
+                returnType = resolveReturnTypePostfix((IPolymorphicTypeSymbol) evalType,
+                        identifier, expression.getText().equals("$this"));
+                identifier.setText(variableName);
+            } else {
+                ReferenceException exception = ErrorReporterRegistry.get().wrongTypeClassMemberAccess(identifier);
+                returnType = symbolFactory.createErroneousTypeSymbol(identifier, exception);
+            }
+        } else {
+            returnType = evalType;
+        }
+        return returnType;
+    }
+
+    private ITypeSymbol resolveReturnTypePostfix(IPolymorphicTypeSymbol polymorphicTypeSymbol, ITSPHPAst identifier,
+            boolean isAccessor$This) {
+
+        ISymbolWithAccessModifier symbol =
+                (ISymbolWithAccessModifier) polymorphicTypeSymbol.resolveWithFallbackToParent(identifier);
+
+        if (symbol != null) {
+            int accessFrom;
+            if (isAccessor$This) {
+                accessFrom = symbol.getDefinitionScope() == polymorphicTypeSymbol
+                        ? TSPHPDefinitionWalker.Private
+                        : TSPHPDefinitionWalker.Protected;
+            } else {
+                accessFrom = TSPHPDefinitionWalker.Public;
+            }
+
+            if (!symbol.canBeAccessedFrom(accessFrom)) {
+                ErrorReporterRegistry.get().visibilityViolationClassMemberAccess(identifier, symbol, accessFrom);
+            }
+            return symbol.getType();
+        } else {
+            ReferenceException exception = ErrorReporterRegistry.get().notDefined(identifier);
+            return symbolFactory.createErroneousTypeSymbol(identifier, exception);
+        }
+    }
+
+    @Override
     public void checkEquality(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right) {
         if (areNotSameAndNoneIsSubType(left, right)) {
 
@@ -667,27 +688,32 @@ public class TypeCheckerController implements ITypeCheckerController
             CastingDto leftToRight = overloadResolver.getCastingDtoAlwaysCasting(rightSymbol, left);
             CastingDto rightToLeft = overloadResolver.getCastingDtoAlwaysCasting(leftSymbol, right);
 
-            if (leftToRight != null && rightToLeft != null) {
-
+            if (haveBothSideCast(leftToRight, rightToLeft)) {
                 ErrorReporterRegistry.get().operatorAmbiguousCasts(operator, left, right, leftToRight, rightToLeft,
                         leftToRight.ambiguousCasts, rightToLeft.ambiguousCasts);
 
-            } else if (leftToRight == null && rightToLeft == null) {
-
+            } else if (haveNoSideCast(leftToRight, rightToLeft)) {
                 ErrorReporterRegistry.get().wrongEqualityUsage(operator, left, right);
 
-            } else if (leftToRight == null
-                    && rightToLeft.ambiguousCasts != null && !rightToLeft.ambiguousCasts.isEmpty()) {
-
+            } else if (hasAmbiguousCast(rightToLeft)) {
                 ErrorReporterRegistry.get().ambiguousCasts(operator, left, right, rightToLeft.ambiguousCasts);
 
-            } else if (rightToLeft == null
-                    && leftToRight.ambiguousCasts != null && !leftToRight.ambiguousCasts.isEmpty()) {
-
+            } else if (hasAmbiguousCast(leftToRight)) {
                 ErrorReporterRegistry.get().ambiguousCasts(operator, left, right, leftToRight.ambiguousCasts);
-
             }
         }
+    }
+
+    private boolean haveBothSideCast(CastingDto leftToRight, CastingDto rightToLeft) {
+        return leftToRight != null && rightToLeft != null;
+    }
+
+    private boolean haveNoSideCast(CastingDto leftToRight, CastingDto rightToLeft) {
+        return leftToRight == null && rightToLeft == null;
+    }
+
+    private boolean hasAmbiguousCast(CastingDto castingDto) {
+        return castingDto != null && castingDto.ambiguousCasts != null && !castingDto.ambiguousCasts.isEmpty();
     }
 
     private IVariableSymbol getVariableSymbolFromExpression(ITSPHPAst expression) {

@@ -19,6 +19,7 @@ package ch.tutteli.tsphp.typechecker.symbols;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
+import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import java.util.Set;
 
 /**
@@ -30,7 +31,7 @@ public class ClassTypeSymbol extends AScopedTypeSymbol implements IClassTypeSymb
 {
 
     private IMethodSymbol construct;
-    private IVariableSymbol thiz;
+    private IVariableSymbol $this;
     private IClassTypeSymbol parent;
 
     public ClassTypeSymbol(ITSPHPAst definitionAst, Set<Integer> modifiers, String name, IScope enclosingScope,
@@ -50,12 +51,12 @@ public class ClassTypeSymbol extends AScopedTypeSymbol implements IClassTypeSymb
 
     @Override
     public IVariableSymbol getThis() {
-        return thiz;
+        return $this;
     }
 
     @Override
     public void setThis(IVariableSymbol theThis) {
-        thiz = theThis;
+        $this = theThis;
     }
 
     @Override
@@ -66,5 +67,15 @@ public class ClassTypeSymbol extends AScopedTypeSymbol implements IClassTypeSymb
     @Override
     public void setParent(IClassTypeSymbol theParent) {
         parent = theParent;
+    }
+
+    @Override
+    public boolean isFinal() {
+        return modifiers.contains(TSPHPDefinitionWalker.Final);
+    }
+
+    @Override
+    public boolean isAbstract() {
+        return modifiers.contains(TSPHPDefinitionWalker.Abstract);
     }
 }

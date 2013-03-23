@@ -64,8 +64,8 @@ public abstract class AScopedTypeSymbol extends AScopedSymbol implements ICaseIn
         ISymbol symbol = ScopeHelperRegistry.get().resolve(this, ast);
         if (symbol == null && !parentTypeSymbols.isEmpty()) {
             for (ITypeSymbol parentTypeSymbol : parentTypeSymbols) {
-                if (parentTypeSymbol instanceof InterfaceTypeSymbol) {
-                    symbol = ((InterfaceTypeSymbol) parentTypeSymbols).resolveWithFallbackToParent(ast);
+                if (parentTypeSymbol instanceof IPolymorphicTypeSymbol) {
+                    symbol = ((IPolymorphicTypeSymbol) parentTypeSymbol).resolveWithFallbackToParent(ast);
                     if (symbol != null) {
                         break;
                     }

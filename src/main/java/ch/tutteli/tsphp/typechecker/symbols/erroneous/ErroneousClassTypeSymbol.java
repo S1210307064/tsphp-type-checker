@@ -96,5 +96,15 @@ public class ErroneousClassTypeSymbol extends AErroneousScopedSymbol implements 
         throw new UnsupportedOperationException("ErroneousClassSymbol is not a real class.");
     }
 
+    @Override
+    public boolean isFinal() {
+        return false;
+    }
+
+    @Override
+    public boolean isAbstract() {
+        return false;
+    }
+
    
 }

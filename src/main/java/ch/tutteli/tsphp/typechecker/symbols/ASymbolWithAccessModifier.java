@@ -24,20 +24,30 @@ import java.util.Set;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class VariableSymbol extends ASymbolWithAccessModifier implements IVariableSymbol
+public abstract class ASymbolWithAccessModifier extends ASymbolWithModifier implements ISymbolWithAccessModifier
 {
 
-    public VariableSymbol(ITSPHPAst definitionAst, Set<Integer> modifiers, String name) {
+    public ASymbolWithAccessModifier(ITSPHPAst definitionAst, Set<Integer> modifiers, String name) {
         super(definitionAst, modifiers, name);
     }
 
     @Override
-    public boolean isStatic() {
-        return modifiers.contains(TSPHPDefinitionWalker.Static);
+    public boolean isPublic() {
+        return modifiers.contains(TSPHPDefinitionWalker.Public);
     }
 
     @Override
-    public boolean isAlwaysCasting() {
-        return modifiers.contains(TSPHPDefinitionWalker.Cast);
+    public boolean isProtected() {
+        return modifiers.contains(TSPHPDefinitionWalker.Protected);
+    }
+
+    @Override
+    public boolean isPrivate() {
+        return modifiers.contains(TSPHPDefinitionWalker.Private);
+    }
+
+    @Override
+    public boolean canBeAccessedFrom(int type) {
+        return ModifierHelper.canBeAccessedFrom(modifiers, type);
     }
 }

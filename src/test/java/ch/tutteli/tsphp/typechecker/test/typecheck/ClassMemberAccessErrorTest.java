@@ -19,6 +19,8 @@ package ch.tutteli.tsphp.typechecker.test.typecheck;
 import ch.tutteli.tsphp.typechecker.error.ReferenceErrorDto;
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ATypeCheckErrorTest;
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ConstantInitialValueHelper;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
@@ -30,10 +32,10 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class ClassMemberInitErrorTest extends ATypeCheckErrorTest
+public class ClassMemberAccessErrorTest extends ATypeCheckErrorTest
 {
 
-    public ClassMemberInitErrorTest(String testString, ReferenceErrorDto[] expectedLinesAndPositions) {
+    public ClassMemberAccessErrorTest(String testString, ReferenceErrorDto[] expectedLinesAndPositions) {
         super(testString, expectedLinesAndPositions);
     }
 
@@ -44,14 +46,20 @@ public class ClassMemberInitErrorTest extends ATypeCheckErrorTest
 
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
-        Collection<Object[]> collection = 
-                ConstantInitialValueHelper.errorTestStrings("class A{", ";}", "$a", true, false);
-        
-        collection.add(new Object[]{
-            "class A{private int $a;private int\n $b = $this->a;}",
-            new ReferenceErrorDto[]{new ReferenceErrorDto("$b", 2, 1)}
+        return Arrays.asList(new Object[][]{
+            {
+                "class A{protected int $a;} A $a; $a->\n a;",
+                new ReferenceErrorDto[]{new ReferenceErrorDto("a", 2, 1)}
+            },
+            {
+                "class A{private int $a;} A $a; $a->\n a;",
+                new ReferenceErrorDto[]{new ReferenceErrorDto("a", 2, 1)}
+            },
+            {
+                "class A{private int $a;} class B extends A{function void foo(){$this->\n a;}}",
+                new ReferenceErrorDto[]{new ReferenceErrorDto("a", 2, 1)}
+            }
         });
 
-        return collection;
     }
 }

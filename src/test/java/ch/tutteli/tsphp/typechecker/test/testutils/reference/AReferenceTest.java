@@ -16,11 +16,13 @@
  */
 package ch.tutteli.tsphp.typechecker.test.testutils.reference;
 
+import ch.tutteli.tsphp.common.IErrorLogger;
 import ch.tutteli.tsphp.common.IErrorReporter;
-import ch.tutteli.tsphp.typechecker.antlr.TSPHPReferenceWalker;
+import ch.tutteli.tsphp.common.exceptions.TSPHPException;
+import ch.tutteli.tsphp.typechecker.antlr.ErrorReportingTSPHPReferenceWalker;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.test.testutils.definition.ADefinitionTest;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Ignore;
 
 /**
@@ -31,7 +33,7 @@ import org.junit.Ignore;
 public abstract class AReferenceTest extends ADefinitionTest
 {
 
-    protected TSPHPReferenceWalker reference;
+    protected ErrorReportingTSPHPReferenceWalker reference;
 
     public AReferenceTest(String testString) {
         super(testString);
@@ -44,6 +46,9 @@ public abstract class AReferenceTest extends ADefinitionTest
         Assert.assertFalse(testString + " failed. Exceptions occured." + exceptions,
                 errorHelper.hasFoundError());
 
+        Assert.assertFalse(testString + " failed. reference walker exceptions occured.",
+                reference.hasFoundError());
+
         verifyReferences();
 
     }
@@ -52,8 +57,15 @@ public abstract class AReferenceTest extends ADefinitionTest
     protected final void verifyDefinitions() {
         super.verifyDefinitions();
         commonTreeNodeStream.reset();
-        reference = new TSPHPReferenceWalker(commonTreeNodeStream, controller);
+        reference = new ErrorReportingTSPHPReferenceWalker(commonTreeNodeStream, controller);
         reference.downup(ast);
+        reference.addErrorLogger(new IErrorLogger()
+        {
+            @Override
+            public void log(TSPHPException exception) {
+                System.out.println(exception.getMessage());
+            }
+        });
         checkReferences();
     }
 

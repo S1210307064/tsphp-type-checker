@@ -56,8 +56,38 @@ public class MethodSymbol extends AScopedSymbol implements IMethodSymbol
     }
 
     @Override
+    public boolean isFinal() {
+        return modifiers.contains(TSPHPDefinitionWalker.Final);
+    }
+
+    @Override
+    public boolean isAbstract() {
+        return modifiers.contains(TSPHPDefinitionWalker.Abstract);
+    }
+
+    @Override
     public boolean isAlwaysCasting() {
-        return modifiers.contains(TSPHPDefinitionWalker.Cast);
+        return returnTypeModifier.contains(TSPHPDefinitionWalker.Cast);
+    }
+
+    @Override
+    public boolean isPublic() {
+        return modifiers.contains(TSPHPDefinitionWalker.Public);
+    }
+
+    @Override
+    public boolean isProtected() {
+        return modifiers.contains(TSPHPDefinitionWalker.Protected);
+    }
+
+    @Override
+    public boolean isPrivate() {
+        return modifiers.contains(TSPHPDefinitionWalker.Private);
+    }
+
+    @Override
+    public boolean canBeAccessedFrom(int type) {
+        return ModifierHelper.canBeAccessedFrom(modifiers, type);
     }
 
     @Override
