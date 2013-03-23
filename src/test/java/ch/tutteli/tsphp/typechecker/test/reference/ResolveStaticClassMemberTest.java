@@ -60,7 +60,7 @@ public class ResolveStaticClassMemberTest extends AReferenceAstTest
                         }
                     },
                     {
-                        "namespace a{class a{static public float $d;} a::$d;}",
+                        "namespace a{class a{public static float $d;} a::$d;}",
                         new ScopeTestStruct[]{
                             accessor("a", "\\a\\.\\a\\.", 1, 1, 0, 0),
                             variable("\\a\\.\\a\\.", 1, 1, 0, 1)

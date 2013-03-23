@@ -178,8 +178,16 @@ methodFunctionDeclaration
 		}
 	;
 typeModifier returns[boolean isNullable]
-	:	^(TYPE_MODIFIER Cast? nullable=QuestionMark? ~(Cast|QuestionMark)?)
+	:	^(TYPE_MODIFIER 
+			Cast? 
+			nullable=QuestionMark? 
+			(	Static (Private|Protected|Public) 
+			| 	(Private|Protected|Public) Static?
+			)?
+		)
+		
 		{$isNullable = $nullable!=null;}
+		
 	|	TYPE_MODIFIER	
 	;
 	

@@ -36,10 +36,10 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class ClassConstantAccessTest extends AOperatorTypeCheckTest
+public class ClassStaticMemberAccessTest extends AOperatorTypeCheckTest
 {
 
-    public ClassConstantAccessTest(String testString, TypeCheckStruct[] struct) {
+    public ClassStaticMemberAccessTest(String testString, TypeCheckStruct[] struct) {
         super(testString, struct);
     }
 
@@ -60,30 +60,52 @@ public class ClassConstantAccessTest extends AOperatorTypeCheckTest
         };
 
         for (Object[] type : types) {
-            collection.add(new Object[]{"class A{const " + type[0] + " a = false;} A::a;", new TypeCheckStruct[]{
+            collection.add(new Object[]{"class A{public static " + type[0] + " $a;} A::$a;", new TypeCheckStruct[]{
                     struct("sMemAccess", (EBuiltInType) type[1], 1, 1, 0)
                 }
             });
-            collection.add(new Object[]{"class A{const " + type[0] + " a = false;} class B extends A{} B::a;",
+            collection.add(new Object[]{"class A{public static " + type[0] + " $a;} class B extends A{} B::$a;",
                 new TypeCheckStruct[]{
                     struct("sMemAccess", (EBuiltInType) type[1], 1, 2, 0)
                 }
             });
-            collection.add(new Object[]{"class A{const " + type[0] + " a = false; function void foo(){self::a;}}",
+            collection.add(new Object[]{"class A{public static " + type[0] + " $a; function void foo(){self::$a;}}",
                 new TypeCheckStruct[]{
                     struct("sMemAccess", (EBuiltInType) type[1], 1, 0, 4, 1, 4, 0, 0)
                 }
             });
-            collection.add(new Object[]{"class A{const " + type[0] + " a = false;} "
-                + "class B extends A{ function void foo(){self::a;}}",
+            collection.add(new Object[]{"class A{public static " + type[0] + " $a;} "
+                + "class B extends A{ function void foo(){self::$a;}}",
                 new TypeCheckStruct[]{
                     struct("sMemAccess", (EBuiltInType) type[1], 1, 1, 4, 0, 4, 0, 0)
                 }
             });
-            collection.add(new Object[]{"class A{const " + type[0] + " a = false;} "
-                + "class B extends A{ function void foo(){parent::a;}}",
+            collection.add(new Object[]{"class A{public static " + type[0] + " $a;} "
+                + "class B extends A{ function void foo(){parent::$a;}}",
                 new TypeCheckStruct[]{
                     struct("sMemAccess", (EBuiltInType) type[1], 1, 1, 4, 0, 4, 0, 0)
+                }
+            });
+            collection.add(new Object[]{"class A{protected static " + type[0] + " $a; function void foo(){self::$a;}}",
+                new TypeCheckStruct[]{
+                    struct("sMemAccess", (EBuiltInType) type[1], 1, 0, 4, 1, 4, 0, 0)
+                }
+            });
+            collection.add(new Object[]{"class A{protected static " + type[0] + " $a;} "
+                + "class B extends A{ function void foo(){self::$a;}}",
+                new TypeCheckStruct[]{
+                    struct("sMemAccess", (EBuiltInType) type[1], 1, 1, 4, 0, 4, 0, 0)
+                }
+            });
+            collection.add(new Object[]{"class A{protected static " + type[0] + " $a;} "
+                + "class B extends A{ function void foo(){parent::$a;}}",
+                new TypeCheckStruct[]{
+                    struct("sMemAccess", (EBuiltInType) type[1], 1, 1, 4, 0, 4, 0, 0)
+                }
+            });
+            collection.add(new Object[]{"class A{private static " + type[0] + " $a; function void foo(){self::$a;}}",
+                new TypeCheckStruct[]{
+                    struct("sMemAccess", (EBuiltInType) type[1], 1, 0, 4, 1, 4, 0, 0)
                 }
             });
         }

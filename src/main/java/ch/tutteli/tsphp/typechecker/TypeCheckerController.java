@@ -196,8 +196,10 @@ public class TypeCheckerController implements ITypeCheckerController
 
     private ICanBeStatic resolveStatic(ITSPHPAst callee, ITSPHPAst identifier, IVisibilityViolationCaller caller) {
 
+        boolean isSelfOrParent = callee.getText().equals("self") || callee.getText().equals("parent");
+
         ICanBeStatic symbol = (ICanBeStatic) resolvePostFixSymbol((IPolymorphicTypeSymbol) callee.getSymbol(),
-                identifier, callee.getText().equals("$this"), caller);
+                identifier, isSelfOrParent, caller);
 
         if (!symbol.isStatic()) {
             ErrorReporterRegistry.get().notStatic(callee);
@@ -691,14 +693,14 @@ public class TypeCheckerController implements ITypeCheckerController
     }
 
     private ISymbolWithAccessModifier resolvePostFixSymbol(IPolymorphicTypeSymbol polymorphicTypeSymbol, ITSPHPAst identifier,
-            boolean isAccessor$This, IVisibilityViolationCaller caller) {
+            boolean isThisSelfOrParent, IVisibilityViolationCaller caller) {
 
         ISymbolWithAccessModifier symbol =
                 (ISymbolWithAccessModifier) polymorphicTypeSymbol.resolveWithFallbackToParent(identifier);
 
         if (symbol != null) {
             int accessFrom;
-            if (isAccessor$This) {
+            if (isThisSelfOrParent) {
                 accessFrom = symbol.getDefinitionScope() == polymorphicTypeSymbol
                         ? TSPHPDefinitionWalker.Private
                         : TSPHPDefinitionWalker.Protected;

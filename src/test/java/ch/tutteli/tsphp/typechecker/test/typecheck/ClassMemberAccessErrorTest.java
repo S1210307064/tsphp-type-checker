@@ -18,8 +18,6 @@ package ch.tutteli.tsphp.typechecker.test.typecheck;
 
 import ch.tutteli.tsphp.typechecker.error.ReferenceErrorDto;
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ATypeCheckErrorTest;
-import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ConstantInitialValueHelper;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import org.antlr.runtime.RecognitionException;

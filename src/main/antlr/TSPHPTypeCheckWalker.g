@@ -215,7 +215,7 @@ symbol returns [ITypeSymbol type]
 		|   	^(FUNCTION_CALL	identifier=TYPE_NAME .)
 		|	^(METHOD_CALL_STATIC TYPE_NAME identifier=Identifier .)	
 		|	^(METHOD_CALL . identifier=Identifier .)
-		|	^(CLASS_STATIC_ACCESS . identifier=(CLASS_STATIC_ACCESS_VARIABLE_ID|CONSTANT))
+		|	^(CLASS_STATIC_ACCESS . (identifier=CLASS_STATIC_ACCESS_VARIABLE_ID|identifier=CONSTANT))
 		)
 		{$type = $identifier.getSymbol().getType();}		
 	;
