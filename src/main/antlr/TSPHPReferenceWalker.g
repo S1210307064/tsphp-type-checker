@@ -275,8 +275,15 @@ methodCallee
 	;
 	
 classConstantStaticMember
-	:	^(CLASS_STATIC_ACCESS accessor=staticAccessor identifier=(CLASS_STATIC_ACCESS_VARIABLE_ID|CONSTANT))
-		{$identifier.setSymbol(controller.resolveStaticMemberOrClassConstant($accessor.start, $identifier));}
+	:	^(CLASS_STATIC_ACCESS 
+			accessor=staticAccessor 
+			(	identifier=CLASS_STATIC_ACCESS_VARIABLE_ID
+				{$identifier.setSymbol(controller.resolveStaticMember($accessor.start, $identifier));}
+			|	identifier=CONSTANT
+				{$identifier.setSymbol(controller.resolveClassConstant($accessor.start, $identifier));}
+			)
+		)
+		
 	;
 
 staticAccessor

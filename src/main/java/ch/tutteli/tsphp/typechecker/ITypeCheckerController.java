@@ -45,7 +45,9 @@ public interface ITypeCheckerController
 
     IMethodSymbol resolveStaticMethod(ITSPHPAst callee, ITSPHPAst id);
 
-    IVariableSymbol resolveStaticMemberOrClassConstant(ITSPHPAst accessor, ITSPHPAst id);
+    IVariableSymbol resolveStaticMember(ITSPHPAst accessor, ITSPHPAst id);
+
+    IVariableSymbol resolveClassConstant(ITSPHPAst accessor, ITSPHPAst id);
 
     IMethodSymbol resolveFunction(ITSPHPAst ast);
 

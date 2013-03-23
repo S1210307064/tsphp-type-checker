@@ -193,6 +193,14 @@ public class ErrorMessageProvider extends AErrorMessageProvider
         visbilityViolationErrors.put("classMemberAccess", "Line %line%|%pos% - cannot access the class member %id%.\n"
                 + "%id%'s visibility is %vis% and it would need at least %access% access in order that you can "
                 + "access it from this location.");
+        visbilityViolationErrors.put("staticClassMemberAccess", "Line %line%|%pos% - cannot access the static class "
+                + "member %id%.\n"
+                + "%id%'s visibility is %vis% and it would need at least %access% access in order that you can "
+                + "access it from this location.");
+        visbilityViolationErrors.put("classConstantAccess", "Line %line%|%pos% - cannot access the class "
+                + "constant %id%.\n"
+                + "%id%'s visibility is %vis% and it would need at least %access% access in order that you can "
+                + "access it from this location.");
     }
 
     @Override

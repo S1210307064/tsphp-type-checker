@@ -32,7 +32,6 @@ import ch.tutteli.tsphp.typechecker.OverloadDto;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tutteli.tsphp.typechecker.symbols.IArrayTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
-import ch.tutteli.tsphp.typechecker.symbols.IPolymorphicTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolWithAccessModifier;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 import java.util.ArrayDeque;
@@ -565,8 +564,19 @@ public class ErrorReporter implements IErrorReporter
     public ReferenceException visibilityViolationClassMemberAccess(ITSPHPAst identifier,
             ISymbolWithAccessModifier symbol, int accessFrom) {
 
-        return addAndGetVisibilityViolatedError("classMemberAccess", identifier,
-                symbol, accessFrom);
+        return addAndGetVisibilityViolatedError("classMemberAccess", identifier, symbol, accessFrom);
+    }
+
+    @Override
+    public ReferenceException visibilityViolationStaticClassMemberAccess(ITSPHPAst identifier,
+            ISymbolWithAccessModifier symbol, int accessFrom) {
+        return addAndGetVisibilityViolatedError("staticClassMemberAccess", identifier, symbol, accessFrom);
+    }
+
+    @Override
+    public ReferenceException visibilityViolationClassConstantAccess(ITSPHPAst identifier,
+            ISymbolWithAccessModifier symbol, int accessFrom) {
+        return addAndGetVisibilityViolatedError("classConstantAccess", identifier, symbol, accessFrom);
     }
 
     private ReferenceException addAndGetVisibilityViolatedError(String key, ITSPHPAst identifier,

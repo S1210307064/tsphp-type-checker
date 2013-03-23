@@ -26,7 +26,6 @@ import ch.tutteli.tsphp.typechecker.AmbiguousCallException;
 import ch.tutteli.tsphp.typechecker.CastingDto;
 import ch.tutteli.tsphp.typechecker.symbols.IArrayTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
-import ch.tutteli.tsphp.typechecker.symbols.IPolymorphicTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolWithAccessModifier;
 import java.util.List;
 
@@ -164,4 +163,10 @@ public interface IErrorReporter extends ch.tutteli.tsphp.common.IErrorReporter
 
     ReferenceException visibilityViolationClassMemberAccess(ITSPHPAst identifier, ISymbolWithAccessModifier symbol,
             int accessFrom);
+
+    ReferenceException visibilityViolationStaticClassMemberAccess(ITSPHPAst identifier,
+            ISymbolWithAccessModifier symbol, int accessFrom);
+
+    ReferenceException visibilityViolationClassConstantAccess(ITSPHPAst identifier,
+            ISymbolWithAccessModifier symbol, int accessFrom);
 }
