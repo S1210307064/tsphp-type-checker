@@ -445,52 +445,62 @@ public class TypeCheckerController implements ITypeCheckerController
     }
 
     @Override
-    public ITypeSymbol resolveBinaryOperatorEvalType(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right) {
+    public ITypeSymbol resolveBinaryOperatorEvalType(final ITSPHPAst operator, final ITSPHPAst left, final ITSPHPAst right) {
+
+        IAmbiguousCallReporter caller = new IAmbiguousCallReporter()
+        {
+            @Override
+            public void report(AmbiguousCallException exception) {
+                ErrorReporterRegistry.get().ambiguousBinaryOperatorUsage(operator, left, right, exception);
+            }
+        };
+        IWrongOperatorUsageReporter wrongOperatorUsageCaller = new IWrongOperatorUsageReporter()
+        {
+            @Override
+            public ReferenceException report(List<IMethodSymbol> methods) {
+                return ErrorReporterRegistry.get().wrongBinaryOperatorUsage(operator, left, right, methods);
+            }
+        };
+
+        return resolveOperatorEvalType(new OperatorResolvingDto(operator, binaryOperators,
+                new BinaryActualParameterGetter(left, right),
+                new BinaryOperatorErroneuousChecker(left.getEvalType(), right.getEvalType()),
+                caller,
+                wrongOperatorUsageCaller));
+
+    }
+
+    private ITypeSymbol resolveOperatorEvalType(OperatorResolvingDto dto) {
         ITypeSymbol typeSymbol;
 
-        IErroneousTypeSymbol erroneousTypeSymbol = getFirstErroneousTypeSymbol(left.getEvalType(), right.getEvalType());
-
+        IErroneousTypeSymbol erroneousTypeSymbol = dto.erroneuousChecker.getErroneousTypeSymbol();
         if (erroneousTypeSymbol == null) {
-            //TODO Code duplication -> change behaviour, use "delegate" to reduce code duplication
-            if (binaryOperators.containsKey(operator.getToken().getType())) {
+            if (dto.operators.containsKey(dto.operator.getToken().getType())) {
                 try {
-                    typeSymbol = resolveEvalType(operator, left, right);
+                    typeSymbol = resolveEvalType(dto);
                 } catch (TypeCheckerException ex) {
-                    //Error reporting is done in resolveBinary
-                    typeSymbol = symbolFactory.createErroneousTypeSymbol(operator, ex);
+                    typeSymbol = symbolFactory.createErroneousTypeSymbol(dto.operator, ex);
                 }
             } else {
-                TypeCheckerException exception = ErrorReporterRegistry.get().unsupportedOperator(operator);
-                typeSymbol = symbolFactory.createErroneousTypeSymbol(operator, exception);
+                TypeCheckerException exception = ErrorReporterRegistry.get().unsupportedOperator(dto.operator);
+                typeSymbol = symbolFactory.createErroneousTypeSymbol(dto.operator, exception);
             }
 
         } else {
             typeSymbol = erroneousTypeSymbol;
         }
-
         return typeSymbol;
     }
 
-    private IErroneousTypeSymbol getFirstErroneousTypeSymbol(ITypeSymbol... actualParameterTypes) {
-        IErroneousTypeSymbol erroneousTypeSymbol = null;
-        for (ITypeSymbol typeSymbol : actualParameterTypes) {
-            if (typeSymbol instanceof IErroneousTypeSymbol) {
-                erroneousTypeSymbol = (IErroneousTypeSymbol) typeSymbol;
-                break;
-            }
-        }
-        return erroneousTypeSymbol;
-    }
+    private ITypeSymbol resolveEvalType(OperatorResolvingDto dto) throws TypeCheckerException {
 
-    private ITypeSymbol resolveEvalType(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right)
-            throws TypeCheckerException {
         ITypeSymbol typeSymbol = null;
         OverloadDto methodDto;
 
         try {
-            methodDto = resolveBinaryOperator(operator, left, right);
+            methodDto = resolveOperatorOverload(dto);
         } catch (AmbiguousCallException ex) {
-            ErrorReporterRegistry.get().ambiguousBinaryOperatorUsage(operator, left, right, ex);
+            dto.ambigousCallReporter.report(ex);
             methodDto = ex.getAmbiguousOverloads().get(0);
         }
         if (methodDto != null) {
@@ -502,23 +512,21 @@ public class TypeCheckerController implements ITypeCheckerController
         return typeSymbol;
     }
 
-    private OverloadDto resolveBinaryOperator(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right)
-            throws TypeCheckerException {
-
-        int tokenType = operator.getToken().getType();
-        List<ITSPHPAst> actualParameterTypes = new ArrayList<>();
-        actualParameterTypes.add(left);
-        actualParameterTypes.add(right);
+    private OverloadDto resolveOperatorOverload(OperatorResolvingDto dto) throws TypeCheckerException {
+        int tokenType = dto.operator.getToken().getType();
 
         OverloadDto methodDto = null;
 
-        List<IMethodSymbol> methods = binaryOperators.get(tokenType);
-        List<OverloadDto> goodMethods = overloadResolver.getApplicableOverloads(methods, actualParameterTypes);
+        List<IMethodSymbol> methods = dto.operators.get(tokenType);
+        List<OverloadDto> goodMethods = overloadResolver.getApplicableOverloads(methods,
+                dto.actualParameterGetter.getActualParameterTypes());
+
         if (!goodMethods.isEmpty()) {
             methodDto = overloadResolver.getMostSpecificApplicableMethod(goodMethods);
         }
         if (methodDto == null) {
-            throw ErrorReporterRegistry.get().wrongBinaryOperatorUsage(operator, left, right, methods);
+            throw dto.wrongOperatorUsageReporter.report(methods);
+
         }
         return methodDto;
     }
@@ -529,65 +537,27 @@ public class TypeCheckerController implements ITypeCheckerController
         }
     }
 
-    //TODO code duplication !!!!!!!!!!!!!!!!!
     @Override
-    public ITypeSymbol resolveUnaryOperatorEvalType(ITSPHPAst operator, ITSPHPAst expression) {
-        ITypeSymbol typeSymbol;
-        if (unaryOperators.containsKey(operator.getToken().getType())) {
-            try {
-                typeSymbol = resolveEvalType(operator, expression);
-            } catch (TypeCheckerException ex) {
-                //Error reporting is done in resolveBinary
-                typeSymbol = symbolFactory.createErroneousTypeSymbol(expression, ex);
+    public ITypeSymbol resolveUnaryOperatorEvalType(final ITSPHPAst operator, final ITSPHPAst expression) {
+        IAmbiguousCallReporter ambiguousCallReporter = new IAmbiguousCallReporter()
+        {
+            @Override
+            public void report(AmbiguousCallException exception) {
+                ErrorReporterRegistry.get().ambiguousUnaryOperatorUsage(operator, expression, exception);
             }
-        } else {
-            TypeCheckerException exception = ErrorReporterRegistry.get().unsupportedOperator(operator);
-            typeSymbol = symbolFactory.createErroneousTypeSymbol(operator, exception);
-        }
-        return typeSymbol;
-    }
-
-    //TODO code duplication !!!!!!!!!!!!!!!!!
-    private ITypeSymbol resolveEvalType(ITSPHPAst operator, ITSPHPAst expression)
-            throws TypeCheckerException {
-        ITypeSymbol typeSymbol = null;
-        OverloadDto methodDto;
-
-        try {
-            methodDto = resolveUnaryOperator(operator, expression);
-        } catch (AmbiguousCallException ex) {
-            ErrorReporterRegistry.get().ambiguousUnaryOperatorUsage(operator, expression, ex);
-            methodDto = ex.getAmbiguousOverloads().get(0);
-        }
-        if (methodDto != null) {
-            typeSymbol = methodDto.methodSymbol.getType();
-            if (methodDto.parametersNeedCasting != null) {
-                addCastingsToAst(methodDto.parametersNeedCasting);
+        };
+        IWrongOperatorUsageReporter wrongOperatorUsageReporter = new IWrongOperatorUsageReporter()
+        {
+            @Override
+            public ReferenceException report(List<IMethodSymbol> methods) {
+                return ErrorReporterRegistry.get().wrongUnaryOperatorUsage(operator, expression, methods);
             }
-        }
-        return typeSymbol;
-    }
+        };
 
-    //TODO code duplication !!!!!!!!!!!!!!!!!
-    private OverloadDto resolveUnaryOperator(ITSPHPAst operator, ITSPHPAst expression)
-            throws TypeCheckerException {
-
-        List<ITSPHPAst> actualParameters = new ArrayList<>();
-        actualParameters.add(expression);
-
-        int tokenType = operator.getToken().getType();
-
-        OverloadDto methodDto = null;
-
-        List<IMethodSymbol> methods = unaryOperators.get(tokenType);
-        List<OverloadDto> goodMethods = overloadResolver.getApplicableOverloads(methods, actualParameters);
-        if (!goodMethods.isEmpty()) {
-            methodDto = overloadResolver.getMostSpecificApplicableMethod(goodMethods);
-        }
-        if (methodDto == null) {
-            throw ErrorReporterRegistry.get().wrongUnaryOperatorUsage(operator, expression, methods);
-        }
-        return methodDto;
+        return resolveOperatorEvalType(new OperatorResolvingDto(operator, unaryOperators,
+                new UnaryActualParameterGetter(expression),
+                new UnaryOperatorErroneousChecker(expression.getEvalType()),
+                ambiguousCallReporter, wrongOperatorUsageReporter));
     }
 
     @Override
@@ -797,8 +767,7 @@ public class TypeCheckerController implements ITypeCheckerController
     }
 
     private boolean areNotErroneousTypes(ITypeSymbol leftType, ITypeSymbol rightType) {
-        IErroneousTypeSymbol erroneousTypeSymbol = getFirstErroneousTypeSymbol(leftType, rightType);
-        return erroneousTypeSymbol == null;
+        return !(leftType instanceof IErroneousTypeSymbol) && !(rightType instanceof IErroneousTypeSymbol);
     }
 
     private boolean areNotSameAndNoneIsSubType(ITSPHPAst left, ITSPHPAst right) {
@@ -1150,11 +1119,148 @@ public class TypeCheckerController implements ITypeCheckerController
     }
 
     /**
+     * A "delegate" which represents a call of a method on an IErrrorReporter.
+     */
+    private interface IWrongOperatorUsageReporter
+    {
+
+        ReferenceException report(List<IMethodSymbol> methods);
+    }
+
+    /**
+     * A "delegate" which represents a call of a method on an IErrrorReporter.
+     */
+    private interface IAmbiguousCallReporter
+    {
+
+        void report(AmbiguousCallException exception);
+    }
+
+    /**
      * A "delegate" which represents a call of a visibility violation method on an IErrrorReporter.
      */
     private interface IVisibilityViolationCaller
     {
 
         void callAppropriateMethod(ITSPHPAst identifier, ISymbolWithAccessModifier symbol, int accessFrom);
+    }
+
+    private class OperatorResolvingDto
+    {
+
+        ITSPHPAst operator;
+        Map<Integer, List<IMethodSymbol>> operators;
+        IErroneuousChecker erroneuousChecker;
+        IActualParameterGetter actualParameterGetter;
+        IAmbiguousCallReporter ambigousCallReporter;
+        IWrongOperatorUsageReporter wrongOperatorUsageReporter;
+
+        public OperatorResolvingDto(ITSPHPAst theOperator, Map<Integer, List<IMethodSymbol>> theOperators,
+                IActualParameterGetter theActualParameterGetter,
+                IErroneuousChecker theErroneuousChecker,
+                IAmbiguousCallReporter theAmbiguousCastCaller,
+                IWrongOperatorUsageReporter theWrongOperatorUsageCaller) {
+
+            operator = theOperator;
+            operators = theOperators;
+            erroneuousChecker = theErroneuousChecker;
+            actualParameterGetter = theActualParameterGetter;
+            ambigousCallReporter = theAmbiguousCastCaller;
+            wrongOperatorUsageReporter = theWrongOperatorUsageCaller;
+        }
+    }
+
+    /**
+     * A "delegate" which returns an IErroneuousTypeSymbol if it founds one otherwise null
+     */
+    private interface IErroneuousChecker
+    {
+
+        IErroneousTypeSymbol getErroneousTypeSymbol();
+    }
+
+    private class BinaryOperatorErroneuousChecker implements IErroneuousChecker
+    {
+
+        private ITypeSymbol leftType;
+        private ITypeSymbol rightType;
+
+        public BinaryOperatorErroneuousChecker(ITypeSymbol theLeftType, ITypeSymbol theRightType) {
+            leftType = theLeftType;
+            rightType = theRightType;
+        }
+
+        @Override
+        public IErroneousTypeSymbol getErroneousTypeSymbol() {
+            IErroneousTypeSymbol erroneousTypeSymbol = null;
+            if (leftType instanceof IErroneousTypeSymbol) {
+                erroneousTypeSymbol = (IErroneousTypeSymbol) leftType;
+            } else if (rightType instanceof IErroneousTypeSymbol) {
+                erroneousTypeSymbol = (IErroneousTypeSymbol) rightType;
+            }
+            return erroneousTypeSymbol;
+        }
+    }
+
+    private class UnaryOperatorErroneousChecker implements IErroneuousChecker
+    {
+
+        private ITypeSymbol leftType;
+
+        public UnaryOperatorErroneousChecker(ITypeSymbol theLeftType) {
+            leftType = theLeftType;
+        }
+
+        @Override
+        public IErroneousTypeSymbol getErroneousTypeSymbol() {
+            IErroneousTypeSymbol erroneousTypeSymbol = null;
+            if (leftType instanceof IErroneousTypeSymbol) {
+                erroneousTypeSymbol = (IErroneousTypeSymbol) leftType;
+            }
+            return erroneousTypeSymbol;
+        }
+    }
+
+    private interface IActualParameterGetter
+    {
+
+        List<ITSPHPAst> getActualParameterTypes();
+    }
+
+    private class BinaryActualParameterGetter implements IActualParameterGetter
+    {
+
+        private ITSPHPAst left;
+        private ITSPHPAst right;
+
+        public BinaryActualParameterGetter(ITSPHPAst leftHandSide, ITSPHPAst rightHandSide) {
+            left = leftHandSide;
+            right = rightHandSide;
+        }
+
+        @Override
+        public List<ITSPHPAst> getActualParameterTypes() {
+            List<ITSPHPAst> actualParameterTypes = new ArrayList<>();
+            actualParameterTypes.add(left);
+            actualParameterTypes.add(right);
+            return actualParameterTypes;
+        }
+    }
+
+    private class UnaryActualParameterGetter implements IActualParameterGetter
+    {
+
+        private ITSPHPAst expression;
+
+        public UnaryActualParameterGetter(ITSPHPAst theExpression) {
+            expression = theExpression;
+        }
+
+        @Override
+        public List<ITSPHPAst> getActualParameterTypes() {
+            List<ITSPHPAst> actualParameterTypes = new ArrayList<>();
+            actualParameterTypes.add(expression);
+            return actualParameterTypes;
+        }
     }
 }

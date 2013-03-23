@@ -86,7 +86,11 @@ public interface ITypeCheckerController
     ITypeSymbol resolveReturnTypeArrayAccess(ITSPHPAst statement, ITSPHPAst expression, ITSPHPAst index);
 
     ITypeSymbol resolveReturnTypeClassMemberAccess(ITSPHPAst statement, ITSPHPAst expression, ITSPHPAst identifier);
-
+ 
+    void checkFunctionCall(ITSPHPAst identifier, ITSPHPAst arguments);
+    
+    void checkMethodCall(ITSPHPAst identifier, ITSPHPAst arguments);
+    
     void checkEquality(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
 
     void checkIdentity(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
@@ -128,4 +132,5 @@ public interface ITypeCheckerController
     void checkClone(ITSPHPAst clone, ITSPHPAst expression);
 
     void checkInstanceof(ITSPHPAst operator, ITSPHPAst expression, ITSPHPAst typeAst);
+   
 }
