@@ -37,10 +37,10 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class ClassConstantAccessTest extends AOperatorTypeCheckTest
+public class ClassMemberAccessStaticTest extends AOperatorTypeCheckTest
 {
 
-    public ClassConstantAccessTest(String testString, TypeCheckStruct[] struct) {
+    public ClassMemberAccessStaticTest(String testString, TypeCheckStruct[] struct) {
         super(testString, struct);
     }
 
@@ -60,60 +60,54 @@ public class ClassConstantAccessTest extends AOperatorTypeCheckTest
             {"string", String}
         };
 
-
         for (Object[] type : types) {
             collection.addAll(Arrays.asList(new Object[][]{
                 {
-                    "class A{const " + type[0] + " a = false;} A::a;",
+                    "class A{public static " + type[0] + " $a;} A::$a;",
                     typeStruct("sMemAccess", (EBuiltInType) type[1], 1, 1, 0)
                 },
                 {
-                    "interface A{const " + type[0] + " a = false;} A::a;",
-                    typeStruct("sMemAccess", (EBuiltInType) type[1], 1, 1, 0)
-                },
-                {
-                    "class A{const " + type[0] + " a = false;} class B extends A{} B::a;",
+                    "class A{public static " + type[0] + " $a;} class B extends A{} B::$a;",
                     typeStruct("sMemAccess", (EBuiltInType) type[1], 1, 2, 0)
                 },
                 {
-                    "interface A{const " + type[0] + " a = false;} class B implements A{} B::a;",
-                    typeStruct("sMemAccess", (EBuiltInType) type[1], 1, 2, 0)
-                },
-                {
-                    "class A{const " + type[0] + " a = false; function void foo(){self::a;}}",
+                    "class A{public static " + type[0] + " $a; function void foo(){self::$a;}}",
                     typeStruct("sMemAccess", (EBuiltInType) type[1], 1, 0, 4, 1, 4, 0, 0)
                 },
                 {
-                    "class A{const " + type[0] + " a = false; function void foo(){A::a;}}",
+                    "class A{public static " + type[0] + " $a;} class B extends A{ function void foo(){self::$a;}}",
+                    typeStruct("sMemAccess", (EBuiltInType) type[1], 1, 1, 4, 0, 4, 0, 0)
+                },
+                {
+                    "class A{public static " + type[0] + " $a;} class B extends A{ function void foo(){parent::$a;}}",
+                    typeStruct("sMemAccess", (EBuiltInType) type[1], 1, 1, 4, 0, 4, 0, 0)
+                },
+                {
+                    "class A{protected static " + type[0] + " $a; function void foo(){self::$a;}}",
                     typeStruct("sMemAccess", (EBuiltInType) type[1], 1, 0, 4, 1, 4, 0, 0)
                 },
                 {
-                    "class A{const " + type[0] + " a = false;} class B extends A{ function void foo(){self::a;}}",
+                    "class A{protected static " + type[0] + " $a;} "
+                    + "class B extends A{ function void foo(){self::$a;}}",
                     typeStruct("sMemAccess", (EBuiltInType) type[1], 1, 1, 4, 0, 4, 0, 0)
                 },
                 {
-                    "interface A{const " + type[0] + " a = false;} class B implements A{ function void foo(){self::a;}}",
+                    "class A{protected static " + type[0] + " $a;} "
+                    + "class B extends A{ function void foo(){parent::$a;}}",
                     typeStruct("sMemAccess", (EBuiltInType) type[1], 1, 1, 4, 0, 4, 0, 0)
                 },
                 {
-                    "class A{const " + type[0] + " a = false;} class B extends A{ function void foo(){parent::a;}}",
-                    typeStruct("sMemAccess", (EBuiltInType) type[1], 1, 1, 4, 0, 4, 0, 0)
+                    "class A{private static " + type[0] + " $a; function void foo(){self::$a;}}",
+                    typeStruct("sMemAccess", (EBuiltInType) type[1], 1, 0, 4, 1, 4, 0, 0)
+                },
+                //can still access static class members with $this
+                {
+                    "class A{public static " + type[0] + " $a; function void foo(){$this->a;}}",
+                    typeStruct("memAccess", (EBuiltInType) type[1], 1, 0, 4, 1, 4, 0, 0)
                 },
                 {
-                    "class A{const " + type[0] + " a = false;} class B extends A{ function void foo(){A::a;}}",
-                    typeStruct("sMemAccess", (EBuiltInType) type[1], 1, 1, 4, 0, 4, 0, 0)
-                },
-                {
-                    "class A{const " + type[0] + " a = false;} class B extends A{ function void foo(){B::a;}}",
-                    typeStruct("sMemAccess", (EBuiltInType) type[1], 1, 1, 4, 0, 4, 0, 0)
-                },
-                {
-                    "interface A{const " + type[0] + " a = false;} class B implements A{ function void foo(){A::a;}}",
-                    typeStruct("sMemAccess", (EBuiltInType) type[1], 1, 1, 4, 0, 4, 0, 0)
-                },
-                {
-                    "interface A{const " + type[0] + " a = false;} class B implements A{ function void foo(){B::a;}}",
-                    typeStruct("sMemAccess", (EBuiltInType) type[1], 1, 1, 4, 0, 4, 0, 0)
+                    "class A{public static " + type[0] + " $a;} class B extends A{ function void foo(){$this->a;}}",
+                    typeStruct("memAccess", (EBuiltInType) type[1], 1, 1, 4, 0, 4, 0, 0)
                 }
             }));
         }

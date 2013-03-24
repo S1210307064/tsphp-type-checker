@@ -72,7 +72,7 @@ public class ErrorMessageProvider extends AErrorMessageProvider
     }
 
     @Override
-    protected void loadWrongArgumentTyperrorMessages() {
+    protected void loadWrongArgumentTypeErrorMessages() {
         wrongArgumentTypeErrors = new HashMap<>();
         wrongArgumentTypeErrors.put("wrongOperatorUsage", "Line %line%|%pos% - usage of operator %id% is wrong.\n"
                 + "It cannot be applied to the given types for LHS/RHS: %aParams%\n"
@@ -80,6 +80,14 @@ public class ErrorMessageProvider extends AErrorMessageProvider
         wrongArgumentTypeErrors.put("ambiguousOperatorUsage", "Line %line%|%pos% - usage of operator %id% is ambiguous."
                 + "\ntypes LHS/RHS: %aParams%\n"
                 + "ambiguous overloads: %overloads%");
+        wrongArgumentTypeErrors.put("wrongFunctionCall", "Line %line%|%pos% - no applicable overload found for the "
+                + "function %id%.\n"
+                + "Given argument types: %aParams%\n"
+                + "existing overloads: %overloads%");
+        wrongArgumentTypeErrors.put("wrongMethodCall", "Line %line%|%pos% - no applicable overload found for the "
+                + "method %id%.\n"
+                + "Given argument types: %aParams%\n"
+                + "existing overloads: %overloads%");
     }
 
     @Override
@@ -201,6 +209,9 @@ public class ErrorMessageProvider extends AErrorMessageProvider
                 + "constant %id%.\n"
                 + "%id%'s visibility is %vis% and it would need at least %access% access in order that you can "
                 + "access it from this location.");
+         visbilityViolationErrors.put("methodCall", "Line %line%|%pos% - cannot call the method %id%.\n"
+                + "%id%'s visibility is %vis% and it would need at least %access% access in order that you can "
+                + "call it from this location.");
     }
 
     @Override

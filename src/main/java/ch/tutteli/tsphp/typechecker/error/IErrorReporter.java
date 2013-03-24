@@ -58,7 +58,7 @@ public interface IErrorReporter extends ch.tutteli.tsphp.common.IErrorReporter
 
     DefinitionException methodNotDefined(ITSPHPAst callee, ITSPHPAst id);
 
-    DefinitionException memberNotDefined(ITSPHPAst callee, ITSPHPAst id);
+    DefinitionException memberNotDefined(ITSPHPAst accessor, ITSPHPAst id);
 
     DefinitionException variableDefinedInOtherConditionalScope(ITSPHPAst definitionAst, ITSPHPAst variable);
 
@@ -92,6 +92,9 @@ public interface IErrorReporter extends ch.tutteli.tsphp.common.IErrorReporter
     ReferenceException ambiguousBinaryOperatorUsage(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right,
             AmbiguousCallException ex);
 
+    ReferenceException ambiguousCall(ITSPHPAst identifier, AmbiguousCallException exception,
+            List<ITSPHPAst> actualParameters);
+
     ReferenceException operatorAmbiguousCasts(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right,
             CastingDto leftToRightCasts, CastingDto rightToLeftCasts,
             List<CastingDto> leftAmbiguouities, List<CastingDto> rightAmbiguouties);
@@ -104,6 +107,12 @@ public interface IErrorReporter extends ch.tutteli.tsphp.common.IErrorReporter
 
     ReferenceException wrongUnaryOperatorUsage(ITSPHPAst operator, ITSPHPAst expression,
             List<IMethodSymbol> existingMethodOverloads);
+
+    ReferenceException wrongFunctionCall(ITSPHPAst identifier, List<ITSPHPAst> actualParameters,
+            List<IMethodSymbol> methods);
+
+    ReferenceException wrongMethodCall(ITSPHPAst identifier, List<ITSPHPAst> actualParameters,
+            List<IMethodSymbol> methods);
 
     ReferenceException wrongEqualityUsage(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
 
@@ -162,11 +171,14 @@ public interface IErrorReporter extends ch.tutteli.tsphp.common.IErrorReporter
     ReferenceException wrongTypeClassMemberAccess(ITSPHPAst expression);
 
     ReferenceException visibilityViolationClassMemberAccess(ITSPHPAst identifier, ISymbolWithAccessModifier symbol,
-            int accessFrom);
+            int accessedFrom);
 
     ReferenceException visibilityViolationStaticClassMemberAccess(ITSPHPAst identifier,
-            ISymbolWithAccessModifier symbol, int accessFrom);
+            ISymbolWithAccessModifier symbol, int accessedFrom);
 
     ReferenceException visibilityViolationClassConstantAccess(ITSPHPAst identifier,
-            ISymbolWithAccessModifier symbol, int accessFrom);
+            ISymbolWithAccessModifier symbol, int accessedFrom);
+
+    ReferenceException visibilityViolationMethodCall(ITSPHPAst identifier, ISymbolWithAccessModifier symbol,
+            int accessedFrom);
 }

@@ -40,8 +40,12 @@ public abstract class AReferenceScopeTest extends AReferenceTest
 
     @Override
     protected void verifyReferences() {
-        for (int i = 0; i < testStructs.length; ++i) {
-            ReferenceScopeTestStruct testStruct = testStructs[i];
+        verifyReferences(testStructs, ast, testString);
+    }
+
+    public static void verifyReferences(ReferenceScopeTestStruct[] scopeTestStructs, ITSPHPAst ast, String testString) {
+        for (int i = 0; i < scopeTestStructs.length; ++i) {
+            ReferenceScopeTestStruct testStruct = scopeTestStructs[i];
             ITSPHPAst testCandidate = ScopeTestHelper.getAst(ast, testString, testStruct.astAccessOrder);
             Assert.assertNotNull(testString + " failed. testCandidate is null. should be " + testStruct.astText, testCandidate);
             Assert.assertEquals(testString + " failed. wrong ast text,", testStruct.astText,
@@ -56,6 +60,8 @@ public abstract class AReferenceScopeTest extends AReferenceTest
             Assert.assertNotNull(testString + " -- " + testStruct.astText + " failed. type was null", typeSymbol);
             Assert.assertEquals(testString + " -- " + testStruct.astText + " failed. wrong type scope,",
                     testStruct.typeScope, ScopeTestHelper.getEnclosingScopeNames(typeSymbol.getDefinitionScope()));
+            Assert.assertEquals(testString + " -- " + testStruct.astText + " failed. wrong type text,",
+                    testStruct.typeText, typeSymbol.getName());
         }
     }
 }

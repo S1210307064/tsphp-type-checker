@@ -45,5 +45,5 @@ public interface IScopeHelper
     IGlobalNamespaceScope getCorrespondingGlobalNamespace(
             ILowerCaseStringMap<IGlobalNamespaceScope> globalNamespaceScopes, String typeName);
 
-    ISymbol resolve(IScope scope, ITSPHPAst typeAst);
+    ISymbol resolve(IScope scope, ITSPHPAst ast);
 }

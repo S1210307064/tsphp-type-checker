@@ -29,7 +29,6 @@ import ch.tutteli.tsphp.typechecker.scopes.IConditionalScope;
 import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IArrayTypeSymbol;
-import ch.tutteli.tsphp.typechecker.symbols.ICanBeStatic;
 import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IInterfaceTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
@@ -169,47 +168,10 @@ public class TypeCheckerController implements ITypeCheckerController
         return symbol;
     }
 
-    @Override
-    public IMethodSymbol resolveStaticMethod(ITSPHPAst callee, ITSPHPAst id) {
-        IMethodSymbol symbol;
-        ISymbol calleeSymbol = callee.getSymbol();
-        if (!(calleeSymbol instanceof IErroneousSymbol)) {
-            IVisibilityViolationCaller caller = new IVisibilityViolationCaller()
-            {
-                @Override
-                public void callAppropriateMethod(ITSPHPAst identifier, ISymbolWithAccessModifier symbol,
-                        int accessFrom) {
-                    //TODO call method
-                }
-            };
-            symbol = (IMethodSymbol) resolveStatic(callee, id, caller);
-        } else {
-            IErroneousSymbol erroneousSymbol = (IErroneousSymbol) calleeSymbol;
-            symbol = symbolFactory.createErroneousMethodSymbol(id, erroneousSymbol.getException());
-        }
-        if (symbol == null) {
-            ReferenceException exception = ErrorReporterRegistry.get().notDefined(id);
-            symbol = symbolFactory.createErroneousMethodSymbol(id, exception);
-        }
-        return symbol;
-    }
-
-    private ICanBeStatic resolveStatic(ITSPHPAst callee, ITSPHPAst identifier, IVisibilityViolationCaller caller) {
-
-        boolean isSelfOrParent = callee.getText().equals("self") || callee.getText().equals("parent");
-
-        ICanBeStatic symbol = (ICanBeStatic) resolvePostFixSymbol((IPolymorphicTypeSymbol) callee.getSymbol(),
-                identifier, isSelfOrParent, caller);
-
-        if (!symbol.isStatic()) {
-            ErrorReporterRegistry.get().notStatic(callee);
-        }
-        return symbol;
-    }
 
     @Override
     public IVariableSymbol resolveStaticMember(ITSPHPAst accessor, ITSPHPAst identifier) {
-        return resolveStaticMemberOrClassConstant(accessor, identifier, new IVisibilityViolationCaller()
+        return resolveStaticClassMemberOrClassConstant(accessor, identifier, new IVisibilityViolationCaller()
         {
             @Override
             public void callAppropriateMethod(ITSPHPAst identifier, ISymbolWithAccessModifier symbol, int accessFrom) {
@@ -220,7 +182,7 @@ public class TypeCheckerController implements ITypeCheckerController
 
     @Override
     public IVariableSymbol resolveClassConstant(ITSPHPAst accessor, ITSPHPAst identifier) {
-        return resolveStaticMemberOrClassConstant(accessor, identifier, new IVisibilityViolationCaller()
+        return resolveStaticClassMemberOrClassConstant(accessor, identifier, new IVisibilityViolationCaller()
         {
             @Override
             public void callAppropriateMethod(ITSPHPAst identifier, ISymbolWithAccessModifier symbol, int accessFrom) {
@@ -229,67 +191,36 @@ public class TypeCheckerController implements ITypeCheckerController
         });
     }
 
-    private IVariableSymbol resolveStaticMemberOrClassConstant(ITSPHPAst accessor, ITSPHPAst id,
+    private IVariableSymbol resolveStaticClassMemberOrClassConstant(ITSPHPAst accessor, ITSPHPAst id,
             IVisibilityViolationCaller caller) {
-        IVariableSymbol symbol;
-        ISymbol accessorSymbol = accessor.getSymbol();
-        if (!(accessorSymbol instanceof IErroneousSymbol)) {
-            symbol = (IVariableSymbol) resolveStatic(accessor, id, caller);
-        } else {
-            IErroneousSymbol erroneousSymbol = (IErroneousSymbol) accessorSymbol;
-            symbol = symbolFactory.createErroneousVariableSymbol(id, erroneousSymbol.getException());
+        IVariableSymbol variableSymbol = resolveClassMemberOrStaticMemberOrConstantAccess(accessor, id, caller);
+        if (!variableSymbol.isStatic()) {
+            ErrorReporterRegistry.get().notStatic(accessor);
         }
-        if (symbol == null) {
-            ReferenceException exception = ErrorReporterRegistry.get().notDefined(id);
-            symbol = symbolFactory.createErroneousVariableSymbol(id, exception);
-        }
-        return symbol;
+        return variableSymbol;
     }
 
-    @Override
-    public IMethodSymbol resolveFunction(ITSPHPAst ast) {
-        ISymbol symbol = symbolResolver.resolveGlobalIdentifierWithFallback(ast);
-        if (symbol == null) {
-            ReferenceException exception = ErrorReporterRegistry.get().notDefined(ast);
-            symbol = symbolFactory.createErroneousMethodSymbol(ast, exception);
-        }
-        return (IMethodSymbol) symbol;
-    }
+    private void checkAccess(ISymbolWithAccessModifier methodSymbol, IPolymorphicTypeSymbol polymorphicTypeSymbol,
+            IVisibilityViolationCaller visibilityViolationCaller, ITSPHPAst calleeOrAccessor, ITSPHPAst identifier) {
 
-    @Override
-    public IMethodSymbol resolveMethod(ITSPHPAst callee, ITSPHPAst id) {
-        IMethodSymbol methodSymbol;
+        int accessedFrom;
 
-        IVariableSymbol variableSymbol = (IVariableSymbol) callee.getSymbol();
-        if (!(variableSymbol instanceof IErroneousSymbol)) {
-            ITypeSymbol typeSymbol = variableSymbol.getType();
-            if (!(typeSymbol instanceof IErroneousSymbol)) {
-                methodSymbol = resolveMethod(typeSymbol, callee, id);
-            } else {
-                methodSymbol = symbolFactory.createErroneousMethodSymbol(id,
-                        ((IErroneousSymbol) typeSymbol).getException());
-            }
+
+        String calleeOrAccessorText = calleeOrAccessor.getText();
+        if (calleeOrAccessorText.equals("$this") || calleeOrAccessorText.equals("self")) {
+            accessedFrom = methodSymbol.getDefinitionScope() == polymorphicTypeSymbol
+                    ? TSPHPDefinitionWalker.Private
+                    : TSPHPDefinitionWalker.Protected;
+
+        } else if (calleeOrAccessorText.equals("parent")) {
+            accessedFrom = TSPHPDefinitionWalker.Protected;
         } else {
-            methodSymbol = symbolFactory.createErroneousMethodSymbol(id,
-                    ((IErroneousSymbol) variableSymbol).getException());
+            accessedFrom = TSPHPDefinitionWalker.Public;
         }
-        if (methodSymbol == null) {
-            DefinitionException exception = ErrorReporterRegistry.get().methodNotDefined(callee, id);
-            methodSymbol = symbolFactory.createErroneousMethodSymbol(id, exception);
-        }
-        return methodSymbol;
-    }
 
-    private IMethodSymbol resolveMethod(ITypeSymbol typeSymbol, ITSPHPAst callee, ITSPHPAst identifier) {
-        IMethodSymbol methodSymbol;
-        if (typeSymbol instanceof IPolymorphicTypeSymbol) {
-            IPolymorphicTypeSymbol inheritableTypeSymbol = (IPolymorphicTypeSymbol) typeSymbol;
-            methodSymbol = (IMethodSymbol) inheritableTypeSymbol.resolveWithFallbackToParent(identifier);
-        } else {
-            ReferenceException exception = ErrorReporterRegistry.get().wrongTypeMethodCall(callee);
-            methodSymbol = symbolFactory.createErroneousMethodSymbol(identifier, exception);
+        if (!methodSymbol.canBeAccessedFrom(accessedFrom)) {
+            visibilityViolationCaller.callAppropriateMethod(identifier, methodSymbol, accessedFrom);
         }
-        return methodSymbol;
     }
 
     @Override
@@ -495,40 +426,38 @@ public class TypeCheckerController implements ITypeCheckerController
     private ITypeSymbol resolveEvalType(OperatorResolvingDto dto) throws TypeCheckerException {
 
         ITypeSymbol typeSymbol = null;
-        OverloadDto methodDto;
+        List<IMethodSymbol> methods = dto.operators.get(dto.operator.getToken().getType());
+        List<ITSPHPAst> actualParameters = dto.actualParameterGetter.getActualParameters();
+        OverloadDto overloadDto = getMostSpecificOverload(methods, actualParameters, dto.ambiguousCallReporter);
 
-        try {
-            methodDto = resolveOperatorOverload(dto);
-        } catch (AmbiguousCallException ex) {
-            dto.ambigousCallReporter.report(ex);
-            methodDto = ex.getAmbiguousOverloads().get(0);
-        }
-        if (methodDto != null) {
-            typeSymbol = methodDto.methodSymbol.getType();
-            if (methodDto.parametersNeedCasting != null) {
-                addCastingsToAst(methodDto.parametersNeedCasting);
-            }
+        if (overloadDto != null) {
+            typeSymbol = overloadDto.methodSymbol.getType();
+        } else {
+            throw dto.wrongOperatorUsageReporter.report(methods);
         }
         return typeSymbol;
     }
 
-    private OverloadDto resolveOperatorOverload(OperatorResolvingDto dto) throws TypeCheckerException {
-        int tokenType = dto.operator.getToken().getType();
+    private OverloadDto getMostSpecificOverload(List<IMethodSymbol> methods, List<ITSPHPAst> actualParameters,
+            IAmbiguousCallReporter ambiguousCallReporter) {
 
-        OverloadDto methodDto = null;
-
-        List<IMethodSymbol> methods = dto.operators.get(tokenType);
-        List<OverloadDto> goodMethods = overloadResolver.getApplicableOverloads(methods,
-                dto.actualParameterGetter.getActualParameterTypes());
+        OverloadDto overloadDto = null;
+        List<OverloadDto> goodMethods = overloadResolver.getApplicableOverloads(methods, actualParameters);
 
         if (!goodMethods.isEmpty()) {
-            methodDto = overloadResolver.getMostSpecificApplicableMethod(goodMethods);
+            try {
+                overloadDto = overloadResolver.getMostSpecificApplicableMethod(goodMethods);
+            } catch (AmbiguousCallException ex) {
+                ambiguousCallReporter.report(ex);
+                overloadDto = ex.getAmbiguousOverloads().get(0);
+            }
         }
-        if (methodDto == null) {
-            throw dto.wrongOperatorUsageReporter.report(methods);
-
+        if (overloadDto != null) {
+            if (overloadDto.parametersNeedCasting != null) {
+                addCastingsToAst(overloadDto.parametersNeedCasting);
+            }
         }
-        return methodDto;
+        return overloadDto;
     }
 
     private void addCastingsToAst(List<CastingDto> parametersNeedCasting) {
@@ -632,60 +561,196 @@ public class TypeCheckerController implements ITypeCheckerController
     }
 
     @Override
-    public ITypeSymbol resolveReturnTypeClassMemberAccess(ITSPHPAst statement, ITSPHPAst expression, ITSPHPAst identifier) {
-        ITypeSymbol returnType;
-        ITypeSymbol evalType = expression.getEvalType();
-        if (!(evalType instanceof IErroneousSymbol)) {
-            if (evalType instanceof IPolymorphicTypeSymbol) {
-                String variableName = identifier.getText();
-                identifier.setText("$" + variableName);
-                IVisibilityViolationCaller caller = new IVisibilityViolationCaller()
-                {
-                    @Override
-                    public void callAppropriateMethod(ITSPHPAst identifier, ISymbolWithAccessModifier symbol,
-                            int accessFrom) {
-                        ErrorReporterRegistry.get().visibilityViolationClassMemberAccess(
-                                identifier, symbol, accessFrom);
-                    }
-                };
-                returnType = resolvePostFixSymbol((IPolymorphicTypeSymbol) evalType, identifier,
-                        expression.getText().equals("$this"), caller).getType();
-
-                identifier.setText(variableName);
-            } else {
-                ReferenceException exception = ErrorReporterRegistry.get().wrongTypeClassMemberAccess(identifier);
-                returnType = symbolFactory.createErroneousTypeSymbol(identifier, exception);
+    public IVariableSymbol resolveClassMemberAccess(ITSPHPAst expression, ITSPHPAst identifier) {
+        String variableName = identifier.getText();
+        identifier.setText("$" + variableName);
+        IVisibilityViolationCaller visibilityViolationCaller = new IVisibilityViolationCaller()
+        {
+            @Override
+            public void callAppropriateMethod(ITSPHPAst identifier, ISymbolWithAccessModifier symbol,
+                    int accessFrom) {
+                ErrorReporterRegistry.get().visibilityViolationClassMemberAccess(
+                        identifier, symbol, accessFrom);
             }
-        } else {
-            returnType = evalType;
-        }
-        return returnType;
+        };
+        IVariableSymbol variableSymbol = resolveClassMemberOrStaticMemberOrConstantAccess(expression, identifier,
+                visibilityViolationCaller);
+
+        identifier.setText(variableName);
+        return variableSymbol;
     }
 
-    private ISymbolWithAccessModifier resolvePostFixSymbol(IPolymorphicTypeSymbol polymorphicTypeSymbol, ITSPHPAst identifier,
-            boolean isThisSelfOrParent, IVisibilityViolationCaller caller) {
+    private IVariableSymbol resolveClassMemberOrStaticMemberOrConstantAccess(ITSPHPAst expression,
+            ITSPHPAst identifier, IVisibilityViolationCaller visibilityViolationCaller) {
 
-        ISymbolWithAccessModifier symbol =
-                (ISymbolWithAccessModifier) polymorphicTypeSymbol.resolveWithFallbackToParent(identifier);
+        IVariableSymbol variableSymbol;
+        ITypeSymbol evalType = expression.getEvalType();
+        if (!(evalType instanceof IErroneousSymbol)) {
+            variableSymbol = checkAccessorAndResolveAccess(evalType, expression, identifier, visibilityViolationCaller);
+        } else {
+            IErroneousSymbol erroneousSymbol = (IErroneousSymbol) evalType;
+            variableSymbol = symbolFactory.createErroneousVariableSymbol(expression, erroneousSymbol.getException());
+            variableSymbol.setType(evalType);
+        }
+        return variableSymbol;
+    }
+
+    private IVariableSymbol checkAccessorAndResolveAccess(ITypeSymbol evalType, ITSPHPAst expression,
+            ITSPHPAst identifier, IVisibilityViolationCaller visibilityViolationCaller) {
+        IVariableSymbol variableSymbol;
+        if (evalType instanceof IPolymorphicTypeSymbol) {
+            variableSymbol = resolveAccess((IPolymorphicTypeSymbol) evalType, expression,
+                    identifier, visibilityViolationCaller);
+        } else {
+            ReferenceException exception = ErrorReporterRegistry.get().wrongTypeClassMemberAccess(identifier);
+            variableSymbol = symbolFactory.createErroneousVariableSymbol(identifier, exception);
+            variableSymbol.setType(symbolFactory.createErroneousTypeSymbol(identifier, exception));
+        }
+        return variableSymbol;
+    }
+
+    private IVariableSymbol resolveAccess(IPolymorphicTypeSymbol polymorphicTypeSymbol,
+            ITSPHPAst accessor, ITSPHPAst identifier, IVisibilityViolationCaller visibilityViolationCaller) {
+
+        IVariableSymbol symbol =
+                (IVariableSymbol) polymorphicTypeSymbol.resolveWithFallbackToParent(identifier);
 
         if (symbol != null) {
-            int accessFrom;
-            if (isThisSelfOrParent) {
-                accessFrom = symbol.getDefinitionScope() == polymorphicTypeSymbol
-                        ? TSPHPDefinitionWalker.Private
-                        : TSPHPDefinitionWalker.Protected;
-            } else {
-                accessFrom = TSPHPDefinitionWalker.Public;
-            }
-
-            if (!symbol.canBeAccessedFrom(accessFrom)) {
-                caller.callAppropriateMethod(identifier, symbol, accessFrom);
-            }
+            checkAccess(symbol, polymorphicTypeSymbol, visibilityViolationCaller, accessor, identifier);
         } else {
-            ReferenceException exception = ErrorReporterRegistry.get().notDefined(identifier);
+            DefinitionException exception = ErrorReporterRegistry.get().memberNotDefined(accessor, identifier);
             symbol = symbolFactory.createErroneousVariableSymbol(identifier, exception);
         }
         return symbol;
+    }
+
+    @Override
+    public IMethodSymbol resolveFunctionCall(ITSPHPAst identifier, ITSPHPAst arguments) {
+
+        IMethodSymbol methodSymbol = (IMethodSymbol) symbolResolver.resolveGlobalIdentifierWithFallback(identifier);
+        IWrongCallReporter wrongCallReporter = new IWrongCallReporter()
+        {
+            @Override
+            public void report(ITSPHPAst identifier, List<ITSPHPAst> actualParameters, List<IMethodSymbol> methods) {
+                ErrorReporterRegistry.get().wrongFunctionCall(identifier, actualParameters, methods);
+            }
+        };
+        if (methodSymbol != null) {
+            resolveCallOverload(identifier, arguments, methodSymbol, wrongCallReporter);
+        } else {
+            ReferenceException exception = ErrorReporterRegistry.get().notDefined(identifier);
+            ITypeSymbol typeSymbol = symbolFactory.createErroneousClassTypeSymbol(identifier, exception);
+            methodSymbol = symbolFactory.createErroneousMethodSymbol(identifier, exception);
+            methodSymbol.setType(typeSymbol);
+        }
+
+        return methodSymbol;
+    }
+
+    private IMethodSymbol resolveCallOverload(final ITSPHPAst identifier, ITSPHPAst arguments,
+            IMethodSymbol methodSymbol, IWrongCallReporter wrongCallReporter) {
+
+        List<IMethodSymbol> methods = new ArrayList<>();
+        methods.add(methodSymbol);
+        OverloadDto overloadDto = resolveCallOverload(identifier, arguments, methods, wrongCallReporter);
+        //error reporting if overloadDto == null happens in resolveCallOverload
+        if (overloadDto != null) {
+            methodSymbol = overloadDto.methodSymbol;
+        }
+        return methodSymbol;
+    }
+
+    @Override
+    public IMethodSymbol resolveMethodCall(ITSPHPAst callee, ITSPHPAst identifier, ITSPHPAst arguments) {
+        IMethodSymbol methodSymbol;
+
+        ITypeSymbol typeSymbol = callee.getEvalType();
+        if (!(typeSymbol instanceof IErroneousTypeSymbol)) {
+            methodSymbol = checkCalleeAndResolveCall(typeSymbol, callee, identifier, arguments);
+        } else {
+            TypeCheckerException exception = ((IErroneousTypeSymbol) typeSymbol).getException();
+            methodSymbol = symbolFactory.createErroneousMethodSymbol(identifier, exception);
+            methodSymbol.setType(typeSymbol);
+        }
+        return methodSymbol;
+    }
+
+    private IMethodSymbol checkCalleeAndResolveCall(ITypeSymbol typeSymbol, ITSPHPAst callee,
+            ITSPHPAst identifier, ITSPHPAst arguments) {
+        IMethodSymbol methodSymbol;
+        if (typeSymbol instanceof IPolymorphicTypeSymbol) {
+            IPolymorphicTypeSymbol polymorphicTypeSymbol = (IPolymorphicTypeSymbol) typeSymbol;
+            methodSymbol = (IMethodSymbol) polymorphicTypeSymbol.resolveWithFallbackToParent(identifier);
+
+            IWrongCallReporter wrongCallReporter = new IWrongCallReporter()
+            {
+                @Override
+                public void report(ITSPHPAst identifier, List<ITSPHPAst> actualParameters, List<IMethodSymbol> methods) {
+                    ErrorReporterRegistry.get().wrongFunctionCall(identifier, actualParameters, methods);
+                }
+            };
+            if (methodSymbol != null) {
+                methodSymbol = resolveCallOverload(identifier, arguments, methodSymbol, wrongCallReporter);
+                methodVisibilityCheck(methodSymbol, polymorphicTypeSymbol, callee, identifier);
+            } else {
+                DefinitionException exception = ErrorReporterRegistry.get().methodNotDefined(callee, identifier);
+                typeSymbol = symbolFactory.createErroneousClassTypeSymbol(identifier, exception);
+                methodSymbol = symbolFactory.createErroneousMethodSymbol(identifier, exception);
+                methodSymbol.setType(typeSymbol);
+            }
+        } else {
+            ReferenceException exception = ErrorReporterRegistry.get().wrongTypeMethodCall(callee);
+            typeSymbol = symbolFactory.createErroneousClassTypeSymbol(identifier, exception);
+            methodSymbol = symbolFactory.createErroneousMethodSymbol(identifier, exception);
+            methodSymbol.setType(typeSymbol);
+        }
+        return methodSymbol;
+    }
+
+    private void methodVisibilityCheck(IMethodSymbol methodSymbol, IPolymorphicTypeSymbol polymorphicTypeSymbol,
+            ITSPHPAst callee, ITSPHPAst identifier) {
+
+        IVisibilityViolationCaller visibilityViolationCaller = new IVisibilityViolationCaller()
+        {
+            @Override
+            public void callAppropriateMethod(ITSPHPAst identifier, ISymbolWithAccessModifier symbol,
+                    int accessedFrom) {
+                ErrorReporterRegistry.get().visibilityViolationMethodCall(identifier, symbol, accessedFrom);
+            }
+        };
+
+        checkAccess(methodSymbol, polymorphicTypeSymbol, visibilityViolationCaller, callee, identifier);
+    }
+
+    @Override
+    public IMethodSymbol resolveStaticMethodCall(ITSPHPAst callee, ITSPHPAst identifier, ITSPHPAst arguments) {
+        IMethodSymbol symbol = resolveMethodCall(callee, identifier, arguments);
+        if (!symbol.isStatic()) {
+            ErrorReporterRegistry.get().notStatic(identifier);
+        }
+        return symbol;
+    }
+
+    private OverloadDto resolveCallOverload(final ITSPHPAst identifier, ITSPHPAst arguments,
+            List<IMethodSymbol> methods, IWrongCallReporter wrongCallReporter) {
+
+        OverloadDto overloadDto;
+
+        List<ITSPHPAst> children = arguments.getChildren();
+        final List<ITSPHPAst> actualParameters = children != null ? children : new ArrayList<ITSPHPAst>();
+        IAmbiguousCallReporter ambiguousCallReporter = new IAmbiguousCallReporter()
+        {
+            @Override
+            public void report(AmbiguousCallException exception) {
+                ErrorReporterRegistry.get().ambiguousCall(identifier, exception, actualParameters);
+            }
+        };
+        overloadDto = getMostSpecificOverload(methods, actualParameters, ambiguousCallReporter);
+        if (overloadDto == null) {
+            wrongCallReporter.report(identifier, actualParameters, methods);
+        }
+
+        return overloadDto;
     }
 
     @Override
@@ -1145,6 +1210,12 @@ public class TypeCheckerController implements ITypeCheckerController
         void callAppropriateMethod(ITSPHPAst identifier, ISymbolWithAccessModifier symbol, int accessFrom);
     }
 
+    private interface IVisbilityChecker
+    {
+
+        void checkAccessModifier();
+    }
+
     private class OperatorResolvingDto
     {
 
@@ -1152,7 +1223,7 @@ public class TypeCheckerController implements ITypeCheckerController
         Map<Integer, List<IMethodSymbol>> operators;
         IErroneuousChecker erroneuousChecker;
         IActualParameterGetter actualParameterGetter;
-        IAmbiguousCallReporter ambigousCallReporter;
+        IAmbiguousCallReporter ambiguousCallReporter;
         IWrongOperatorUsageReporter wrongOperatorUsageReporter;
 
         public OperatorResolvingDto(ITSPHPAst theOperator, Map<Integer, List<IMethodSymbol>> theOperators,
@@ -1165,7 +1236,7 @@ public class TypeCheckerController implements ITypeCheckerController
             operators = theOperators;
             erroneuousChecker = theErroneuousChecker;
             actualParameterGetter = theActualParameterGetter;
-            ambigousCallReporter = theAmbiguousCastCaller;
+            ambiguousCallReporter = theAmbiguousCastCaller;
             wrongOperatorUsageReporter = theWrongOperatorUsageCaller;
         }
     }
@@ -1224,7 +1295,7 @@ public class TypeCheckerController implements ITypeCheckerController
     private interface IActualParameterGetter
     {
 
-        List<ITSPHPAst> getActualParameterTypes();
+        List<ITSPHPAst> getActualParameters();
     }
 
     private class BinaryActualParameterGetter implements IActualParameterGetter
@@ -1239,7 +1310,7 @@ public class TypeCheckerController implements ITypeCheckerController
         }
 
         @Override
-        public List<ITSPHPAst> getActualParameterTypes() {
+        public List<ITSPHPAst> getActualParameters() {
             List<ITSPHPAst> actualParameterTypes = new ArrayList<>();
             actualParameterTypes.add(left);
             actualParameterTypes.add(right);
@@ -1257,10 +1328,16 @@ public class TypeCheckerController implements ITypeCheckerController
         }
 
         @Override
-        public List<ITSPHPAst> getActualParameterTypes() {
+        public List<ITSPHPAst> getActualParameters() {
             List<ITSPHPAst> actualParameterTypes = new ArrayList<>();
             actualParameterTypes.add(expression);
             return actualParameterTypes;
         }
+    }
+
+    private interface IWrongCallReporter
+    {
+
+        void report(ITSPHPAst identifier, List<ITSPHPAst> actualParameters, List<IMethodSymbol> methods);
     }
 }

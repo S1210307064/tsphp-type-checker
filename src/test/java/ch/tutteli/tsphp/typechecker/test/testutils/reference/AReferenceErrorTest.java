@@ -20,6 +20,7 @@ import ch.tutteli.tsphp.common.IErrorReporter;
 import ch.tutteli.tsphp.common.exceptions.ReferenceException;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.error.ReferenceErrorDto;
+import java.util.List;
 import org.junit.Assert;
 import org.junit.Ignore;
 
@@ -45,6 +46,10 @@ public abstract class AReferenceErrorTest extends AReferenceTest
 
     @Override
     public void verifyReferences() {
+        verifyReferences(errorMessagePrefix, exceptions, errorDtos);
+    }
+
+    public static void verifyReferences(String errorMessagePrefix, List<Exception> exceptions, ReferenceErrorDto[] errorDtos) {
         IErrorReporter errorReporter = ErrorReporterRegistry.get();
         Assert.assertTrue(errorMessagePrefix + " failed. No exception occured.", errorReporter.hasFoundError());
 
@@ -63,5 +68,6 @@ public abstract class AReferenceErrorTest extends AReferenceTest
             Assert.assertEquals(errorMessagePrefix + " failed. wrong position.",
                     errorDtos[i].position, exception.getDefinition().getCharPositionInLine());
         }
+
     }
 }

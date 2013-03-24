@@ -188,10 +188,10 @@ variableDeclaration[ITSPHPAst tMod, ITSPHPAst type]
 methodFunctionCall
 	:	(	^(METHOD_CALL callee=. identifier=Identifier .)
 			{$callee.setScope(currentScope);}
-		|	^(METHOD_CALL_STATIC callee=. identifier=Identifier ACTUAL_PARAMETERS)
+		|	^(METHOD_CALL_STATIC callee=. identifier=Identifier .)
 			{$callee.setScope(currentScope);}
-		|	^(METHOD_CALL_POSTFIX identifier=Identifier ACTUAL_PARAMETERS)
-		|	^(FUNCTION_CALL identifier=TYPE_NAME ACTUAL_PARAMETERS)
+		|	^(METHOD_CALL_POSTFIX identifier=Identifier .)
+		|	^(FUNCTION_CALL identifier=TYPE_NAME .)
 			{$identifier.setScope(currentScope);}
 		)
 	;

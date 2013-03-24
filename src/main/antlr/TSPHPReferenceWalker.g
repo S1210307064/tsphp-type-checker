@@ -72,7 +72,8 @@ topdown
    	|	constantDeclarationList
    	|	parameterDeclarationList
     	|	variableDeclarationList
- 	|	functionCall
+    	// function call has no callee and is therefor not resolved in this phase. Resolving occurs in the type checking phase where overloads are taken into account
+// 	|	functionCall
  	|	methodCallStatic
  	|	methodCall
  	|	classConstantStaticMember
@@ -240,29 +241,14 @@ variableDeclaration[ITypeSymbol type] returns [IVariableSymbol variableSymbol]
 		}
 	;
 
-
-functionCall
-	:	^(FUNCTION_CALL	identifier=TYPE_NAME .)
-		{
-			IMethodSymbol methodSymbol = controller.resolveFunction($identifier);
-			$identifier.setSymbol(methodSymbol);
-		}
-	;
-
 methodCallStatic
-	:	^(METHOD_CALL_STATIC callee=TYPE_NAME identifier=Identifier .)	
-		{
-			ITypeSymbol typeSymbol = controller.resolveType($callee);
-			$callee.setSymbol(typeSymbol);
-			$identifier.setSymbol(controller.resolveStaticMethod($callee, $identifier));
-		}
+	:	^(METHOD_CALL_STATIC callee=TYPE_NAME . .)	
+		{$callee.setSymbol(controller.resolveType($callee));}
 	;
 	
 methodCall
-	:	^(METHOD_CALL callee=methodCallee identifier=Identifier .)	
-		{
-			//callee's symbol is set in methodCallee
-			$identifier.setSymbol( controller.resolveMethod($callee.start, $identifier));
+	:	^(METHOD_CALL callee=methodCallee . .)	
+		{//callee's symbol is set in methodCallee
 		}
 	;
 methodCallee
@@ -295,6 +281,7 @@ classConstantStaticMember
 	;
 
 staticAccessor
+@after{$start.setEvalType((ITypeSymbol) $start.getSymbol());}
 	:	typeName=TYPE_NAME
 		{$typeName.setSymbol(controller.resolveType($typeName));}
 

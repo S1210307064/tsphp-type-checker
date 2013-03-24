@@ -118,12 +118,12 @@ public class ErrorReporter implements IErrorReporter
 
     @Override
     public DefinitionException methodNotDefined(ITSPHPAst callee, ITSPHPAst id) {
-        return addAndGetDefinitionException("methodNotDefined", callee.getSymbol().getDefinitionAst(), id);
+        return addAndGetDefinitionException("methodNotDefined", callee.getEvalType().getDefinitionAst(), id);
     }
 
     @Override
-    public DefinitionException memberNotDefined(ITSPHPAst callee, ITSPHPAst id) {
-        return addAndGetDefinitionException("memberNotDefined", callee.getSymbol().getDefinitionAst(), id);
+    public DefinitionException memberNotDefined(ITSPHPAst accessor, ITSPHPAst id) {
+        return addAndGetDefinitionException("memberNotDefined", accessor.getEvalType().getDefinitionAst(), id);
     }
 
     @Override
@@ -191,7 +191,7 @@ public class ErrorReporter implements IErrorReporter
 
     @Override
     public ReferenceException notStatic(ITSPHPAst callee) {
-        return addAndGetReferenceException("notStatic", (ITSPHPAst) callee.getParent());
+        return addAndGetReferenceException("notStatic", callee);
     }
 
     @Override
@@ -316,14 +316,35 @@ public class ErrorReporter implements IErrorReporter
         return addAndGetAmbiguousCallException("ambiguousOperatorUsage", operator, ex, left, right);
     }
 
-    private ReferenceException addAndGetAmbiguousCallException(String key, ITSPHPAst call, AmbiguousCallException ex,
-            ITSPHPAst... actualParameters) {
+    @Override
+    public ReferenceException ambiguousCall(ITSPHPAst identifier, AmbiguousCallException exception,
+            List<ITSPHPAst> actualParameters) {
+
+        return addAndGetWrongArgumentTypeException("ambiguousCall", identifier,
+                getAmbiguousMethodSymbols(exception), getActualParameterTypes(actualParameters));
+    }
+
+    private List<IMethodSymbol> getAmbiguousMethodSymbols(AmbiguousCallException exception) {
         List<IMethodSymbol> methods = new ArrayList<>();
-        List<OverloadDto> overloads = ex.getAmbiguousOverloads();
+        List<OverloadDto> overloads = exception.getAmbiguousOverloads();
         for (OverloadDto overload : overloads) {
             methods.add(overload.methodSymbol);
         }
-        return addAndGetWrongArgumentTypeException(key, call, methods, actualParameters);
+        return methods;
+    }
+
+    private String[] getActualParameterTypes(List<ITSPHPAst> actualParameters) {
+        String[] actualParameterTypes = new String[actualParameters.size()];
+        for (int i = 0; i < actualParameterTypes.length; ++i) {
+            actualParameterTypes[i] = getAbsoluteTypeName(actualParameters.get(i).getEvalType());
+        }
+        return actualParameterTypes;
+    }
+
+    private ReferenceException addAndGetAmbiguousCallException(String key, ITSPHPAst call,
+            AmbiguousCallException exception, ITSPHPAst... actualParameters) {
+
+        return addAndGetWrongArgumentTypeException(key, call, getAmbiguousMethodSymbols(exception), actualParameters);
     }
 
     @Override
@@ -341,6 +362,20 @@ public class ErrorReporter implements IErrorReporter
         return addAndGetWrongArgumentTypeException("wrongOperatorUsage", operator, existingMethodOverloads, expression);
     }
 
+    @Override
+    public ReferenceException wrongFunctionCall(ITSPHPAst identifier, List<ITSPHPAst> actualParameters,
+            List<IMethodSymbol> methods) {
+        return addAndGetWrongArgumentTypeException("wrongFunctionCall", identifier, methods,
+                getActualParameterTypes(actualParameters));
+    }
+
+    @Override
+    public ReferenceException wrongMethodCall(ITSPHPAst identifier, List<ITSPHPAst> actualParameters,
+            List<IMethodSymbol> methods) {
+        return addAndGetWrongArgumentTypeException("wrongMethodCall", identifier, methods,
+                getActualParameterTypes(actualParameters));
+    }
+
     private ReferenceException addAndGetWrongArgumentTypeException(String key, ITSPHPAst call,
             List<IMethodSymbol> existingMethodOverloads, ITSPHPAst... actualParameters) {
 
@@ -348,6 +383,11 @@ public class ErrorReporter implements IErrorReporter
         for (int i = 0; i < actualParameterTypes.length; ++i) {
             actualParameterTypes[i] = getAbsoluteTypeName(actualParameters[i].getEvalType());
         }
+        return addAndGetWrongArgumentTypeException(key, call, existingMethodOverloads, actualParameterTypes);
+    }
+
+    private ReferenceException addAndGetWrongArgumentTypeException(String key, ITSPHPAst call,
+            List<IMethodSymbol> existingMethodOverloads, String[] actualParameterTypes) {
 
         List<List<String>> existingOverloads = new ArrayList<>();
 
@@ -537,7 +577,7 @@ public class ErrorReporter implements IErrorReporter
 
     @Override
     public ReferenceException wrongTypeMethodCall(ITSPHPAst callee) {
-        return addAndGetClassInterfaceExpectedError("wrongTypeMethodCall", callee, callee.getSymbol().getType());
+        return addAndGetClassInterfaceExpectedError("wrongTypeMethodCall", callee, callee.getEvalType());
     }
 
     @Override
@@ -562,21 +602,27 @@ public class ErrorReporter implements IErrorReporter
 
     @Override
     public ReferenceException visibilityViolationClassMemberAccess(ITSPHPAst identifier,
-            ISymbolWithAccessModifier symbol, int accessFrom) {
+            ISymbolWithAccessModifier symbol, int accessedFrom) {
 
-        return addAndGetVisibilityViolatedError("classMemberAccess", identifier, symbol, accessFrom);
+        return addAndGetVisibilityViolatedError("classMemberAccess", identifier, symbol, accessedFrom);
     }
 
     @Override
     public ReferenceException visibilityViolationStaticClassMemberAccess(ITSPHPAst identifier,
-            ISymbolWithAccessModifier symbol, int accessFrom) {
-        return addAndGetVisibilityViolatedError("staticClassMemberAccess", identifier, symbol, accessFrom);
+            ISymbolWithAccessModifier symbol, int accessedFrom) {
+        return addAndGetVisibilityViolatedError("staticClassMemberAccess", identifier, symbol, accessedFrom);
     }
 
     @Override
     public ReferenceException visibilityViolationClassConstantAccess(ITSPHPAst identifier,
-            ISymbolWithAccessModifier symbol, int accessFrom) {
-        return addAndGetVisibilityViolatedError("classConstantAccess", identifier, symbol, accessFrom);
+            ISymbolWithAccessModifier symbol, int accessedFrom) {
+        return addAndGetVisibilityViolatedError("classConstantAccess", identifier, symbol, accessedFrom);
+    }
+
+    @Override
+    public ReferenceException visibilityViolationMethodCall(ITSPHPAst identifier, ISymbolWithAccessModifier symbol,
+            int accessedFrom) {
+        return addAndGetVisibilityViolatedError("methodCall", identifier, symbol, accessedFrom);
     }
 
     private ReferenceException addAndGetVisibilityViolatedError(String key, ITSPHPAst identifier,

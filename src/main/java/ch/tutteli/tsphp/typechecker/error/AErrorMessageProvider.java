@@ -38,7 +38,7 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
 
     protected abstract void loadReferenceErrorMessages();
 
-    protected abstract void loadWrongArgumentTyperrorMessages();
+    protected abstract void loadWrongArgumentTypeErrorMessages();
 
     protected abstract void loadTypeCheckErrorMessages();
 
@@ -105,7 +105,7 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
     public String getWrongArgumentTypeErrorMessage(String key, WrongArgumentTypeErrorDto dto) {
         String message;
         if (wrongArgumentTypeErrors == null) {
-            loadWrongArgumentTyperrorMessages();
+            loadWrongArgumentTypeErrorMessages();
         }
         if (wrongArgumentTypeErrors.containsKey(key)) {
             message = wrongArgumentTypeErrors.get(key);

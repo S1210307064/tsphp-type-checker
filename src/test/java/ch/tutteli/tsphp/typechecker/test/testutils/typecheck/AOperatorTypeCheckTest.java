@@ -20,6 +20,7 @@ import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tutteli.tsphp.typechecker.test.testutils.ScopeTestHelper;
+import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AReferenceScopeTypeCheckTest.struct;
 import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.EBuiltInType.Array;
 import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.EBuiltInType.Bool;
 import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.EBuiltInType.BoolNullable;
@@ -57,6 +58,7 @@ public abstract class AOperatorTypeCheckTest extends ATypeCheckTest
     public static EBuiltInType Exception = EBuiltInType.Exception;
     public static EBuiltInType ErrorException = EBuiltInType.ErrorException;
     public static EBuiltInType Null = EBuiltInType.Null;
+    public static EBuiltInType Void = EBuiltInType.Void;
     //
     protected TypeCheckStruct[] testStructs;
 
@@ -81,8 +83,12 @@ public abstract class AOperatorTypeCheckTest extends ATypeCheckTest
     protected static TypeCheckStruct struct(String astText, EBuiltInType type, Integer... accessOrder) {
         return new TypeCheckStruct(astText, type, Arrays.asList(accessOrder));
     }
+    
+    protected static TypeCheckStruct[] typeStruct(String astText, EBuiltInType type, Integer... accessOrder) {
+        return new TypeCheckStruct[]{struct(astText, type, accessOrder)};
+    }
 
-    private ITypeSymbol getTypeSymbol(EBuiltInType type) {
+    protected ITypeSymbol getTypeSymbol(EBuiltInType type) {
         ITypeSymbol typeSymbol;
 
         switch (type) {
@@ -125,6 +131,9 @@ public abstract class AOperatorTypeCheckTest extends ATypeCheckTest
                 break;
             case Null:
                 typeSymbol = symbolTable.getNullTypeSymbol();
+                break;
+            case Void:
+                typeSymbol = symbolTable.getVoidTypeSymbol();
                 break;
             case Object:
             default:

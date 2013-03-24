@@ -43,15 +43,17 @@ public interface ITypeCheckerController
 
     IVariableSymbol resolveConstant(ITSPHPAst ast);
 
-    IMethodSymbol resolveStaticMethod(ITSPHPAst callee, ITSPHPAst id);
-
     IVariableSymbol resolveStaticMember(ITSPHPAst accessor, ITSPHPAst id);
 
     IVariableSymbol resolveClassConstant(ITSPHPAst accessor, ITSPHPAst id);
 
-    IMethodSymbol resolveFunction(ITSPHPAst ast);
+    IVariableSymbol resolveClassMemberAccess(ITSPHPAst expression, ITSPHPAst identifier);
 
-    IMethodSymbol resolveMethod(ITSPHPAst callee, ITSPHPAst id);
+    IMethodSymbol resolveFunctionCall(ITSPHPAst identifier, ITSPHPAst arguments);
+
+    IMethodSymbol resolveMethodCall(ITSPHPAst callee, ITSPHPAst identifier, ITSPHPAst arguments);
+
+    IMethodSymbol resolveStaticMethodCall(ITSPHPAst callee, ITSPHPAst identifier, ITSPHPAst arguments);
 
     IVariableSymbol resolveThisSelf(ITSPHPAst $this);
 
@@ -85,12 +87,6 @@ public interface ITypeCheckerController
 
     ITypeSymbol resolveReturnTypeArrayAccess(ITSPHPAst statement, ITSPHPAst expression, ITSPHPAst index);
 
-    ITypeSymbol resolveReturnTypeClassMemberAccess(ITSPHPAst statement, ITSPHPAst expression, ITSPHPAst identifier);
- 
-    void checkFunctionCall(ITSPHPAst identifier, ITSPHPAst arguments);
-    
-    void checkMethodCall(ITSPHPAst identifier, ITSPHPAst arguments);
-    
     void checkEquality(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
 
     void checkIdentity(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
@@ -132,5 +128,4 @@ public interface ITypeCheckerController
     void checkClone(ITSPHPAst clone, ITSPHPAst expression);
 
     void checkInstanceof(ITSPHPAst operator, ITSPHPAst expression, ITSPHPAst typeAst);
-   
 }

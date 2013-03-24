@@ -14,10 +14,10 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.test.reference;
+package ch.tutteli.tsphp.typechecker.test.typecheck;
 
 import ch.tutteli.tsphp.typechecker.error.ReferenceErrorDto;
-import ch.tutteli.tsphp.typechecker.test.testutils.reference.AReferenceErrorTest;
+import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ATypeCheckErrorTest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,10 +32,10 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class MethodCallReferenceErrorTest extends AReferenceErrorTest
+public class MethodCallErrorTest extends ATypeCheckErrorTest
 {
 
-    public MethodCallReferenceErrorTest(String testString, ReferenceErrorDto[] expectedLinesAndPositions) {
+    public MethodCallErrorTest(String testString, ReferenceErrorDto[] expectedLinesAndPositions) {
         super(testString, expectedLinesAndPositions);
     }
 
@@ -51,11 +51,34 @@ public class MethodCallReferenceErrorTest extends AReferenceErrorTest
         ReferenceErrorDto[] errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto("$a", 2, 1)};
 
         String[] types = new String[]{"bool", "bool?", "int", "int?", "float", "float?", "string", "string?",
-            "array", "resource"};
+            "array", "resource", "object"};
         //call on a non-object
         for (String type : types) {
             collection.add(new Object[]{type + " $a;\n $a->foo();", errorDto});
         }
+
+        errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto("foo()", 2, 1)};
+        collection.addAll(Arrays.asList(new Object[][]{
+            //visibility violation
+            {"class A{protected function void foo(){}} A $a; $a->\n foo();", errorDto},
+            {"class A{private function void foo(){}} A $a; $a->\n foo();", errorDto},
+            {
+                "class A{private function void foo(){}} class B extends A{function void bar(){$this->\n foo();}}",
+                errorDto
+            },
+            {
+                "class A{private function void foo(){}} class B extends A{function void bar(){self::\n foo();}}",
+                errorDto
+            },
+            {
+                "class A{private function void foo(){}} class B extends A{function void bar(){parent::\n foo();}}",
+                errorDto
+            },
+            //wrong arguments
+            {"class A{public function void foo(){}} A $a; $a->\n foo(1);", errorDto},
+            {"class A{public function void foo(int $a){}} A $a; $a->\n foo();", errorDto},
+            {"class A{public function void foo(int $a){}} A $a; $a->\n foo('1');", errorDto},
+            {"class A{public function void foo(int $a, string $b){}} A $a; $a->\n foo(1,[1]);", errorDto},}));
 
         return collection;
     }

@@ -40,6 +40,10 @@ public abstract class AReferenceAstTest extends AReferenceTest
 
     @Override
     protected void verifyReferences() {
+        verifyReferences(testStructs, ast, testString);
+    }
+
+    public static void verifyReferences(ScopeTestStruct[] testStructs, ITSPHPAst ast, String testString) {
         for (int i = 0; i < testStructs.length; ++i) {
             ScopeTestStruct testStruct = testStructs[i];
             ITSPHPAst testCandidate = ScopeTestHelper.getAst(ast, testString, testStruct.astAccessOrder);

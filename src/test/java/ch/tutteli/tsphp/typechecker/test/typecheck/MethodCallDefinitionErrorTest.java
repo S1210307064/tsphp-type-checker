@@ -14,15 +14,12 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker.test.reference;
+package ch.tutteli.tsphp.typechecker.test.typecheck;
 
 import ch.tutteli.tsphp.typechecker.error.DefinitionErrorDto;
-import ch.tutteli.tsphp.typechecker.error.ReferenceErrorDto;
-import ch.tutteli.tsphp.typechecker.test.testutils.reference.AReferenceDefinitionErrorTest;
-import java.util.ArrayList;
+import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ATypeCheckDefinitionErrorTest;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,7 +30,7 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class MethodCallDefinitionErrorTest extends AReferenceDefinitionErrorTest
+public class MethodCallDefinitionErrorTest extends ATypeCheckDefinitionErrorTest
 {
 
     public MethodCallDefinitionErrorTest(String testString, DefinitionErrorDto[] expectedLinesAndPositions) {
@@ -47,10 +44,10 @@ public class MethodCallDefinitionErrorTest extends AReferenceDefinitionErrorTest
 
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
-        DefinitionErrorDto[] errorDto = new DefinitionErrorDto[]{new DefinitionErrorDto("$a", 2, 1, "foo()", 3, 1)};
+        DefinitionErrorDto[] errorDto = new DefinitionErrorDto[]{new DefinitionErrorDto("A", 2, 1, "foo()", 3, 1)};
         return Arrays.asList(new Object[][]{
-            {"class A{} A\n $a; $a->\n foo();", errorDto},
-            {"class A{} class B extends A{function void foo(){}} B $b;A \n $a = $b; $a->\n foo();", errorDto},
+            {"class \n A{} A $a; $a->\n foo();", errorDto},
+            {"class \n A{} class B extends A{function void foo(){}} B $b;A $a = $b; $a->\n foo();", errorDto},
         });
 
     }

@@ -16,8 +16,8 @@
  */
 package ch.tutteli.tsphp.typechecker.test.testutils.typecheck;
 
-import ch.tutteli.tsphp.typechecker.error.ReferenceErrorDto;
-import ch.tutteli.tsphp.typechecker.test.testutils.reference.AReferenceErrorTest;
+import ch.tutteli.tsphp.typechecker.test.testutils.ScopeTestStruct;
+import ch.tutteli.tsphp.typechecker.test.testutils.reference.AReferenceAstTest;
 import org.junit.Ignore;
 
 /**
@@ -25,26 +25,20 @@ import org.junit.Ignore;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @Ignore
-public class ATypeCheckErrorTest extends ATypeCheckTest
+public abstract class AReferenceAstTypeCheckTest extends AOperatorTypeCheckTest
 {
 
-    protected ReferenceErrorDto[] errorDtos;
+    protected ScopeTestStruct[] scopeTestStructs;
 
-    public ATypeCheckErrorTest(String testString, ReferenceErrorDto[] theErrorDtos) {
-        super(testString);
-        errorDtos = theErrorDtos;
-
-    }
-
-    @Override
-    protected void checkErrors() {
-
-
-        verifyTypeCheck();
+    public AReferenceAstTypeCheckTest(String testString, ScopeTestStruct[] theScopeTestStructs,
+            TypeCheckStruct[] typeCheckStructs) {
+        super(testString, typeCheckStructs);
+        scopeTestStructs = theScopeTestStructs;
     }
 
     @Override
     protected void verifyTypeCheck() {
-       AReferenceErrorTest.verifyReferences(errorMessagePrefix, exceptions, errorDtos);
+        super.verifyTypeCheck();
+        AReferenceAstTest.verifyReferences(scopeTestStructs, ast, testString);
     }
 }

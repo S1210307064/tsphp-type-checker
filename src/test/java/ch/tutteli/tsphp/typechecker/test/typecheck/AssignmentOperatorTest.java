@@ -60,8 +60,9 @@ public class AssignmentOperatorTest extends AOperatorTypeCheckTest
 
         addCompoundAssignment();
 
-        //see TSPHP - 433
+        
         collection.addAll(Arrays.asList(new Object[][]{
+            //see TSPHP - 433
             {"bool? $b; int $i = $b = true;", new TypeCheckStruct[]{
                     struct("$i", Int, 1, 1, 1),
                     struct("=", Bool, 1, 1, 1, 0),
@@ -77,7 +78,7 @@ public class AssignmentOperatorTest extends AOperatorTypeCheckTest
                     struct("$c", String, 1, 2, 1, 0, 1, 0),
                     struct("false", Bool, 1, 2, 1, 0, 1, 1)
                 }
-            }
+            },
         }));
 
         return collection;

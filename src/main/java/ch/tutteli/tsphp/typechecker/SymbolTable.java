@@ -29,6 +29,7 @@ import ch.tutteli.tsphp.typechecker.symbols.IScalarTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
 import ch.tutteli.tsphp.typechecker.symbols.ITypeSymbolWithPHPBuiltInCasting;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IVoidTypeSymbol;
 import ch.tutteli.tsphp.typechecker.utils.IAstHelper;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -66,6 +67,7 @@ public class SymbolTable implements ISymbolTable
     private IClassTypeSymbol exceptionTypeSymbol;
     //
     private IGlobalNamespaceScope globalDefaultNamespace;
+    private IVoidTypeSymbol voidTypeSymbol;
 
     public SymbolTable(ISymbolFactory theSymbolFactory, IAstHelper theAstHelper,
             IGlobalNamespaceScope theGlobalDefaultNamespace) {
@@ -88,6 +90,11 @@ public class SymbolTable implements ISymbolTable
     @Override
     public Map<ITypeSymbol, Map<ITypeSymbol, ICastingMethod>> getExplicitCastings() {
         return explicitCastings;
+    }
+
+    @Override
+    public IVoidTypeSymbol getVoidTypeSymbol() {
+        return voidTypeSymbol;
     }
 
     @Override
@@ -184,7 +191,8 @@ public class SymbolTable implements ISymbolTable
 
         nullTypeSymbol = symbolFactory.createNullTypeSymbol();
         globalDefaultNamespace.define(nullTypeSymbol);
-        globalDefaultNamespace.define(symbolFactory.createVoidTypeSymbol());
+        voidTypeSymbol = symbolFactory.createVoidTypeSymbol();
+        globalDefaultNamespace.define(voidTypeSymbol);
 
         defineObjectTypeSymbol();
 

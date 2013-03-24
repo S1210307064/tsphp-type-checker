@@ -601,7 +601,7 @@ public class AssignHelper
     }
 
     public static Collection<Object[]> getAssignmentErrorTestStrings(String operator, boolean isDeclaration) {
-        List<Object[]> collection = new ArrayList<>();
+        collection = new ArrayList<>();
         ReferenceErrorDto[] errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto(operator, 2, 1)};
         String[] types = new String[]{"bool?", "int", "int?", "float", "float?", "string", "string?", "array",
             "resource", "object", "Exception", "ErrorException"};

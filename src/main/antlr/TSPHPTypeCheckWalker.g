@@ -44,6 +44,8 @@ import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.typechecker.ISymbolTable;
 import ch.tutteli.tsphp.typechecker.ITypeCheckerController;
+import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 }
 
 @members {
@@ -211,11 +213,32 @@ expression returns [ITypeSymbol type]
     	
 symbol returns [ITypeSymbol type]
 	:	(	identifier=VariableId	
+		|	identifier=This
 	    	|	identifier=CONSTANT
-		|   	^(FUNCTION_CALL	identifier=TYPE_NAME .)
-		|	^(METHOD_CALL_STATIC TYPE_NAME identifier=Identifier .)	
-		|	^(METHOD_CALL . identifier=Identifier .)
-		|	^(CLASS_STATIC_ACCESS . (identifier=CLASS_STATIC_ACCESS_VARIABLE_ID|identifier=CONSTANT))
+		|   	^(FUNCTION_CALL	identifier=TYPE_NAME args=.)
+			{
+			    IMethodSymbol methodSymbol = controller.resolveFunctionCall($identifier, $args);
+		     	    $identifier.setSymbol(methodSymbol);
+			    $type = methodSymbol.getType();
+			}
+			
+		|	^(METHOD_CALL callee=. identifier=Identifier args=.)
+			{
+			    $callee.setEvalType($callee.getSymbol().getType());
+			    IMethodSymbol methodSymbol = controller.resolveMethodCall($callee, $identifier, $args);
+			    $identifier.setSymbol(methodSymbol);
+			    $type = methodSymbol.getType();
+			}
+			
+		|	^(METHOD_CALL_STATIC calleeStatic=TYPE_NAME identifier=Identifier args=.)	
+			{
+			    $calleeStatic.setEvalType((ITypeSymbol) $calleeStatic.getSymbol());
+			    IMethodSymbol methodSymbol = controller.resolveStaticMethodCall($calleeStatic, $identifier, $args);
+			    $identifier.setSymbol(methodSymbol);
+			    $type = methodSymbol.getType();
+			}
+
+		|	^(CLASS_STATIC_ACCESS accessor=. (identifier=CLASS_STATIC_ACCESS_VARIABLE_ID|identifier=CONSTANT))
 		)
 		{$type = $identifier.getSymbol().getType();}		
 	;
@@ -354,15 +377,21 @@ specialOperators returns [ITypeSymbol type]
 	;
 
 postFixOperators returns [ITypeSymbol type]
-	:	^(nil=CLASS_MEMBER_ACCESS accessor=. Identifier)
+	:	^(CLASS_MEMBER_ACCESS accessor=expression Identifier)
 		{
-		    $accessor.setEvalType($accessor.getSymbol().getType());
-		    $type = controller.resolveReturnTypeClassMemberAccess($nil, $accessor, $Identifier);
+		    IVariableSymbol variableSymbol = controller.resolveClassMemberAccess($accessor.start, $Identifier);
+		    $Identifier.setSymbol(variableSymbol);
+		    $type = variableSymbol.getType();
 		}	
 		
 	|	^(nil=ARRAY_ACCESS expr=expression index=expression)
  		{$type = controller.resolveReturnTypeArrayAccess($nil, $expr.start, $index.start);}	
  		
- 	|	^(METHOD_CALL_POSTFIX expr=expression .)
+ 	|	^(METHOD_CALL_POSTFIX callee=expression identifier=Identifier args=.)
+ 		{
+ 		    IMethodSymbol methodSymbol = controller.resolveMethodCall($callee.start, $identifier, $args);
+		    $identifier.setSymbol(methodSymbol);
+		    $type = methodSymbol.getType();
+ 		}
 	;
 	

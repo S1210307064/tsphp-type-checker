@@ -16,9 +16,9 @@
  */
 package ch.tutteli.tsphp.typechecker.test.typecheck;
 
-import ch.tutteli.tsphp.typechecker.error.ReferenceErrorDto;
-import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ATypeCheckErrorTest;
-import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AssignHelper;
+import ch.tutteli.tsphp.typechecker.error.DefinitionErrorDto;
+import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.ATypeCheckDefinitionErrorTest;
+import java.util.Arrays;
 import java.util.Collection;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
@@ -30,10 +30,10 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class AssignmentOperatorErrorTest extends ATypeCheckErrorTest
+public class ClassMemberAccessDefinitionErrorTest extends ATypeCheckDefinitionErrorTest
 {
 
-    public AssignmentOperatorErrorTest(String testString, ReferenceErrorDto[] expectedLinesAndPositions) {
+    public ClassMemberAccessDefinitionErrorTest(String testString, DefinitionErrorDto[] expectedLinesAndPositions) {
         super(testString, expectedLinesAndPositions);
     }
 
@@ -44,6 +44,11 @@ public class AssignmentOperatorErrorTest extends ATypeCheckErrorTest
 
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
-       return AssignHelper.getAssignmentErrorTestStrings("=", false);
+        DefinitionErrorDto[] errorDto = new DefinitionErrorDto[]{new DefinitionErrorDto("A", 2, 1, "a", 3, 1)};
+        return Arrays.asList(new Object[][]{
+            {"class\n A{} A $a; $a->\n a;", errorDto},
+            {"class\n A{} class B extends A{function void foo(){}} B $b;A $a = $b; $a->\n a;", errorDto},
+        });
+
     }
 }
