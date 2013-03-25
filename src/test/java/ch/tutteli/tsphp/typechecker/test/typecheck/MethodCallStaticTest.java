@@ -17,8 +17,6 @@
 package ch.tutteli.tsphp.typechecker.test.typecheck;
 
 import ch.tutteli.tsphp.typechecker.test.testutils.ScopeTestStruct;
-import ch.tutteli.tsphp.typechecker.test.testutils.definition.ADefinitionScopeTest;
-import ch.tutteli.tsphp.typechecker.test.testutils.reference.ReferenceScopeTestStruct;
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AReferenceAstTypeCheckTest;
 import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest.Array;
 import static ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest.Bool;
