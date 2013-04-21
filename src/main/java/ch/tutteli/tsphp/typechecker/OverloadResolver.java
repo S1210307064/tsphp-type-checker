@@ -35,15 +35,15 @@ public class OverloadResolver implements IOverloadResolver
 {
 
     private Map<ITypeSymbol, Map<ITypeSymbol, ICastingMethod>> explicitCasts;
-    private ISymbolTable symbolTable;
+    private ITypeSystem typeSystem;
 
     /**
      *
      * @param theScalarCastMethod The method used to cast a scalar type to another scalar type
      */
-    public OverloadResolver(ISymbolTable theSymbolTable) {
-        symbolTable = theSymbolTable;
-        explicitCasts = theSymbolTable.getExplicitCastings();
+    public OverloadResolver(ITypeSystem theTypeSystem) {
+        typeSystem = theTypeSystem;
+        explicitCasts = theTypeSystem.getExplicitCastings();
     }
 
     @Override
@@ -83,23 +83,23 @@ public class OverloadResolver implements IOverloadResolver
         int parameterCount = formalParameters.size();
         int promotionTotalCount = 0;
         int promotionParameterCount = 0;
-        CastingDto parameterDto = null;
+        CastingDto castingDto = null;
         List<CastingDto> parameters = new ArrayList<>();
         for (int i = 0; i < parameterCount; ++i) {
-            parameterDto = getCastingDto(formalParameters.get(i), actualParameters.get(i));
-            if (parameterDto != null) {
-                if (parameterDto.promotionLevel != 0) {
+            castingDto = getCastingDto(formalParameters.get(i), actualParameters.get(i));
+            if (castingDto != null) {
+                if (castingDto.promotionLevel != 0) {
                     ++promotionParameterCount;
-                    promotionTotalCount += parameterDto.promotionLevel;
+                    promotionTotalCount += castingDto.promotionLevel;
                 }
-                if (parameterDto.castingMethods != null) {
-                    parameters.add(parameterDto);
+                if (castingDto.castingMethods != null) {
+                    parameters.add(castingDto);
                 }
             } else {
                 break;
             }
         }
-        if (parameterDto != null) {
+        if (castingDto != null) {
             methodDto = new OverloadDto(method, promotionParameterCount, promotionTotalCount, parameters);
         }
         return methodDto;
@@ -150,7 +150,7 @@ public class OverloadResolver implements IOverloadResolver
     private CastingDto getStandardCastingDto(ITSPHPAst actualParameter, ITypeSymbol formalParameterType,
             int promotionLevel, int explicitCastingLevel) {
         List<ICastingMethod> castingMethods = new ArrayList<>();
-        castingMethods.add(symbolTable.getStandardCastingMethod(formalParameterType));
+        castingMethods.add(typeSystem.getStandardCastingMethod(formalParameterType));
         return new CastingDto(promotionLevel, explicitCastingLevel, castingMethods, actualParameter);
     }
 
@@ -347,7 +347,7 @@ public class OverloadResolver implements IOverloadResolver
     }
 
     @Override
-    public OverloadDto getMostSpecificApplicableMethod(List<OverloadDto> methods)
+    public OverloadDto getMostSpecificApplicableOverload(List<OverloadDto> methods)
             throws AmbiguousCallException {
 
         List<OverloadDto> ambiguousMethodDtos = new ArrayList<>();

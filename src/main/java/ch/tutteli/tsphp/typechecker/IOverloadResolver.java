@@ -32,7 +32,7 @@ public interface IOverloadResolver
     List<OverloadDto> getApplicableOverloads(List<IMethodSymbol> methods,
             List<ITSPHPAst> actualParameterTypes);
 
-    OverloadDto getMostSpecificApplicableMethod(List<OverloadDto> methods)
+    OverloadDto getMostSpecificApplicableOverload(List<OverloadDto> methods)
             throws AmbiguousCallException;
 
     CastingDto getCastingDto(IVariableSymbol formalParameter, ITSPHPAst actualParameter);

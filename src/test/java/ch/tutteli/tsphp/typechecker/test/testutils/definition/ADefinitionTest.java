@@ -24,12 +24,12 @@ import ch.tutteli.tsphp.common.TSPHPAstAdaptor;
 import ch.tutteli.tsphp.common.exceptions.TSPHPException;
 import ch.tutteli.tsphp.typechecker.IOverloadResolver;
 import ch.tutteli.tsphp.typechecker.ISymbolResolver;
-import ch.tutteli.tsphp.typechecker.ISymbolTable;
 import ch.tutteli.tsphp.typechecker.ITypeCheckerController;
+import ch.tutteli.tsphp.typechecker.ITypeSystem;
 import ch.tutteli.tsphp.typechecker.OverloadResolver;
 import ch.tutteli.tsphp.typechecker.SymbolResolver;
-import ch.tutteli.tsphp.typechecker.SymbolTable;
 import ch.tutteli.tsphp.typechecker.TypeCheckerController;
+import ch.tutteli.tsphp.typechecker.TypeSystem;
 import ch.tutteli.tsphp.typechecker.antlr.ErrorReportingTSPHPDefinitionWalker;
 import ch.tutteli.tsphp.typechecker.test.testutils.ATest;
 import ch.tutteli.tsphp.typechecker.test.testutils.TestDefiner;
@@ -54,7 +54,7 @@ public abstract class ADefinitionTest extends ATest
     protected String errorMessagePrefix;
     protected TestDefiner definer;
     protected ITypeCheckerController controller;
-    protected ISymbolTable symbolTable;
+    protected ITypeSystem typeSystem;
     protected TestScopeFactory scopeFactory;
     protected ITSPHPAst ast;
     protected CommonTreeNodeStream commonTreeNodeStream;
@@ -79,14 +79,14 @@ public abstract class ADefinitionTest extends ATest
         scopeFactory = new TestScopeFactory();
         TestSymbolFactory symbolFactory = new TestSymbolFactory();
         definer = new TestDefiner(symbolFactory, scopeFactory);
-        symbolTable = new SymbolTable(symbolFactory, astHelper, definer.getGlobalDefaultNamespace());
+        typeSystem = new TypeSystem(symbolFactory, astHelper, definer.getGlobalDefaultNamespace());
         ISymbolResolver symbolResolver = new SymbolResolver(symbolFactory, definer.getGlobalNamespaceScopes(),
                 definer.getGlobalDefaultNamespace());
-        IOverloadResolver methodResolver = new OverloadResolver(symbolTable);
+        IOverloadResolver methodResolver = new OverloadResolver(typeSystem);
 
         controller = new TypeCheckerController(
                 symbolFactory,
-                symbolTable,
+                typeSystem,
                 definer,
                 symbolResolver,
                 methodResolver,

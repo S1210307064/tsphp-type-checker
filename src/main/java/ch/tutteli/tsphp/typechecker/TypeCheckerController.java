@@ -56,7 +56,7 @@ public class TypeCheckerController implements ITypeCheckerController
 
     private ISymbolFactory symbolFactory;
     private ISymbolResolver symbolResolver;
-    private ISymbolTable symbolTable;
+    private ITypeSystem typeSystem;
     private IDefiner definer;
     private IOverloadResolver overloadResolver;
     private IAstHelper astHelper;
@@ -66,19 +66,19 @@ public class TypeCheckerController implements ITypeCheckerController
     //
     private IGlobalNamespaceScope globalDefaultNamespace;
 
-    public TypeCheckerController(ISymbolFactory theSymbolFactory, ISymbolTable theSymbolTable,
+    public TypeCheckerController(ISymbolFactory theSymbolFactory, ITypeSystem theTypeSystem,
             IDefiner theDefiner, ISymbolResolver theSymbolResolver, IOverloadResolver theMethodResolver,
             IAstHelper theAstHelper) {
         symbolFactory = theSymbolFactory;
-        symbolTable = theSymbolTable;
+        typeSystem = theTypeSystem;
         definer = theDefiner;
         symbolResolver = theSymbolResolver;
         overloadResolver = theMethodResolver;
         astHelper = theAstHelper;
 
-        symbolTable.initTypeSystem();
-        unaryOperators = symbolTable.getUnaryOperators();
-        binaryOperators = symbolTable.getBinaryOperators();
+        typeSystem.initTypeSystem();
+        unaryOperators = typeSystem.getUnaryOperators();
+        binaryOperators = typeSystem.getBinaryOperators();
         globalDefaultNamespace = definer.getGlobalDefaultNamespace();
     }
 
@@ -88,8 +88,8 @@ public class TypeCheckerController implements ITypeCheckerController
     }
 
     @Override
-    public ISymbolTable getSymbolTable() {
-        return symbolTable;
+    public ITypeSystem getTypeSystem() {
+        return typeSystem;
     }
 
     @Override
@@ -446,7 +446,7 @@ public class TypeCheckerController implements ITypeCheckerController
 
         if (!goodMethods.isEmpty()) {
             try {
-                overloadDto = overloadResolver.getMostSpecificApplicableMethod(goodMethods);
+                overloadDto = overloadResolver.getMostSpecificApplicableOverload(goodMethods);
             } catch (AmbiguousCallException ex) {
                 ambiguousCallReporter.report(ex);
                 overloadDto = ex.getAmbiguousOverloads().get(0);
@@ -511,7 +511,7 @@ public class TypeCheckerController implements ITypeCheckerController
     }
 
     private void checkTernaryCondition(final ITSPHPAst operator, final ITSPHPAst condition) {
-        final ITypeSymbol typeExpected = symbolTable.getBoolTypeSymbol();
+        final ITypeSymbol typeExpected = typeSystem.getBoolTypeSymbol();
         checkIsSameOrSubType(condition, typeExpected, new IErrorReporterCaller()
         {
             @Override
@@ -530,7 +530,7 @@ public class TypeCheckerController implements ITypeCheckerController
         ITypeSymbol keyTypeSymbol = null;
         ITypeSymbol evalType = expression.getEvalType();
         if (!(evalType instanceof IErroneousSymbol)) {
-            IArrayTypeSymbol arrayTypeSymbol = symbolTable.getArrayTypeSymbol();
+            IArrayTypeSymbol arrayTypeSymbol = typeSystem.getArrayTypeSymbol();
             int promotionCount = overloadResolver.getPromotionLevelFromTo(evalType, arrayTypeSymbol);
             if (overloadResolver.isSameOrParentType(promotionCount)) {
                 IArrayTypeSymbol arrayType = (IArrayTypeSymbol) evalType;
@@ -545,7 +545,7 @@ public class TypeCheckerController implements ITypeCheckerController
         }
 
         if (keyTypeSymbol == null) {
-            keyTypeSymbol = symbolTable.getStringTypeSymbol();
+            keyTypeSymbol = typeSystem.getStringTypeSymbol();
         }
 
         final ITypeSymbol typeSymbol = keyTypeSymbol;
@@ -910,7 +910,7 @@ public class TypeCheckerController implements ITypeCheckerController
         if (castingDto != null) {
             if (castingDto.castingMethods == null) {
                 //even thought a casting is not really necessary we do one to be consistent
-                ICastingMethod castingMethod = symbolTable.getStandardCastingMethod(left.getEvalType());
+                ICastingMethod castingMethod = typeSystem.getStandardCastingMethod(left.getEvalType());
                 castingDto.castingMethods = new ArrayList<>();
                 castingDto.castingMethods.add(castingMethod);
             }
@@ -922,7 +922,7 @@ public class TypeCheckerController implements ITypeCheckerController
 
     @Override
     public void checkIf(final ITSPHPAst ifRoot, final ITSPHPAst expression) {
-        final ITypeSymbol typeSymbol = symbolTable.getBoolTypeSymbol();
+        final ITypeSymbol typeSymbol = typeSystem.getBoolTypeSymbol();
         checkIsSameOrSubType(expression, typeSymbol, new IErrorReporterCaller()
         {
             @Override
@@ -945,7 +945,7 @@ public class TypeCheckerController implements ITypeCheckerController
 
     @Override
     public void checkSwitch(final ITSPHPAst switchRoot, final ITSPHPAst expression) {
-        final ITypeSymbol typeSymbol = symbolTable.getStringNullableTypeSymbol();
+        final ITypeSymbol typeSymbol = typeSystem.getStringNullableTypeSymbol();
         checkIsSameOrSubType(expression, typeSymbol, new IErrorReporterCaller()
         {
             @Override
@@ -969,7 +969,7 @@ public class TypeCheckerController implements ITypeCheckerController
 
     @Override
     public void checkFor(final ITSPHPAst forRoot, final ITSPHPAst expression) {
-        final ITypeSymbol typeSymbol = symbolTable.getBoolTypeSymbol();
+        final ITypeSymbol typeSymbol = typeSystem.getBoolTypeSymbol();
         checkIsSameOrSubType(expression, typeSymbol, new IErrorReporterCaller()
         {
             @Override
@@ -987,7 +987,7 @@ public class TypeCheckerController implements ITypeCheckerController
         ITypeSymbol valueTypeSymbol = null;
         ITypeSymbol evalType = array.getEvalType();
         if (!(evalType instanceof IErroneousSymbol)) {
-            IArrayTypeSymbol arrayTypeSymbol = symbolTable.getArrayTypeSymbol();
+            IArrayTypeSymbol arrayTypeSymbol = typeSystem.getArrayTypeSymbol();
             int promotionCount = overloadResolver.getPromotionLevelFromTo(evalType, arrayTypeSymbol);
             if (overloadResolver.isSameOrParentType(promotionCount)) {
                 IArrayTypeSymbol arrayType = (IArrayTypeSymbol) evalType;
@@ -999,7 +999,7 @@ public class TypeCheckerController implements ITypeCheckerController
         }
         if (keyVariableId != null) {
             if (keyTypeSymbol == null) {
-                keyTypeSymbol = symbolTable.getStringTypeSymbol();
+                keyTypeSymbol = typeSystem.getStringTypeSymbol();
             }
             checkIsSameOrParentType(keyVariableId, keyVariableId, keyTypeSymbol);
         }
@@ -1019,7 +1019,7 @@ public class TypeCheckerController implements ITypeCheckerController
 
     @Override
     public void checkWhile(final ITSPHPAst whileRoot, final ITSPHPAst expression) {
-        final ITypeSymbol typeSymbol = symbolTable.getBoolTypeSymbol();
+        final ITypeSymbol typeSymbol = typeSystem.getBoolTypeSymbol();
         checkIsSameOrSubType(expression, typeSymbol, new IErrorReporterCaller()
         {
             @Override
@@ -1031,7 +1031,7 @@ public class TypeCheckerController implements ITypeCheckerController
 
     @Override
     public void checkDoWhile(final ITSPHPAst doWhileRoot, final ITSPHPAst expression) {
-        final ITypeSymbol typeSymbol = symbolTable.getBoolTypeSymbol();
+        final ITypeSymbol typeSymbol = typeSystem.getBoolTypeSymbol();
         checkIsSameOrSubType(expression, typeSymbol, new IErrorReporterCaller()
         {
             @Override
@@ -1043,7 +1043,7 @@ public class TypeCheckerController implements ITypeCheckerController
 
     @Override
     public void checkThrow(final ITSPHPAst throwRoot, final ITSPHPAst expression) {
-        final ITypeSymbol typeSymbol = symbolTable.getExceptionTypeSymbol();
+        final ITypeSymbol typeSymbol = typeSystem.getExceptionTypeSymbol();
         checkIsSameOrSubType(expression, typeSymbol, new IErrorReporterCaller()
         {
             @Override
@@ -1055,7 +1055,7 @@ public class TypeCheckerController implements ITypeCheckerController
 
     @Override
     public void checkCatch(final ITSPHPAst castRoot, final ITSPHPAst variableId) {
-        final ITypeSymbol typeSymbol = symbolTable.getExceptionTypeSymbol();
+        final ITypeSymbol typeSymbol = typeSystem.getExceptionTypeSymbol();
         checkIsSameOrSubType(variableId, typeSymbol, new IErrorReporterCaller()
         {
             @Override
@@ -1137,7 +1137,7 @@ public class TypeCheckerController implements ITypeCheckerController
 
     @Override
     public void checkEcho(final ITSPHPAst expression) {
-        final ITypeSymbol typeSymbol = symbolTable.getStringNullableTypeSymbol();
+        final ITypeSymbol typeSymbol = typeSystem.getStringNullableTypeSymbol();
         checkIsSameOrSubType(expression, typeSymbol, new IErrorReporterCaller()
         {
             @Override

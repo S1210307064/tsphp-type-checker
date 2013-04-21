@@ -93,51 +93,51 @@ public abstract class AOperatorTypeCheckTest extends ATypeCheckTest
 
         switch (type) {
             case Bool:
-                typeSymbol = symbolTable.getBoolTypeSymbol();
+                typeSymbol = typeSystem.getBoolTypeSymbol();
                 break;
             case BoolNullable:
-                typeSymbol = symbolTable.getBoolNullableTypeSymbol();
+                typeSymbol = typeSystem.getBoolNullableTypeSymbol();
                 break;
             case Int:
-                typeSymbol = symbolTable.getIntTypeSymbol();
+                typeSymbol = typeSystem.getIntTypeSymbol();
                 break;
             case IntNullable:
-                typeSymbol = symbolTable.getIntNullableTypeSymbol();
+                typeSymbol = typeSystem.getIntNullableTypeSymbol();
                 break;
             case Float:
-                typeSymbol = symbolTable.getFloatTypeSymbol();
+                typeSymbol = typeSystem.getFloatTypeSymbol();
                 break;
             case FloatNullable:
-                typeSymbol = symbolTable.getFloatNullableTypeSymbol();
+                typeSymbol = typeSystem.getFloatNullableTypeSymbol();
                 break;
             case String:
-                typeSymbol = symbolTable.getStringTypeSymbol();
+                typeSymbol = typeSystem.getStringTypeSymbol();
                 break;
             case StringNullable:
-                typeSymbol = symbolTable.getStringNullableTypeSymbol();
+                typeSymbol = typeSystem.getStringNullableTypeSymbol();
                 break;
             case Array:
-                typeSymbol = symbolTable.getArrayTypeSymbol();
+                typeSymbol = typeSystem.getArrayTypeSymbol();
                 break;
             case Resource:
-                typeSymbol = symbolTable.getResourceTypeSymbol();
+                typeSymbol = typeSystem.getResourceTypeSymbol();
                 break;
             case Exception:
-                typeSymbol = symbolTable.getExceptionTypeSymbol();
+                typeSymbol = typeSystem.getExceptionTypeSymbol();
                 break;
             case ErrorException:
                 typeSymbol = (ITypeSymbol) definer.getGlobalDefaultNamespace().resolve(
                         astHelper.createAst(TSPHPDefinitionWalker.TYPE_NAME, "ErrorException"));
                 break;
             case Null:
-                typeSymbol = symbolTable.getNullTypeSymbol();
+                typeSymbol = typeSystem.getNullTypeSymbol();
                 break;
             case Void:
-                typeSymbol = symbolTable.getVoidTypeSymbol();
+                typeSymbol = typeSystem.getVoidTypeSymbol();
                 break;
             case Object:
             default:
-                typeSymbol = symbolTable.getObjectTypeSymbol();
+                typeSymbol = typeSystem.getObjectTypeSymbol();
                 break;
         }
         return typeSymbol;

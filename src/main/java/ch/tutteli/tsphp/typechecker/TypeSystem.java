@@ -42,7 +42,7 @@ import java.util.Set;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class SymbolTable implements ISymbolTable
+public class TypeSystem implements ITypeSystem
 {
 
     private ISymbolFactory symbolFactory;
@@ -69,7 +69,7 @@ public class SymbolTable implements ISymbolTable
     private IGlobalNamespaceScope globalDefaultNamespace;
     private IVoidTypeSymbol voidTypeSymbol;
 
-    public SymbolTable(ISymbolFactory theSymbolFactory, IAstHelper theAstHelper,
+    public TypeSystem(ISymbolFactory theSymbolFactory, IAstHelper theAstHelper,
             IGlobalNamespaceScope theGlobalDefaultNamespace) {
 
         symbolFactory = theSymbolFactory;

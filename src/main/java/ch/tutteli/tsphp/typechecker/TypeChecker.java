@@ -63,17 +63,17 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
         ISymbolFactory symbolFactory = new SymbolFactory();
 
         IDefiner definer = new Definer(symbolFactory, new ScopeFactory());
-        ISymbolTable symbolTable = new SymbolTable(symbolFactory, astHelper,
+        ITypeSystem typeSystem = new TypeSystem(symbolFactory, astHelper,
                 definer.getGlobalDefaultNamespace());
 
         ISymbolResolver symbolResolver = new SymbolResolver(symbolFactory, definer.getGlobalNamespaceScopes(),
                 definer.getGlobalDefaultNamespace());
 
-        IOverloadResolver overloadResolver = new OverloadResolver(symbolTable);
+        IOverloadResolver overloadResolver = new OverloadResolver(typeSystem);
 
         controller = new TypeCheckerController(
                 symbolFactory,
-                symbolTable,
+                typeSystem,
                 definer,
                 symbolResolver,
                 overloadResolver,

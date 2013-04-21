@@ -42,7 +42,7 @@ package ch.tutteli.tsphp.typechecker.antlr;
 
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.typechecker.ISymbolTable;
+import ch.tutteli.tsphp.typechecker.ITypeSystem;
 import ch.tutteli.tsphp.typechecker.ITypeCheckerController;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
@@ -50,13 +50,13 @@ import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 
 @members {
 ITypeCheckerController controller;
-ISymbolTable symbolTable;
+ITypeSystem typeSystem;
 
 
 public TSPHPTypeCheckWalker(TreeNodeStream input, ITypeCheckerController theController) {
     this(input);
     controller = theController;
-    symbolTable = theController.getSymbolTable();
+    typeSystem = theController.getTypeSystem();
 }
 }
 
@@ -194,12 +194,12 @@ parameterDefaultValue
 	
 expression returns [ITypeSymbol type]
 @after { $start.setEvalType($type); } // do after any alternative
-	:   	Bool			{$type = symbolTable.getBoolTypeSymbol();}
-    	|   	Int     		{$type =  symbolTable.getIntTypeSymbol();}
-    	|   	Float			{$type = symbolTable.getFloatTypeSymbol();}
-    	|   	String			{$type =  symbolTable.getStringTypeSymbol();}
-    	|	^(TypeArray .*)		{$type = symbolTable.getArrayTypeSymbol();}
-    	|	Null			{$type = symbolTable.getNullTypeSymbol();}
+	:   	Bool			{$type = typeSystem.getBoolTypeSymbol();}
+    	|   	Int     		{$type =  typeSystem.getIntTypeSymbol();}
+    	|   	Float			{$type = typeSystem.getFloatTypeSymbol();}
+    	|   	String			{$type =  typeSystem.getStringTypeSymbol();}
+    	|	^(TypeArray .*)		{$type = typeSystem.getArrayTypeSymbol();}
+    	|	Null			{$type = typeSystem.getNullTypeSymbol();}
     	|  	symbol			{$type = $symbol.type;}
 	|	unaryOperator 		{$type = $unaryOperator.type;}
 	|	binaryOperator 		{$type = $binaryOperator.type;}
@@ -294,13 +294,13 @@ equalityOperator returns [ITypeSymbol type]
 			left=expression right=expression
 		)
 		{
-		    $type = symbolTable.getBoolTypeSymbol();
+		    $type = typeSystem.getBoolTypeSymbol();
 		    controller.checkEquality($start, $left.start, $right.start);
 		}
 		
 	|	^( ('===' |'!==') left=expression right=expression)
 		{
-		    $type = symbolTable.getBoolTypeSymbol();
+		    $type = typeSystem.getBoolTypeSymbol();
 		    controller.checkIdentity($start, $left.start, $right.start);
 		}
 	;
@@ -362,7 +362,7 @@ specialOperators returns [ITypeSymbol type]
 		)
 		{
 		    
-		    $type = symbolTable.getBoolTypeSymbol();
+		    $type = typeSystem.getBoolTypeSymbol();
 		    controller.checkInstanceof($start, $expr.start, $identifier);
 		}
     	|	^('new' identifier=TYPE_NAME args=.)

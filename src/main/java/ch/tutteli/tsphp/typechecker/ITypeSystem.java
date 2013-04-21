@@ -31,7 +31,7 @@ import java.util.Map;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public interface ISymbolTable
+public interface ITypeSystem
 {
 
     void initTypeSystem();

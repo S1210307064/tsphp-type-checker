@@ -31,7 +31,7 @@ public interface ITypeCheckerController
 
     IDefiner getDefiner();
 
-    ISymbolTable getSymbolTable();
+    ITypeSystem getTypeSystem();
 
     boolean checkIsInterface(ITSPHPAst typeAst, ITypeSymbol symbol);
 

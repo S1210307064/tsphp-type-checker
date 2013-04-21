@@ -21,7 +21,7 @@ import ch.tutteli.tsphp.typechecker.IDefiner;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tutteli.tsphp.typechecker.test.testutils.AstTestHelper;
 import ch.tutteli.tsphp.typechecker.test.testutils.TypeHelper;
-import ch.tutteli.tsphp.typechecker.test.testutils.reference.ASymbolTableTest;
+import ch.tutteli.tsphp.typechecker.test.testutils.reference.ATypeSystemTest;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -35,7 +35,7 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class ResolvePrimitiveTypeTest extends ASymbolTableTest
+public class ResolvePrimitiveTypeTest extends ATypeSystemTest
 {
 
     private String type;

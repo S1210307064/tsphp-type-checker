@@ -43,9 +43,9 @@ public class DoubleExplicitCastingTest extends AOperatorTypeCheckTest
 
     @Test
     public void test() throws RecognitionException {
-        symbolTable.getExplicitCastings()
-                .get(symbolTable.getObjectTypeSymbol())
-                .remove(symbolTable.getBoolTypeSymbol());
+        typeSystem.getExplicitCastings()
+                .get(typeSystem.getObjectTypeSymbol())
+                .remove(typeSystem.getBoolTypeSymbol());
 
         check();
     }
