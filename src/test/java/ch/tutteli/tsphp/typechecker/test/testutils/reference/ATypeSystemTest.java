@@ -16,6 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker.test.testutils.reference;
 
+import ch.tutteli.tsphp.common.AstHelperRegistry;
 import ch.tutteli.tsphp.common.ITSPHPAstAdaptor;
 import ch.tutteli.tsphp.common.TSPHPAstAdaptor;
 import ch.tutteli.tsphp.typechecker.IDefiner;
@@ -49,12 +50,10 @@ public class ATypeSystemTest extends ATest
 
     public ATypeSystemTest() {
         super();
-        ITSPHPAstAdaptor adaptor = new TSPHPAstAdaptor();
-        IAstHelper astHelper = new AstHelper(adaptor);
         scopeFactory = new TestScopeFactory();
         TestSymbolFactory symbolFactory = new TestSymbolFactory();
         IDefiner definer = new TestDefiner(symbolFactory, scopeFactory);
-        ITypeSystem typeSystem = new TypeSystem(symbolFactory, astHelper,
+        ITypeSystem typeSystem = new TypeSystem(symbolFactory, AstHelperRegistry.get(),
                 definer.getGlobalDefaultNamespace());
         ISymbolResolver symbolResolver = new SymbolResolver(symbolFactory, definer.getGlobalNamespaceScopes(),
                 definer.getGlobalDefaultNamespace());
@@ -66,6 +65,6 @@ public class ATypeSystemTest extends ATest
                 definer,
                 symbolResolver,
                 methodResolver,
-                astHelper);
+                new AstHelper());
     }
 }

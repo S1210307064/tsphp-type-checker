@@ -16,6 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker;
 
+import ch.tutteli.tsphp.common.IAstHelper;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.ACTUAL_PARAMETERS;
 import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.Identifier;
@@ -25,7 +26,6 @@ import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ITypeSymbolWithPHPBuiltInCasting;
-import ch.tutteli.tsphp.typechecker.utils.IAstHelper;
 import org.antlr.runtime.Token;
 
 /**

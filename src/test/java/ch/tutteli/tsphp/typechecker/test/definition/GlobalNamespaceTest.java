@@ -61,13 +61,13 @@ public class GlobalNamespaceTest extends ADefinitionTest
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
         return Arrays.asList(new Object[][]{
-//                    {"int $a=1;", new String[]{"\\"}},
-//                    {"namespace{}", new String[]{"\\"}},
-//                    {"namespace{} namespace{}", new String[]{"\\"}},
-//                    {"namespace{} namespace b{} namespace a\\b{}", new String[]{"\\", "\\b\\", "\\a\\b\\"}},
-//                    {"namespace{} namespace{}  namespace a\\b{}", new String[]{"\\", "\\a\\b\\"}},
-//                    {"namespace{} namespace b{} namespace{} ", new String[]{"\\", "\\b\\"}},
-//                    {"namespace{} namespace{} namespace{} ", new String[]{"\\"}},
+                    {"int $a=1;", new String[]{"\\"}},
+                    {"namespace{}", new String[]{"\\"}},
+                    {"namespace{} namespace{}", new String[]{"\\"}},
+                    {"namespace{} namespace b{} namespace a\\b{}", new String[]{"\\", "\\b\\", "\\a\\b\\"}},
+                    {"namespace{} namespace{}  namespace a\\b{}", new String[]{"\\", "\\a\\b\\"}},
+                    {"namespace{} namespace b{} namespace{} ", new String[]{"\\", "\\b\\"}},
+                    {"namespace{} namespace{} namespace{} ", new String[]{"\\"}},
                     //default space is always created since int, float etc. is defined in default namespace
                     {"namespace a;", new String[]{"\\","\\a\\"}}
                 });

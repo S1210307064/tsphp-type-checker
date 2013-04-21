@@ -25,17 +25,10 @@ import ch.tutteli.tsphp.typechecker.CastingDto;
  */
 public interface IAstHelper
 {
-
-    ITSPHPAst createAst(ITSPHPAst ast);
-
-    ITSPHPAst createAst(int tokenType, String name);
-
     /**
      * Create a function call or static method call AST node and use the given expression as actual parameter.
      *
      * @return The create node
      */
     ITSPHPAst prependCasting(CastingDto parameterPromotionDto);
-
-    void prependAst(ITSPHPAst ast, ITSPHPAst target);
 }

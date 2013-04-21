@@ -14,25 +14,36 @@
  * limitations under the License.
  * 
  */
-package ch.tutteli.tsphp.typechecker;
+package ch.tutteli.tsphp.typechecker.symbols;
 
-import ch.tutteli.tsphp.common.IAstHelper;
+import ch.tutteli.tsphp.common.AstHelperRegistry;
+import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
+import java.util.Set;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-class ClassInterfaceCastingMethod extends ACastingMethod implements ICastingMethod
+public abstract class ANullableTypeSymbol extends ATypeSymbol
 {
 
-    public ClassInterfaceCastingMethod(IAstHelper astHelper, ITypeSymbol typeSymbol) {
-        super(astHelper, typeSymbol);
+    public ANullableTypeSymbol(ITSPHPAst definitionAst, String name, ITypeSymbol parentTypeSymbol) {
+        super(definitionAst, name, parentTypeSymbol);
+    }
+
+    public ANullableTypeSymbol(ITSPHPAst definitionAst, String name, Set<ITypeSymbol> parentTypeSymbols) {
+        super(definitionAst, name, parentTypeSymbols);
     }
 
     @Override
-    protected int getTokenType() {
-        return TSPHPDefinitionWalker.TYPE_NAME;
+    public boolean isNullable() {
+        return true;
+    }
+
+    @Override
+    public ITSPHPAst getDefaultValue() {
+        return AstHelperRegistry.get().createAst(TSPHPDefinitionWalker.Null, "null");
     }
 }

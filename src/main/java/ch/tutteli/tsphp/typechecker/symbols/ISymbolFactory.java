@@ -40,10 +40,10 @@ public interface ISymbolFactory
     IVoidTypeSymbol createVoidTypeSymbol();
 
     IScalarTypeSymbol createScalarTypeSymbol(String name, int tokenType, ITypeSymbol parentTypeSymbol,
-            boolean isNullable);
+            boolean isNullable, int defaultValueTokenType, String defaultValue);
 
     IScalarTypeSymbol createScalarTypeSymbol(String name, int tokenType, Set<ITypeSymbol> parentTypeSymbol,
-            boolean isNullable);
+            boolean isNullable, int defaultValueTokenType, String defaultValue);
 
     IArrayTypeSymbol createArrayTypeSymbol(String name, int tokenType, ITypeSymbol keyValue, ITypeSymbol valueType);
 

@@ -16,6 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker.test.testutils.typecheck;
 
+import ch.tutteli.tsphp.common.AstHelperRegistry;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
@@ -127,7 +128,7 @@ public abstract class AOperatorTypeCheckTest extends ATypeCheckTest
                 break;
             case ErrorException:
                 typeSymbol = (ITypeSymbol) definer.getGlobalDefaultNamespace().resolve(
-                        astHelper.createAst(TSPHPDefinitionWalker.TYPE_NAME, "ErrorException"));
+                        AstHelperRegistry.get().createAst(TSPHPDefinitionWalker.TYPE_NAME, "ErrorException"));
                 break;
             case Null:
                 typeSymbol = typeSystem.getNullTypeSymbol();

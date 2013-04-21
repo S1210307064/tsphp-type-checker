@@ -164,18 +164,20 @@ variableInit
 	:	{$start.getParent().getType()!=Catch && $start.getParent().getType()!=Foreach}?
 		^(list=VARIABLE_DECLARATION_LIST 
 			type=. 
-			(	^(VariableId expression)
-				{
-		   		    $VariableId.setEvalType($VariableId.getSymbol().getType());
-				    if($list.getParent().getType() != CLASS_MEMBER){
-				         controller.checkInitialValue($VariableId, $expression.start);
-				    } else {
-				        controller.checkConstantInitialValue($VariableId, $expression.start);
-				    }
-				}
+			(	(	^(variableId=VariableId expression)
+					{
+			   		    $variableId.setEvalType($variableId.getSymbol().getType());
+					    if($list.getParent().getType() != CLASS_MEMBER){
+					         controller.checkInitialValue($variableId, $expression.start);
+					    } else {
+					        controller.checkConstantInitialValue($variableId, $expression.start);
+					    }
+					}
+				|	variableId=VariableId
+					{if($list.getParent().getType() == CLASS_MEMBER) controller.addDefaultValue($variableId);}
+				)
 			)+
 		)
-		
 	;
 	
 constantInit

@@ -16,6 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker;
 
+import ch.tutteli.tsphp.common.AstHelperRegistry;
 import ch.tutteli.tsphp.common.IErrorLogger;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITSPHPAstAdaptor;
@@ -48,11 +49,8 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
     private ITypeCheckerController controller;
     private Collection<IErrorLogger> errorLoggers = new ArrayDeque<>();
     private boolean hasFoundError = false;
-    private IAstHelper astHelper;
 
-    public TypeChecker(ITSPHPAstAdaptor astAdaptor) {
-
-        astHelper = new AstHelper(astAdaptor);
+    public TypeChecker() {
         ScopeHelperRegistry.set(new ScopeHelper());
         ErrorReporterRegistry.set(new ErrorReporter(new ErrorMessageProvider()));
 
@@ -61,9 +59,9 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
 
     private void init() {
         ISymbolFactory symbolFactory = new SymbolFactory();
-
         IDefiner definer = new Definer(symbolFactory, new ScopeFactory());
-        ITypeSystem typeSystem = new TypeSystem(symbolFactory, astHelper,
+
+        ITypeSystem typeSystem = new TypeSystem(symbolFactory, AstHelperRegistry.get(),
                 definer.getGlobalDefaultNamespace());
 
         ISymbolResolver symbolResolver = new SymbolResolver(symbolFactory, definer.getGlobalNamespaceScopes(),
@@ -77,7 +75,7 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
                 definer,
                 symbolResolver,
                 overloadResolver,
-                astHelper);
+                new AstHelper());
     }
 
     @Override

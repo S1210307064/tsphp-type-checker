@@ -17,10 +17,8 @@
 package ch.tutteli.tsphp.typechecker.utils;
 
 import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.common.ITSPHPAstAdaptor;
 import ch.tutteli.tsphp.typechecker.CastingDto;
 import ch.tutteli.tsphp.typechecker.ICastingMethod;
-import org.antlr.runtime.CommonToken;
 
 /**
  *
@@ -28,22 +26,6 @@ import org.antlr.runtime.CommonToken;
  */
 public class AstHelper implements IAstHelper
 {
-
-    private ITSPHPAstAdaptor astAdaptor;
-
-    public AstHelper(ITSPHPAstAdaptor theAstAdaptor) {
-        astAdaptor = theAstAdaptor;
-    }
-
-    @Override
-    public ITSPHPAst createAst(ITSPHPAst ast) {
-        return astAdaptor.create(ast);
-    }
-
-    @Override
-    public ITSPHPAst createAst(int tokenType, String name) {
-        return (ITSPHPAst) astAdaptor.create(tokenType, new CommonToken(tokenType, name));
-    }
 
     @Override
     public ITSPHPAst prependCasting(CastingDto dto) {
@@ -61,17 +43,5 @@ public class AstHelper implements IAstHelper
         parent.replaceChildren(childIndex, childIndex, actualParameter);
 
         return actualParameter;
-    }
-
-    /**
-     * Prepend ast to target, makes ast the parent of target
-     */
-    @Override
-    public void prependAst(ITSPHPAst ast, ITSPHPAst target) {
-        ITSPHPAst parent = (ITSPHPAst) target.getParent();
-        int childIndex = target.getChildIndex();
-        ast.setParent(parent);
-        ast.addChild(target);
-        parent.replaceChildren(childIndex, childIndex, ast);
     }
 }

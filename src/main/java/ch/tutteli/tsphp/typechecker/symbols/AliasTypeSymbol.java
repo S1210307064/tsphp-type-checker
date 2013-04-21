@@ -34,4 +34,9 @@ public class AliasTypeSymbol extends ATypeSymbol implements IAliasTypeSymbol
     public boolean isNullable() {
         return true;
     }
+
+    @Override
+    public ITSPHPAst getDefaultValue() {
+        throw new UnsupportedOperationException("AliasTypeSymbol does not have an default value.");
+    }
 }

@@ -22,7 +22,7 @@ import ch.tutteli.tsphp.common.ITypeSymbol;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class ArrayTypeSymbol extends ATypeSymbol implements IArrayTypeSymbol
+public class ArrayTypeSymbol extends ANullableTypeSymbol implements IArrayTypeSymbol
 {
 
     private ITypeSymbol keyTypeSymbol;
@@ -40,11 +40,6 @@ public class ArrayTypeSymbol extends ATypeSymbol implements IArrayTypeSymbol
     @Override
     public int getTokenTypeForCasting() {
         return tokenType;
-    }
-
-    @Override
-    public boolean isNullable() {
-        return true;
     }
 
     @Override

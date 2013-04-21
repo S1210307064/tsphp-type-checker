@@ -16,8 +16,8 @@
  */
 package ch.tutteli.tsphp.typechecker;
 
+import ch.tutteli.tsphp.common.IAstHelper;
 import ch.tutteli.tsphp.typechecker.symbols.ITypeSymbolWithPHPBuiltInCasting;
-import ch.tutteli.tsphp.typechecker.utils.IAstHelper;
 
 /**
  *
@@ -25,7 +25,7 @@ import ch.tutteli.tsphp.typechecker.utils.IAstHelper;
  */
 public class BuiltInCastingMethod extends ACastingMethod implements ICastingMethod
 {
-    
+
     public BuiltInCastingMethod(IAstHelper theAstHelper, ITypeSymbolWithPHPBuiltInCasting theType) {
         super(theAstHelper, theType);
     }

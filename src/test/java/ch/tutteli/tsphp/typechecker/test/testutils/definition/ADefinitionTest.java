@@ -16,6 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker.test.testutils.definition;
 
+import ch.tutteli.tsphp.common.AstHelperRegistry;
 import ch.tutteli.tsphp.common.IErrorLogger;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITSPHPAstAdaptor;
@@ -75,11 +76,11 @@ public abstract class ADefinitionTest extends ATest
 
     private void init() {
         adaptor = new TSPHPAstAdaptor();
-        astHelper = new AstHelper(adaptor);
+        astHelper = new AstHelper();
         scopeFactory = new TestScopeFactory();
         TestSymbolFactory symbolFactory = new TestSymbolFactory();
         definer = new TestDefiner(symbolFactory, scopeFactory);
-        typeSystem = new TypeSystem(symbolFactory, astHelper, definer.getGlobalDefaultNamespace());
+        typeSystem = new TypeSystem(symbolFactory, AstHelperRegistry.get(), definer.getGlobalDefaultNamespace());
         ISymbolResolver symbolResolver = new SymbolResolver(symbolFactory, definer.getGlobalNamespaceScopes(),
                 definer.getGlobalDefaultNamespace());
         IOverloadResolver methodResolver = new OverloadResolver(typeSystem);

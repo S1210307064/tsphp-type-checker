@@ -16,10 +16,12 @@
  */
 package ch.tutteli.tsphp.typechecker.symbols.erroneous;
 
+import ch.tutteli.tsphp.common.AstHelperRegistry;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
+import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IPolymorphicTypeSymbol;
@@ -106,5 +108,8 @@ public class ErroneousClassTypeSymbol extends AErroneousScopedSymbol implements 
         return false;
     }
 
-   
+    @Override
+    public ITSPHPAst getDefaultValue() {
+        return AstHelperRegistry.get().createAst(TSPHPDefinitionWalker.Null, "null");
+    }
 }

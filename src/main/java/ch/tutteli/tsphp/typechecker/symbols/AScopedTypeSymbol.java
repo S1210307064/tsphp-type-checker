@@ -16,14 +16,17 @@
  */
 package ch.tutteli.tsphp.typechecker.symbols;
 
+import ch.tutteli.tsphp.common.AstHelperRegistry;
 import ch.tutteli.tsphp.common.ILowerCaseStringMap;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.LowerCaseStringMap;
+import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tutteli.tsphp.typechecker.scopes.ICaseInsensitiveScope;
 import ch.tutteli.tsphp.typechecker.scopes.ScopeHelperRegistry;
+import ch.tutteli.tsphp.typechecker.utils.IAstHelper;
 import ch.tutteli.tsphp.typechecker.utils.MapHelper;
 import java.util.HashSet;
 import java.util.List;
@@ -38,7 +41,6 @@ public abstract class AScopedTypeSymbol extends AScopedSymbol implements ICaseIn
 
     protected Set<ITypeSymbol> parentTypeSymbols = new HashSet<>();
     protected ILowerCaseStringMap<List<ISymbol>> symbolsCaseInsensitive = new LowerCaseStringMap<>();
-    
     private boolean isObjectTheParentTypeSymbol = false;
 
     public AScopedTypeSymbol(ITSPHPAst definitionAst, Set<Integer> modifiers, String name, IScope enclosingScope,
@@ -92,5 +94,10 @@ public abstract class AScopedTypeSymbol extends AScopedSymbol implements ICaseIn
     @Override
     public boolean isNullable() {
         return true;
+    }
+
+    @Override
+    public ITSPHPAst getDefaultValue() {
+        return AstHelperRegistry.get().createAst(TSPHPDefinitionWalker.Null, "null");
     }
 }

@@ -16,6 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker;
 
+import ch.tutteli.tsphp.common.AstHelperRegistry;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
@@ -167,7 +168,6 @@ public class TypeCheckerController implements ITypeCheckerController
         }
         return symbol;
     }
-
 
     @Override
     public IVariableSymbol resolveStaticMember(ITSPHPAst accessor, ITSPHPAst identifier) {
@@ -1093,7 +1093,7 @@ public class TypeCheckerController implements ITypeCheckerController
 
     @Override
     public void checkInitialValue(final ITSPHPAst variableId, final ITSPHPAst expression) {
-        ITSPHPAst operator = astHelper.createAst(variableId);
+        ITSPHPAst operator = AstHelperRegistry.get().createAst(variableId);
         operator.setText("=");
         operator.getToken().setType(TSPHPDefinitionWalker.Assign);
         checkAssignment(operator, variableId, expression);
@@ -1174,6 +1174,19 @@ public class TypeCheckerController implements ITypeCheckerController
         }
     }
 
+    @Override
+    public void addDefaultValue(ITSPHPAst variableId) {
+        ITypeSymbol typeSymbol = variableId.getSymbol().getType();
+        ITSPHPAst initValue = typeSymbol.getDefaultValue();
+        if(typeSymbol.isNullable()){
+            initValue.setEvalType(typeSystem.getNullTypeSymbol());
+        }else{
+            initValue.setEvalType(typeSymbol);
+        }
+        variableId.addChild(initValue);
+        
+    }
+
     /**
      * A "delegate" which represents a call of a method on an IErrrorReporter.
      */
@@ -1208,12 +1221,6 @@ public class TypeCheckerController implements ITypeCheckerController
     {
 
         void callAppropriateMethod(ITSPHPAst identifier, ISymbolWithAccessModifier symbol, int accessFrom);
-    }
-
-    private interface IVisbilityChecker
-    {
-
-        void checkAccessModifier();
     }
 
     private class OperatorResolvingDto

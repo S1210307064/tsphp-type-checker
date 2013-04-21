@@ -17,21 +17,17 @@
 package ch.tutteli.tsphp.typechecker.symbols;
 
 import ch.tutteli.tsphp.common.ITypeSymbol;
+import ch.tutteli.tsphp.typechecker.utils.IAstHelper;
 import java.util.HashSet;
 
 /**
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class NullTypeSymbol extends ATypeSymbol implements INullTypeSymbol
+public class NullTypeSymbol extends ANullableTypeSymbol implements INullTypeSymbol
 {
 
     public NullTypeSymbol() {
         super(null, "null", new HashSet<ITypeSymbol>());
-    }
-
-    @Override
-    public boolean isNullable() {
-        return true;
     }
 }

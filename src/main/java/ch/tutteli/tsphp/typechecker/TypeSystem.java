@@ -16,6 +16,7 @@
  */
 package ch.tutteli.tsphp.typechecker;
 
+import ch.tutteli.tsphp.common.IAstHelper;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.*;
@@ -30,7 +31,6 @@ import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
 import ch.tutteli.tsphp.typechecker.symbols.ITypeSymbolWithPHPBuiltInCasting;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IVoidTypeSymbol;
-import ch.tutteli.tsphp.typechecker.utils.IAstHelper;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -196,42 +196,47 @@ public class TypeSystem implements ITypeSystem
 
         defineObjectTypeSymbol();
 
-        stringNullableTypeSymbol = symbolFactory.createScalarTypeSymbol("string?", TypeString, objectTypeSymbol, true);
+        stringNullableTypeSymbol = symbolFactory.createScalarTypeSymbol("string?", TypeString, objectTypeSymbol, true,
+                Null, "null");
         globalDefaultNamespace.define(stringNullableTypeSymbol);
 
         floatNullableTypeSymbol = symbolFactory.createScalarTypeSymbol(
-                "float?", TypeFloat, stringNullableTypeSymbol, true);
+                "float?", TypeFloat, stringNullableTypeSymbol, true, Null, "null");
         globalDefaultNamespace.define(floatNullableTypeSymbol);
 
-        intNullableTypeSymbol = symbolFactory.createScalarTypeSymbol("int?", TypeInt, floatNullableTypeSymbol, true);
+        intNullableTypeSymbol = symbolFactory.createScalarTypeSymbol("int?", TypeInt, floatNullableTypeSymbol, true,
+                Null, "null");
         globalDefaultNamespace.define(intNullableTypeSymbol);
 
-        boolNullableTypeSymbol = symbolFactory.createScalarTypeSymbol("bool?", TypeBool, intNullableTypeSymbol, true);
+        boolNullableTypeSymbol = symbolFactory.createScalarTypeSymbol("bool?", TypeBool, intNullableTypeSymbol, true,
+                Null, "null");
         globalDefaultNamespace.define(boolNullableTypeSymbol);
 
 
         Set<ITypeSymbol> parentTypes = new HashSet<>();
         parentTypes.add(objectTypeSymbol);
         parentTypes.add(stringNullableTypeSymbol);
-        stringTypeSymbol = symbolFactory.createScalarTypeSymbol("string", TypeString, parentTypes, false);
+        stringTypeSymbol = symbolFactory.createScalarTypeSymbol("string", TypeString, parentTypes, false,
+                TypeString, "''");
         globalDefaultNamespace.define(stringTypeSymbol);
 
         parentTypes = new HashSet<>();
         parentTypes.add(stringTypeSymbol);
         parentTypes.add(floatNullableTypeSymbol);
-        floatTypeSymbol = symbolFactory.createScalarTypeSymbol("float", TypeFloat, parentTypes, false);
+        floatTypeSymbol = symbolFactory.createScalarTypeSymbol("float", TypeFloat, parentTypes, false,
+                TypeFloat, "0.0");
         globalDefaultNamespace.define(floatTypeSymbol);
 
         parentTypes = new HashSet<>();
         parentTypes.add(floatTypeSymbol);
         parentTypes.add(intNullableTypeSymbol);
-        intTypeSymbol = symbolFactory.createScalarTypeSymbol("int", TypeInt, parentTypes, false);
+        intTypeSymbol = symbolFactory.createScalarTypeSymbol("int", TypeInt, parentTypes, false, TypeInt, "0");
         globalDefaultNamespace.define(intTypeSymbol);
 
         parentTypes = new HashSet<>();
         parentTypes.add(intTypeSymbol);
         parentTypes.add(boolNullableTypeSymbol);
-        boolTypeSymbol = symbolFactory.createScalarTypeSymbol("bool", TypeBool, parentTypes, false);
+        boolTypeSymbol = symbolFactory.createScalarTypeSymbol("bool", TypeBool, parentTypes, false, TypeBool, "false");
         globalDefaultNamespace.define(boolTypeSymbol);
 
         arrayTypeSymbol = symbolFactory.createArrayTypeSymbol("array", TypeArray, stringTypeSymbol, objectTypeSymbol);
