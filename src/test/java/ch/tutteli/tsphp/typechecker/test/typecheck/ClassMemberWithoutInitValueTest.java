@@ -59,6 +59,7 @@ public class ClassMemberWithoutInitValueTest extends AOperatorTypeCheckTest
             {"class a{float? $a;}", new TypeCheckStruct[]{struct("null", Null, 1, 0, 4, 0, 0, 1, 0)}},
             {"class a{string? $a;}", new TypeCheckStruct[]{struct("null", Null, 1, 0, 4, 0, 0, 1, 0)}},
             {"class a{Exception $a;}", new TypeCheckStruct[]{struct("null", Null, 1, 0, 4, 0, 0, 1, 0)}},
-            {"class a{ErrorException $a;}", new TypeCheckStruct[]{struct("null", Null, 1, 0, 4, 0, 0, 1, 0)}},});
+            {"class a{ErrorException $a;}", new TypeCheckStruct[]{struct("null", Null, 1, 0, 4, 0, 0, 1, 0)}}
+        });
     }
 }

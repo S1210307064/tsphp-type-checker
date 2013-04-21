@@ -51,8 +51,8 @@ public class ScalarTypeSymbol extends ATypeSymbol implements IScalarTypeSymbol
             int theDefaultValueTokenType, String theDefaultValue) {
         tokenTypeForCasting = theTokenTypeForCasting;
         isNullable = isItNullable;
-        defaultValue = theDefaultValue;
         defaultValueTokenType = theDefaultValueTokenType;
+        defaultValue = theDefaultValue;
     }
 
     @Override

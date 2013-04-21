@@ -217,26 +217,26 @@ public class TypeSystem implements ITypeSystem
         parentTypes.add(objectTypeSymbol);
         parentTypes.add(stringNullableTypeSymbol);
         stringTypeSymbol = symbolFactory.createScalarTypeSymbol("string", TypeString, parentTypes, false,
-                TypeString, "''");
+                String, "''");
         globalDefaultNamespace.define(stringTypeSymbol);
 
         parentTypes = new HashSet<>();
         parentTypes.add(stringTypeSymbol);
         parentTypes.add(floatNullableTypeSymbol);
         floatTypeSymbol = symbolFactory.createScalarTypeSymbol("float", TypeFloat, parentTypes, false,
-                TypeFloat, "0.0");
+                Float, "0.0");
         globalDefaultNamespace.define(floatTypeSymbol);
 
         parentTypes = new HashSet<>();
         parentTypes.add(floatTypeSymbol);
         parentTypes.add(intNullableTypeSymbol);
-        intTypeSymbol = symbolFactory.createScalarTypeSymbol("int", TypeInt, parentTypes, false, TypeInt, "0");
+        intTypeSymbol = symbolFactory.createScalarTypeSymbol("int", TypeInt, parentTypes, false, Int, "0");
         globalDefaultNamespace.define(intTypeSymbol);
 
         parentTypes = new HashSet<>();
         parentTypes.add(intTypeSymbol);
         parentTypes.add(boolNullableTypeSymbol);
-        boolTypeSymbol = symbolFactory.createScalarTypeSymbol("bool", TypeBool, parentTypes, false, TypeBool, "false");
+        boolTypeSymbol = symbolFactory.createScalarTypeSymbol("bool", TypeBool, parentTypes, false, Bool, "false");
         globalDefaultNamespace.define(boolTypeSymbol);
 
         arrayTypeSymbol = symbolFactory.createArrayTypeSymbol("array", TypeArray, stringTypeSymbol, objectTypeSymbol);
