@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Robert Stoll <rstoll@tutteli.ch>
+ * Copyright 2013 Robert Stoll <rstoll@tutteli.ch>
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ options {
 
 @header{
 /*
- * Copyright 2012 Robert Stoll <rstoll@tutteli.ch>
+ * Copyright 2013 Robert Stoll <rstoll@tutteli.ch>
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -207,6 +207,7 @@ expression returns [ITypeSymbol type]
 	|	binaryOperator 		{$type = $binaryOperator.type;}
  	|	^('@' expr=expression)	{$type = $expr.start.getEvalType();}
       	|	equalityOperator	{$type = $equalityOperator.type;}
+      	|	identityOperator	{$type = $identityOperator.type;}
       	|	assignOperator		{$type = $assignOperator.type;}
       	|	castOperator		{$type = $castOperator.type;}
    	|	specialOperators	{$type = $specialOperators.type;}
@@ -299,8 +300,10 @@ equalityOperator returns [ITypeSymbol type]
 		    $type = typeSystem.getBoolTypeSymbol();
 		    controller.checkEquality($start, $left.start, $right.start);
 		}
-		
-	|	^( ('===' |'!==') left=expression right=expression)
+	;
+	
+identityOperator returns [ITypeSymbol type]
+	:	^( ('===' |'!==') left=expression right=expression)
 		{
 		    $type = typeSystem.getBoolTypeSymbol();
 		    controller.checkIdentity($start, $left.start, $right.start);
