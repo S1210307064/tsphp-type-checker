@@ -369,7 +369,7 @@ public class TypeCheckerController implements ITypeCheckerController
         IClassTypeSymbol classTypeSymbol = getEnclosingClass(ast);
         IClassTypeSymbol parent = classTypeSymbol.getParent();
         if (parent == null) {
-            TypeCheckerException ex = ErrorReporterRegistry.get().noParentClass(classTypeSymbol.getDefinitionAst());
+            TypeCheckerException ex = ErrorReporterRegistry.get().noParentClass(ast);
             parent = symbolFactory.createErroneousClassTypeSymbol(ast, ex);
         }
         return parent;

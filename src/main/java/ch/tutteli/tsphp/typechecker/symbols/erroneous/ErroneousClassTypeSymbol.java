@@ -90,7 +90,7 @@ public class ErroneousClassTypeSymbol extends AErroneousScopedSymbol implements 
 
     @Override
     public IClassTypeSymbol getParent() {
-        throw new UnsupportedOperationException("ErroneousClassSymbol is not a real class.");
+        return this;
     }
 
     @Override
