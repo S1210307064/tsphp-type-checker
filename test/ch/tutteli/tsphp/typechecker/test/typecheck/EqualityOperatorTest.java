@@ -47,7 +47,7 @@ public class EqualityOperatorTest extends AOperatorTypeCheckTest
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
         List<Object[]> collection = new ArrayList<>();
-        String[] operators = new String[]{"==", "!=", "<>"};
+        String[] operators = new String[]{"==", "!="};
         for (String operator : operators) {
             collection.addAll(Arrays.asList(new Object[][]{
                         {"true " + operator + " false;", new TypeCheckStruct[]{struct(operator, Bool, 1, 0, 0)}},

@@ -263,13 +263,13 @@ public class TypeSystem implements ITypeSystem
     }
 
     private void initMaps() {
-        int[] unaryOperatoTypes = new int[]{
+        int[] unaryOperatorTypes = new int[]{
             PRE_INCREMENT, PRE_DECREMENT,
             At, BitwiseNot, LogicNot, UNARY_MINUS, UNARY_PLUS,
             POST_INCREMENT, POST_DECREMENT
         };
-        for (int i = 0; i < unaryOperatoTypes.length; ++i) {
-            unaryOperators.put(unaryOperatoTypes[i], new ArrayList<IMethodSymbol>());
+        for (int unaryOperatorType : unaryOperatorTypes) {
+            unaryOperators.put(unaryOperatorType, new ArrayList<IMethodSymbol>());
         }
 
         int[] binaryOperatorTypes = new int[]{
@@ -279,14 +279,14 @@ public class TypeSystem implements ITypeSystem
             ModuloAssign, DotAssign, ShiftLeftAssign, ShiftRightAssign, CASTING_ASSIGN,
             LogicOr, LogicAnd,
             BitwiseOr, BitwiseAnd, BitwiseXor,
-            Equal, Identical, NotEqual, NotIdentical, NotEqualAlternative,
+            Equal, Identical, NotEqual, NotIdentical,
             LessThan, LessEqualThan, GreaterThan, GreaterEqualThan,
             ShiftLeft, ShiftRight,
             Plus, Minus, Multiply, Divide, Modulo, Dot,
             CASTING
         };
-        for (int i = 0; i < binaryOperatorTypes.length; ++i) {
-            binaryOperators.put(binaryOperatorTypes[i], new ArrayList<IMethodSymbol>());
+        for (int binaryOperatorType : binaryOperatorTypes) {
+            binaryOperators.put(binaryOperatorType, new ArrayList<IMethodSymbol>());
         }
     }
 

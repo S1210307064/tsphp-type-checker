@@ -1,10 +1,13 @@
 build/*
 nbproject/*
-/src/main/antlr/output
+.idea/*
+out/*
+*.iml
+/antlr/output/*
 
-/src/main/java/ch/tutteli/tsphp/typechecker/antlr/TSPHPDefinitionWalker.java
-/src/main/java/ch/tutteli/tsphp/typechecker/antlr/TSPHPDefinitionWalker.tokens
-/src/main/java/ch/tutteli/tsphp/typechecker/antlr/TSPHPReferenceWalker.java
-/src/main/java/ch/tutteli/tsphp/typechecker/antlr/TSPHPReferenceWalker.tokens
-/src/main/java/ch/tutteli/tsphp/typechecker/antlr/TSPHPTypeCheckWalker.java
-/src/main/java/ch/tutteli/tsphp/typechecker/antlr/TSPHPTypeCheckWalker.tokens
+TSPHPDefinitionWalker.java
+TSPHPDefinitionWalker.tokens
+TSPHPReferenceWalker.java
+TSPHPReferenceWalker.tokens
+TSPHPTypeCheckWalker.java
+TSPHPTypeCheckWalker.tokens
