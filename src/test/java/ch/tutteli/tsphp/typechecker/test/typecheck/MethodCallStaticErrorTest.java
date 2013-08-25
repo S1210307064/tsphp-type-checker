@@ -47,29 +47,10 @@ public class MethodCallStaticErrorTest extends ATypeCheckErrorTest
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
         List<Object[]> collection = new ArrayList<>();
+        MethodCallErrorTest.AddGeneralTestStrings(collection, true);
 
         ReferenceErrorDto[] errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto("foo()", 2, 1)};
         collection.addAll(Arrays.asList(new Object[][]{
-            //visibility violation
-            {"class A{protected static function void foo(){}} A::\n foo();", errorDto},
-            {"class A{private static function void foo(){}} A::\n foo();", errorDto},
-            {
-                "class A{private static function void foo(){}} class B extends A{function void bar(){$this->\n foo();}}",
-                errorDto
-            },
-            {
-                "class A{private static function void foo(){}} class B extends A{function void bar(){self::\n foo();}}",
-                errorDto
-            },
-            {
-                "class A{private static function void foo(){}} class B extends A{function void bar(){parent::\n foo();}}",
-                errorDto
-            },
-            //wrong arguments
-            {"class A{public static function void foo(){}} A::\n foo(1);", errorDto},
-            {"class A{public static function void foo(int $a){}} A::\n foo();", errorDto},
-            {"class A{public static function void foo(int $a){}} A::\n foo('1');", errorDto},
-            {"class A{public static function void foo(int $a, string $b){}} A::\n foo(1,[1]);", errorDto},
             //not static
             {"class A{public function void foo(){}} A::\n foo();", errorDto},
             {"class A{public function void foo(){}} class B extends A{} B::\n foo();", errorDto}

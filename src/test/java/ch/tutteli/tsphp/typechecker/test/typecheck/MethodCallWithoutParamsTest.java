@@ -47,10 +47,10 @@ import org.junit.runners.Parameterized;
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
 @RunWith(Parameterized.class)
-public class MethodCallTest extends AReferenceScopeTypeCheckTest
+public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
 {
 
-    public MethodCallTest(String testString, ReferenceScopeTestStruct[] scopeTestStructs,
+    public MethodCallWithoutParamsTest(String testString, ReferenceScopeTestStruct[] scopeTestStructs,
             TypeCheckStruct[] typeCheckStructs) {
         super(testString, scopeTestStructs, typeCheckStructs);
     }

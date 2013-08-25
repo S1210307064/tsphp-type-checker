@@ -16,7 +16,6 @@
  */
 package ch.tutteli.tsphp.typechecker.test.typecheck;
 
-import ch.tutteli.tsphp.typechecker.test.testutils.TypeHelper;
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.AOperatorTypeCheckTest;
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.IdentityHelper;
 import ch.tutteli.tsphp.typechecker.test.testutils.typecheck.TypeCheckStruct;

@@ -370,14 +370,15 @@ specialOperators returns [ITypeSymbol type]
 		    $type = typeSystem.getBoolTypeSymbol();
 		    controller.checkInstanceof($start, $expr.start, $identifier);
 		}
-    	|	^('new' identifier=TYPE_NAME args=.)
+    	|	^(nil='new' identifier=TYPE_NAME args=.)
     		{
     		    $type = (ITypeSymbol) $identifier.getSymbol();
+    		    controller.checkNew($nil, $identifier, $args);
     		}
     	|	^(nil='clone' expression)
     		{
-    		    controller.checkClone($nil, $expression.start);
     		    $type = $expression.type;
+    		    controller.checkClone($nil, $expression.start);
     		}
 	;
 

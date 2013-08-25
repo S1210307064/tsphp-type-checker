@@ -56,30 +56,42 @@ public class MethodCallErrorTest extends ATypeCheckErrorTest
         for (String type : types) {
             collection.add(new Object[]{type + " $a;\n $a->foo();", errorDto});
         }
+   
+        AddGeneralTestStrings(collection, false);
+        return collection;
+    }
 
-        errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto("foo()", 2, 1)};
+    public static void AddGeneralTestStrings(Collection<Object[]> collection, boolean isStatic) {
+        ReferenceErrorDto[] errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto("foo()", 2, 1)};
+        
+        String modifier ="";
+        String methodCall = "A $a; $a->\n ";
+        if(isStatic){
+            modifier = "static ";
+            methodCall = "A::\n "; 
+        }
+        
         collection.addAll(Arrays.asList(new Object[][]{
             //visibility violation
-            {"class A{protected function void foo(){}} A $a; $a->\n foo();", errorDto},
-            {"class A{private function void foo(){}} A $a; $a->\n foo();", errorDto},
+            {"class A{protected "+modifier+" function void foo(){}} " + methodCall + "foo();", errorDto},
+            {"class A{private "+modifier+" function void foo(){}} " + methodCall + "foo();", errorDto},
             {
-                "class A{private function void foo(){}} class B extends A{function void bar(){$this->\n foo();}}",
+                "class A{private "+modifier+" function void foo(){}} class B extends A{function void bar(){$this->\n foo();}}",
                 errorDto
             },
             {
-                "class A{private function void foo(){}} class B extends A{function void bar(){self::\n foo();}}",
+                "class A{private "+modifier+" function void foo(){}} class B extends A{function void bar(){self::\n foo();}}",
                 errorDto
             },
             {
-                "class A{private function void foo(){}} class B extends A{function void bar(){parent::\n foo();}}",
+                "class A{private "+modifier+" function void foo(){}} class B extends A{function void bar(){parent::\n foo();}}",
                 errorDto
             },
             //wrong arguments
-            {"class A{public function void foo(){}} A $a; $a->\n foo(1);", errorDto},
-            {"class A{public function void foo(int $a){}} A $a; $a->\n foo();", errorDto},
-            {"class A{public function void foo(int $a){}} A $a; $a->\n foo('1');", errorDto},
-            {"class A{public function void foo(int $a, string $b){}} A $a; $a->\n foo(1,[1]);", errorDto},}));
-
-        return collection;
+            {"class A{public "+modifier+" function void foo(){}} " + methodCall + "foo(1);", errorDto},
+            {"class A{public "+modifier+" function void foo(int $a){}} " + methodCall + "foo();", errorDto},
+            {"class A{public "+modifier+" function void foo(int $a){}} " + methodCall + "foo('1');", errorDto},
+            {"class A{public "+modifier+" function void foo(int $a, string $b){}} " + methodCall + "foo(1,[1]);", errorDto}
+        }));
     }
 }
