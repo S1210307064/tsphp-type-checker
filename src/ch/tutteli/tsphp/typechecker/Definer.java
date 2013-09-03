@@ -93,9 +93,13 @@ public class Definer implements IDefiner
     }
 
     @Override
-    public IInterfaceTypeSymbol defineInterface(IScope currentScope, ITSPHPAst modifier, ITSPHPAst identifier, ITSPHPAst extendsIds) {
+    public IInterfaceTypeSymbol defineInterface(IScope currentScope, ITSPHPAst modifier, ITSPHPAst identifier,
+            ITSPHPAst extendsIds) {
         assignScopeToIdentifiers(currentScope, extendsIds);
-        IInterfaceTypeSymbol interfaceSymbol = symbolFactory.createInterfaceTypeSymbol(modifier, identifier, currentScope);
+
+        IInterfaceTypeSymbol interfaceSymbol = symbolFactory.createInterfaceTypeSymbol(modifier,
+                identifier, currentScope);
+
         define(currentScope, identifier, interfaceSymbol);
         return interfaceSymbol;
     }
@@ -115,7 +119,8 @@ public class Definer implements IDefiner
     }
 
     @Override
-    public IClassTypeSymbol defineClass(IScope currentScope, ITSPHPAst modifier, ITSPHPAst identifier, ITSPHPAst extendsIds, ITSPHPAst implementsIds) {
+    public IClassTypeSymbol defineClass(IScope currentScope, ITSPHPAst modifier, ITSPHPAst identifier,
+            ITSPHPAst extendsIds, ITSPHPAst implementsIds) {
         assignScopeToIdentifiers(currentScope, extendsIds);
         assignScopeToIdentifiers(currentScope, implementsIds);
         IClassTypeSymbol classSymbol = symbolFactory.createClassTypeSymbol(modifier, identifier, currentScope);

@@ -22,7 +22,7 @@ import ch.tutteli.tsphp.common.TSPHPAst;
 import ch.tutteli.tsphp.common.exceptions.DefinitionException;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.symbols.VariableSymbol;
-import ch.tutteli.tsphp.typechecker.test.testutils.ATest;
+import ch.tutteli.tsphp.typechecker.test.integration.testutils.ATest;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;

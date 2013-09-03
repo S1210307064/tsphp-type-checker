@@ -198,7 +198,7 @@ public class OverloadResolver implements IOverloadResolver
 
         List<CastingDto> dtos = new ArrayList<>();
         Map<ITypeSymbol, PromotionExplicitCastingLevelDto> visitedTypes = new HashMap<>();
-        ExplicitCastingDto dto = new ExplicitCastingDto(0, 0, formalParameter, dtos,
+        ExplicitCastingDto dto = new ExplicitCastingDto(0, 0, formalParameter,
                 actualParameter.getEvalType(), visitedTypes);
 
         CastingDto castingDto = getCastingDtoFromExplicitCasting(dto);
@@ -422,6 +422,7 @@ public class OverloadResolver implements IOverloadResolver
         return castingDto;
     }
 
+    //CHECKSTYLE:OFF:VisibilityModifier|ParameterNumber
     private class ExplicitCastingDto extends PromotionExplicitCastingLevelDto
     {
 
@@ -430,7 +431,7 @@ public class OverloadResolver implements IOverloadResolver
         public Map<ITypeSymbol, PromotionExplicitCastingLevelDto> visitedTypes;
 
         private ExplicitCastingDto(int thePromotionLevel, int theExplicitCastingLevel,
-                IVariableSymbol theFormalParameter, List<CastingDto> theListToAddTheDtos,
+                IVariableSymbol theFormalParameter,
                 ITypeSymbol theActualParameterType,
                 Map<ITypeSymbol, PromotionExplicitCastingLevelDto> theVisitedTypes) {
             super(thePromotionLevel, theExplicitCastingLevel);
@@ -446,4 +447,5 @@ public class OverloadResolver implements IOverloadResolver
             visitedTypes = explicitCastingDto.visitedTypes;
         }
     }
+    //CHECKSTYLE:OFF:VisibilityModifier|ParameterNumber
 }
