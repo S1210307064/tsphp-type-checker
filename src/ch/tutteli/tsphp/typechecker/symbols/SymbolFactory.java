@@ -23,7 +23,7 @@ import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.ErroneousAccessSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.ErroneousClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.ErroneousMethodSymbol;
-import ch.tutteli.tsphp.typechecker.symbols.erroneous.ErroneusTypeSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.erroneous.ErroneousTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.ErroneusVariableSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousAccessSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousClassTypeSymbol;
@@ -128,7 +128,7 @@ public class SymbolFactory implements ISymbolFactory
 
     @Override
     public IErroneousTypeSymbol createErroneousTypeSymbol(ITSPHPAst ast, TypeCheckerException exception) {
-        return new ErroneusTypeSymbol(ast, exception);
+        return new ErroneousTypeSymbol(ast, exception);
     }
 
     @Override
@@ -155,7 +155,7 @@ public class SymbolFactory implements ISymbolFactory
     private Set<Integer> getModifiers(ITSPHPAst modifierAst) {
         Set<Integer> modifiers = new HashSet<>();
 
-        List<ITSPHPAst> children = (List<ITSPHPAst>) modifierAst.getChildren();
+        List<ITSPHPAst> children = modifierAst.getChildren();
         if (children != null && !children.isEmpty()) {
             for (ITSPHPAst child : children) {
                 modifiers.add(child.getType());

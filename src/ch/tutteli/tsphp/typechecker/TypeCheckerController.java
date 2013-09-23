@@ -112,7 +112,7 @@ public class TypeCheckerController implements ITypeCheckerController
     }
 
     @Override
-    public boolean checkForwardReference(ITSPHPAst ast) {
+    public boolean checkIsForwardReference(ITSPHPAst ast) {
         ISymbol symbol = ast.getSymbol();
         boolean isNotUsedBefore = true;
         //only check if not already an error occured in conjunction with this ast (for instance missing declaration)
@@ -129,7 +129,7 @@ public class TypeCheckerController implements ITypeCheckerController
     }
 
     @Override
-    public boolean checkOutOfConditionalScope(ITSPHPAst ast) {
+    public boolean checkIsOutOfConditionalScope(ITSPHPAst ast) {
         boolean ok = true;
         ISymbol symbol = ast.getSymbol();
         if (symbol.getDefinitionScope() instanceof IConditionalScope) {

@@ -27,16 +27,16 @@ import java.util.Set;
  *
  * @author Robert Stoll <rstoll@tutteli.ch>
  */
-public class ErroneusTypeSymbol extends AErroneousSymbol implements IErroneousTypeSymbol
+public class ErroneousTypeSymbol extends AErroneousSymbol implements IErroneousTypeSymbol
 {
 
-    public ErroneusTypeSymbol(ITSPHPAst type, TypeCheckerException exception) {
+    public ErroneousTypeSymbol(ITSPHPAst type, TypeCheckerException exception) {
         super(type, exception);
     }
 
     @Override
     public Set<ITypeSymbol> getParentTypeSymbols() {
-        throw new UnsupportedOperationException("ErroneusTypeSymbol is not a real type.");
+        throw new UnsupportedOperationException("ErroneousTypeSymbol is not a real type.");
     }
 
     @Override

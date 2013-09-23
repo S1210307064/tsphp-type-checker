@@ -19,7 +19,6 @@ package ch.tutteli.tsphp.typechecker;
 import ch.tutteli.tsphp.common.AstHelperRegistry;
 import ch.tutteli.tsphp.common.IErrorLogger;
 import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.common.ITSPHPAstAdaptor;
 import ch.tutteli.tsphp.common.ITypeChecker;
 import ch.tutteli.tsphp.common.exceptions.TSPHPException;
 import ch.tutteli.tsphp.typechecker.antlr.ErrorReportingTSPHPDefinitionWalker;
@@ -34,7 +33,6 @@ import ch.tutteli.tsphp.typechecker.scopes.ScopeHelperRegistry;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
 import ch.tutteli.tsphp.typechecker.symbols.SymbolFactory;
 import ch.tutteli.tsphp.typechecker.utils.AstHelper;
-import ch.tutteli.tsphp.typechecker.utils.IAstHelper;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import org.antlr.runtime.tree.TreeNodeStream;
@@ -70,12 +68,12 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
         IOverloadResolver overloadResolver = new OverloadResolver(typeSystem);
 
         controller = new TypeCheckerController(
-                symbolFactory,
-                typeSystem,
-                definer,
-                symbolResolver,
-                overloadResolver,
-                new AstHelper());
+                  symbolFactory
+                , typeSystem
+                , definer
+                , symbolResolver
+                , overloadResolver
+                , new AstHelper());
     }
 
     @Override

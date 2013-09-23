@@ -373,7 +373,7 @@ specialOperators returns [ITypeSymbol type]
     	|	^(nil='new' identifier=TYPE_NAME args=.)
     		{
     		    $type = (ITypeSymbol) $identifier.getSymbol();
-    		    //controller.checkNew($nil, $identifier, $args);
+    		    controller.checkNew($nil, $identifier, $args);
     		}
     	|	^(nil='clone' expression)
     		{

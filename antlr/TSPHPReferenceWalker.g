@@ -329,8 +329,8 @@ variable
 		}? varId=VariableId
 		{
       			$varId.setSymbol(controller.resolveVariable($varId));
-			controller.checkForwardReference($varId);
-			controller.checkOutOfConditionalScope($varId);
+			controller.checkIsForwardReference($varId);
+			controller.checkIsOutOfConditionalScope($varId);
       		}
 	;
 	
