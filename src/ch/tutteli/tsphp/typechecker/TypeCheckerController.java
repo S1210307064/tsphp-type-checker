@@ -1,19 +1,3 @@
-/*
- * Copyright 2013 Robert Stoll <rstoll@tutteli.ch>
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * 
- */
 package ch.tutteli.tsphp.typechecker;
 
 import ch.tutteli.tsphp.common.AstHelperRegistry;
@@ -48,10 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- *
- * @author Robert Stoll <rstoll@tutteli.ch>
- */
 public class TypeCheckerController implements ITypeCheckerController
 {
 
@@ -115,7 +95,7 @@ public class TypeCheckerController implements ITypeCheckerController
     public boolean checkIsForwardReference(ITSPHPAst ast) {
         ISymbol symbol = ast.getSymbol();
         boolean isNotUsedBefore = true;
-        //only check if not already an error occured in conjunction with this ast (for instance missing declaration)
+        //only check if not already an error occurred in conjunction with this ast (for instance missing declaration)
         if (!(symbol instanceof IErroneousSymbol)) {
             ITSPHPAst definitionAst = symbol.getDefinitionAst();
             isNotUsedBefore = definitionAst.isDefinedEarlierThan(ast);
@@ -273,13 +253,13 @@ public class TypeCheckerController implements ITypeCheckerController
 
         if (symbol == null) {
             rewriteToAbsoluteNotFoundType(typeAst);
-            ReferenceException ex = ErrorReporterRegistry.get().unkownType(typeAst);
+            ReferenceException ex = ErrorReporterRegistry.get().unknownType(typeAst);
             symbol = symbolFactory.createErroneousClassTypeSymbol(typeAst, ex);
 
         } else if (symbol instanceof IAliasTypeSymbol) {
 
             typeAst.setText(symbol.getName());
-            ReferenceException ex = ErrorReporterRegistry.get().unkownType(typeAst);
+            ReferenceException ex = ErrorReporterRegistry.get().unknownType(typeAst);
             symbol = symbolFactory.createErroneousClassTypeSymbol(symbol.getDefinitionAst(), ex);
         }
         return symbol;
@@ -314,7 +294,7 @@ public class TypeCheckerController implements ITypeCheckerController
         ITypeSymbol typeSymbol = (ITypeSymbol) globalDefaultNamespace.resolve(typeAst);
         if (typeSymbol == null) {
             rewriteToAbsoluteNotFoundType(typeAst);
-            ReferenceException ex = ErrorReporterRegistry.get().unkownType(typeAst);
+            ReferenceException ex = ErrorReporterRegistry.get().unknownType(typeAst);
             typeSymbol = symbolFactory.createErroneousTypeSymbol(typeAst, ex);
 
         }

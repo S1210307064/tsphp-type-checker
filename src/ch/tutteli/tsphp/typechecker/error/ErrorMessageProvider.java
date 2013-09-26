@@ -1,27 +1,7 @@
-/*
- * Copyright 2013 Robert Stoll <rstoll@tutteli.ch>
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * 
- */
 package ch.tutteli.tsphp.typechecker.error;
 
 import java.util.HashMap;
 
-/**
- *
- * @author Robert Stoll <rstoll@tutteli.ch>
- */
 public class ErrorMessageProvider extends AErrorMessageProvider
 {
 
@@ -55,7 +35,7 @@ public class ErrorMessageProvider extends AErrorMessageProvider
     @Override
     protected void loadReferenceErrorMessages() {
         referenceErrors = new HashMap<>();
-        referenceErrors.put("unkownType", "Line %line%|%pos% - The type \"%id%\" could not be resolved.");
+        referenceErrors.put("unknownType", "Line %line%|%pos% - The type \"%id%\" could not be resolved.");
         referenceErrors.put("interfaceExpected", "Line %line%|%pos% - Interface expected, "
                 + "\"%id%\" is not an interface.");
         referenceErrors.put("classExpected", "Line %line%|%pos% - class expected, \"%id%\" is not a class.");
@@ -265,7 +245,7 @@ public class ErrorMessageProvider extends AErrorMessageProvider
     }
 
     @Override
-    protected String getStandardVisibilityViolationErrorMessage(String key, VisbilityErrorDto dto) {
+    protected String getStandardVisibilityViolationErrorMessage(String key, VisibilityErrorDto dto) {
         return "VisibilityViolationException occured, corresponding error message for \"" + key + "\" is not defined. "
                 + "Please report bug to http://tsphp.tutteli.ch/jira\n"
                 + "However, the following information was gathered.\n"
