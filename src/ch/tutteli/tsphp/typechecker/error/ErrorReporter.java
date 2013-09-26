@@ -1,19 +1,3 @@
-/*
- * Copyright 2013 Robert Stoll <rstoll@tutteli.ch>
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * 
- */
 package ch.tutteli.tsphp.typechecker.error;
 
 import ch.tutteli.tsphp.common.IErrorLogger;
@@ -39,10 +23,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-/**
- *
- * @author Robert Stoll <rstoll@tutteli.ch>
- */
 public class ErrorReporter implements IErrorReporter
 {
 
@@ -96,8 +76,8 @@ public class ErrorReporter implements IErrorReporter
     }
 
     @Override
-    public DefinitionException alreadyDefined(ITSPHPAst existingDefintion, ITSPHPAst newDefinition) {
-        return addAndGetDefinitionException("alreadyDefined", existingDefintion, newDefinition);
+    public DefinitionException alreadyDefined(ITSPHPAst existingDefinition, ITSPHPAst newDefinition) {
+        return addAndGetDefinitionException("alreadyDefined", existingDefinition, newDefinition);
     }
 
     @Override
@@ -150,8 +130,8 @@ public class ErrorReporter implements IErrorReporter
     }
 
     @Override
-    public ReferenceException unkownType(ITSPHPAst typeAst) {
-        return addAndGetReferenceException("unkownType", typeAst);
+    public ReferenceException unknownType(ITSPHPAst typeAst) {
+        return addAndGetReferenceException("unknownType", typeAst);
     }
 
     @Override
@@ -211,17 +191,17 @@ public class ErrorReporter implements IErrorReporter
     @Override
     public ReferenceException operatorAmbiguousCasts(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right,
             CastingDto leftToRightCasts, CastingDto rightToLeftCasts,
-            List<CastingDto> leftAmbiguouities, List<CastingDto> rightAmbiguouties) {
+            List<CastingDto> leftAmbiguities, List<CastingDto> rightAmbiguities) {
 
         ReferenceException exception;
-        if (noAmbiguousCasts(leftAmbiguouities, rightAmbiguouties)) {
+        if (noAmbiguousCasts(leftAmbiguities, rightAmbiguities)) {
             exception = addAndGetOperatorAmbiguousCastsException("operatorBothSideCast",
                     operator, leftToRightCasts, rightToLeftCasts,
-                    leftAmbiguouities, rightAmbiguouties, left, right, true);
+                    leftAmbiguities, rightAmbiguities, left, right, true);
         } else {
             exception = addAndGetOperatorAmbiguousCastsException("operatorAmbiguousCasts",
                     operator, leftToRightCasts, rightToLeftCasts,
-                    leftAmbiguouities, rightAmbiguouties, left, right, true);
+                    leftAmbiguities, rightAmbiguities, left, right, true);
         }
 
         return exception;
@@ -643,7 +623,7 @@ public class ErrorReporter implements IErrorReporter
         }
 
         String errorMessage = errorMessageProvider.getVisibilityErrorMessage(key,
-                new VisbilityErrorDto(symbol.getName(), identifier.getLine(),
+                new VisibilityErrorDto(symbol.getName(), identifier.getLine(),
                 identifier.getCharPositionInLine(), visibility, wasAccessedFrom));
         ReferenceException exception = new ReferenceException(errorMessage, identifier);
         reportError(exception);

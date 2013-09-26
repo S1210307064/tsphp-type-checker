@@ -1,19 +1,4 @@
-/*
- * Copyright 2013 Robert Stoll <rstoll@tutteli.ch>
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * 
- */
+
 package ch.tutteli.tsphp.typechecker.test.integration.typecheck;
 
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.typecheck.AOperatorTypeCheckTest;
@@ -27,10 +12,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-/**
- *
- * @author Robert Stoll <rstoll@tutteli.ch>
- */
+
 @RunWith(Parameterized.class)
 public class TernaryOperatorTest extends AOperatorTypeCheckTest
 {
@@ -46,7 +28,7 @@ public class TernaryOperatorTest extends AOperatorTypeCheckTest
 
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
-        //I think there are enought test which cover the identity check. Thus here only a few tests
+        //I think there are enough test which cover the identity check. Thus here only a few tests
         return Arrays.asList(new Object[][]{
             //same types
             {"float $a; float $b; true ? $a : $b;", new TypeCheckStruct[]{

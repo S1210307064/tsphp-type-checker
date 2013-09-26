@@ -1,29 +1,9 @@
-/*
- * Copyright 2013 Robert Stoll <rstoll@tutteli.ch>
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * 
- */
 package ch.tutteli.tsphp.typechecker.error;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-/**
- *
- * @author Robert Stoll <rstoll@tutteli.ch>
- */
 public abstract class AErrorMessageProvider implements IErrorMessageProvider
 {
 
@@ -56,7 +36,7 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
 
     protected abstract String getStandardAmbiguousCastsErrorMessage(String key, AmbiguousCastsErrorDto dto);
 
-    protected abstract String getStandardVisibilityViolationErrorMessage(String key, VisbilityErrorDto dto);
+    protected abstract String getStandardVisibilityViolationErrorMessage(String key, VisibilityErrorDto dto);
 
     @Override
     public String getDefinitionErrorMessage(String key, DefinitionErrorDto dto) {
@@ -158,7 +138,7 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
     }
 
     @Override
-    public String getVisibilityErrorMessage(String key, VisbilityErrorDto dto) {
+    public String getVisibilityErrorMessage(String key, VisibilityErrorDto dto) {
         String message;
         if (visbilityViolationErrors == null) {
             loadVisibilityViolationErrorMessages();
