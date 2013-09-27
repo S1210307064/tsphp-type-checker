@@ -341,6 +341,10 @@ specialOperators returns [ITypeSymbol type]
     	|	^(nil='new' identifier=TYPE_NAME args=.)
     		{
     		    $type = (ITypeSymbol) $identifier.getSymbol();
+<<<<<<< HEAD
+=======
+    		    controller.checkNew($identifier, $args);
+>>>>>>> last commit was not complete
     		}
     	|	^(nil='clone' expression)
     		{
