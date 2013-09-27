@@ -84,7 +84,7 @@ public abstract class ADefinitionTest extends ATest
         commonTreeNodeStream.setTokenStream(parserUnit.tokenStream);
 
         definition = new ErrorReportingTSPHPDefinitionWalker(commonTreeNodeStream, controller.getDefiner());
-        definition.addErrorLogger(new IErrorLogger()
+        definition.registerErrorLogger(new IErrorLogger()
         {
             @Override
             public void log(TSPHPException exception) {

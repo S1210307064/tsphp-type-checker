@@ -3,13 +3,17 @@ package ch.tutteli.tsphp.typechecker.test.integration.definition;
 import ch.tutteli.tsphp.common.ILowerCaseStringMap;
 import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.definition.ADefinitionTest;
-import java.util.Arrays;
-import java.util.Collection;
-import junit.framework.Assert;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+
+import java.util.Arrays;
+import java.util.Collection;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(Parameterized.class)
 public class GlobalNamespaceTest extends ADefinitionTest
@@ -29,11 +33,11 @@ public class GlobalNamespaceTest extends ADefinitionTest
 
     @Override
     protected void verifyDefinitions() {
-         ILowerCaseStringMap<IGlobalNamespaceScope> globalNamespaceScopes = definer.getGlobalNamespaceScopes();
-        Assert.assertEquals(testString + " failed. size wrong ", namespaces.length, globalNamespaceScopes.size());
+        ILowerCaseStringMap<IGlobalNamespaceScope> globalNamespaceScopes = definer.getGlobalNamespaceScopes();
+        assertThat(testString + " failed. size wrong ", globalNamespaceScopes.size(), equalTo(namespaces.length));
 
         for (String namespace : namespaces) {
-            Assert.assertTrue(testString + " failed. Global namespace " + namespace + " did not exists in "
+            assertTrue(testString + " failed. Global namespace " + namespace + " did not exists in "
                     + globalNamespaceScopes.keySet(), globalNamespaceScopes.containsKey(namespace));
         }
     }

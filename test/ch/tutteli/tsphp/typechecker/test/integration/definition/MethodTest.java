@@ -61,6 +61,8 @@ public class MethodTest extends ADefinitionSymbolTest
         });
     }
 
+
+    @SuppressWarnings("unchecked")
     private static void addModifiers() {
 
         int priv = TSPHPDefinitionWalker.Private;

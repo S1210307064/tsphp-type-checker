@@ -227,7 +227,7 @@ public class TypeSystem implements ITypeSystem
 
         //predefiend classes
         exceptionTypeSymbol = createClass("Exception");
-        //TODO TSPHP-401 Define predefined Exceptions 
+        //TODO rstoll TSPHP-401 Define predefined Exceptions
         globalDefaultNamespace.define(exceptionTypeSymbol);
 
         IClassTypeSymbol errorException = createClass("ErrorException");

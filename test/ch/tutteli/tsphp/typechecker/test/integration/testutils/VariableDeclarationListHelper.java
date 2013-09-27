@@ -27,6 +27,7 @@ public class VariableDeclarationListHelper
         final List<Object[]> collection = new ArrayList<>();
         TypeHelper.getAllTypesInclModifier(new IAdder()
         {
+            @SuppressWarnings("unchecked")
             @Override
             public void add(String type, String typeExpected, SortedSet modifiers) {
                 String typeExpected2 = isDefinitionPhase ? "" : typeExpected;

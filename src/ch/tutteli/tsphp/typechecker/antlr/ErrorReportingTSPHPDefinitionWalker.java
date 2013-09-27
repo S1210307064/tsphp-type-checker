@@ -32,12 +32,12 @@ public class ErrorReportingTSPHPDefinitionWalker extends TSPHPDefinitionWalker i
                 : "Unknown token";
         for (IErrorLogger logger : errorLoggers) {
             logger.log(new TSPHPException("Line " + exception.line + "|" + exception.charPositionInLine
-                    + " definition phase exception occured. " + tokenText, exception));
+                    + " definition phase exception occurred. " + tokenText, exception));
         }
     }
 
     @Override
-    public void addErrorLogger(IErrorLogger errorLogger) {
+    public void registerErrorLogger(IErrorLogger errorLogger) {
         errorLoggers.add(errorLogger);
     }
 }
