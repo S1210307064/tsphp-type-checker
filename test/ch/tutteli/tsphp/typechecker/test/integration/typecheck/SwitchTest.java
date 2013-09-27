@@ -15,7 +15,10 @@ import org.junit.runners.Parameterized;
 public class SwitchTest extends AOperatorTypeCheckTest
 {
 
+
     private static List<Object[]> collection;
+
+    protected List<Exception> exceptions = new ArrayList<>();
 
     public SwitchTest(String testString, TypeCheckStruct[] struct) {
         super(testString, struct);

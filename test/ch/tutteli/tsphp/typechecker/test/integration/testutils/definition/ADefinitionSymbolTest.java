@@ -5,7 +5,8 @@ import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.ScopeTestHelper;
 import java.util.List;
 import java.util.Map;
-import junit.framework.Assert;
+
+import org.junit.Assert;
 import org.junit.Ignore;
 
 @Ignore

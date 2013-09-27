@@ -32,12 +32,12 @@ public class ErrorReportingTSPHPTypeCheckWalker extends TSPHPTypeCheckWalker imp
                 : "Unknown token";
         for (IErrorLogger logger : errorLoggers) {
             logger.log(new TSPHPException("Line " + exception.line + "|" + exception.charPositionInLine
-                    + " type checker exception occured. " + tokenText, exception));
+                    + " type checker exception occurred. " + tokenText, exception));
         }
     }
 
     @Override
-    public void addErrorLogger(IErrorLogger errorLogger) {
+    public void registerErrorLogger(IErrorLogger errorLogger) {
         errorLoggers.add(errorLogger);
     }
 }

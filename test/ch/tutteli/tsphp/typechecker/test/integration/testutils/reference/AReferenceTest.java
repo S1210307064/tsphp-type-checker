@@ -39,7 +39,7 @@ public abstract class AReferenceTest extends ADefinitionTest
         commonTreeNodeStream.reset();
         reference = new ErrorReportingTSPHPReferenceWalker(commonTreeNodeStream, controller);
         reference.downup(ast);
-        reference.addErrorLogger(new IErrorLogger()
+        reference.registerErrorLogger(new IErrorLogger()
         {
             @Override
             public void log(TSPHPException exception) {

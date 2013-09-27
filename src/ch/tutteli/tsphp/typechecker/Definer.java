@@ -85,8 +85,8 @@ public class Definer implements IDefiner
     }
 
     private void assignScopeToIdentifiers(IScope currentScope, ITSPHPAst identifierList) {
-        int lenght = identifierList.getChildCount();
-        for (int i = 0; i < lenght; ++i) {
+        int length = identifierList.getChildCount();
+        for (int i = 0; i < length; ++i) {
             ITSPHPAst ast = identifierList.getChild(i);
             ast.setScope(currentScope);
         }

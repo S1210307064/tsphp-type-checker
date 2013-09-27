@@ -43,6 +43,7 @@ public class ConstructDestructTest extends ADefinitionSymbolTest
         return collection;
     }
 
+    @SuppressWarnings("unchecked")
     private static void addModifiers() {
 
         int priv = TSPHPDefinitionWalker.Private;

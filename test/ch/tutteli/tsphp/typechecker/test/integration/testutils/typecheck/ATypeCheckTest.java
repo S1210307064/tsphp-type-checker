@@ -25,7 +25,7 @@ public abstract class ATypeCheckTest extends AReferenceTest
     protected void verifyReferences() {
         commonTreeNodeStream.reset();
         typeCheckWalker = new ErrorReportingTSPHPTypeCheckWalker(commonTreeNodeStream, controller);
-        typeCheckWalker.addErrorLogger(new IErrorLogger()
+        typeCheckWalker.registerErrorLogger(new IErrorLogger()
         {
             @Override
             public void log(TSPHPException exception) {

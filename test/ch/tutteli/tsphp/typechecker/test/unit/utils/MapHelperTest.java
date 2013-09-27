@@ -1,11 +1,12 @@
-package ch.tutteli.tsphp.typechecker.test.utils;
+package ch.tutteli.tsphp.typechecker.test.unit.utils;
 
 import ch.tutteli.tsphp.typechecker.utils.MapHelper;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import junit.framework.Assert;
+
+import org.junit.Assert;
 import org.junit.Test;
 
 public class MapHelperTest

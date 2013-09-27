@@ -25,7 +25,7 @@ public abstract class ATest implements IErrorLogger
         parser = new ParserFacade();
         ScopeHelperRegistry.set(new ScopeHelper());
         IErrorReporter errorReporter = new ErrorReporter(new ErrorMessageProvider());
-        errorReporter.addErrorLogger(this);
+        errorReporter.registerErrorLogger(this);
         ErrorReporterRegistry.set(errorReporter);
     }
 

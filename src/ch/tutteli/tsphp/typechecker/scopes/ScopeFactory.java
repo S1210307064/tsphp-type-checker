@@ -11,7 +11,7 @@ public class ScopeFactory implements IScopeFactory
     }
 
     @Override
-    public INamespaceScope createNamespace(String name, IScope currentScope) {
+    public INamespaceScope createNamespace(String name, IGlobalNamespaceScope currentScope) {
         return new NamespaceScope(name, currentScope);
     }
 

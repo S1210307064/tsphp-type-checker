@@ -47,7 +47,7 @@ public class ErrorReporter implements IErrorReporter
     }
 
     @Override
-    public void addErrorLogger(IErrorLogger errorLogger) {
+    public void registerErrorLogger(IErrorLogger errorLogger) {
         errorLoggers.add(errorLogger);
     }
 
@@ -62,12 +62,12 @@ public class ErrorReporter implements IErrorReporter
 
     }
 
+    @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     @Override
     public DefinitionException determineAlreadyDefined(ITSPHPAst ast1, ITSPHPAst ast2) {
         return ast1.isDefinedEarlierThan(ast2)
                 ? alreadyDefined(ast1, ast2)
                 : alreadyDefined(ast2, ast1);
-
     }
 
     @Override

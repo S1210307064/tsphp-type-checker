@@ -72,6 +72,6 @@ public class MethodSymbol extends AScopedSymbol implements IMethodSymbol
 
     @Override
     public String toString() {
-        return super.toString() + ModifierHelper.getModifiers(new TreeSet(returnTypeModifier));
+        return super.toString() + ModifierHelper.getModifiers(new TreeSet<>(returnTypeModifier));
     }
 }

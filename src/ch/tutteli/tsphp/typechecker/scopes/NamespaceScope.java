@@ -1,16 +1,14 @@
 package ch.tutteli.tsphp.typechecker.scopes;
 
 import ch.tutteli.tsphp.common.ILowerCaseStringMap;
-import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.LowerCaseStringMap;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasSymbol;
-import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
-import ch.tutteli.tsphp.typechecker.symbols.IInterfaceTypeSymbol;
 import ch.tutteli.tsphp.typechecker.utils.MapHelper;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +19,7 @@ public class NamespaceScope extends AScope implements INamespaceScope
     private ILowerCaseStringMap<List<IAliasSymbol>> usesCaseInsensitive = new LowerCaseStringMap<>();
     private Map<String, List<IAliasSymbol>> uses = new LinkedHashMap<>();
 
-    public NamespaceScope(String scopeName, IScope globalNamespaceScope) {
+    public NamespaceScope(String scopeName, IGlobalNamespaceScope globalNamespaceScope) {
         super(scopeName, globalNamespaceScope);
     }
 
@@ -65,6 +63,7 @@ public class NamespaceScope extends AScope implements INamespaceScope
         ITypeSymbol typeSymbol = (ITypeSymbol) resolve(symbol.getDefinitionAst());
         boolean ok = hasNoTypeNameClash(symbol.getDefinitionAst(), typeSymbol);
         if (!ok) {
+            //noinspection ThrowableResultOfMethodCallIgnored
             ErrorReporterRegistry.get().determineAlreadyDefined(symbol, typeSymbol);
         }
         return ok;
@@ -82,18 +81,6 @@ public class NamespaceScope extends AScope implements INamespaceScope
         }
         return hasNoTypeNameClash;
 
-    }
-
-    @Override
-    public boolean interfaceDefinitionCheck(IInterfaceTypeSymbol symbol) {
-        //TODO 
-        return true;
-    }
-
-    @Override
-    public boolean classDefinitionCheck(IClassTypeSymbol symbol) {
-        //TODO check
-        return true;
     }
 
     @Override

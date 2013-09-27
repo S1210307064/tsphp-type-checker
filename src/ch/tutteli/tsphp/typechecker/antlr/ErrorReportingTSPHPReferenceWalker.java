@@ -32,12 +32,12 @@ public class ErrorReportingTSPHPReferenceWalker extends TSPHPReferenceWalker imp
                 : "Unknown token";
         for (IErrorLogger logger : errorLoggers) {
             logger.log(new TSPHPException("Line " + exception.line + "|" + exception.charPositionInLine
-                    + " reference phase exception occured. " + tokenText, exception));
+                    + " reference phase exception occurred. " + tokenText, exception));
         }
     }
 
     @Override
-    public void addErrorLogger(IErrorLogger errorLogger) {
+    public void registerErrorLogger(IErrorLogger errorLogger) {
         errorLoggers.add(errorLogger);
     }
 }

@@ -61,9 +61,9 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
         ErrorReportingTSPHPDefinitionWalker definition =
                 new ErrorReportingTSPHPDefinitionWalker(treeNodeStream, controller.getDefiner());
         for (IErrorLogger logger : errorLoggers) {
-            definition.addErrorLogger(logger);
+            definition.registerErrorLogger(logger);
         }
-        definition.addErrorLogger(this);
+        definition.registerErrorLogger(this);
         definition.downup(ast);
     }
 
@@ -73,9 +73,9 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
         ErrorReportingTSPHPReferenceWalker reference =
                 new ErrorReportingTSPHPReferenceWalker(treeNodeStream, controller);
         for (IErrorLogger logger : errorLoggers) {
-            reference.addErrorLogger(logger);
+            reference.registerErrorLogger(logger);
         }
-        reference.addErrorLogger(this);
+        reference.registerErrorLogger(this);
         reference.downup(ast);
     }
 
@@ -85,9 +85,9 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
     }
 
     @Override
-    public void addErrorLogger(IErrorLogger errorLogger) {
+    public void registerErrorLogger(IErrorLogger errorLogger) {
         errorLoggers.add(errorLogger);
-        ErrorReporterRegistry.get().addErrorLogger(errorLogger);
+        ErrorReporterRegistry.get().registerErrorLogger(errorLogger);
     }
 
     @Override
@@ -96,9 +96,9 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
         ErrorReportingTSPHPTypeCheckWalker typeCheckWalker =
                 new ErrorReportingTSPHPTypeCheckWalker(treeNodeStream, controller);
         for (IErrorLogger logger : errorLoggers) {
-            typeCheckWalker.addErrorLogger(logger);
+            typeCheckWalker.registerErrorLogger(logger);
         }
-        typeCheckWalker.addErrorLogger(this);
+        typeCheckWalker.registerErrorLogger(this);
         typeCheckWalker.downup(ast);
     }
 
@@ -111,7 +111,7 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
     }
 
     @Override
-    public void log(TSPHPException tsphpe) {
+    public void log(TSPHPException exception) {
         hasFoundError = true;
     }
 }
