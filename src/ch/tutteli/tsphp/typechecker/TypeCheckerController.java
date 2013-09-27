@@ -833,13 +833,6 @@ public class TypeCheckerController implements ITypeCheckerController
     }
 
     @Override
-    public void checkPrePostIncrementDecrement(ITSPHPAst operator, ITSPHPAst expression) {
-        if (!(expression.getSymbol() instanceof IVariableSymbol)) {
-            ErrorReporterRegistry.get().variableExpected(expression);
-        }
-    }
-
-    @Override
     public void checkIdentity(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right) {
         if (areNotSameAndNoneIsSubType(left, right)) {
             ErrorReporterRegistry.get().wrongIdentityUsage(operator, left, right);
@@ -1152,6 +1145,11 @@ public class TypeCheckerController implements ITypeCheckerController
                 }
             }
         }
+    }
+
+    @Override
+    public void checkNew(ITSPHPAst identifier, ITSPHPAst arguments) {
+        //TODO rstoll TSPHP-422 type check new operator
     }
 
     @Override

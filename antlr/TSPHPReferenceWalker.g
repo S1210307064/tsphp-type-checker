@@ -226,7 +226,7 @@ methodCallee
 	|	varId=VariableId
 		{
       			$varId.setSymbol(controller.resolveVariable($varId));
-			controller.checkForwardReference($varId);
+			controller.checkIsForwardReference($varId);
 		}
 	
 	|	slf='self'
@@ -317,7 +317,7 @@ constant
 		{
 			IVariableSymbol variableSymbol = controller.resolveConstant($cnst);
 			$cnst.setSymbol(variableSymbol);
-			controller.checkForwardReference($cnst);
+			controller.checkIsForwardReference($cnst);
 		}
 	;
 	
