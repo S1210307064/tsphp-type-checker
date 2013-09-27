@@ -249,6 +249,7 @@
                forkmode="once"
                showoutput="true"
                failureproperty="test.failed">
+			<jvmarg value="${test.vm.param}" />   
             <sysproperty key="proj.basedir" value="${basedir}" />
             <formatter usefile="false" type="brief" />
             <formatter type="xml" />
