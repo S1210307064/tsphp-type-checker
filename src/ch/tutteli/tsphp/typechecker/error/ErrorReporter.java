@@ -117,14 +117,14 @@ public class ErrorReporter implements IErrorReporter
     }
 
     private DefinitionException addAndGetDefinitionException(String key,
-            ITSPHPAst existingDefintion, ITSPHPAst newDefinition) {
+            ITSPHPAst existingDefinition, ITSPHPAst newDefinition) {
 
         String errorMessage = errorMessageProvider.getDefinitionErrorMessage(key,
                 new DefinitionErrorDto(
-                existingDefintion.getText(), existingDefintion.getLine(), existingDefintion.getCharPositionInLine(),
-                newDefinition.getText(), newDefinition.getLine(), newDefinition.getCharPositionInLine()));
+                        existingDefinition.getText(), existingDefinition.getLine(), existingDefinition.getCharPositionInLine(),
+                        newDefinition.getText(), newDefinition.getLine(), newDefinition.getCharPositionInLine()));
 
-        DefinitionException exception = new DefinitionException(errorMessage, existingDefintion, newDefinition);
+        DefinitionException exception = new DefinitionException(errorMessage, existingDefinition, newDefinition);
         reportError(exception);
         return exception;
     }

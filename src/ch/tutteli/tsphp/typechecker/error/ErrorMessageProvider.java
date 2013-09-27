@@ -1,5 +1,6 @@
 package ch.tutteli.tsphp.typechecker.error;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class ErrorMessageProvider extends AErrorMessageProvider
@@ -165,7 +166,7 @@ public class ErrorMessageProvider extends AErrorMessageProvider
                 + "with the operator %id%. LHS can be casted to RHS and RHS can be casted to LHS.\n"
                 + "cast LHS to RHS: %LHS%\n"
                 + "cast RHS to LHS: %RHS%\n"
-                + "Further ambiguouities:\n"
+                + "Further ambiguities:\n"
                 + "ambiguous casts LHS to RHS: %ambLHS%\n"
                 + "ambiguous casts RHS to LHS: %ambRHS%");
 
@@ -196,7 +197,7 @@ public class ErrorMessageProvider extends AErrorMessageProvider
 
     @Override
     protected String getStandardDefinitionErrorMessage(String key, DefinitionErrorDto dto) {
-        return "DefinitionException occured, corresponding error message for \"" + key + "\" not defined. "
+        return "DefinitionException occurred, corresponding error message for \"" + key + "\" not defined. "
                 + "Please report bug to http://tsphp.tutteli.ch\n"
                 + "However, the following information was gathered.\n"
                 + "Line " + dto.line + "|" + dto.position + " - " + dto.identifier + " was already defined on line "
@@ -205,7 +206,7 @@ public class ErrorMessageProvider extends AErrorMessageProvider
 
     @Override
     protected String getStandardReferenceErrorMessage(String key, ReferenceErrorDto dto) {
-        return "ReferenceException occured, corresponding error message for \"" + key + "\" is not defined. "
+        return "ReferenceException occurred, corresponding error message for \"" + key + "\" is not defined. "
                 + "Please report bug to http://tsphp.tutteli.ch\n"
                 + "However, the following information was gathered.\n"
                 + "Line " + dto.line + "|" + dto.position + " - " + dto.identifier + " could not been resolved to its "
@@ -214,17 +215,17 @@ public class ErrorMessageProvider extends AErrorMessageProvider
 
     @Override
     protected String getStandardWrongArgumentTypeErrorMessage(String key, WrongArgumentTypeErrorDto dto) {
-        return "WrongArgumentTypeException occured, corresponding error message for \"" + key + "\" is not defined. "
+        return "WrongArgumentTypeException occurred, corresponding error message for \"" + key + "\" is not defined. "
                 + "Please report bug to http://tsphp.tutteli.ch\n"
                 + "However, the following information was gathered.\n"
                 + "Line " + dto.line + "|" + dto.position + " - usage of " + dto.identifier + " was wrong.\n"
-                + "types actual parameters: " + dto.actualParameterTypes.toString() + "\n"
+                + "types actual parameters: " + Arrays.toString(dto.actualParameterTypes) + "\n"
                 + "existing overloads: " + getOverloadSignatures(dto.possibleOverloads);
     }
 
     @Override
     protected String getStandardTypeCheckErrorMessage(String key, TypeCheckErrorDto dto) {
-        return "TypeCheckException occured, corresponding error message for \"" + key + "\" is not defined. "
+        return "TypeCheckException occurred, corresponding error message for \"" + key + "\" is not defined. "
                 + "Please report bug to http://tsphp.tutteli.ch/jira\n"
                 + "However, the following information was gathered.\n"
                 + "Line " + dto.line + "|" + dto.position + " - usage of " + dto.identifier + " was wrong.\n"
@@ -234,7 +235,7 @@ public class ErrorMessageProvider extends AErrorMessageProvider
 
     @Override
     protected String getStandardAmbiguousCastsErrorMessage(String key, AmbiguousCastsErrorDto dto) {
-        return "AmbiguousCastsException occured, corresponding error message for \"" + key + "\" is not defined. "
+        return "AmbiguousCastsException occurred, corresponding error message for \"" + key + "\" is not defined. "
                 + "Please report bug to http://tsphp.tutteli.ch/jira\n"
                 + "However, the following information was gathered.\n"
                 + "Line " + dto.line + "|" + dto.position + " - usage of " + dto.identifier + " was wrong.\n"
@@ -246,7 +247,7 @@ public class ErrorMessageProvider extends AErrorMessageProvider
 
     @Override
     protected String getStandardVisibilityViolationErrorMessage(String key, VisibilityErrorDto dto) {
-        return "VisibilityViolationException occured, corresponding error message for \"" + key + "\" is not defined. "
+        return "VisibilityViolationException occurred, corresponding error message for \"" + key + "\" is not defined. "
                 + "Please report bug to http://tsphp.tutteli.ch/jira\n"
                 + "However, the following information was gathered.\n"
                 + "Line " + dto.line + "|" + dto.position + " - cannot access " + dto.identifier + ".\n"

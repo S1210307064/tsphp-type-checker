@@ -74,8 +74,6 @@ public interface ITypeCheckerController
 
     void checkAssignment(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
 
-    void checkPrePostIncrementDecrement(ITSPHPAst operator, ITSPHPAst expression);
-
     void checkCast(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
 
     void checkCastAssignment(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
@@ -109,6 +107,8 @@ public interface ITypeCheckerController
     void checkClone(ITSPHPAst clone, ITSPHPAst expression);
 
     void checkInstanceof(ITSPHPAst operator, ITSPHPAst expression, ITSPHPAst typeAst);
+
+    void checkNew(ITSPHPAst identifier, ITSPHPAst arguments);
     
     void addDefaultValue(ITSPHPAst variableId);
 }
