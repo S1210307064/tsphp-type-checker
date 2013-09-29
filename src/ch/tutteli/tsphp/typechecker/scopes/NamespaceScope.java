@@ -91,11 +91,11 @@ public class NamespaceScope extends AScope implements INamespaceScope
 
     @Override
     public List<IAliasSymbol> getUse(String alias) {
-        return usesCaseInsensitive.get(alias);
+        return uses.get(alias);
     }
 
     @Override
-    public ITSPHPAst getFirstUseDefinitionAst(String alias) {
-        return uses.containsKey(alias) ? uses.get(alias).get(0).getDefinitionAst() : null;
+    public ITSPHPAst getCaseInsensitiveFirstUseDefinitionAst(String alias) {
+        return usesCaseInsensitive.containsKey(alias) ? usesCaseInsensitive.get(alias).get(0).getDefinitionAst() : null;
     }
 }

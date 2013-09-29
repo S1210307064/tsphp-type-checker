@@ -67,7 +67,7 @@ public class SymbolResolver implements ISymbolResolver
 
     @Override
     public ISymbol resolveGlobalIdentifier(ITSPHPAst typeAst) {
-        ISymbol symbol = null;
+        ISymbol symbol;
 
         if (isAbsolute(typeAst.getText())) {
             symbol = resolveAbsoluteIdentifier(typeAst);
@@ -98,7 +98,7 @@ public class SymbolResolver implements ISymbolResolver
             symbol = scope.resolve(typeAst);
 
             String alias = getPotentialAlias(typeAst.getText());
-            ITSPHPAst useDefinition = scope.getFirstUseDefinitionAst(alias);
+            ITSPHPAst useDefinition = scope.getCaseInsensitiveFirstUseDefinitionAst(alias);
             useDefinition = checkTypeNameClashAndRecoverIfNecessary(useDefinition, symbol);
 
             if (useDefinition != null) {
@@ -143,8 +143,10 @@ public class SymbolResolver implements ISymbolResolver
         if (hasTypeNameClash(useDefinition, typeSymbol)) {
             ITSPHPAst typeDefinition = typeSymbol.getDefinitionAst();
             if (useDefinition.isDefinedEarlierThan(typeDefinition)) {
+                //noinspection ThrowableResultOfMethodCallIgnored
                 ErrorReporterRegistry.get().alreadyDefined(useDefinition, typeDefinition);
             } else {
+                //noinspection ThrowableResultOfMethodCallIgnored
                 ErrorReporterRegistry.get().alreadyDefined(typeDefinition, useDefinition);
                 //we do not use the alias if it was defined later than typeSymbol
                 useDefinition = null;
@@ -269,7 +271,7 @@ public class SymbolResolver implements ISymbolResolver
     @Override
     public IVariableSymbol resolveConstant(ITSPHPAst ast) {
         ISymbol symbol;
-        if (ast.getText().indexOf("\\") != -1) {
+        if (ast.getText().contains("\\")) {
             symbol = resolveGlobalIdentifierWithFallback(ast);
         } else {
             INamespaceScope scope = getEnclosingNamespaceScope(ast);

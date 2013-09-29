@@ -6,7 +6,6 @@ import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.NamespaceScope;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasSymbol;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.List;
@@ -92,6 +91,8 @@ public class NamespaceScopeTest
         verify(aliasSymbol).setDefinitionScope(namespaceScope);
     }
 
+
+
     @Test
     public void getUse_NotDefined_ReturnsNull() {
         //no arrange needed
@@ -104,11 +105,11 @@ public class NamespaceScopeTest
 
 
     @Test
-    public void getFirstUseDefinitionAst_NotDefined_ReturnsNull() {
+    public void getCaseInsensitiveFirstUseDefinitionAst_NotDefined_ReturnsNull() {
         //no arrange needed
 
         INamespaceScope namespaceScope = createNamespaceScope();
-        ITSPHPAst ast = namespaceScope.getFirstUseDefinitionAst("nonExistingAlias");
+        ITSPHPAst ast = namespaceScope.getCaseInsensitiveFirstUseDefinitionAst("nonExistingAlias");
 
         assertNull(ast);
     }
@@ -126,15 +127,40 @@ public class NamespaceScopeTest
 
 
     @Test
-    public void getFirstUseDefinitionAst_WrongName_ReturnsNull() {
+    public void getCaseInsensitiveFirstUseDefinitionAst_WrongName_ReturnsNull() {
         IAliasSymbol aliasSymbol = createAliasSymbol("aliasName");
 
         INamespaceScope namespaceScope = createNamespaceScope();
         namespaceScope.defineUse(aliasSymbol);
-        ITSPHPAst ast = namespaceScope.getFirstUseDefinitionAst("nonExistingAlias");
+        ITSPHPAst ast = namespaceScope.getCaseInsensitiveFirstUseDefinitionAst("nonExistingAlias");
 
         assertNull(ast);
     }
+
+
+    @Test
+    public void getUse_CaseWrong_ReturnsNull() {
+        IAliasSymbol aliasSymbol = createAliasSymbol("aliasName");
+
+        INamespaceScope namespaceScope = createNamespaceScope();
+        namespaceScope.defineUse(aliasSymbol);
+        List<IAliasSymbol> symbols = namespaceScope.getUse("ALIASName");
+
+        assertNull(symbols);
+    }
+
+    @Test
+    public void getCaseInsensitiveFirstUseDefinitionAst_CaseWrong_ReturnsAst() {
+        ITSPHPAst expectedAst = mock(ITSPHPAst.class);
+        IAliasSymbol aliasSymbol = createAliasSymbol("aliasName", expectedAst);
+
+        INamespaceScope namespaceScope = createNamespaceScope();
+        namespaceScope.defineUse(aliasSymbol);
+        ITSPHPAst ast = namespaceScope.getCaseInsensitiveFirstUseDefinitionAst("ALIASName");
+
+        assertThat(ast, is(expectedAst));
+    }
+
 
     @Test
     public void getUse_OneDefined_ReturnsListWithOne() {
@@ -150,13 +176,13 @@ public class NamespaceScopeTest
 
 
     @Test
-    public void getFirstUseDefinitionAst_OneDefined_ReturnsAst() {
+    public void getCaseInsensitiveFirstUseDefinitionAst_OneDefined_ReturnsAst() {
         ITSPHPAst expectedAst = mock(ITSPHPAst.class);
         IAliasSymbol aliasSymbol = createAliasSymbol("aliasName", expectedAst);
 
         INamespaceScope namespaceScope = createNamespaceScope();
         namespaceScope.defineUse(aliasSymbol);
-        ITSPHPAst ast = namespaceScope.getFirstUseDefinitionAst("aliasName");
+        ITSPHPAst ast = namespaceScope.getCaseInsensitiveFirstUseDefinitionAst("aliasName");
 
         assertThat(ast, is(expectedAst));
     }
@@ -176,7 +202,7 @@ public class NamespaceScopeTest
     }
 
     @Test
-    public void getFirstUseDefinitionAst_TwoDefined_ReturnsFirstAst() {
+    public void getCaseInsensitiveFirstUseDefinitionAst_TwoDefined_ReturnsFirstAst() {
         ITSPHPAst expectedAst = mock(ITSPHPAst.class);
         IAliasSymbol aliasSymbol = createAliasSymbol("aliasName", expectedAst);
         ITSPHPAst notThisAst = mock(ITSPHPAst.class);
@@ -185,33 +211,7 @@ public class NamespaceScopeTest
         INamespaceScope namespaceScope = createNamespaceScope();
         namespaceScope.defineUse(aliasSymbol);
         namespaceScope.defineUse(aliasSymbol2);
-        ITSPHPAst ast = namespaceScope.getFirstUseDefinitionAst("aliasName");
-
-        assertThat(ast, is(expectedAst));
-    }
-
-    @Test
-    public void getUse_CaseWrong_ReturnsListWithOne() {
-        IAliasSymbol aliasSymbol = createAliasSymbol("aliasName");
-
-        INamespaceScope namespaceScope = createNamespaceScope();
-        namespaceScope.defineUse(aliasSymbol);
-        List<IAliasSymbol> symbols = namespaceScope.getUse("ALIASName");
-
-        assertThat(symbols.size(), is(1));
-        assertThat(symbols, hasItem(aliasSymbol));
-    }
-
-    @Test
-    //TODO rstoll TSPHP-601 getFirstUseDefinitionAst in NamespaceScope not case insensitive
-    @Ignore
-    public void getFirstUseDefinitionAst_CaseWrong_ReturnsAst() {
-        ITSPHPAst expectedAst = mock(ITSPHPAst.class);
-        IAliasSymbol aliasSymbol = createAliasSymbol("aliasName", expectedAst);
-
-        INamespaceScope namespaceScope = createNamespaceScope();
-        namespaceScope.defineUse(aliasSymbol);
-        ITSPHPAst ast = namespaceScope.getFirstUseDefinitionAst("ALIASName");
+        ITSPHPAst ast = namespaceScope.getCaseInsensitiveFirstUseDefinitionAst("aliasName");
 
         assertThat(ast, is(expectedAst));
     }
