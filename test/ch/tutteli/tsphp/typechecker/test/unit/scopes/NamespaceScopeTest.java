@@ -6,13 +6,13 @@ import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.NamespaceScope;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasSymbol;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class NamespaceScopeTest
@@ -92,9 +92,8 @@ public class NamespaceScopeTest
     }
 
 
-
     @Test
-    public void getUse_NotDefined_ReturnsNull() {
+    public void getUse_NothingDefined_ReturnsNull() {
         //no arrange needed
 
         INamespaceScope namespaceScope = createNamespaceScope();
@@ -216,13 +215,24 @@ public class NamespaceScopeTest
         assertThat(ast, is(expectedAst));
     }
 
+    @Test
+    @Ignore //TODO rstoll TSPHP-604 remove hidden dependency ScopeHelper
+    public void useDefinitionCheck_NothingDefined_ReturnsTrue() {
+        IAliasSymbol symbol = createAliasSymbol("aliasName");
+
+        INamespaceScope namespaceScope = createNamespaceScope();
+        boolean result = namespaceScope.useDefinitionCheck(symbol);
+
+        assertTrue(result);
+    }
+
     private IAliasSymbol createAliasSymbol(String name) {
         IAliasSymbol aliasSymbol = mock(IAliasSymbol.class);
         when(aliasSymbol.getName()).thenReturn(name);
         return aliasSymbol;
     }
 
-    private IAliasSymbol createAliasSymbol(String name, ITSPHPAst ast){
+    private IAliasSymbol createAliasSymbol(String name, ITSPHPAst ast) {
         IAliasSymbol aliasSymbol = createAliasSymbol(name);
         when(aliasSymbol.getDefinitionAst()).thenReturn(ast);
         return aliasSymbol;

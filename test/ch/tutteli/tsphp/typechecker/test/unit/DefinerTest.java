@@ -43,7 +43,7 @@ public class DefinerTest
     public void getGlobalDefaultNamespace_FirstCall_UsesScopeFactory() {
         initScopeFactoryForGlobalDefaultNamespace();
 
-        IDefiner definer = new Definer(symbolFactory, scopeFactory);
+        IDefiner definer = createDefiner();
         IGlobalNamespaceScope scope = definer.getGlobalDefaultNamespace();
 
         assertThat(scope, is(globalDefaultScope));
@@ -54,7 +54,7 @@ public class DefinerTest
     public void getGlobalDefaultNamespace_SecondCall_UsesScopeFactoryOnlyOnce() {
         initScopeFactoryForGlobalDefaultNamespace();
 
-        IDefiner definer = new Definer(symbolFactory, scopeFactory);
+        IDefiner definer = createDefiner();
         IGlobalNamespaceScope scope = definer.getGlobalDefaultNamespace();
 
         assertThat(scope, is(globalDefaultScope));
@@ -70,7 +70,7 @@ public class DefinerTest
     public void defineNamespace_FirstCall_UsesScopeFactory() {
         NamespaceAndGlobalPair namespaceAndGlobal = initDefineNamespace("name");
 
-        IDefiner definer = new Definer(symbolFactory, scopeFactory);
+        IDefiner definer = createDefiner();
         INamespaceScope namespaceScope = definer.defineNamespace("name");
 
         assertThat(namespaceScope, is(namespaceAndGlobal.namespaceScope));
@@ -86,7 +86,7 @@ public class DefinerTest
                 .thenReturn(namespaceAndGlobal.namespaceScope)
                 .thenReturn(secondNamespaceScope);
 
-        IDefiner definer = new Definer(symbolFactory, scopeFactory);
+        IDefiner definer = createDefiner();
         INamespaceScope namespaceScope1 = definer.defineNamespace("name");
         INamespaceScope namespaceScope2 = definer.defineNamespace("name");
 
@@ -101,7 +101,7 @@ public class DefinerTest
     public void getGlobalNamespaceScopes_NothingDefined_ContainsGlobalDefaultNamespace() {
         initScopeFactoryForGlobalDefaultNamespace();
 
-        IDefiner definer = new Definer(symbolFactory, scopeFactory);
+        IDefiner definer = createDefiner();
         ILowerCaseStringMap<IGlobalNamespaceScope> scopes = definer.getGlobalNamespaceScopes();
 
         assertThat(scopes, hasEntry("\\", globalDefaultScope));
@@ -112,7 +112,7 @@ public class DefinerTest
     public void getGlobalNamespaceScopes_DefineAdditionalNamespace_ContainsBoth() {
         NamespaceAndGlobalPair namespaceAndGlobal = initDefineNamespace("name");
 
-        IDefiner definer = new Definer(symbolFactory, scopeFactory);
+        IDefiner definer = createDefiner();
         definer.defineNamespace("name");
         ILowerCaseStringMap<IGlobalNamespaceScope> scopes = definer.getGlobalNamespaceScopes();
 
@@ -129,7 +129,7 @@ public class DefinerTest
         IAliasSymbol aliasSymbol = mock(IAliasSymbol.class);
         when(symbolFactory.createAliasSymbol(aliasAst, "alias")).thenReturn(aliasSymbol);
 
-        IDefiner definer = new Definer(symbolFactory, scopeFactory);
+        IDefiner definer = createDefiner();
         definer.defineUse(namespaceScope, typeAst, aliasAst);
 
         verify(typeAst).setScope(namespaceScope);
@@ -148,7 +148,7 @@ public class DefinerTest
         IVariableSymbol variableSymbol = mock(IVariableSymbol.class);
         when(symbolFactory.createVariableSymbol(modifierAst, identifierAst)).thenReturn(variableSymbol);
 
-        IDefiner definer = new Definer(symbolFactory, scopeFactory);
+        IDefiner definer = createDefiner();
         definer.defineVariable(namespaceScope, modifierAst, typeAst, identifierAst);
 
         verify(typeAst).setScope(namespaceScope);
@@ -165,7 +165,7 @@ public class DefinerTest
         IVariableSymbol variableSymbol = mock(IVariableSymbol.class);
         when(symbolFactory.createVariableSymbol(modifierAst, identifierAst)).thenReturn(variableSymbol);
 
-        IDefiner definer = new Definer(symbolFactory, scopeFactory);
+        IDefiner definer = createDefiner();
         definer.defineConstant(namespaceScope, modifierAst, typeAst, identifierAst);
 
         verify(typeAst).setScope(namespaceScope);
@@ -186,7 +186,7 @@ public class DefinerTest
         when(symbolFactory.createInterfaceTypeSymbol(modifierAst, identifierAst, namespaceScope))
                 .thenReturn(interfaceTypeSymbol);
 
-        IDefiner definer = new Definer(symbolFactory, scopeFactory);
+        IDefiner definer = createDefiner();
         IInterfaceTypeSymbol interfaceSymbol = definer.defineInterface(namespaceScope,
                 modifierAst, identifierAst, extendsAst);
 
@@ -240,7 +240,7 @@ public class DefinerTest
         when(symbolFactory.createClassTypeSymbol(modifierAst, identifierAst, namespaceScope))
                 .thenReturn(classTypeSymbol);
 
-        IDefiner definer = new Definer(symbolFactory, scopeFactory);
+        IDefiner definer = createDefiner();
         IClassTypeSymbol classSymbol = definer.defineClass(namespaceScope, modifierAst, identifierAst,
                 extendsAst, implementsAst);
 
@@ -332,7 +332,7 @@ public class DefinerTest
         when(symbolFactory.createMethodSymbol(modifierAst, returnTypeModifierAst, identifierAst, namespaceScope))
                 .thenReturn(expectedMethodSymbol);
 
-        IDefiner definer = new Definer(symbolFactory, scopeFactory);
+        IDefiner definer = createDefiner();
         IMethodSymbol methodSymbol = definer.defineMethod(namespaceScope, modifierAst, returnTypeModifierAst,
                 returnTypeAst, identifierAst);
 
@@ -348,7 +348,7 @@ public class DefinerTest
         IConditionalScope conditionalScope = mock(IConditionalScope.class);
         when(scopeFactory.createConditionalScope(parentScope)).thenReturn(conditionalScope);
 
-        IDefiner definer = new Definer(symbolFactory, scopeFactory);
+        IDefiner definer = createDefiner();
         IConditionalScope scope = definer.defineConditionalScope(parentScope);
 
         assertThat(scope, is(conditionalScope));
@@ -356,6 +356,10 @@ public class DefinerTest
         //shouldn't have any additional interaction with scopeFactory than creating the global default namespace
         verify(scopeFactory).createGlobalNamespaceScope("\\");
         verifyNoMoreInteractions(scopeFactory);
+    }
+
+    private IDefiner createDefiner() {
+        return new Definer(symbolFactory, scopeFactory);
     }
 
     private void verifyScopeSymbolAndDefine(IScope scope, ITSPHPAst identifierAst, ISymbol symbol) {
