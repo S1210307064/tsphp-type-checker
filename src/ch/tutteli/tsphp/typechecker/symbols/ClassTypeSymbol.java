@@ -4,6 +4,8 @@ import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
+import ch.tutteli.tsphp.typechecker.scopes.IScopeHelper;
+
 import java.util.Set;
 
 public class ClassTypeSymbol extends AScopedTypeSymbol implements IClassTypeSymbol
@@ -13,9 +15,14 @@ public class ClassTypeSymbol extends AScopedTypeSymbol implements IClassTypeSymb
     private IVariableSymbol $this;
     private IClassTypeSymbol parent;
 
-    public ClassTypeSymbol(ITSPHPAst definitionAst, Set<Integer> modifiers, String name, IScope enclosingScope,
+    public ClassTypeSymbol(
+            IScopeHelper scopeHelper,
+            ITSPHPAst definitionAst,
+            Set<Integer> modifiers,
+            String name,
+            IScope enclosingScope,
             ITypeSymbol parentTypeSymbol) {
-        super(definitionAst, modifiers, name, enclosingScope, parentTypeSymbol);
+        super(scopeHelper, definitionAst, modifiers, name, enclosingScope, parentTypeSymbol);
     }
 
     @Override

@@ -71,27 +71,28 @@ public class TypeHelper
                 };
     }
 
+
     public static void getAllTypesInclModifier(IAdder adder) {
         String[] types = getScalarTypes();
         int cast = TSPHPDefinitionWalker.Cast;
         int questionMark = TSPHPDefinitionWalker.QuestionMark;
 
         for (String type : types) {
-            adder.add(type, type, new TreeSet());
-            adder.add("cast " + type, type, new TreeSet(Arrays.asList(new Integer[]{cast})));
-            adder.add(type + "?", type, new TreeSet(Arrays.asList(new Integer[]{questionMark})));
-            adder.add("cast " + type + "?", type, new TreeSet(Arrays.asList(new Integer[]{cast, questionMark})));
+            adder.add(type, type, new TreeSet<Integer>());
+            adder.add("cast " + type, type, new TreeSet<>(Arrays.asList(new Integer[]{cast})));
+            adder.add(type + "?", type, new TreeSet<>(Arrays.asList(new Integer[]{questionMark})));
+            adder.add("cast " + type + "?", type, new TreeSet<>(Arrays.asList(new Integer[]{cast, questionMark})));
         }
 
-        adder.add("array", "array", new TreeSet());
-        adder.add("cast array", "array", new TreeSet(Arrays.asList(new Integer[]{cast})));
+        adder.add("array", "array", new TreeSet<Integer>());
+        adder.add("cast array", "array", new TreeSet<>(Arrays.asList(new Integer[]{cast})));
 
         types = getClassInterfaceTypes();
         for (String type : types) {
-            adder.add(type, type, new TreeSet());
-            adder.add("cast " + type, type, new TreeSet(Arrays.asList(new Integer[]{cast})));
+            adder.add(type, type, new TreeSet<Integer>());
+            adder.add("cast " + type, type, new TreeSet<>(Arrays.asList(new Integer[]{cast})));
         }
-        adder.add("resource", "resource", new TreeSet());
-        adder.add("object", "object", new TreeSet());
+        adder.add("resource", "resource", new TreeSet<Integer>());
+        adder.add("object", "object", new TreeSet<Integer>());
     }
 }

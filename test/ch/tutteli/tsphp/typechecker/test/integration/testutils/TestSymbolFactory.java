@@ -3,6 +3,7 @@ package ch.tutteli.tsphp.typechecker.test.integration.testutils;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
+import ch.tutteli.tsphp.typechecker.scopes.IScopeHelper;
 import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IInterfaceTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
@@ -14,7 +15,11 @@ import java.util.List;
 public class TestSymbolFactory extends SymbolFactory
 {
 
-    List<ICreateSymbolListener> listeners = new ArrayList<>();
+    private List<ICreateSymbolListener> listeners = new ArrayList<>();
+
+    public TestSymbolFactory(IScopeHelper theScopeHelper) {
+        super(theScopeHelper);
+    }
 
     @Override
     public IInterfaceTypeSymbol createInterfaceTypeSymbol(ITSPHPAst modifier, ITSPHPAst identifier, IScope currentScope) {

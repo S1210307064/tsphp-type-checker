@@ -12,8 +12,8 @@ public class GlobalNamespaceScope extends AScope implements IGlobalNamespaceScop
 
     private ILowerCaseStringMap<List<ISymbol>> symbolsCaseInsensitive = new LowerCaseStringMap<>();
 
-    public GlobalNamespaceScope(String scopeName) {
-        super(scopeName, null);
+    public GlobalNamespaceScope(IScopeHelper scopeHelper, String scopeName) {
+        super(scopeHelper, scopeName, null);
     }
 
     @Override
@@ -24,7 +24,7 @@ public class GlobalNamespaceScope extends AScope implements IGlobalNamespaceScop
 
     @Override
     public boolean doubleDefinitionCheckCaseInsensitive(ISymbol symbol) {
-        return ScopeHelperRegistry.get().doubleDefinitionCheck(symbolsCaseInsensitive, symbol);
+        return scopeHelper.doubleDefinitionCheck(symbolsCaseInsensitive, symbol);
     }
 
     @Override

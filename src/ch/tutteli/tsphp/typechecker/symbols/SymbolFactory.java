@@ -4,6 +4,7 @@ import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
+import ch.tutteli.tsphp.typechecker.scopes.IScopeHelper;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.ErroneousAccessSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.ErroneousClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.ErroneousMethodSymbol;
@@ -19,8 +20,12 @@ import java.util.Set;
 
 public class SymbolFactory implements ISymbolFactory
 {
-
+    private final IScopeHelper scopeHelper;
     private ITypeSymbol objectTypeSymbol = null;
+
+    public SymbolFactory(IScopeHelper theScopeHelper) {
+        scopeHelper = theScopeHelper;
+    }
 
     @Override
     public void setObjectTypeSymbol(ITypeSymbol typeSymbol) {
@@ -77,22 +82,37 @@ public class SymbolFactory implements ISymbolFactory
     @Override
     public IInterfaceTypeSymbol createInterfaceTypeSymbol(ITSPHPAst modifier, ITSPHPAst identifier,
             IScope currentScope) {
-        return new InterfaceTypeSymbol(identifier, getModifiers(modifier), identifier.getText(), currentScope,
+        return new InterfaceTypeSymbol(
+                scopeHelper,
+                identifier,
+                getModifiers(modifier),
+                identifier.getText(),
+                currentScope,
                 objectTypeSymbol);
     }
 
     @Override
     public IClassTypeSymbol createClassTypeSymbol(ITSPHPAst classModifierAst, ITSPHPAst identifier,
             IScope currentScope) {
-        return new ClassTypeSymbol(identifier, getModifiers(classModifierAst), identifier.getText(), currentScope,
+        return new ClassTypeSymbol(
+                scopeHelper,
+                identifier,
+                getModifiers(classModifierAst),
+                identifier.getText(),
+                currentScope,
                 objectTypeSymbol);
     }
 
     @Override
     public IMethodSymbol createMethodSymbol(ITSPHPAst methodModifier, ITSPHPAst returnTypeModifier,
             ITSPHPAst identifier, IScope currentScope) {
-        return new MethodSymbol(identifier, getModifiers(methodModifier), getModifiers(returnTypeModifier),
-                identifier.getText(), currentScope);
+        return new MethodSymbol(
+                scopeHelper,
+                identifier,
+                getModifiers(methodModifier),
+                getModifiers(returnTypeModifier),
+                identifier.getText(),
+                currentScope);
     }
 
     @Override

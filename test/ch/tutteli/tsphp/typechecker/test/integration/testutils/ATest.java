@@ -8,11 +8,10 @@ import ch.tutteli.tsphp.typechecker.error.ErrorMessageProvider;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporter;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.error.IErrorReporter;
-import ch.tutteli.tsphp.typechecker.scopes.ScopeHelper;
-import ch.tutteli.tsphp.typechecker.scopes.ScopeHelperRegistry;
+import org.junit.Ignore;
+
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Ignore;
 
 @Ignore
 public abstract class ATest implements IErrorLogger
@@ -23,7 +22,6 @@ public abstract class ATest implements IErrorLogger
 
     public ATest() {
         parser = new ParserFacade();
-        ScopeHelperRegistry.set(new ScopeHelper());
         IErrorReporter errorReporter = new ErrorReporter(new ErrorMessageProvider());
         errorReporter.registerErrorLogger(this);
         ErrorReporterRegistry.set(errorReporter);

@@ -4,8 +4,10 @@ import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
+import ch.tutteli.tsphp.typechecker.scopes.IScopeHelper;
 import ch.tutteli.tsphp.typechecker.scopes.NamespaceScope;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasSymbol;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -17,12 +19,19 @@ import static org.mockito.Mockito.*;
 
 public class NamespaceScopeTest
 {
+    private IScopeHelper scopeHelper;
+
+    @Before
+    public void setUp(){
+        scopeHelper = mock(IScopeHelper.class);
+    }
+
     @Test
     public void define_Standard_DelegateToEnclosingScopeAndSetDefinitionScope() {
         IGlobalNamespaceScope globalNamespaceScope = mock(IGlobalNamespaceScope.class);
         ISymbol symbol = mock(ISymbol.class);
 
-        INamespaceScope namespaceScope = new NamespaceScope("test", globalNamespaceScope);
+        INamespaceScope namespaceScope = createNamespaceScope(globalNamespaceScope);
         namespaceScope.define(symbol);
 
         verify(globalNamespaceScope).define(symbol);
@@ -37,7 +46,7 @@ public class NamespaceScopeTest
         ISymbol symbol2 = mock(ISymbol.class);
         when(symbol2.getName()).thenReturn("a");
 
-        INamespaceScope namespaceScope = new NamespaceScope("test", globalNamespaceScope);
+        INamespaceScope namespaceScope = createNamespaceScope(globalNamespaceScope);
         namespaceScope.define(symbol);
         namespaceScope.define(symbol2);
 
@@ -52,7 +61,7 @@ public class NamespaceScopeTest
         IGlobalNamespaceScope globalNamespaceScope = mock(IGlobalNamespaceScope.class);
         ITSPHPAst ast = mock(ITSPHPAst.class);
 
-        INamespaceScope namespaceScope = new NamespaceScope("test", globalNamespaceScope);
+        INamespaceScope namespaceScope = createNamespaceScope(globalNamespaceScope);
         namespaceScope.resolve(ast);
 
         verify(globalNamespaceScope).resolve(ast);
@@ -63,7 +72,7 @@ public class NamespaceScopeTest
         IGlobalNamespaceScope globalNamespaceScope = mock(IGlobalNamespaceScope.class);
         ISymbol symbol = mock(ISymbol.class);
 
-        INamespaceScope namespaceScope = new NamespaceScope("test", globalNamespaceScope);
+        INamespaceScope namespaceScope = createNamespaceScope(globalNamespaceScope);
         namespaceScope.doubleDefinitionCheck(symbol);
 
         verify(globalNamespaceScope).doubleDefinitionCheck(symbol);
@@ -74,7 +83,7 @@ public class NamespaceScopeTest
         IGlobalNamespaceScope globalNamespaceScope = mock(IGlobalNamespaceScope.class);
         ISymbol symbol = mock(ISymbol.class);
 
-        INamespaceScope namespaceScope = new NamespaceScope("test", globalNamespaceScope);
+        INamespaceScope namespaceScope = createNamespaceScope(globalNamespaceScope);
         namespaceScope.doubleDefinitionCheckCaseInsensitive(symbol);
 
         verify(globalNamespaceScope).doubleDefinitionCheckCaseInsensitive(symbol);
@@ -239,7 +248,9 @@ public class NamespaceScopeTest
     }
 
     private INamespaceScope createNamespaceScope() {
-        IGlobalNamespaceScope globalNamespaceScope = mock(IGlobalNamespaceScope.class);
-        return new NamespaceScope("test", globalNamespaceScope);
+        return createNamespaceScope(mock(IGlobalNamespaceScope.class));
+    }
+    private INamespaceScope createNamespaceScope(IGlobalNamespaceScope globalNamespaceScope) {
+        return new NamespaceScope(scopeHelper, "test", globalNamespaceScope);
     }
 }

@@ -12,28 +12,30 @@ import java.util.Map;
  */
 public abstract class AScope implements IScope
 {
-
+    protected final IScopeHelper scopeHelper;
     protected String scopeName;
     protected IScope enclosingScope;
     protected Map<String, List<ISymbol>> symbols = new LinkedHashMap<>();
-    public AScope(String theScopeName, IScope theEnclosingScope) {
+
+    public AScope(IScopeHelper theScopeHelper, String theScopeName, IScope theEnclosingScope) {
+        scopeHelper = theScopeHelper;
         scopeName = theScopeName;
         enclosingScope = theEnclosingScope;
     }
 
     @Override
     public void define(ISymbol symbol) {
-        ScopeHelperRegistry.get().define(this, symbol);
+        scopeHelper.define(this, symbol);
     }
 
     @Override
     public boolean doubleDefinitionCheck(ISymbol symbol) {
-       return ScopeHelperRegistry.get().doubleDefinitionCheck(symbols, symbol);
+       return scopeHelper.doubleDefinitionCheck(symbols, symbol);
     }
 
     @Override
     public ISymbol resolve(ITSPHPAst typeAst) {
-        return ScopeHelperRegistry.get().resolve(this, typeAst);
+        return scopeHelper.resolve(this, typeAst);
     }
 
     @Override

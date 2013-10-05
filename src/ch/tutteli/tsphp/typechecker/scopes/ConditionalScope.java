@@ -8,8 +8,8 @@ import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
 public class ConditionalScope extends AScope implements IConditionalScope
 {
 
-    public ConditionalScope(IScope enclosingScope) {
-        super("cScope", enclosingScope);
+    public ConditionalScope(IScopeHelper scopeHelper, IScope enclosingScope) {
+        super(scopeHelper, "cScope", enclosingScope);
     }
 
     @Override
@@ -24,14 +24,15 @@ public class ConditionalScope extends AScope implements IConditionalScope
         if (scope instanceof INamespaceScope) {
             scope = scope.getEnclosingScope();
         }
-        return ScopeHelperRegistry.get().doubleDefinitionCheck(scope.getSymbols(), symbol,
+        return scopeHelper.doubleDefinitionCheck(scope.getSymbols(), symbol,
                 new IAlreadyDefinedMethodCaller()
-        {
-            @Override
-            public void callAccordingAlreadyDefinedMethod(ISymbol firstDefinition, ISymbol symbolToCheck) {
-                ErrorReporterRegistry.get().definedInOuterScope(firstDefinition, symbolToCheck);
-            }
-        });
+                {
+                    @Override
+                    public void callAccordingAlreadyDefinedMethod(ISymbol firstDefinition, ISymbol symbolToCheck) {
+                        //noinspection ThrowableResultOfMethodCallIgnored
+                        ErrorReporterRegistry.get().definedInOuterScope(firstDefinition, symbolToCheck);
+                    }
+                });
     }
 
     private IScope getEnclosingNonConditionalScope(ISymbol symbol) {

@@ -5,7 +5,7 @@ import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.LowerCaseStringMap;
-import ch.tutteli.tsphp.typechecker.scopes.ScopeHelperRegistry;
+import ch.tutteli.tsphp.typechecker.scopes.IScopeHelper;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -15,13 +15,19 @@ import java.util.Set;
  */
 public abstract class AScopedSymbol extends ASymbolWithModifier implements IScope
 {
-
+    protected final IScopeHelper scopeHelper;
     protected IScope enclosingScope;
     protected Map<String, List<ISymbol>> members = new LowerCaseStringMap<>();
 
-    public AScopedSymbol(ITSPHPAst definitionAst, Set<Integer> modifiers, String name, IScope theEnclosingScope) {
+    public AScopedSymbol(
+              IScopeHelper theScopeHelper
+            , ITSPHPAst definitionAst
+            , Set<Integer> modifiers
+            , String name
+            , IScope theEnclosingScope) {
         super(definitionAst, modifiers, name);
         enclosingScope = theEnclosingScope;
+        scopeHelper = theScopeHelper;
     }
 
     @Override
@@ -31,17 +37,17 @@ public abstract class AScopedSymbol extends ASymbolWithModifier implements IScop
 
     @Override
     public void define(ISymbol symbol) {
-        ScopeHelperRegistry.get().define(this, symbol);
+        scopeHelper.define(this, symbol);
     }
 
     @Override
     public boolean doubleDefinitionCheck(ISymbol symbol) {
-        return ScopeHelperRegistry.get().doubleDefinitionCheck(members, symbol);
+        return scopeHelper.doubleDefinitionCheck(members, symbol);
     }
 
     @Override
     public ISymbol resolve(ITSPHPAst ast) {
-        return ScopeHelperRegistry.get().resolve(this, ast);
+        return scopeHelper.resolve(this, ast);
     }
 
     @Override

@@ -9,8 +9,7 @@ import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.LowerCaseStringMap;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tutteli.tsphp.typechecker.scopes.ICaseInsensitiveScope;
-import ch.tutteli.tsphp.typechecker.scopes.ScopeHelperRegistry;
-import ch.tutteli.tsphp.typechecker.utils.IAstHelper;
+import ch.tutteli.tsphp.typechecker.scopes.IScopeHelper;
 import ch.tutteli.tsphp.typechecker.utils.MapHelper;
 import java.util.HashSet;
 import java.util.List;
@@ -23,9 +22,14 @@ public abstract class AScopedTypeSymbol extends AScopedSymbol implements ICaseIn
     protected ILowerCaseStringMap<List<ISymbol>> symbolsCaseInsensitive = new LowerCaseStringMap<>();
     private boolean isObjectTheParentTypeSymbol = false;
 
-    public AScopedTypeSymbol(ITSPHPAst definitionAst, Set<Integer> modifiers, String name, IScope enclosingScope,
+    public AScopedTypeSymbol(
+            IScopeHelper scopeHelper,
+            ITSPHPAst definitionAst,
+            Set<Integer> modifiers,
+            String name,
+            IScope enclosingScope,
             ITypeSymbol theParentTypeSymbol) {
-        super(definitionAst, modifiers, name, enclosingScope);
+        super(scopeHelper, definitionAst, modifiers, name, enclosingScope);
         parentTypeSymbols.add(theParentTypeSymbol);
         isObjectTheParentTypeSymbol = theParentTypeSymbol.getName().equals("object");
     }
@@ -38,12 +42,12 @@ public abstract class AScopedTypeSymbol extends AScopedSymbol implements ICaseIn
 
     @Override
     public boolean doubleDefinitionCheckCaseInsensitive(ISymbol symbol) {
-        return ScopeHelperRegistry.get().doubleDefinitionCheck(symbolsCaseInsensitive, symbol);
+        return scopeHelper.doubleDefinitionCheck(symbolsCaseInsensitive, symbol);
     }
 
     @Override
     public ISymbol resolveWithFallbackToParent(ITSPHPAst ast) {
-        ISymbol symbol = ScopeHelperRegistry.get().resolve(this, ast);
+        ISymbol symbol = scopeHelper.resolve(this, ast);
         if (symbol == null && !parentTypeSymbols.isEmpty()) {
             for (ITypeSymbol parentTypeSymbol : parentTypeSymbols) {
                 if (parentTypeSymbol instanceof IPolymorphicTypeSymbol) {

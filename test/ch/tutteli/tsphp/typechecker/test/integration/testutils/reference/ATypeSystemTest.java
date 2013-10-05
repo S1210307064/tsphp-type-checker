@@ -11,6 +11,8 @@ import ch.tutteli.tsphp.typechecker.SymbolResolver;
 import ch.tutteli.tsphp.typechecker.TypeCheckerController;
 import ch.tutteli.tsphp.typechecker.TypeSystem;
 import ch.tutteli.tsphp.typechecker.scopes.IScopeFactory;
+import ch.tutteli.tsphp.typechecker.scopes.IScopeHelper;
+import ch.tutteli.tsphp.typechecker.scopes.ScopeHelper;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.ATest;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.TestDefiner;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.TestScopeFactory;
@@ -27,13 +29,23 @@ public class ATypeSystemTest extends ATest
 
     public ATypeSystemTest() {
         super();
-        scopeFactory = new TestScopeFactory();
-        TestSymbolFactory symbolFactory = new TestSymbolFactory();
+        IScopeHelper scopeHelper = new ScopeHelper();
+
+        scopeFactory = new TestScopeFactory(scopeHelper);
+        TestSymbolFactory symbolFactory = new TestSymbolFactory(scopeHelper);
         IDefiner definer = new TestDefiner(symbolFactory, scopeFactory);
-        ITypeSystem typeSystem = new TypeSystem(symbolFactory, AstHelperRegistry.get(),
+
+        ITypeSystem typeSystem = new TypeSystem(
+                symbolFactory,
+                AstHelperRegistry.get(),
                 definer.getGlobalDefaultNamespace());
-        ISymbolResolver symbolResolver = new SymbolResolver(symbolFactory, definer.getGlobalNamespaceScopes(),
+
+        ISymbolResolver symbolResolver = new SymbolResolver(
+                scopeHelper,
+                symbolFactory,
+                definer.getGlobalNamespaceScopes(),
                 definer.getGlobalDefaultNamespace());
+
         IOverloadResolver methodResolver = new OverloadResolver(typeSystem);
 
         controller = new TypeCheckerController(

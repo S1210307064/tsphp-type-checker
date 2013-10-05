@@ -3,6 +3,8 @@ package ch.tutteli.tsphp.typechecker.symbols;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
+import ch.tutteli.tsphp.typechecker.scopes.IScopeHelper;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -14,9 +16,14 @@ public class MethodSymbol extends AScopedSymbol implements IMethodSymbol
     private List<IVariableSymbol> parameters = new ArrayList<>();
     private Set<Integer> returnTypeModifier;
 
-    public MethodSymbol(ITSPHPAst definitionAst, Set<Integer> methodModifiers, Set<Integer> theReturnTypeModifier,
-            String name, IScope enclosingScope) {
-        super(definitionAst, methodModifiers, name, enclosingScope);
+    public MethodSymbol(
+            IScopeHelper scopeHelper,
+            ITSPHPAst definitionAst,
+            Set<Integer> methodModifiers,
+            Set<Integer> theReturnTypeModifier,
+            String name,
+            IScope enclosingScope) {
+        super(scopeHelper, definitionAst, methodModifiers, name, enclosingScope);
         returnTypeModifier = theReturnTypeModifier;
     }
 

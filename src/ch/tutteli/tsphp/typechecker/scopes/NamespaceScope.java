@@ -19,8 +19,8 @@ public class NamespaceScope extends AScope implements INamespaceScope
     private ILowerCaseStringMap<List<IAliasSymbol>> usesCaseInsensitive = new LowerCaseStringMap<>();
     private Map<String, List<IAliasSymbol>> uses = new LinkedHashMap<>();
 
-    public NamespaceScope(String scopeName, IGlobalNamespaceScope globalNamespaceScope) {
-        super(scopeName, globalNamespaceScope);
+    public NamespaceScope(IScopeHelper scopeHelper, String scopeName, IGlobalNamespaceScope globalNamespaceScope) {
+        super(scopeHelper, scopeName, globalNamespaceScope);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class NamespaceScope extends AScope implements INamespaceScope
 
     @Override
     public boolean useDefinitionCheck(IAliasSymbol symbol) {
-        boolean isNotDoubleDefined = ScopeHelperRegistry.get().doubleDefinitionCheck(
+        boolean isNotDoubleDefined = scopeHelper.doubleDefinitionCheck(
                 usesCaseInsensitive.get(symbol.getName()).get(0), symbol);
         return isNotDoubleDefined && isNotAlreadyDefinedAsType(symbol);
 

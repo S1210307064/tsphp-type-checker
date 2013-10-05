@@ -11,7 +11,7 @@ import ch.tutteli.tsphp.common.exceptions.ReferenceException;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
-import ch.tutteli.tsphp.typechecker.scopes.ScopeHelperRegistry;
+import ch.tutteli.tsphp.typechecker.scopes.IScopeHelper;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
@@ -21,14 +21,18 @@ import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 public class SymbolResolver implements ISymbolResolver
 {
 
-    private ISymbolFactory symbolFactory;
+    private final IScopeHelper scopeHelper;
+    private final ISymbolFactory symbolFactory;
+
     private ILowerCaseStringMap<IGlobalNamespaceScope> globalNamespaceScopes = new LowerCaseStringMap<>();
     private IGlobalNamespaceScope globalDefaultNamespace;
 
-    public SymbolResolver(ISymbolFactory theSymbolFactory,
+    public SymbolResolver(
+            IScopeHelper theScopeHelper,
+            ISymbolFactory theSymbolFactory,
             ILowerCaseStringMap<IGlobalNamespaceScope> theGlobalNamespaceScopes,
             IGlobalNamespaceScope theGlobalDefaultNamespace) {
-
+        scopeHelper = theScopeHelper;
         symbolFactory = theSymbolFactory;
         globalNamespaceScopes = theGlobalNamespaceScopes;
         globalDefaultNamespace = theGlobalDefaultNamespace;
@@ -83,7 +87,7 @@ public class SymbolResolver implements ISymbolResolver
 
     private ISymbol resolveAbsoluteIdentifier(ITSPHPAst typeAst) {
         ISymbol symbol = null;
-        IGlobalNamespaceScope scope = ScopeHelperRegistry.get()
+        IGlobalNamespaceScope scope = scopeHelper
                 .getCorrespondingGlobalNamespace(globalNamespaceScopes, typeAst.getText());
         if (scope != null) {
             symbol = scope.resolve(typeAst);
@@ -126,7 +130,7 @@ public class SymbolResolver implements ISymbolResolver
         String typeName = typeAst.getText();
         IScope scope = typeAst.getScope();
         if (isAbsolute(typeName)) {
-            scope = ScopeHelperRegistry.get().getCorrespondingGlobalNamespace(globalNamespaceScopes, typeName);
+            scope = scopeHelper.getCorrespondingGlobalNamespace(globalNamespaceScopes, typeName);
         }
         return scope;
     }
@@ -169,8 +173,8 @@ public class SymbolResolver implements ISymbolResolver
                 typeName = getAbsoluteTypeName((ITypeSymbol) symbol, alias, typeName);
                 typeAst.setText(typeName);
 
-                IGlobalNamespaceScope globalNamespaceScope = ScopeHelperRegistry.get().
-                        getCorrespondingGlobalNamespace(globalNamespaceScopes, typeName);
+                IGlobalNamespaceScope globalNamespaceScope = scopeHelper
+                        .getCorrespondingGlobalNamespace(globalNamespaceScopes, typeName);
                 if (globalNamespaceScope != null) {
                     symbol = globalNamespaceScope.resolve(typeAst);
                 } else {
@@ -223,7 +227,7 @@ public class SymbolResolver implements ISymbolResolver
         IScope enclosingGlobalNamespaceScope = getEnclosingGlobalNamespaceScope(typeAst.getScope());
         String typeName = enclosingGlobalNamespaceScope.getScopeName() + typeAst.getText();
         typeAst.setText(typeName);
-        IGlobalNamespaceScope scope = ScopeHelperRegistry.get().getCorrespondingGlobalNamespace(globalNamespaceScopes, typeName);
+        IGlobalNamespaceScope scope = scopeHelper.getCorrespondingGlobalNamespace(globalNamespaceScopes, typeName);
 
         ISymbol typeSymbol = null;
         if (scope != null) {

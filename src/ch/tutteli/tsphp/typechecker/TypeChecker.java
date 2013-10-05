@@ -11,15 +11,16 @@ import ch.tutteli.tsphp.typechecker.antlr.ErrorReportingTSPHPTypeCheckWalker;
 import ch.tutteli.tsphp.typechecker.error.ErrorMessageProvider;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporter;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
+import ch.tutteli.tsphp.typechecker.scopes.IScopeHelper;
 import ch.tutteli.tsphp.typechecker.scopes.ScopeFactory;
 import ch.tutteli.tsphp.typechecker.scopes.ScopeHelper;
-import ch.tutteli.tsphp.typechecker.scopes.ScopeHelperRegistry;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
 import ch.tutteli.tsphp.typechecker.symbols.SymbolFactory;
 import ch.tutteli.tsphp.typechecker.utils.AstHelper;
+import org.antlr.runtime.tree.TreeNodeStream;
+
 import java.util.ArrayDeque;
 import java.util.Collection;
-import org.antlr.runtime.tree.TreeNodeStream;
 
 public class TypeChecker implements ITypeChecker, IErrorLogger
 {
@@ -29,31 +30,36 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
     private boolean hasFoundError = false;
 
     public TypeChecker() {
-        ScopeHelperRegistry.set(new ScopeHelper());
         ErrorReporterRegistry.set(new ErrorReporter(new ErrorMessageProvider()));
 
         init();
     }
 
     private void init() {
-        ISymbolFactory symbolFactory = new SymbolFactory();
-        IDefiner definer = new Definer(symbolFactory, new ScopeFactory());
+        IScopeHelper scopeHelper = new ScopeHelper();
+        ISymbolFactory symbolFactory = new SymbolFactory(scopeHelper);
+        IDefiner definer = new Definer(symbolFactory, new ScopeFactory(scopeHelper));
 
-        ITypeSystem typeSystem = new TypeSystem(symbolFactory, AstHelperRegistry.get(),
+        ITypeSystem typeSystem = new TypeSystem(
+                symbolFactory,
+                AstHelperRegistry.get(),
                 definer.getGlobalDefaultNamespace());
 
-        ISymbolResolver symbolResolver = new SymbolResolver(symbolFactory, definer.getGlobalNamespaceScopes(),
+        ISymbolResolver symbolResolver = new SymbolResolver(
+                scopeHelper,
+                symbolFactory,
+                definer.getGlobalNamespaceScopes(),
                 definer.getGlobalDefaultNamespace());
 
         IOverloadResolver overloadResolver = new OverloadResolver(typeSystem);
 
         controller = new TypeCheckerController(
-                  symbolFactory
-                , typeSystem
-                , definer
-                , symbolResolver
-                , overloadResolver
-                , new AstHelper());
+                symbolFactory,
+                typeSystem,
+                definer,
+                symbolResolver,
+                overloadResolver,
+                new AstHelper());
     }
 
     @Override

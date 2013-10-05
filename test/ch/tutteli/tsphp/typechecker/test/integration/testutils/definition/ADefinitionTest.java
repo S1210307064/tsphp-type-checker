@@ -16,10 +16,12 @@ import ch.tutteli.tsphp.typechecker.SymbolResolver;
 import ch.tutteli.tsphp.typechecker.TypeCheckerController;
 import ch.tutteli.tsphp.typechecker.TypeSystem;
 import ch.tutteli.tsphp.typechecker.antlr.ErrorReportingTSPHPDefinitionWalker;
-import ch.tutteli.tsphp.typechecker.test.integration.testutils.TestScopeFactory;
-import ch.tutteli.tsphp.typechecker.test.integration.testutils.TestSymbolFactory;
+import ch.tutteli.tsphp.typechecker.scopes.IScopeHelper;
+import ch.tutteli.tsphp.typechecker.scopes.ScopeHelper;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.ATest;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.TestDefiner;
+import ch.tutteli.tsphp.typechecker.test.integration.testutils.TestScopeFactory;
+import ch.tutteli.tsphp.typechecker.test.integration.testutils.TestSymbolFactory;
 import ch.tutteli.tsphp.typechecker.utils.AstHelper;
 import ch.tutteli.tsphp.typechecker.utils.IAstHelper;
 import org.antlr.runtime.RecognitionException;
@@ -55,14 +57,22 @@ public abstract class ADefinitionTest extends ATest
     }
 
     private void init() {
+        IScopeHelper scopeHelper = new ScopeHelper();
+
         adaptor = new TSPHPAstAdaptor();
         astHelper = new AstHelper();
-        scopeFactory = new TestScopeFactory();
-        TestSymbolFactory symbolFactory = new TestSymbolFactory();
+        scopeFactory = new TestScopeFactory(scopeHelper);
+
+        TestSymbolFactory symbolFactory = new TestSymbolFactory(scopeHelper);
         definer = new TestDefiner(symbolFactory, scopeFactory);
         typeSystem = new TypeSystem(symbolFactory, AstHelperRegistry.get(), definer.getGlobalDefaultNamespace());
-        ISymbolResolver symbolResolver = new SymbolResolver(symbolFactory, definer.getGlobalNamespaceScopes(),
+
+        ISymbolResolver symbolResolver = new SymbolResolver(
+                scopeHelper,
+                symbolFactory,
+                definer.getGlobalNamespaceScopes(),
                 definer.getGlobalDefaultNamespace());
+
         IOverloadResolver methodResolver = new OverloadResolver(typeSystem);
 
         controller = new TypeCheckerController(
