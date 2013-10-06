@@ -17,8 +17,6 @@ public interface ICastingMethod
      * For instance, if B $b; A $a = (A) $b; and not B itself contains the cast to A but C (parent type of B) then this
      * method will return the ITypeSymbol which represents the type C. However, if B contains the casting then null will
      * be returned.
-     *
-     * @return
      */
     ITypeSymbol getParentTypeWhichProvidesCast();
 

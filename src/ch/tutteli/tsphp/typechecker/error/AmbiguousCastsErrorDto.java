@@ -7,16 +7,16 @@ public class AmbiguousCastsErrorDto extends ReferenceErrorDto
 
     public List<String> leftToRightCasts;
     public List<String> rightToLeftCasts;
-    public List<List<String>> leftAmbiguouities;
-    public List<List<String>> rightAmbiguouities;
+    public List<List<String>> leftAmbiguities;
+    public List<List<String>> rightAmbiguities;
 
     public AmbiguousCastsErrorDto(String theIdentifier, int theLine, int thePosition,
             List<String> theLeftToRightCasts, List<String> theRightToLeftCasts,
-            List<List<String>> theLeftAmbiguouities, List<List<String>> theRightAmbiguouities) {
+            List<List<String>> theLeftAmbiguities, List<List<String>> theRightAmbiguities) {
         super(theIdentifier, theLine, thePosition);
         leftToRightCasts = theLeftToRightCasts;
         rightToLeftCasts = theRightToLeftCasts;
-        leftAmbiguouities = theLeftAmbiguouities;
-        rightAmbiguouities = theRightAmbiguouities;
+        leftAmbiguities = theLeftAmbiguities;
+        rightAmbiguities = theRightAmbiguities;
     }
 }

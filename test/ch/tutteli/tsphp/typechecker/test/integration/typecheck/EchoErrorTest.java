@@ -14,8 +14,6 @@ import org.junit.runners.Parameterized;
 public class EchoErrorTest extends ATypeCheckErrorTest
 {
 
-    private static List<Object[]> collection;
-
     public EchoErrorTest(String testString, ReferenceErrorDto[] expectedLinesAndPositions) {
         super(testString, expectedLinesAndPositions);
     }
@@ -27,9 +25,9 @@ public class EchoErrorTest extends ATypeCheckErrorTest
 
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
-        collection = new ArrayList<>();
+        List<Object[]> collection = new ArrayList<>();
         ReferenceErrorDto[] errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto("$b", 2, 1)};
-        ReferenceErrorDto[] errroTwo = new ReferenceErrorDto[]{
+        ReferenceErrorDto[] errorTwo = new ReferenceErrorDto[]{
             new ReferenceErrorDto("$b", 2, 1),
             new ReferenceErrorDto("$b", 3, 1)
         };
@@ -37,7 +35,7 @@ public class EchoErrorTest extends ATypeCheckErrorTest
         String[] types = new String[]{"array", "resource", "object"};
         for (String type : types) {
             collection.add(new Object[]{type + " $b;echo\n $b;", errorDto});
-            collection.add(new Object[]{type + " $b;echo\n $b,\n $b;", errroTwo});
+            collection.add(new Object[]{type + " $b;echo\n $b,\n $b;", errorTwo});
         }
 
         return collection;

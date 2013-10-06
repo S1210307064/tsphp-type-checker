@@ -10,7 +10,7 @@ import java.util.List;
 public class GlobalNamespaceScope extends AScope implements IGlobalNamespaceScope
 {
 
-    private ILowerCaseStringMap<List<ISymbol>> symbolsCaseInsensitive = new LowerCaseStringMap<>();
+    private final ILowerCaseStringMap<List<ISymbol>> symbolsCaseInsensitive = new LowerCaseStringMap<>();
 
     public GlobalNamespaceScope(IScopeHelper scopeHelper, String scopeName) {
         super(scopeHelper, scopeName, null);
@@ -37,11 +37,10 @@ public class GlobalNamespaceScope extends AScope implements IGlobalNamespaceScop
         return symbol;
     }
 
-    @Override
-    public String getTypeNameWithoutNamespacePrefix(String typeName) {
-        int scopeNameLenght = scopeName.length();
-        if (typeName.length() > scopeNameLenght && typeName.substring(0, scopeNameLenght).equals(scopeName)) {
-            typeName = typeName.substring(scopeNameLenght);
+    private String getTypeNameWithoutNamespacePrefix(String typeName) {
+        int scopeNameLength = scopeName.length();
+        if (typeName.length() > scopeNameLength && typeName.substring(0, scopeNameLength).equals(scopeName)) {
+            typeName = typeName.substring(scopeNameLength);
         }
         return typeName;
     }

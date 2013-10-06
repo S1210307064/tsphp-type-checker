@@ -15,8 +15,6 @@ import org.junit.runners.Parameterized;
 public class VariableInitTest extends AOperatorTypeCheckTest
 {
 
-    private static List<Object[]> collection;
-
     public VariableInitTest(String testString, TypeCheckStruct[] struct) {
         super(testString, struct);
     }
@@ -28,7 +26,7 @@ public class VariableInitTest extends AOperatorTypeCheckTest
 
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
-        collection = new ArrayList<>();
+        List<Object[]> collection = new ArrayList<>();
 
         AssignHelper.getAssignments(collection, true);
 

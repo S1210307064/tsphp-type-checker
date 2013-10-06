@@ -9,6 +9,6 @@ public class PseudoTypeSymbol extends ANullableTypeSymbol implements IPseudoType
 {
 
     public PseudoTypeSymbol(String name, ITypeSymbol parentTypeSymbol) {
-        super(null, name, parentTypeSymbol);
+        super(name, parentTypeSymbol);
     }
 }

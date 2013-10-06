@@ -19,11 +19,11 @@ import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 public class Definer implements IDefiner
 {
 
-    private ISymbolFactory symbolFactory;
-    private IScopeFactory scopeFactory;
+    private final ISymbolFactory symbolFactory;
+    private final IScopeFactory scopeFactory;
     //
-    private ILowerCaseStringMap<IGlobalNamespaceScope> globalNamespaceScopes = new LowerCaseStringMap<>();
-    private IGlobalNamespaceScope globalDefaultNamespace;
+    private final ILowerCaseStringMap<IGlobalNamespaceScope> globalNamespaceScopes = new LowerCaseStringMap<>();
+    private final IGlobalNamespaceScope globalDefaultNamespace;
 
     public Definer(ISymbolFactory aSymbolFactory, IScopeFactory aScopeFactory) {
         symbolFactory = aSymbolFactory;

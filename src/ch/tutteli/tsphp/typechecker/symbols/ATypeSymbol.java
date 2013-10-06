@@ -9,7 +9,7 @@ import java.util.Set;
 public abstract class ATypeSymbol extends ASymbol implements ITypeSymbol
 {
 
-    private Set<ITypeSymbol> parentTypeSymbols;
+    private final Set<ITypeSymbol> parentTypeSymbols;
 
     public ATypeSymbol(final ITSPHPAst theDefinitionAst, final String theName, final ITypeSymbol theParentTypeSymbol) {
         super(theDefinitionAst, theName);

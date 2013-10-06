@@ -510,11 +510,11 @@ public class AssignHelper
         for (Object[] type2 : castToBoolTypes) {
             collection.add(new Object[]{
                 type2[0] + " $b; cast " + typeName + " $a " + assign + " $b;",
-                structCastBool("bool", type, boolType, (EBuiltInType) type2[1])
+                structCastBool(type, boolType, (EBuiltInType) type2[1])
             });
             collection.add(new Object[]{
                 type2[0] + " $b; " + typeName + " $a " + castAssign + "  $b;",
-                structCastBool("bool", type, boolType, (EBuiltInType) type2[1])
+                structCastBool(type, boolType, (EBuiltInType) type2[1])
             });
         }
     }
@@ -561,30 +561,30 @@ public class AssignHelper
         };
     }
 
-    private static Object structCastBool(String typeName, EBuiltInType leftType,
+    private static Object structCastBool(EBuiltInType leftType,
             EBuiltInType boolType, EBuiltInType initType) {
 
         return isDeclaration
                 ? new TypeCheckStruct[]{
             AOperatorTypeCheckTest.struct("casting", boolType, 1, 1, 1, 0),
-            AOperatorTypeCheckTest.struct(typeName, boolType, 1, 1, 1, 0, 0, 1),
+            AOperatorTypeCheckTest.struct("bool", boolType, 1, 1, 1, 0, 0, 1),
             AOperatorTypeCheckTest.struct("$b", initType, 1, 1, 1, 0, 1)
         }
                 : new TypeCheckStruct[]{
             AOperatorTypeCheckTest.struct("=", boolType, 1, 2, 0),
             AOperatorTypeCheckTest.struct("$a", leftType, 1, 2, 0, 0),
             AOperatorTypeCheckTest.struct("casting", boolType, 1, 2, 0, 1),
-            AOperatorTypeCheckTest.struct(typeName, boolType, 1, 2, 0, 1, 0, 1),
+            AOperatorTypeCheckTest.struct("bool", boolType, 1, 2, 0, 1, 0, 1),
             AOperatorTypeCheckTest.struct("$b", initType, 1, 2, 0, 1, 1)
         };
     }
 
-    public static Collection<Object[]> getAssignmentErrorTestStrings(String operator, boolean isDeclaration) {
+    public static Collection<Object[]> getAssignmentErrorTestStrings(boolean isDeclaration) {
         collection = new ArrayList<>();
-        ReferenceErrorDto[] errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto(operator, 2, 1)};
+        ReferenceErrorDto[] errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto("=", 2, 1)};
         String[] types = new String[]{"bool?", "int", "int?", "float", "float?", "string", "string?", "array",
             "resource", "object", "Exception", "ErrorException"};
-        String $a = isDeclaration ? "\n $a " + operator : "$a; $a\n " + operator;
+        String $a = isDeclaration ? "\n $a " + "=" : "$a; $a\n " + "=";
         for (String type : types) {
             collection.add(new Object[]{type + " $b; bool " + $a + " $b;", errorDto});
         }

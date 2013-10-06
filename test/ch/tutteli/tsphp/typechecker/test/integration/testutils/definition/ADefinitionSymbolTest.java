@@ -63,9 +63,9 @@ public abstract class ADefinitionSymbolTest extends ADefinitionTest
     protected String getMultipleTypesAsString(ITSPHPAst types) {
 
         StringBuilder stringBuilder = new StringBuilder();
-        int lenght = types.getChildCount();
-        for (int i = 0; i < lenght; ++i) {
-            stringBuilder.append(getSingleTypeAsString((ITSPHPAst) types.getChild(i)));
+        int length = types.getChildCount();
+        for (int i = 0; i < length; ++i) {
+            stringBuilder.append(getSingleTypeAsString(types.getChild(i)));
         }
         return stringBuilder.toString();
     }

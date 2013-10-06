@@ -15,8 +15,6 @@ import org.junit.runners.Parameterized;
 public class DoubleExplicitCastingTest extends AOperatorTypeCheckTest
 {
 
-    private static List<Object[]> collection;
-
     public DoubleExplicitCastingTest(String testString, TypeCheckStruct[] struct) {
         super(testString, struct);
     }
@@ -32,12 +30,12 @@ public class DoubleExplicitCastingTest extends AOperatorTypeCheckTest
 
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
-        collection = new ArrayList<>();
+        List<Object[]> collection = new ArrayList<>();
 
         collection.addAll(Arrays.asList(new Object[][]{
-            {"cast int $a; $a = [1,2];", new TypeCheckStruct[]{struct("=", Int, 1, 1, 0)}},
-            {"cast float $a; $a = [1,2];", new TypeCheckStruct[]{struct("=", Float, 1, 1, 0)}},
-            {"cast string $a; $a = [1,2];", new TypeCheckStruct[]{struct("=", String, 1, 1, 0)}}
+                {"cast int $a; $a = [1,2];", new TypeCheckStruct[]{struct("=", Int, 1, 1, 0)}},
+                {"cast float $a; $a = [1,2];", new TypeCheckStruct[]{struct("=", Float, 1, 1, 0)}},
+                {"cast string $a; $a = [1,2];", new TypeCheckStruct[]{struct("=", String, 1, 1, 0)}}
         }));
 
         return collection;

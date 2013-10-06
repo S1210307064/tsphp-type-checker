@@ -15,7 +15,7 @@ import org.antlr.runtime.Token;
 public class UserSpecificCastingMethod extends ACastingMethod implements ICastingMethod
 {
 
-    private IMethodSymbol methodSymbol;
+    private final IMethodSymbol methodSymbol;
 
     public UserSpecificCastingMethod(IAstHelper theAstHelper, ITypeSymbolWithPHPBuiltInCasting theType,
             IMethodSymbol theMethodSymbol) {

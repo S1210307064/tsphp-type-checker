@@ -15,7 +15,7 @@ import org.junit.runners.Parameterized;
 public class NamespaceTest extends ADefinitionTest
 {
 
-    String namespaces;
+    private String namespaces;
 
     public NamespaceTest(String testString, String theNamespaces) {
         super(testString);

@@ -24,8 +24,7 @@ public abstract class AReferenceScopeTest extends AReferenceTest
     }
 
     public static void verifyReferences(ReferenceScopeTestStruct[] scopeTestStructs, ITSPHPAst ast, String testString) {
-        for (int i = 0; i < scopeTestStructs.length; ++i) {
-            ReferenceScopeTestStruct testStruct = scopeTestStructs[i];
+        for (ReferenceScopeTestStruct testStruct : scopeTestStructs) {
             ITSPHPAst testCandidate = ScopeTestHelper.getAst(ast, testString, testStruct.astAccessOrder);
             Assert.assertNotNull(testString + " failed. testCandidate is null. should be " + testStruct.astText, testCandidate);
             Assert.assertEquals(testString + " failed. wrong ast text,", testStruct.astText,

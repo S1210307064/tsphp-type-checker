@@ -14,8 +14,6 @@ import org.junit.runners.Parameterized;
 public class WhileErrorTest extends ATypeCheckErrorTest
 {
 
-    private static List<Object[]> collection;
-
     public WhileErrorTest(String testString, ReferenceErrorDto[] expectedLinesAndPositions) {
         super(testString, expectedLinesAndPositions);
     }
@@ -27,18 +25,18 @@ public class WhileErrorTest extends ATypeCheckErrorTest
 
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
-        collection = new ArrayList<>();
+        List<Object[]> collection = new ArrayList<>();
 
         String[] types = new String[]{"bool?", "int", "int?", "float", "float?", "string", "string?",
             "array", "resource", "object"};
         for (String type : types) {
             collection.add(new Object[]{
-                type + " $b;\n while($b);",
-                new ReferenceErrorDto[]{new ReferenceErrorDto("while", 2, 1)}
+                    type + " $b;\n while($b);",
+                    new ReferenceErrorDto[]{new ReferenceErrorDto("while", 2, 1)}
             });
             collection.add(new Object[]{
-                type + " $b;\n do;while($b);",
-                new ReferenceErrorDto[]{new ReferenceErrorDto("do", 2, 1)}
+                    type + " $b;\n do;while($b);",
+                    new ReferenceErrorDto[]{new ReferenceErrorDto("do", 2, 1)}
             });
         }
 

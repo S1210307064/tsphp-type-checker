@@ -12,7 +12,7 @@ import org.antlr.runtime.tree.TreeNodeStream;
 public class ErrorReportingTSPHPDefinitionWalker extends TSPHPDefinitionWalker implements IErrorReporter
 {
 
-    private Collection<IErrorLogger> errorLoggers = new ArrayDeque<>();
+    private final Collection<IErrorLogger> errorLoggers = new ArrayDeque<>();
     private boolean hasFoundError;
 
     public ErrorReportingTSPHPDefinitionWalker(TreeNodeStream input, IDefiner theDefiner) {

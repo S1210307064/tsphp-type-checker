@@ -19,7 +19,7 @@ public abstract class AScopedTypeSymbol extends AScopedSymbol implements ICaseIn
 {
 
     protected Set<ITypeSymbol> parentTypeSymbols = new HashSet<>();
-    protected ILowerCaseStringMap<List<ISymbol>> symbolsCaseInsensitive = new LowerCaseStringMap<>();
+    protected final ILowerCaseStringMap<List<ISymbol>> symbolsCaseInsensitive = new LowerCaseStringMap<>();
     private boolean isObjectTheParentTypeSymbol = false;
 
     public AScopedTypeSymbol(

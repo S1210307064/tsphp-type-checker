@@ -8,9 +8,9 @@ public class AmbiguousCastException extends TypeCheckerException
 
     private List<CastingDto> ambiguousCasts;
 
-    public AmbiguousCastException(List<CastingDto> theAmmbiguousCasts) {
+    public AmbiguousCastException(List<CastingDto> theAmbiguousCasts) {
 
-        ambiguousCasts = theAmmbiguousCasts;
+        ambiguousCasts = theAmbiguousCasts;
     }
 
     public List<CastingDto> getAmbiguousCasts() {

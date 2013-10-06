@@ -68,6 +68,7 @@ public class ScopeHelper implements IScopeHelper
     private class StandardAlreadyDefinedMethodCaller implements IAlreadyDefinedMethodCaller
     {
 
+        @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
         @Override
         public void callAccordingAlreadyDefinedMethod(ISymbol firstDefinition, ISymbol symbolToCheck) {
             ErrorReporterRegistry.get().alreadyDefined(firstDefinition, symbolToCheck);

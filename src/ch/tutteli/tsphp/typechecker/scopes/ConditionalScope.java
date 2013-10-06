@@ -27,9 +27,9 @@ public class ConditionalScope extends AScope implements IConditionalScope
         return scopeHelper.doubleDefinitionCheck(scope.getSymbols(), symbol,
                 new IAlreadyDefinedMethodCaller()
                 {
+                    @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
                     @Override
                     public void callAccordingAlreadyDefinedMethod(ISymbol firstDefinition, ISymbol symbolToCheck) {
-                        //noinspection ThrowableResultOfMethodCallIgnored
                         ErrorReporterRegistry.get().definedInOuterScope(firstDefinition, symbolToCheck);
                     }
                 });

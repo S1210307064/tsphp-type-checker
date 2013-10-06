@@ -108,7 +108,7 @@ public interface IErrorReporter extends ch.tutteli.tsphp.common.IErrorReporter
 
     ReferenceException wrongTypeSwitch(ITSPHPAst switchRoot, ITSPHPAst expression, ITypeSymbol typeSymbol);
 
-    ReferenceException wrongTypeSwitchCase(ITSPHPAst switchCase, ITSPHPAst expression, ITypeSymbol typeSymbol);
+    ReferenceException wrongTypeSwitchCase(ITSPHPAst switchRoot, ITSPHPAst switchCase, ITypeSymbol typeSymbol);
 
     ReferenceException wrongTypeFor(ITSPHPAst forRoot, ITSPHPAst expression, ITypeSymbol typeSymbol);
 

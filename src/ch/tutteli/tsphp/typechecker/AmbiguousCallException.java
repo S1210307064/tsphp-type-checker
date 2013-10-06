@@ -11,8 +11,8 @@ public class AmbiguousCallException extends TypeCheckerException
 
     private List<OverloadDto> ambiguousOverloads;
 
-    AmbiguousCallException(List<OverloadDto> theAmmbiguousMethodDtos) {
-        ambiguousOverloads = theAmmbiguousMethodDtos;
+    AmbiguousCallException(List<OverloadDto> theAmbiguousMethodDtos) {
+        ambiguousOverloads = theAmbiguousMethodDtos;
     }
 
     public List<OverloadDto> getAmbiguousOverloads() {

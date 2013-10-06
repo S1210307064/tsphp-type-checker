@@ -16,8 +16,8 @@ import java.util.Map;
 public class NamespaceScope extends AScope implements INamespaceScope
 {
 
-    private ILowerCaseStringMap<List<IAliasSymbol>> usesCaseInsensitive = new LowerCaseStringMap<>();
-    private Map<String, List<IAliasSymbol>> uses = new LinkedHashMap<>();
+    private final ILowerCaseStringMap<List<IAliasSymbol>> usesCaseInsensitive = new LowerCaseStringMap<>();
+    private final Map<String, List<IAliasSymbol>> uses = new LinkedHashMap<>();
 
     public NamespaceScope(IScopeHelper scopeHelper, String scopeName, IGlobalNamespaceScope globalNamespaceScope) {
         super(scopeHelper, scopeName, globalNamespaceScope);
@@ -59,11 +59,11 @@ public class NamespaceScope extends AScope implements INamespaceScope
 
     }
 
+    @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     private boolean isNotAlreadyDefinedAsType(IAliasSymbol symbol) {
         ITypeSymbol typeSymbol = (ITypeSymbol) resolve(symbol.getDefinitionAst());
         boolean ok = hasNoTypeNameClash(symbol.getDefinitionAst(), typeSymbol);
         if (!ok) {
-            //noinspection ThrowableResultOfMethodCallIgnored
             ErrorReporterRegistry.get().determineAlreadyDefined(symbol, typeSymbol);
         }
         return ok;

@@ -14,13 +14,9 @@ import java.util.Set;
 public class OverloadResolver implements IOverloadResolver
 {
 
-    private Map<ITypeSymbol, Map<ITypeSymbol, ICastingMethod>> explicitCasts;
-    private ITypeSystem typeSystem;
+    private final Map<ITypeSymbol, Map<ITypeSymbol, ICastingMethod>> explicitCasts;
+    private final ITypeSystem typeSystem;
 
-    /**
-     *
-     * @param theScalarCastMethod The method used to cast a scalar type to another scalar type
-     */
     public OverloadResolver(ITypeSystem theTypeSystem) {
         typeSystem = theTypeSystem;
         explicitCasts = theTypeSystem.getExplicitCastings();
@@ -176,7 +172,6 @@ public class OverloadResolver implements IOverloadResolver
     private CastingDto getCastingDtoFromExplicitCasting(IVariableSymbol formalParameter,
             ITSPHPAst actualParameter) {
 
-        List<CastingDto> dtos = new ArrayList<>();
         Map<ITypeSymbol, PromotionExplicitCastingLevelDto> visitedTypes = new HashMap<>();
         ExplicitCastingDto dto = new ExplicitCastingDto(0, 0, formalParameter,
                 actualParameter.getEvalType(), visitedTypes);
@@ -192,7 +187,7 @@ public class OverloadResolver implements IOverloadResolver
     private CastingDto getCastingDtoFromExplicitCasting(ExplicitCastingDto explicitCastingDto) {
         CastingDto castingDto = null;
 
-        //to prevent reentrance
+        //to prevent re-entrance
         explicitCastingDto.visitedTypes.put(explicitCastingDto.actualParameterType, null);
 
         ITypeSymbol formalType = explicitCastingDto.formalParameter.getType();

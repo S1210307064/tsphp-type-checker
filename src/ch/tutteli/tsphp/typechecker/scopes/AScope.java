@@ -13,9 +13,9 @@ import java.util.Map;
 public abstract class AScope implements IScope
 {
     protected final IScopeHelper scopeHelper;
-    protected String scopeName;
-    protected IScope enclosingScope;
-    protected Map<String, List<ISymbol>> symbols = new LinkedHashMap<>();
+    protected final String scopeName;
+    protected final IScope enclosingScope;
+    protected final Map<String, List<ISymbol>> symbols = new LinkedHashMap<>();
 
     public AScope(IScopeHelper theScopeHelper, String theScopeName, IScope theEnclosingScope) {
         scopeHelper = theScopeHelper;

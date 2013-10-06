@@ -5,15 +5,14 @@ import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
 import ch.tutteli.tsphp.typechecker.scopes.IScopeHelper;
-import ch.tutteli.tsphp.typechecker.symbols.erroneous.ErroneousAccessSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.ErroneousClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.ErroneousMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.ErroneousTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.ErroneousVariableSymbol;
-import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousAccessSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousTypeSymbol;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -145,11 +144,6 @@ public class SymbolFactory implements ISymbolFactory
     @Override
     public IVariableSymbol createErroneousVariableSymbol(ITSPHPAst ast, TypeCheckerException exception) {
         return new ErroneousVariableSymbol(ast, exception);
-    }
-
-    @Override
-    public IErroneousAccessSymbol createErroneousAccessSymbol(ITSPHPAst ast, TypeCheckerException exception) {
-        return new ErroneousAccessSymbol(ast, exception);
     }
 
     private Set<Integer> getModifiers(ITSPHPAst modifierAst) {

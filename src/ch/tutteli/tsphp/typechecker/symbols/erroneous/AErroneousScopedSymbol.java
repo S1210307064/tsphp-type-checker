@@ -17,6 +17,7 @@ public abstract class AErroneousScopedSymbol extends ASymbol implements IErroneo
 
     public AErroneousScopedSymbol(ITSPHPAst ast, TypeCheckerException theException) {
         super(ast, ast.getText());
+        exception = theException;
     }
 
     @Override

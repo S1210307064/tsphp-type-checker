@@ -12,7 +12,7 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
     protected Map<String, String> wrongArgumentTypeErrors;
     protected Map<String, String> typeCheckErrors;
     protected Map<String, String> ambiguousCastsErrors;
-    protected Map<String, String> visbilityViolationErrors;
+    protected Map<String, String> visibilityViolationErrors;
 
     protected abstract void loadDefinitionErrorMessages();
 
@@ -129,8 +129,8 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
 
             message = message.replace("%LHS%", getCastsSequence(dto.leftToRightCasts));
             message = message.replace("%RHS%", getCastsSequence(dto.rightToLeftCasts));
-            message = message.replace("%ambLHS%", getAmbiguousCastsSequences(dto.leftAmbiguouities));
-            message = message.replace("%ambRHS%", getAmbiguousCastsSequences(dto.rightAmbiguouities));
+            message = message.replace("%ambLHS%", getAmbiguousCastsSequences(dto.leftAmbiguities));
+            message = message.replace("%ambRHS%", getAmbiguousCastsSequences(dto.rightAmbiguities));
         } else {
             message = getStandardAmbiguousCastsErrorMessage(key, dto);
         }
@@ -140,11 +140,11 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
     @Override
     public String getVisibilityErrorMessage(String key, VisibilityErrorDto dto) {
         String message;
-        if (visbilityViolationErrors == null) {
+        if (visibilityViolationErrors == null) {
             loadVisibilityViolationErrorMessages();
         }
-        if (visbilityViolationErrors.containsKey(key)) {
-            message = visbilityViolationErrors.get(key);
+        if (visibilityViolationErrors.containsKey(key)) {
+            message = visibilityViolationErrors.get(key);
             message = replaceStandardPlaceholders(dto, message);
 
             message = message.replace("%vis%", dto.visibility);

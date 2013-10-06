@@ -38,11 +38,11 @@ public abstract class ATypeCheckTest extends AReferenceTest
 
     protected void checkErrors() {
         IErrorReporter errorHelper = ErrorReporterRegistry.get();
-        Assert.assertFalse(testString + " failed. Exceptions occured." + exceptions,
+        Assert.assertFalse(testString + " failed. Exceptions occurred." + exceptions,
                 errorHelper.hasFoundError());
 
 
-        Assert.assertFalse(testString + " failed. type checker walker exceptions occured.",
+        Assert.assertFalse(testString + " failed. type checker walker exceptions occurred.",
                 reference.hasFoundError());
 
 

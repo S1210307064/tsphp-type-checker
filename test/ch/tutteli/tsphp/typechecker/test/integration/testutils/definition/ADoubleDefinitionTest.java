@@ -20,13 +20,13 @@ public abstract class ADoubleDefinitionTest extends ADefinitionTest
     protected ScopeTestStruct[] testStructs;
     protected String namespace;
     protected String identifier;
-    protected int occurence;
+    protected int occurrence;
 
     public ADoubleDefinitionTest(String testString, String theNamespace, String theIdentifier, int howMany) {
         super(testString);
         namespace = theNamespace;
         identifier = theIdentifier;
-        occurence = howMany;
+        occurrence = howMany;
     }
 
     @Override
@@ -39,35 +39,35 @@ public abstract class ADoubleDefinitionTest extends ADefinitionTest
         Map<String, List<ISymbol>> symbols = globalNamespace.getSymbols();
         Assert.assertNotNull(errorMessagePrefix + " failed, symbols was null.", symbols);
         Assert.assertTrue(errorMessagePrefix + " failed. " + identifier + " not found.", symbols.containsKey(identifier));
-        Assert.assertEquals(errorMessagePrefix + " failed. size was wrong", occurence, symbols.get(identifier).size());
+        Assert.assertEquals(errorMessagePrefix + " failed. size was wrong", this.occurrence, symbols.get(identifier).size());
     }
 
-    protected static Collection<Object[]> getDifferentNamespaces(String statements, String identifiers, int occurence) {
+    protected static Collection<Object[]> getDifferentNamespaces(String statements, String identifiers, int occurrence) {
         return Arrays.asList(new Object[][]{
-                    {statements, "\\", identifiers, occurence},
-                    {"namespace b;" + statements, "\\b\\", identifiers, occurence},
-                    {"namespace b\\c;" + statements, "\\b\\c\\", identifiers, occurence},
-                    {"namespace{" + statements + "}", "\\", identifiers, occurence},
-                    {"namespace b{" + statements + "}", "\\b\\", identifiers, occurence},
-                    {"namespace b\\c\\e\\R{" + statements + "}", "\\b\\c\\e\\R\\", identifiers, occurence},
-                    {"namespace{" + statements + "} namespace{" + statements + "}", "\\", identifiers, occurence * 2},
+                    {statements, "\\", identifiers, occurrence},
+                    {"namespace b;" + statements, "\\b\\", identifiers, occurrence},
+                    {"namespace b\\c;" + statements, "\\b\\c\\", identifiers, occurrence},
+                    {"namespace{" + statements + "}", "\\", identifiers, occurrence},
+                    {"namespace b{" + statements + "}", "\\b\\", identifiers, occurrence},
+                    {"namespace b\\c\\e\\R{" + statements + "}", "\\b\\c\\e\\R\\", identifiers, occurrence},
+                    {"namespace{" + statements + "} namespace{" + statements + "}", "\\", identifiers, occurrence * 2},
                     {
                         "namespace b{" + statements + "} namespace b{" + statements + "}",
-                        "\\b\\", identifiers, occurence * 2
+                        "\\b\\", identifiers, occurrence * 2
                     },
                     {
                         "namespace c{" + statements + "} namespace a{" + statements + "} "
                         + "namespace b{" + statements + "}",
-                        "\\c\\", identifiers, occurence
+                        "\\c\\", identifiers, occurrence
                     },
                     {
                         "namespace c{" + statements + "} namespace a{" + statements + "} "
                         + "namespace c{" + statements + "}",
-                        "\\c\\", identifiers, 2 * occurence
+                        "\\c\\", identifiers, 2 * occurrence
                     },
                     {
                         "namespace{" + statements + "} namespace {" + statements + "} namespace c{" + statements + "}",
-                        "\\", identifiers, 2 * occurence
+                        "\\", identifiers, 2 * occurrence
                     }
                 });
     }

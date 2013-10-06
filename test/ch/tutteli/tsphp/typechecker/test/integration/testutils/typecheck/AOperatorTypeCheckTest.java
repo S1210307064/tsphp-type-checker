@@ -14,21 +14,21 @@ import org.junit.Ignore;
 public abstract class AOperatorTypeCheckTest extends ATypeCheckTest
 {
 
-    public static EBuiltInType Bool = EBuiltInType.Bool;
-    public static EBuiltInType BoolNullable = EBuiltInType.BoolNullable;
-    public static EBuiltInType Int = EBuiltInType.Int;
-    public static EBuiltInType IntNullable = EBuiltInType.IntNullable;
-    public static EBuiltInType Float = EBuiltInType.Float;
-    public static EBuiltInType FloatNullable = EBuiltInType.FloatNullable;
-    public static EBuiltInType String = EBuiltInType.String;
-    public static EBuiltInType StringNullable = EBuiltInType.StringNullable;
-    public static EBuiltInType Array = EBuiltInType.Array;
-    public static EBuiltInType Resource = EBuiltInType.Resource;
-    public static EBuiltInType Object = EBuiltInType.Object;
-    public static EBuiltInType Exception = EBuiltInType.Exception;
-    public static EBuiltInType ErrorException = EBuiltInType.ErrorException;
-    public static EBuiltInType Null = EBuiltInType.Null;
-    public static EBuiltInType Void = EBuiltInType.Void;
+    public static final EBuiltInType Bool = EBuiltInType.Bool;
+    public static final EBuiltInType BoolNullable = EBuiltInType.BoolNullable;
+    public static final EBuiltInType Int = EBuiltInType.Int;
+    public static final EBuiltInType IntNullable = EBuiltInType.IntNullable;
+    public static final EBuiltInType Float = EBuiltInType.Float;
+    public static final EBuiltInType FloatNullable = EBuiltInType.FloatNullable;
+    public static final EBuiltInType String = EBuiltInType.String;
+    public static final EBuiltInType StringNullable = EBuiltInType.StringNullable;
+    public static final EBuiltInType Array = EBuiltInType.Array;
+    public static final EBuiltInType Resource = EBuiltInType.Resource;
+    public static final EBuiltInType Object = EBuiltInType.Object;
+    public static final EBuiltInType Exception = EBuiltInType.Exception;
+    public static final EBuiltInType ErrorException = EBuiltInType.ErrorException;
+    public static final EBuiltInType Null = EBuiltInType.Null;
+    public static final EBuiltInType Void = EBuiltInType.Void;
     //
     protected TypeCheckStruct[] testStructs;
 
@@ -39,8 +39,7 @@ public abstract class AOperatorTypeCheckTest extends ATypeCheckTest
 
     @Override
     protected void verifyTypeCheck() {
-        for (int i = 0; i < testStructs.length; ++i) {
-            TypeCheckStruct testStruct = testStructs[i];
+        for (TypeCheckStruct testStruct : testStructs) {
             ITSPHPAst testCandidate = ScopeTestHelper.getAst(ast, testString, testStruct.accessOrderToNode);
             Assert.assertNotNull(testString + " -> " + testStruct.astText + " failed. testCandidate is null. should be " + testStruct.evalType, testCandidate);
             Assert.assertEquals(testString + " -> " + testStruct.astText + " failed. wrong ast text,", testStruct.astText,

@@ -25,7 +25,7 @@ public class SymbolResolver implements ISymbolResolver
     private final ISymbolFactory symbolFactory;
 
     private ILowerCaseStringMap<IGlobalNamespaceScope> globalNamespaceScopes = new LowerCaseStringMap<>();
-    private IGlobalNamespaceScope globalDefaultNamespace;
+    private final IGlobalNamespaceScope globalDefaultNamespace;
 
     public SymbolResolver(
             IScopeHelper theScopeHelper,
@@ -143,14 +143,13 @@ public class SymbolResolver implements ISymbolResolver
         return typeName;
     }
 
+    @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     private ITSPHPAst checkTypeNameClashAndRecoverIfNecessary(ITSPHPAst useDefinition, ISymbol typeSymbol) {
         if (hasTypeNameClash(useDefinition, typeSymbol)) {
             ITSPHPAst typeDefinition = typeSymbol.getDefinitionAst();
             if (useDefinition.isDefinedEarlierThan(typeDefinition)) {
-                //noinspection ThrowableResultOfMethodCallIgnored
                 ErrorReporterRegistry.get().alreadyDefined(useDefinition, typeDefinition);
             } else {
-                //noinspection ThrowableResultOfMethodCallIgnored
                 ErrorReporterRegistry.get().alreadyDefined(typeDefinition, useDefinition);
                 //we do not use the alias if it was defined later than typeSymbol
                 useDefinition = null;

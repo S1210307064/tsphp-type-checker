@@ -11,6 +11,7 @@ public abstract class AErroneousSymbol extends ASymbol implements IErroneousSymb
 
     public AErroneousSymbol(ITSPHPAst ast, TypeCheckerException theException) {
         super(ast, ast.getText());
+        exception = theException;
     }
     
     @Override

@@ -23,10 +23,10 @@ public abstract class AReferenceTest extends ADefinitionTest
 
     protected void checkReferences() {
         IErrorReporter errorHelper = ErrorReporterRegistry.get();
-        Assert.assertFalse(testString + " failed. Exceptions occured." + exceptions,
+        Assert.assertFalse(testString + " failed. Exceptions occurred." + exceptions,
                 errorHelper.hasFoundError());
 
-        Assert.assertFalse(testString + " failed. reference walker exceptions occured.",
+        Assert.assertFalse(testString + " failed. reference walker exceptions occurred.",
                 reference.hasFoundError());
 
         verifyReferences();

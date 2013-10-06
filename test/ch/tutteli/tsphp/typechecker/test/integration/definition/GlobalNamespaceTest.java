@@ -19,7 +19,7 @@ import static org.junit.Assert.assertTrue;
 public class GlobalNamespaceTest extends ADefinitionTest
 {
 
-    String[] namespaces;
+    private String[] namespaces;
 
     public GlobalNamespaceTest(String testString, String[] theNamespaces) {
         super(testString);

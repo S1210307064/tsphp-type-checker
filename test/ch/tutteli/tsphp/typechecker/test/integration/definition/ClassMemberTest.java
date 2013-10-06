@@ -48,6 +48,7 @@ public class ClassMemberTest extends ADefinitionSymbolTest
             {"static public", new TreeSet<>(Arrays.asList(new Integer[]{pub, stat}))},};
         
         for (Object[] variation : variations) {
+            //noinspection unchecked
             collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
                     "class a{ " + variation[0] + " ", ";}", "\\.\\.a ","", "\\.\\.a.",  (SortedSet<Integer>) variation[1]));
         }

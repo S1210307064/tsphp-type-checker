@@ -5,13 +5,13 @@ import ch.tutteli.tsphp.common.ITypeSymbol;
 public class ArrayTypeSymbol extends ANullableTypeSymbol implements IArrayTypeSymbol
 {
 
-    private ITypeSymbol keyTypeSymbol;
-    private ITypeSymbol valueTypeSymbol;
-    private int tokenType;
+    private final ITypeSymbol keyTypeSymbol;
+    private final ITypeSymbol valueTypeSymbol;
+    private final int tokenType;
 
     public ArrayTypeSymbol(String name, int theTokenType, ITypeSymbol theKeyTypeSymbol, ITypeSymbol theValueTypeSymbol,
             ITypeSymbol parentTypeSymbol) {
-        super(null, name, parentTypeSymbol);
+        super(name, parentTypeSymbol);
         tokenType = theTokenType;
         keyTypeSymbol = theKeyTypeSymbol;
         valueTypeSymbol = theValueTypeSymbol;

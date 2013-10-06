@@ -9,12 +9,12 @@ import java.util.Set;
 public abstract class ANullableTypeSymbol extends ATypeSymbol
 {
 
-    public ANullableTypeSymbol(ITSPHPAst definitionAst, String name, ITypeSymbol parentTypeSymbol) {
-        super(definitionAst, name, parentTypeSymbol);
+    public ANullableTypeSymbol(String name, ITypeSymbol parentTypeSymbol) {
+        super(null, name, parentTypeSymbol);
     }
 
-    public ANullableTypeSymbol(ITSPHPAst definitionAst, String name, Set<ITypeSymbol> parentTypeSymbols) {
-        super(definitionAst, name, parentTypeSymbols);
+    public ANullableTypeSymbol(String name, Set<ITypeSymbol> parentTypeSymbols) {
+        super(null, name, parentTypeSymbols);
     }
 
     @Override

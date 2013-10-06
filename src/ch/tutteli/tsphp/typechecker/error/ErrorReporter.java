@@ -26,8 +26,8 @@ import java.util.List;
 public class ErrorReporter implements IErrorReporter
 {
 
-    private IErrorMessageProvider errorMessageProvider;
-    private Collection<IErrorLogger> errorLoggers = new ArrayDeque<>();
+    private final IErrorMessageProvider errorMessageProvider;
+    private final Collection<IErrorLogger> errorLoggers = new ArrayDeque<>();
     private boolean hasFoundError;
 
     public ErrorReporter(IErrorMessageProvider anErrorMessageProvider) {
@@ -207,9 +207,9 @@ public class ErrorReporter implements IErrorReporter
         return exception;
     }
 
-    private boolean noAmbiguousCasts(List<CastingDto> leftAmbiguouities, List<CastingDto> rightAmbiguouties) {
-        return leftAmbiguouities == null || leftAmbiguouities.isEmpty()
-                && rightAmbiguouties == null || rightAmbiguouties.isEmpty();
+    private boolean noAmbiguousCasts(List<CastingDto> leftAmbiguities, List<CastingDto> rightAmbiguties) {
+        return leftAmbiguities == null || leftAmbiguities.isEmpty()
+                && rightAmbiguties == null || rightAmbiguties.isEmpty();
     }
 
     @Override
@@ -221,7 +221,7 @@ public class ErrorReporter implements IErrorReporter
 
     private ReferenceException addAndGetOperatorAmbiguousCastsException(String key, ITSPHPAst operator,
             CastingDto leftToRightCasts, CastingDto rightToLeftCasts,
-            List<CastingDto> leftAmbiguouities, List<CastingDto> rightAmbiguouities, ITSPHPAst left, ITSPHPAst right,
+            List<CastingDto> leftAmbiguities, List<CastingDto> rightAmbiguities, ITSPHPAst left, ITSPHPAst right,
             boolean doBothSideCast) {
 
         String leftType = getAbsoluteTypeName(left.getEvalType());
@@ -235,8 +235,8 @@ public class ErrorReporter implements IErrorReporter
             leftToRightReturnTypes.add(leftType);
         }
         List<List<String>> leftReturnTypes = new ArrayList<>();
-        if (leftAmbiguouities != null) {
-            addReturnTypes(leftReturnTypes, leftAmbiguouities, leftType, rightType);
+        if (leftAmbiguities != null) {
+            addReturnTypes(leftReturnTypes, leftAmbiguities, leftType, rightType);
         }
 
         List<String> rightToLeftReturnTypes;
@@ -247,8 +247,8 @@ public class ErrorReporter implements IErrorReporter
             rightToLeftReturnTypes.add(rightType);
         }
         List<List<String>> rightReturnTypes = new ArrayList<>();
-        if (rightAmbiguouities != null) {
-            addReturnTypes(rightReturnTypes, rightAmbiguouities, rightType, leftType);
+        if (rightAmbiguities != null) {
+            addReturnTypes(rightReturnTypes, rightAmbiguities, rightType, leftType);
         }
 
         String errorMessage = errorMessageProvider.getOperatorAmbiguousCastingErrorMessage(key,
@@ -398,7 +398,7 @@ public class ErrorReporter implements IErrorReporter
     @Override
     public UnsupportedOperationException unsupportedOperator(ITSPHPAst operator) {
         UnsupportedOperationException exception = new UnsupportedOperationException(
-                "Unsupported operator exception occured. Please report bug to http://tsphp.tutteli.ch\nException "
+                "Unsupported operator exception occurred. Please report bug to http://tsphp.tutteli.ch\nException "
                 + "was caused by operator \"" + operator.getText()
                 + " on line " + operator.getLine() + "|" + operator.getCharPositionInLine(), operator);
         reportError(exception);
@@ -451,8 +451,8 @@ public class ErrorReporter implements IErrorReporter
     }
 
     @Override
-    public ReferenceException wrongTypeSwitchCase(ITSPHPAst switchCase, ITSPHPAst expression, ITypeSymbol typeSymbol) {
-        return addAndGetStatementTypeCheckError("wrongTypeSwitchCase", expression, expression, typeSymbol);
+    public ReferenceException wrongTypeSwitchCase(ITSPHPAst switchRoot, ITSPHPAst switchCase, ITypeSymbol typeSymbol) {
+        return addAndGetStatementTypeCheckError("wrongTypeSwitchCase", switchCase, switchCase, typeSymbol);
     }
 
     @Override

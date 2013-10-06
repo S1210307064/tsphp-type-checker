@@ -87,8 +87,8 @@ public class TestDefiner extends Definer implements IDefiner, ICreateSymbolListe
     }
 
     private void appendChildrenFromTo(ITSPHPAst source, ITSPHPAst target) {
-        int lenght = source.getChildCount();
-        for (int i = 0; i < lenght; ++i) {
+        int length = source.getChildCount();
+        for (int i = 0; i < length; ++i) {
             target.addChild(AstHelperRegistry.get().copyAst(source.getChild(i)));
         }
     }

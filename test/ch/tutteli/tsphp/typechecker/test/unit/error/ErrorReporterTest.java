@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
 public class ErrorReporterTest
 {
-    private List<Exception> exceptions = new ArrayList<>();
+    private final List<Exception> exceptions = new ArrayList<>();
     private IErrorReporter errorReporter;
 
     @Before

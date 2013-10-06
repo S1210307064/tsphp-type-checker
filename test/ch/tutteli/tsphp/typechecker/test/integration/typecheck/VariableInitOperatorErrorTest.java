@@ -26,6 +26,6 @@ public class VariableInitOperatorErrorTest extends ATypeCheckErrorTest
 
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
-        return AssignHelper.getAssignmentErrorTestStrings("=", true);
+        return AssignHelper.getAssignmentErrorTestStrings(true);
     }
 }

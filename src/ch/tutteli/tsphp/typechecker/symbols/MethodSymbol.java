@@ -13,8 +13,8 @@ import java.util.TreeSet;
 public class MethodSymbol extends AScopedSymbol implements IMethodSymbol
 {
 
-    private List<IVariableSymbol> parameters = new ArrayList<>();
-    private Set<Integer> returnTypeModifier;
+    private final List<IVariableSymbol> parameters = new ArrayList<>();
+    private final Set<Integer> returnTypeModifier;
 
     public MethodSymbol(
             IScopeHelper scopeHelper,

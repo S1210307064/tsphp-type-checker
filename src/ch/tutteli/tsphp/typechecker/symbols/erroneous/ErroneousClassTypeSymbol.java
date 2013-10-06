@@ -15,7 +15,7 @@ import java.util.Set;
 public class ErroneousClassTypeSymbol extends AErroneousScopedSymbol implements IErroneousClassTypeSymbol
 {
 
-    private IMethodSymbol construct;
+    private final IMethodSymbol construct;
     private IVariableSymbol $this;
 
     public ErroneousClassTypeSymbol(ITSPHPAst ast, TypeCheckerException exception, IMethodSymbol theConstruct) {

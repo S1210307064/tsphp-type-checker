@@ -14,8 +14,6 @@ import org.junit.runners.Parameterized;
 public class ForeachErrorTest extends ATypeCheckErrorTest
 {
 
-    private static List<Object[]> collection;
-
     public ForeachErrorTest(String testString, ReferenceErrorDto[] expectedLinesAndPositions) {
         super(testString, expectedLinesAndPositions);
     }
@@ -27,7 +25,7 @@ public class ForeachErrorTest extends ATypeCheckErrorTest
 
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
-        collection = new ArrayList<>();
+        List<Object[]> collection = new ArrayList<>();
         ReferenceErrorDto[] errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto("foreach", 2, 1)};
         ReferenceErrorDto[] twoErrorDto = new ReferenceErrorDto[]{
             new ReferenceErrorDto("foreach", 2, 1),
@@ -47,8 +45,8 @@ public class ForeachErrorTest extends ATypeCheckErrorTest
         for (String type : types) {
             //only object is supported as type of the values at the moment
             collection.add(new Object[]{
-                "foreach([1,2] as " + type + "\n $v);",
-                new ReferenceErrorDto[]{new ReferenceErrorDto("$v", 2, 1)}
+                    "foreach([1,2] as " + type + "\n $v);",
+                    new ReferenceErrorDto[]{new ReferenceErrorDto("$v", 2, 1)}
             });
         }
         return collection;

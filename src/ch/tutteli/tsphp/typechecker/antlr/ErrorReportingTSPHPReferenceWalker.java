@@ -12,7 +12,7 @@ import org.antlr.runtime.tree.TreeNodeStream;
 public class ErrorReportingTSPHPReferenceWalker extends TSPHPReferenceWalker implements IErrorReporter
 {
 
-    private Collection<IErrorLogger> errorLoggers = new ArrayDeque<>();
+    private final Collection<IErrorLogger> errorLoggers = new ArrayDeque<>();
     private boolean hasFoundError;
 
     public ErrorReportingTSPHPReferenceWalker(TreeNodeStream input, ITypeCheckerController theController) {

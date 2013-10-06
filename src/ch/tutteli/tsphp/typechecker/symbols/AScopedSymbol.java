@@ -16,8 +16,8 @@ import java.util.Set;
 public abstract class AScopedSymbol extends ASymbolWithModifier implements IScope
 {
     protected final IScopeHelper scopeHelper;
-    protected IScope enclosingScope;
-    protected Map<String, List<ISymbol>> members = new LowerCaseStringMap<>();
+    protected final IScope enclosingScope;
+    protected final Map<String, List<ISymbol>> members = new LowerCaseStringMap<>();
 
     public AScopedSymbol(
               IScopeHelper theScopeHelper

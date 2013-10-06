@@ -178,19 +178,19 @@ public class ErrorMessageProvider extends AErrorMessageProvider
 
     @Override
     protected void loadVisibilityViolationErrorMessages() {
-        visbilityViolationErrors = new HashMap<>();
-        visbilityViolationErrors.put("classMemberAccess", "Line %line%|%pos% - cannot access the class member %id%.\n"
+        visibilityViolationErrors = new HashMap<>();
+        visibilityViolationErrors.put("classMemberAccess", "Line %line%|%pos% - cannot access the class member %id%.\n"
                 + "%id%'s visibility is %vis% and it would need at least %access% access in order that you can "
                 + "access it from this location.");
-        visbilityViolationErrors.put("staticClassMemberAccess", "Line %line%|%pos% - cannot access the static class "
+        visibilityViolationErrors.put("staticClassMemberAccess", "Line %line%|%pos% - cannot access the static class "
                 + "member %id%.\n"
                 + "%id%'s visibility is %vis% and it would need at least %access% access in order that you can "
                 + "access it from this location.");
-        visbilityViolationErrors.put("classConstantAccess", "Line %line%|%pos% - cannot access the class "
+        visibilityViolationErrors.put("classConstantAccess", "Line %line%|%pos% - cannot access the class "
                 + "constant %id%.\n"
                 + "%id%'s visibility is %vis% and it would need at least %access% access in order that you can "
                 + "access it from this location.");
-         visbilityViolationErrors.put("methodCall", "Line %line%|%pos% - cannot call the method %id%.\n"
+         visibilityViolationErrors.put("methodCall", "Line %line%|%pos% - cannot call the method %id%.\n"
                 + "%id%'s visibility is %vis% and it would need at least %access% access in order that you can "
                 + "call it from this location.");
     }
@@ -241,8 +241,8 @@ public class ErrorMessageProvider extends AErrorMessageProvider
                 + "Line " + dto.line + "|" + dto.position + " - usage of " + dto.identifier + " was wrong.\n"
                 + "casts LHS to RHS or LHS type: " + getCastsSequence(dto.leftToRightCasts) + "\n"
                 + "casts RHS to LHS or RHS type: " + getCastsSequence(dto.rightToLeftCasts) + "\n"
-                + "ambiguous casts LHS to RHS:" + getAmbiguousCastsSequences(dto.leftAmbiguouities) + "\n"
-                + "ambiguous casts RHS to LHS:" + getAmbiguousCastsSequences(dto.rightAmbiguouities);
+                + "ambiguous casts LHS to RHS:" + getAmbiguousCastsSequences(dto.leftAmbiguities) + "\n"
+                + "ambiguous casts RHS to LHS:" + getAmbiguousCastsSequences(dto.rightAmbiguities);
     }
 
     @Override

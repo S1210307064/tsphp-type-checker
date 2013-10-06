@@ -24,7 +24,6 @@ import ch.tutteli.tsphp.typechecker.test.integration.testutils.TestScopeFactory;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.TestSymbolFactory;
 import ch.tutteli.tsphp.typechecker.utils.AstHelper;
 import ch.tutteli.tsphp.typechecker.utils.IAstHelper;
-import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.CommonTreeNodeStream;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -84,7 +83,7 @@ public abstract class ADefinitionTest extends ATest
                 astHelper);
     }
 
-    public void check() throws RecognitionException {
+    public void check() {
         ParserUnitDto parserUnit = parser.parse(testString);
         ast = parserUnit.compilationUnit;
 

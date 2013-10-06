@@ -14,8 +14,6 @@ import org.junit.runners.Parameterized;
 public class ThrowErrorTest extends ATypeCheckErrorTest
 {
 
-    private static List<Object[]> collection;
-
     public ThrowErrorTest(String testString, ReferenceErrorDto[] expectedLinesAndPositions) {
         super(testString, expectedLinesAndPositions);
     }
@@ -27,7 +25,7 @@ public class ThrowErrorTest extends ATypeCheckErrorTest
 
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
-        collection = new ArrayList<>();
+        List<Object[]> collection = new ArrayList<>();
         ReferenceErrorDto[] errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto("throw", 2, 1)};
 
 

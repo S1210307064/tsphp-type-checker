@@ -26,7 +26,7 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
 {
 
     private ITypeCheckerController controller;
-    private Collection<IErrorLogger> errorLoggers = new ArrayDeque<>();
+    private final Collection<IErrorLogger> errorLoggers = new ArrayDeque<>();
     private boolean hasFoundError = false;
 
     public TypeChecker() {

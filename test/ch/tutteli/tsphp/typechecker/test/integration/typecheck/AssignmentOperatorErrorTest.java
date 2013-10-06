@@ -26,6 +26,6 @@ public class AssignmentOperatorErrorTest extends ATypeCheckErrorTest
 
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
-       return AssignHelper.getAssignmentErrorTestStrings("=", false);
+       return AssignHelper.getAssignmentErrorTestStrings(false);
     }
 }

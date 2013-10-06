@@ -14,8 +14,6 @@ import org.junit.runners.Parameterized;
 public class IfErrorTest extends ATypeCheckErrorTest
 {
 
-    private static List<Object[]> collection;
-
     public IfErrorTest(String testString, ReferenceErrorDto[] expectedLinesAndPositions) {
         super(testString, expectedLinesAndPositions);
     }
@@ -27,7 +25,7 @@ public class IfErrorTest extends ATypeCheckErrorTest
 
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
-        collection = new ArrayList<>();
+        List<Object[]> collection = new ArrayList<>();
         ReferenceErrorDto[] errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto("if", 2, 1)};
 
 

@@ -25,12 +25,12 @@ import java.util.Set;
 public class TypeSystem implements ITypeSystem
 {
 
-    private ISymbolFactory symbolFactory;
-    private IAstHelper astHelper;
+    private final ISymbolFactory symbolFactory;
+    private final IAstHelper astHelper;
     //
-    private Map<Integer, List<IMethodSymbol>> unaryOperators = new HashMap<>();
-    private Map<Integer, List<IMethodSymbol>> binaryOperators = new HashMap<>();
-    private Map<ITypeSymbol, Map<ITypeSymbol, ICastingMethod>> explicitCastings = new HashMap<>();
+    private final Map<Integer, List<IMethodSymbol>> unaryOperators = new HashMap<>();
+    private final Map<Integer, List<IMethodSymbol>> binaryOperators = new HashMap<>();
+    private final Map<ITypeSymbol, Map<ITypeSymbol, ICastingMethod>> explicitCastings = new HashMap<>();
     //
     private INullTypeSymbol nullTypeSymbol;
     private IScalarTypeSymbol boolTypeSymbol;
@@ -46,7 +46,7 @@ public class TypeSystem implements ITypeSystem
     private IPseudoTypeSymbol objectTypeSymbol;
     private IClassTypeSymbol exceptionTypeSymbol;
     //
-    private IGlobalNamespaceScope globalDefaultNamespace;
+    private final IGlobalNamespaceScope globalDefaultNamespace;
     private IVoidTypeSymbol voidTypeSymbol;
 
     public TypeSystem(ISymbolFactory theSymbolFactory, IAstHelper theAstHelper,
