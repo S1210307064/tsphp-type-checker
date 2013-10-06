@@ -349,7 +349,7 @@ constant
 		{
 			IVariableSymbol variableSymbol = controller.resolveConstant($cnst);
 			$cnst.setSymbol(variableSymbol);
-			controller.checkForwardReference($cnst);
+			controller.checkIsForwardReference($cnst);
 		}
 	;
 	
