@@ -258,7 +258,7 @@ methodCallee
 	|	varId=VariableId
 		{
       			$varId.setSymbol(controller.resolveVariable($varId));
-			controller.checkForwardReference($varId);
+			controller.checkIsForwardReference($varId);
 		}
 	
 	|	slf='self'
