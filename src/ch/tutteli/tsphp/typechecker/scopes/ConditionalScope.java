@@ -37,7 +37,7 @@ public class ConditionalScope extends AScope implements IConditionalScope
 
     private IScope getEnclosingNonConditionalScope(ISymbol symbol) {
         IScope scope = symbol.getDefinitionAst().getScope();
-        while (scope != null && scope instanceof IConditionalScope) {
+        while (scope instanceof IConditionalScope) {
             scope = scope.getEnclosingScope();
         }
         return scope;

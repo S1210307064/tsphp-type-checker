@@ -15,8 +15,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.collection.IsMapContaining.hasKey;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -27,6 +29,26 @@ public class NamespaceScopeTest
     @Before
     public void setUp() {
         scopeHelper = mock(IScopeHelper.class);
+    }
+
+    @Test
+    public void getScopeName_DefineTestAsScopeName_ReturnTest(){
+        //no arrange necessary, createNamespaceScope passes "test" as name
+
+        INamespaceScope namespaceScope = createNamespaceScope();
+        String name = namespaceScope.getScopeName();
+
+        assertThat(name, is("test"));
+    }
+
+    @Test
+    public void getEnclosingScope_DefineGlobalNamespaceScope_ReturnDefinedGlobalScope(){
+        IGlobalNamespaceScope globalNamespaceScope = mock(IGlobalNamespaceScope.class);
+
+        INamespaceScope namespaceScope = createNamespaceScope(globalNamespaceScope);
+        IScope scope = namespaceScope.getEnclosingScope();
+
+        assertThat(scope, is((IScope) globalNamespaceScope));
     }
 
     @Test
@@ -105,6 +127,16 @@ public class NamespaceScopeTest
 
 
     @Test
+    public void getSymbols_NothingDefined_ReturnEmptyList() {
+        //no arrange needed
+
+        INamespaceScope namespaceScope = createNamespaceScope();
+        Map<String, List<ISymbol>> symbols = namespaceScope.getSymbols();
+
+        assertTrue(symbols.isEmpty());
+    }
+
+    @Test
     public void getUse_NothingDefined_ReturnNull() {
         //no arrange needed
 
@@ -116,7 +148,7 @@ public class NamespaceScopeTest
 
 
     @Test
-    public void getCaseInsensitiveFirstUseDefinitionAst_NotDefined_ReturnNull() {
+    public void getCaseInsensitiveFirstUseDefinitionAst_NothingDefined_ReturnNull() {
         //no arrange needed
 
         INamespaceScope namespaceScope = createNamespaceScope();
@@ -174,6 +206,21 @@ public class NamespaceScopeTest
 
 
     @Test
+    public void getSymbols_OneDefined_ReturnMapWithOneListWithOne() {
+        IAliasSymbol aliasSymbol = createAliasSymbol("aliasName");
+
+        INamespaceScope namespaceScope = createNamespaceScope();
+        namespaceScope.defineUse(aliasSymbol);
+        Map<String, List<ISymbol>> symbols = namespaceScope.getSymbols();
+
+        assertThat(symbols.size(), is(1));
+        assertThat(symbols, hasKey("aliasName"));
+        List<ISymbol> list = symbols.get("aliasName");
+        assertThat(list.size(), is(1));
+        assertThat(list, hasItem(aliasSymbol));
+    }
+
+    @Test
     public void getUse_OneDefined_ReturnListWithOne() {
         IAliasSymbol aliasSymbol = createAliasSymbol("aliasName");
 
@@ -196,6 +243,45 @@ public class NamespaceScopeTest
         ITSPHPAst ast = namespaceScope.getCaseInsensitiveFirstUseDefinitionAst("aliasName");
 
         assertThat(ast, is(expectedAst));
+    }
+
+
+    @Test
+    public void getSymbols_TwoDefinedSameName_ReturnMapWithOneListWithTwo() {
+        IAliasSymbol aliasSymbol1 = createAliasSymbol("aliasName");
+        IAliasSymbol aliasSymbol2 = createAliasSymbol("aliasName");
+
+        INamespaceScope namespaceScope = createNamespaceScope();
+        namespaceScope.defineUse(aliasSymbol1);
+        namespaceScope.defineUse(aliasSymbol2);
+        Map<String, List<ISymbol>> symbols = namespaceScope.getSymbols();
+
+        assertThat(symbols.size(), is(1));
+        assertThat(symbols, hasKey("aliasName"));
+        List<ISymbol> list = symbols.get("aliasName");
+        assertThat(list.size(), is(2));
+        assertThat(list, hasItems((ISymbol) aliasSymbol1,  aliasSymbol2));
+    }
+
+    @Test
+    public void getSymbols_TwoDefinedDifferentName_ReturnMapWithTwoListWithOneEach() {
+        IAliasSymbol aliasSymbol1 = createAliasSymbol("aliasName1");
+        IAliasSymbol aliasSymbol2 = createAliasSymbol("aliasName2");
+
+        INamespaceScope namespaceScope = createNamespaceScope();
+        namespaceScope.defineUse(aliasSymbol1);
+        namespaceScope.defineUse(aliasSymbol2);
+        Map<String, List<ISymbol>> symbols = namespaceScope.getSymbols();
+
+        assertThat(symbols.size(), is(2));
+        assertThat(symbols, hasKey("aliasName1"));
+        List<ISymbol> list1 = symbols.get("aliasName1");
+        assertThat(list1.size(), is(1));
+        assertThat(list1, hasItem(aliasSymbol1));
+        List<ISymbol> list2 = symbols.get("aliasName2");
+        assertThat(list2.size(), is(1));
+        assertThat(list2, hasItem(aliasSymbol2));
+
     }
 
     @Test
@@ -337,7 +423,7 @@ public class NamespaceScopeTest
         verify(scopeHelper).doubleDefinitionCheck(symbol, symbol);
         verify(globalNamespaceScope).resolve(useDefinitionAst);
         verify(useDefinitionAst).isDefinedEarlierThan(classDefinitionAst);
-        verify(errorReporter).determineAlreadyDefined(symbol,typeSymbol);
+        verify(errorReporter).determineAlreadyDefined(symbol, typeSymbol);
     }
 
     @Test
@@ -367,7 +453,7 @@ public class NamespaceScopeTest
         verify(scopeHelper).doubleDefinitionCheck(symbol, symbol);
         verify(globalNamespaceScope).resolve(useDefinitionAst);
         verify(useDefinitionAst).isDefinedEarlierThan(classDefinitionAst);
-        verify(errorReporter).determineAlreadyDefined(symbol,typeSymbol);
+        verify(errorReporter).determineAlreadyDefined(symbol, typeSymbol);
     }
 
     @Test
@@ -397,8 +483,9 @@ public class NamespaceScopeTest
         verify(globalNamespaceScope).resolve(useDefinitionAst);
         verify(useDefinitionAst).isDefinedEarlierThan(classDefinitionAst);
         verify(typeSymbol).getDefinitionScope();
-        verify(errorReporter).determineAlreadyDefined(symbol,typeSymbol);
+        verify(errorReporter).determineAlreadyDefined(symbol, typeSymbol);
     }
+
 
     private ITypeSymbol createTypeSymbol(ITSPHPAst classDefinitionAst, IScope scope) {
         ITypeSymbol typeSymbol = mock(ITypeSymbol.class);

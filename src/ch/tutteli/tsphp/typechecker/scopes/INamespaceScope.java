@@ -1,8 +1,10 @@
 package ch.tutteli.tsphp.typechecker.scopes;
 
+import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasSymbol;
 import java.util.List;
+import java.util.Map;
 
 public interface INamespaceScope extends ICaseInsensitiveScope
 {
@@ -25,4 +27,12 @@ public interface INamespaceScope extends ICaseInsensitiveScope
      * @return The definition ast or null if the alias wasn't found
      */
     ITSPHPAst getCaseInsensitiveFirstUseDefinitionAst(String alias);
+
+    @Override
+    /**
+     *  Return only the use definition defined in this namespace scope.
+     *
+     *  All other definitions are delegated to the corresponding global namespace and can be found there.
+     */
+    Map<String, List<ISymbol>> getSymbols();
 }

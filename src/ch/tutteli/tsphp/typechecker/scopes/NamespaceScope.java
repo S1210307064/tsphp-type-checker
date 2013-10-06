@@ -1,6 +1,7 @@
 package ch.tutteli.tsphp.typechecker.scopes;
 
 import ch.tutteli.tsphp.common.ILowerCaseStringMap;
+import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
@@ -13,21 +14,36 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class NamespaceScope extends AScope implements INamespaceScope
+public class NamespaceScope implements INamespaceScope
 {
 
     private final ILowerCaseStringMap<List<IAliasSymbol>> usesCaseInsensitive = new LowerCaseStringMap<>();
     private final Map<String, List<IAliasSymbol>> uses = new LinkedHashMap<>();
+    private final IScopeHelper scopeHelper;
+    private final String scopeName;
+    private final IScope globalNamespaceScope;
 
-    public NamespaceScope(IScopeHelper scopeHelper, String scopeName, IGlobalNamespaceScope globalNamespaceScope) {
-        super(scopeHelper, scopeName, globalNamespaceScope);
+    public NamespaceScope(IScopeHelper theScopeHelper, String theScopeName, IGlobalNamespaceScope theGlobalNamespaceScope) {
+        scopeHelper = theScopeHelper;
+        scopeName = theScopeName;
+        globalNamespaceScope = theGlobalNamespaceScope;
+    }
+
+    @Override
+    public String getScopeName() {
+        return scopeName;
+    }
+
+    @Override
+    public IScope getEnclosingScope() {
+        return globalNamespaceScope;
     }
 
     @Override
     public void define(ISymbol symbol) {
         //we define symbols in the corresponding global namespace scope in order that it can be found from other
         //namespaces as well
-        enclosingScope.define(symbol);
+        globalNamespaceScope.define(symbol);
         //However, definition scope is this one, is used for alias resolving and name clashes
         symbol.setDefinitionScope(this);
     }
@@ -35,13 +51,13 @@ public class NamespaceScope extends AScope implements INamespaceScope
     @Override
     public boolean doubleDefinitionCheck(ISymbol symbol) {
         //check in global namespace scope, because they have been defined there
-        return enclosingScope.doubleDefinitionCheck(symbol);
+        return globalNamespaceScope.doubleDefinitionCheck(symbol);
     }
 
     @Override
     public boolean doubleDefinitionCheckCaseInsensitive(ISymbol symbol) {
         //check in global namespace scope, because they have been defined there
-        return ((ICaseInsensitiveScope) enclosingScope).doubleDefinitionCheckCaseInsensitive(symbol);
+        return ((ICaseInsensitiveScope) globalNamespaceScope).doubleDefinitionCheckCaseInsensitive(symbol);
     }
 
     @Override
@@ -86,7 +102,22 @@ public class NamespaceScope extends AScope implements INamespaceScope
     @Override
     public ISymbol resolve(ITSPHPAst ast) {
         //we resolve from the corresponding global namespace scope 
-        return enclosingScope.resolve(ast);
+        return globalNamespaceScope.resolve(ast);
+    }
+
+    @Override
+    public Map<String, List<ISymbol>> getSymbols() {
+        return unsafeCast(uses);
+    }
+
+    @Override
+    public String toString() {
+        return scopeName + ":" + uses.keySet().toString();
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T unsafeCast(Object o){
+        return (T) o;
     }
 
     @Override
