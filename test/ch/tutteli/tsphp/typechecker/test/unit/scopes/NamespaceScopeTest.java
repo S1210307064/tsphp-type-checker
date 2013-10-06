@@ -1,14 +1,17 @@
 package ch.tutteli.tsphp.typechecker.test.unit.scopes;
 
+import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
+import ch.tutteli.tsphp.common.ITypeSymbol;
+import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
+import ch.tutteli.tsphp.typechecker.error.IErrorReporter;
 import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.IScopeHelper;
 import ch.tutteli.tsphp.typechecker.scopes.NamespaceScope;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasSymbol;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.List;
@@ -22,7 +25,7 @@ public class NamespaceScopeTest
     private IScopeHelper scopeHelper;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         scopeHelper = mock(IScopeHelper.class);
     }
 
@@ -102,7 +105,7 @@ public class NamespaceScopeTest
 
 
     @Test
-    public void getUse_NothingDefined_ReturnsNull() {
+    public void getUse_NothingDefined_ReturnNull() {
         //no arrange needed
 
         INamespaceScope namespaceScope = createNamespaceScope();
@@ -113,7 +116,7 @@ public class NamespaceScopeTest
 
 
     @Test
-    public void getCaseInsensitiveFirstUseDefinitionAst_NotDefined_ReturnsNull() {
+    public void getCaseInsensitiveFirstUseDefinitionAst_NotDefined_ReturnNull() {
         //no arrange needed
 
         INamespaceScope namespaceScope = createNamespaceScope();
@@ -123,7 +126,7 @@ public class NamespaceScopeTest
     }
 
     @Test
-    public void getUse_WrongName_ReturnsNull() {
+    public void getUse_WrongName_ReturnNull() {
         IAliasSymbol aliasSymbol = createAliasSymbol("aliasName");
 
         INamespaceScope namespaceScope = createNamespaceScope();
@@ -135,7 +138,7 @@ public class NamespaceScopeTest
 
 
     @Test
-    public void getCaseInsensitiveFirstUseDefinitionAst_WrongName_ReturnsNull() {
+    public void getCaseInsensitiveFirstUseDefinitionAst_WrongName_ReturnNull() {
         IAliasSymbol aliasSymbol = createAliasSymbol("aliasName");
 
         INamespaceScope namespaceScope = createNamespaceScope();
@@ -147,7 +150,7 @@ public class NamespaceScopeTest
 
 
     @Test
-    public void getUse_CaseWrong_ReturnsNull() {
+    public void getUse_CaseWrong_ReturnNull() {
         IAliasSymbol aliasSymbol = createAliasSymbol("aliasName");
 
         INamespaceScope namespaceScope = createNamespaceScope();
@@ -158,7 +161,7 @@ public class NamespaceScopeTest
     }
 
     @Test
-    public void getCaseInsensitiveFirstUseDefinitionAst_CaseWrong_ReturnsAst() {
+    public void getCaseInsensitiveFirstUseDefinitionAst_CaseWrong_ReturnAst() {
         ITSPHPAst expectedAst = mock(ITSPHPAst.class);
         IAliasSymbol aliasSymbol = createAliasSymbol("aliasName", expectedAst);
 
@@ -171,7 +174,7 @@ public class NamespaceScopeTest
 
 
     @Test
-    public void getUse_OneDefined_ReturnsListWithOne() {
+    public void getUse_OneDefined_ReturnListWithOne() {
         IAliasSymbol aliasSymbol = createAliasSymbol("aliasName");
 
         INamespaceScope namespaceScope = createNamespaceScope();
@@ -184,7 +187,7 @@ public class NamespaceScopeTest
 
 
     @Test
-    public void getCaseInsensitiveFirstUseDefinitionAst_OneDefined_ReturnsAst() {
+    public void getCaseInsensitiveFirstUseDefinitionAst_OneDefined_ReturnAst() {
         ITSPHPAst expectedAst = mock(ITSPHPAst.class);
         IAliasSymbol aliasSymbol = createAliasSymbol("aliasName", expectedAst);
 
@@ -196,7 +199,7 @@ public class NamespaceScopeTest
     }
 
     @Test
-    public void getUse_TwoDefined_ReturnsListWithTwo() {
+    public void getUse_TwoDefined_ReturnListWithTwo() {
         IAliasSymbol aliasSymbol1 = createAliasSymbol("aliasName");
         IAliasSymbol aliasSymbol2 = createAliasSymbol("aliasName");
 
@@ -210,7 +213,7 @@ public class NamespaceScopeTest
     }
 
     @Test
-    public void getCaseInsensitiveFirstUseDefinitionAst_TwoDefined_ReturnsFirstAst() {
+    public void getCaseInsensitiveFirstUseDefinitionAst_TwoDefined_ReturnFirstAst() {
         ITSPHPAst expectedAst = mock(ITSPHPAst.class);
         IAliasSymbol aliasSymbol = createAliasSymbol("aliasName", expectedAst);
         ITSPHPAst notThisAst = mock(ITSPHPAst.class);
@@ -224,15 +227,184 @@ public class NamespaceScopeTest
         assertThat(ast, is(expectedAst));
     }
 
-    @Test
-    @Ignore //TODO rstoll TSPHP-604 remove hidden dependency ScopeHelper
-    public void useDefinitionCheck_NothingDefined_ReturnsTrue() {
+    @Test(expected = NullPointerException.class)
+    /**
+     * It is not possible to perform a useDefinitionCheck for a certain symbol which was never defined.
+     * Thus a NullPointerException should be thrown
+     */
+    public void useDefinitionCheck_NothingDefined_ThrowNullPointerException() {
         IAliasSymbol symbol = createAliasSymbol("aliasName");
 
         INamespaceScope namespaceScope = createNamespaceScope();
+        namespaceScope.useDefinitionCheck(symbol);
+
+        //Assert via the @Test(expected) annotation
+    }
+
+    @Test
+    public void useDefinitionCheck_IsNotDoubleDefinedAndIsNotAlreadyDefinedAsType_ReturnTrue() {
+        ITSPHPAst useDefinitionAst = mock(ITSPHPAst.class);
+        IAliasSymbol symbol = createAliasSymbol("aliasName", useDefinitionAst);
+        //not double defined
+        when(scopeHelper.doubleDefinitionCheck(symbol, symbol)).thenReturn(true);
+
+        IGlobalNamespaceScope globalNamespaceScope = mock(IGlobalNamespaceScope.class);
+        //there is not type with the name "aliasName" thus it returns null
+        when(globalNamespaceScope.resolve(useDefinitionAst)).thenReturn(null);
+
+        //act
+        INamespaceScope namespaceScope = createNamespaceScope(globalNamespaceScope);
+        namespaceScope.defineUse(symbol);
         boolean result = namespaceScope.useDefinitionCheck(symbol);
 
         assertTrue(result);
+        verify(scopeHelper).doubleDefinitionCheck(symbol, symbol);
+        verify(globalNamespaceScope).resolve(useDefinitionAst);
+    }
+
+    @Test
+    /**
+     * Strange exception of PHP which stays in TSPHP
+     * There is no type name clash in the following situation: namespace{use a as b;} namespace{ class b{}}
+     * because: use is defined earlier and the use statement is in a different namespace statement
+     */
+    public void useDefinitionCheck_IsNotDoubleDefinedAndDefinedEarlierThanTypeAndTypeInOtherNamespace_ReturnTrue() {
+        ITSPHPAst useDefinitionAst = mock(ITSPHPAst.class);
+        IAliasSymbol symbol = createAliasSymbol("aliasName", useDefinitionAst);
+        //not double defined
+        when(scopeHelper.doubleDefinitionCheck(symbol, symbol)).thenReturn(true);
+
+        ITSPHPAst classDefinitionAst = mock(ITSPHPAst.class);
+        IScope anotherScope = mock(IScope.class);
+        ITypeSymbol typeSymbol = createTypeSymbol(classDefinitionAst, anotherScope);
+        IGlobalNamespaceScope globalNamespaceScope = mock(IGlobalNamespaceScope.class);
+        when(globalNamespaceScope.resolve(useDefinitionAst)).thenReturn(typeSymbol);
+
+        when(useDefinitionAst.isDefinedEarlierThan(classDefinitionAst)).thenReturn(true);
+
+        //act
+        INamespaceScope namespaceScope = createNamespaceScope(globalNamespaceScope);
+        namespaceScope.defineUse(symbol);
+        boolean result = namespaceScope.useDefinitionCheck(symbol);
+
+        assertTrue(result);
+        verify(scopeHelper).doubleDefinitionCheck(symbol, symbol);
+        verify(globalNamespaceScope).resolve(useDefinitionAst);
+        verify(useDefinitionAst).isDefinedEarlierThan(classDefinitionAst);
+        verify(typeSymbol).getDefinitionScope();
+    }
+
+    @Test
+    public void useDefinitionCheck_IsDoubleDefined_ReturnFalse() {
+        IAliasSymbol firstSymbol = createAliasSymbol("aliasName");
+        ITSPHPAst useDefinitionAst = mock(ITSPHPAst.class);
+        IAliasSymbol symbol = createAliasSymbol("aliasName", useDefinitionAst);
+        when(scopeHelper.doubleDefinitionCheck(firstSymbol, symbol)).thenReturn(false);
+
+        //act
+        INamespaceScope namespaceScope = createNamespaceScope();
+        namespaceScope.defineUse(firstSymbol);
+        namespaceScope.defineUse(symbol);
+        boolean result = namespaceScope.useDefinitionCheck(symbol);
+
+        assertFalse(result);
+        verify(scopeHelper).doubleDefinitionCheck(firstSymbol, symbol);
+    }
+
+    @Test
+    public void useDefinitionCheck_IsNotDoubleDefinedAndTypeDefinedEarlierInSameNamespace_ReturnFalse() {
+        IErrorReporter errorReporter = mock(IErrorReporter.class);
+        ErrorReporterRegistry.set(errorReporter);
+
+        ITSPHPAst useDefinitionAst = mock(ITSPHPAst.class);
+        IAliasSymbol symbol = createAliasSymbol("aliasName", useDefinitionAst);
+        //not double defined
+        when(scopeHelper.doubleDefinitionCheck(symbol, symbol)).thenReturn(true);
+
+        IGlobalNamespaceScope globalNamespaceScope = mock(IGlobalNamespaceScope.class);
+        INamespaceScope namespaceScope = createNamespaceScope(globalNamespaceScope);
+        ITSPHPAst classDefinitionAst = mock(ITSPHPAst.class);
+        ITypeSymbol typeSymbol = createTypeSymbol(classDefinitionAst, namespaceScope);
+        when(globalNamespaceScope.resolve(useDefinitionAst)).thenReturn(typeSymbol);
+
+        when(useDefinitionAst.isDefinedEarlierThan(classDefinitionAst)).thenReturn(false);
+
+        //act
+        namespaceScope.defineUse(symbol);
+        boolean result = namespaceScope.useDefinitionCheck(symbol);
+
+        assertFalse(result);
+        verify(scopeHelper).doubleDefinitionCheck(symbol, symbol);
+        verify(globalNamespaceScope).resolve(useDefinitionAst);
+        verify(useDefinitionAst).isDefinedEarlierThan(classDefinitionAst);
+        verify(errorReporter).determineAlreadyDefined(symbol,typeSymbol);
+    }
+
+    @Test
+    public void useDefinitionCheck_IsNotDoubleDefinedAndTypeDefinedEarlierInOtherNamespace_ReturnFalse() {
+        IErrorReporter errorReporter = mock(IErrorReporter.class);
+        ErrorReporterRegistry.set(errorReporter);
+
+        ITSPHPAst useDefinitionAst = mock(ITSPHPAst.class);
+        IAliasSymbol symbol = createAliasSymbol("aliasName", useDefinitionAst);
+        //not double defined
+        when(scopeHelper.doubleDefinitionCheck(symbol, symbol)).thenReturn(true);
+
+        ITSPHPAst classDefinitionAst = mock(ITSPHPAst.class);
+        IScope anotherScope = mock(IScope.class);
+        ITypeSymbol typeSymbol = createTypeSymbol(classDefinitionAst, anotherScope);
+        IGlobalNamespaceScope globalNamespaceScope = mock(IGlobalNamespaceScope.class);
+        when(globalNamespaceScope.resolve(useDefinitionAst)).thenReturn(typeSymbol);
+
+        when(useDefinitionAst.isDefinedEarlierThan(classDefinitionAst)).thenReturn(false);
+
+        //act
+        INamespaceScope namespaceScope = createNamespaceScope(globalNamespaceScope);
+        namespaceScope.defineUse(symbol);
+        boolean result = namespaceScope.useDefinitionCheck(symbol);
+
+        assertFalse(result);
+        verify(scopeHelper).doubleDefinitionCheck(symbol, symbol);
+        verify(globalNamespaceScope).resolve(useDefinitionAst);
+        verify(useDefinitionAst).isDefinedEarlierThan(classDefinitionAst);
+        verify(errorReporter).determineAlreadyDefined(symbol,typeSymbol);
+    }
+
+    @Test
+    public void useDefinitionCheck_IsNotDoubleDefinedAndTypeDefinedLaterInSameNamespace_ReturnFalse() {
+        IErrorReporter errorReporter = mock(IErrorReporter.class);
+        ErrorReporterRegistry.set(errorReporter);
+
+        ITSPHPAst useDefinitionAst = mock(ITSPHPAst.class);
+        IAliasSymbol symbol = createAliasSymbol("aliasName", useDefinitionAst);
+        //not double defined
+        when(scopeHelper.doubleDefinitionCheck(symbol, symbol)).thenReturn(true);
+
+        IGlobalNamespaceScope globalNamespaceScope = mock(IGlobalNamespaceScope.class);
+        INamespaceScope namespaceScope = createNamespaceScope(globalNamespaceScope);
+        ITSPHPAst classDefinitionAst = mock(ITSPHPAst.class);
+        ITypeSymbol typeSymbol = createTypeSymbol(classDefinitionAst, namespaceScope);
+        when(globalNamespaceScope.resolve(useDefinitionAst)).thenReturn(typeSymbol);
+
+        when(useDefinitionAst.isDefinedEarlierThan(classDefinitionAst)).thenReturn(true);
+
+        //act
+        namespaceScope.defineUse(symbol);
+        boolean result = namespaceScope.useDefinitionCheck(symbol);
+
+        assertFalse(result);
+        verify(scopeHelper).doubleDefinitionCheck(symbol, symbol);
+        verify(globalNamespaceScope).resolve(useDefinitionAst);
+        verify(useDefinitionAst).isDefinedEarlierThan(classDefinitionAst);
+        verify(typeSymbol).getDefinitionScope();
+        verify(errorReporter).determineAlreadyDefined(symbol,typeSymbol);
+    }
+
+    private ITypeSymbol createTypeSymbol(ITSPHPAst classDefinitionAst, IScope scope) {
+        ITypeSymbol typeSymbol = mock(ITypeSymbol.class);
+        when(typeSymbol.getDefinitionAst()).thenReturn(classDefinitionAst);
+        when(typeSymbol.getDefinitionScope()).thenReturn(scope);
+        return typeSymbol;
     }
 
     private IAliasSymbol createAliasSymbol(String name) {
@@ -250,6 +422,7 @@ public class NamespaceScopeTest
     private INamespaceScope createNamespaceScope() {
         return createNamespaceScope(mock(IGlobalNamespaceScope.class));
     }
+
     private INamespaceScope createNamespaceScope(IGlobalNamespaceScope globalNamespaceScope) {
         return new NamespaceScope(scopeHelper, "test", globalNamespaceScope);
     }
