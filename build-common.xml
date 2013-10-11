@@ -28,7 +28,9 @@
     <property name="dist" location="${target}/dist"/>
     <property name="javadoc" location="${target}/javadoc"/>
     <property name="junit" location="${target}/junit"/>
+    <property name="junit.unit" location="${target}/junit/unit"/>
     <property name="coverage" location="${target}/coverage"/>
+    <property name="coverage.unit" location="${target}/coverage/unit"/>
     <property name="checkstyle" location="${target}/checkstyle"/>
     <property name="pmd" location="${target}/pmd"/>
     <property name="cpd" location="${target}/cpd"/>
@@ -37,6 +39,7 @@
     <!-- calculated properties -->
     <property name="distname" value="${proj.name}-${proj.version}"/>
     <property name="coverage.data" value="${coverage}/jacoco.exec"/>
+    <property name="coverage.unit.data" value="${coverage.unit}/jacoco.exec"/>
     <property name="checkstyle.config" value="${libdev}/checkstyle/cfg"/>
     <property name="pmd.config" value="${libdev}/pmd/cfg"/>
 
@@ -224,7 +227,7 @@
     <!-- ================================================================== -->
     <!-- Target: test -->
     <!-- ================================================================== -->
-    <target name="test" depends="jar" description="executes unittests">
+    <target name="test" depends="jar" description="executes all junit tests">
         <mkdir dir="${junit}" />
         <mkdir dir="${coverage}" />
         <touch file="${coverage.data}" />
@@ -252,6 +255,39 @@
         <coverage.report />
         <fail message="JUnit tests FAILED!" if="test.failed" />
     </target>
+
+    <!-- ================================================================== -->
+    <!-- Target: unittest, to see how much unit-tests are covering-->
+    <!-- ================================================================== -->
+    <target name="unittest" depends="jar" description="executes junit (real) unit tests">
+        <mkdir dir="${junit.unit}" />
+        <mkdir dir="${coverage.unit}" />
+        <touch file="${coverage.unit.data}" />
+        <jacoco:agent property="test.vm.param" destfile="${coverage.unit.data}" excludes="**/ch/tutteli/tsphp/Main.class"/>
+        <junit printsummary="off"
+               haltonfailure="false"
+               fork="true"
+               forkmode="once"
+               showoutput="true"
+               failureproperty="test.failed">
+            <!-- Do not delete/exchange this property, it is set by jacoco:agent -->
+            <jvmarg value="${test.vm.param}" />
+            <sysproperty key="proj.basedir" value="${basedir}" />
+            <formatter usefile="false" type="brief" />
+            <formatter type="xml" />
+            <batchtest todir="${junit.unit}">
+                <fileset dir="${src.test}">
+                    <include name="**/unit/**/*Test.java" />
+                    <exclude name="**/AllTest.java" />
+                </fileset>
+            </batchtest>
+            <classpath refid="unittestset"/>
+        </junit>
+        <junit.report dir="${junit.unit}" />
+        <coverage.report dir="${coverage.unit}" executiondata="${coverage.unit.data}" />
+        <fail message="JUnit tests FAILED!" if="test.failed" />
+    </target>
+
 
     <!-- ================================================================== -->
     <!-- Target: reports -->
@@ -367,12 +403,13 @@
     <!-- Macro: junit.report -->
     <!-- ================================================================== -->
     <macrodef name="junit.report">
+        <attribute name="dir" default="${junit}"/>
         <sequential>
-            <junitreport todir="${junit}">
-                <fileset dir="${junit}">
+            <junitreport todir="@{dir}">
+                <fileset dir="@{dir}">
                     <include name="TEST-*.xml" />
                 </fileset>
-                <report format="frames" todir="${junit}" />
+                <report format="frames" todir="@{dir}" />
             </junitreport>
         </sequential>
     </macrodef>
@@ -381,10 +418,12 @@
     <!-- Macro: coverage.report -->
     <!-- ================================================================== -->
     <macrodef name="coverage.report">
+        <attribute name="dir" default="${coverage}"/>
+        <attribute name="executiondata" default="${coverage.data}"/>
         <sequential>
             <jacoco:report>
                 <executiondata>
-                    <file file="${coverage.data}" />
+                    <file file="@{executiondata}" />
                 </executiondata>
                 <structure name="${distname}">
                     <classfiles>
@@ -394,8 +433,8 @@
                         <fileset dir="${src.main}" />
                     </sourcefiles>
                 </structure>
-                <html destdir="${coverage}" footer="${coverage.report.footer}" />
-                <xml destfile="${coverage}/coverage.xml" />
+                <html destdir="@{dir}" footer="${coverage.report.footer}" />
+                <xml destfile="@{dir}/coverage.xml" />
             </jacoco:report>
         </sequential>
     </macrodef>

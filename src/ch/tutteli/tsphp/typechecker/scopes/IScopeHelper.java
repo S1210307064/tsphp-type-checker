@@ -22,6 +22,17 @@ public interface IScopeHelper
     boolean doubleDefinitionCheck(ISymbol firstDefinition, ISymbol symbolToCheck,
             IAlreadyDefinedMethodCaller errorMethodCaller);
 
+    /**
+     * Return the corresponding global namespace from the given globalNamespaceScopes for the given typeName.
+     *
+     * As a quick reminder, namespace identifier always end with an \ (backslash) for instance:
+     *
+     * - \
+     * - \ch\
+     * - \ch\tutteli\
+     *
+     * @return The corresponding global namespace or null in the case where it could not be found
+     */
     IGlobalNamespaceScope getCorrespondingGlobalNamespace(
             ILowerCaseStringMap<IGlobalNamespaceScope> globalNamespaceScopes, String typeName);
 

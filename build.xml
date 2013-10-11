@@ -36,7 +36,10 @@
         </java>
     </target>
 
-    <target name="copyAntlr" depends="clean" description="copy antlr generated classes to src/java folder">
+    <target name="copyAntlr" description="copy antlr generated classes to src/java folder">
+        <delete>
+            <fileset dir="${antlr.copyLocation}" includes="TSPHP*.java"/>
+        </delete>
         <copy todir="${antlr.copyLocation}">
             <fileset dir="${antlr.output}" includes="TSPHP*.java"/>
         </copy>
