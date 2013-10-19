@@ -66,10 +66,8 @@ public class NamespaceScopeTest
     @Test
     public void define_TwoSymbolsWithSameName_DelegateToEnclosingScopeAndSetDefinitionScopeForBoth() {
         IGlobalNamespaceScope globalNamespaceScope = mock(IGlobalNamespaceScope.class);
-        ISymbol symbol = mock(ISymbol.class);
-        when(symbol.getName()).thenReturn("a");
-        ISymbol symbol2 = mock(ISymbol.class);
-        when(symbol2.getName()).thenReturn("a");
+        ISymbol symbol = createSymbol("a");
+        ISymbol symbol2 = createSymbol("a");
 
         INamespaceScope namespaceScope = createNamespaceScope(globalNamespaceScope);
         namespaceScope.define(symbol);
@@ -80,6 +78,7 @@ public class NamespaceScopeTest
         verify(globalNamespaceScope).define(symbol2);
         verify(symbol2).setDefinitionScope(namespaceScope);
     }
+
 
     @Test
     public void resolve_Standard_DelegateToEnclosingScope() {
@@ -486,6 +485,11 @@ public class NamespaceScopeTest
         verify(errorReporter).determineAlreadyDefined(symbol, typeSymbol);
     }
 
+    private ISymbol createSymbol(String name) {
+        ISymbol symbol = mock(ISymbol.class);
+        when(symbol.getName()).thenReturn(name);
+        return symbol;
+    }
 
     private ITypeSymbol createTypeSymbol(ITSPHPAst classDefinitionAst, IScope scope) {
         ITypeSymbol typeSymbol = mock(ITypeSymbol.class);

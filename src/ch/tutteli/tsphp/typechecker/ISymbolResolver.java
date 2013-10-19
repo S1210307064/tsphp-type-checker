@@ -19,13 +19,9 @@ public interface ISymbolResolver
 
     IScope getEnclosingGlobalNamespaceScope(IScope scope);
 
-    IScope getResolvingScope(ITSPHPAst typeAst);
-
     ISymbol resolveGlobalIdentifier(ITSPHPAst typeAst);
 
     ISymbol resolveGlobalIdentifierWithFallback(ITSPHPAst ast);
-
-    ISymbol resolveInClassSymbol(ITSPHPAst ast);
 
     ITypeSymbol resolveUseType(ITSPHPAst typeAst, ITSPHPAst alias);
 

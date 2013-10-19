@@ -7,7 +7,7 @@ public interface IScopeFactory
 
     IGlobalNamespaceScope createGlobalNamespaceScope(String name);
 
-    INamespaceScope createNamespace(String name, IGlobalNamespaceScope currentScope);
+    INamespaceScope createNamespaceScope(String name, IGlobalNamespaceScope currentScope);
 
     IConditionalScope createConditionalScope(IScope currentScope);
 }

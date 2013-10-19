@@ -18,8 +18,8 @@ public class TestScopeFactory extends ScopeFactory
     }
 
     @Override
-    public INamespaceScope createNamespace(String name, IGlobalNamespaceScope currentScope) {
-        INamespaceScope scope = super.createNamespace(name,currentScope);
+    public INamespaceScope createNamespaceScope(String name, IGlobalNamespaceScope currentScope) {
+        INamespaceScope scope = super.createNamespaceScope(name, currentScope);
         scopes.add(scope);
         return scope;
 

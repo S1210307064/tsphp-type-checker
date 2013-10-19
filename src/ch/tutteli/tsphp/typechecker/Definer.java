@@ -44,7 +44,7 @@ public class Definer implements IDefiner
 
     @Override
     public INamespaceScope defineNamespace(String name) {
-        return scopeFactory.createNamespace(name, getOrCreateGlobalNamespace(name));
+        return scopeFactory.createNamespaceScope(name, getOrCreateGlobalNamespace(name));
     }
 
     private IGlobalNamespaceScope getOrCreateGlobalNamespace(String name) {

@@ -125,16 +125,6 @@ public class SymbolResolver implements ISymbolResolver
         return namespaceScope;
     }
 
-    @Override
-    public IScope getResolvingScope(ITSPHPAst typeAst) {
-        String typeName = typeAst.getText();
-        IScope scope = typeAst.getScope();
-        if (isAbsolute(typeName)) {
-            scope = scopeHelper.getCorrespondingGlobalNamespace(globalNamespaceScopes, typeName);
-        }
-        return scope;
-    }
-
     private String getPotentialAlias(String typeName) {
         int backslashPosition = typeName.indexOf("\\");
         if (backslashPosition != -1) {
@@ -233,16 +223,6 @@ public class SymbolResolver implements ISymbolResolver
             typeSymbol = scope.resolve(typeAst);
         }
         return typeSymbol;
-    }
-
-    @Override
-    public ISymbol resolveInClassSymbol(ITSPHPAst ast) {
-        ISymbol symbol = null;
-        IClassTypeSymbol classTypeSymbol = getEnclosingClass(ast);
-        if (classTypeSymbol != null) {
-            symbol = classTypeSymbol.resolveWithFallbackToParent(ast);
-        }
-        return symbol;
     }
 
     @Override

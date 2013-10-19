@@ -2,13 +2,12 @@ package ch.tutteli.tsphp.typechecker.scopes;
 
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
-import ch.tutteli.tsphp.common.ITSPHPAst;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Adopted from the book "Language Implementation Patterns" by Terence Parr
+ * Adopted from the book "Language Implementation Patterns" by Terence Parr.
  */
 public abstract class AScope implements IScope
 {
@@ -31,11 +30,6 @@ public abstract class AScope implements IScope
     @Override
     public boolean doubleDefinitionCheck(ISymbol symbol) {
        return scopeHelper.doubleDefinitionCheck(symbols, symbol);
-    }
-
-    @Override
-    public ISymbol resolve(ITSPHPAst typeAst) {
-        return scopeHelper.resolve(this, typeAst);
     }
 
     @Override

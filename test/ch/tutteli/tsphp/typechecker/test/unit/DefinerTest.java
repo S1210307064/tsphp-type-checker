@@ -75,14 +75,14 @@ public class DefinerTest
 
         assertThat(namespaceScope, is(namespaceAndGlobal.namespaceScope));
         verify(scopeFactory, times(1)).createGlobalNamespaceScope("name");
-        verify(scopeFactory).createNamespace("name", namespaceAndGlobal.globalNamespaceScope);
+        verify(scopeFactory).createNamespaceScope("name", namespaceAndGlobal.globalNamespaceScope);
     }
 
     @Test
     public void defineNamespace_SecondCall_GlobalNamespaceOnlyCreatedOnce() {
         NamespaceAndGlobalPair namespaceAndGlobal = initDefineNamespace("name");
         INamespaceScope secondNamespaceScope = mock(INamespaceScope.class);
-        when(scopeFactory.createNamespace("name", namespaceAndGlobal.globalNamespaceScope))
+        when(scopeFactory.createNamespaceScope("name", namespaceAndGlobal.globalNamespaceScope))
                 .thenReturn(namespaceAndGlobal.namespaceScope)
                 .thenReturn(secondNamespaceScope);
 
@@ -94,7 +94,7 @@ public class DefinerTest
         assertThat(namespaceScope2, is(secondNamespaceScope));
 
         verify(scopeFactory, times(1)).createGlobalNamespaceScope("name");
-        verify(scopeFactory, times(2)).createNamespace("name", namespaceAndGlobal.globalNamespaceScope);
+        verify(scopeFactory, times(2)).createNamespaceScope("name", namespaceAndGlobal.globalNamespaceScope);
     }
 
     @Test
@@ -376,7 +376,7 @@ public class DefinerTest
     private NamespaceAndGlobalPair initDefineNamespace(String name) {
         INamespaceScope namespaceScope = mock(INamespaceScope.class);
         IGlobalNamespaceScope globalScope = mock(IGlobalNamespaceScope.class);
-        when(scopeFactory.createNamespace(name, globalScope)).thenReturn(namespaceScope);
+        when(scopeFactory.createNamespaceScope(name, globalScope)).thenReturn(namespaceScope);
         when(scopeFactory.createGlobalNamespaceScope(name)).thenReturn(globalScope);
 
         return new NamespaceAndGlobalPair(globalScope, namespaceScope);
