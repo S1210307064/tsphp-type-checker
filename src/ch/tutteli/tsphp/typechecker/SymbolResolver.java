@@ -62,7 +62,7 @@ public class SymbolResolver implements ISymbolResolver
         return symbol;
     }
 
-    public ISymbol fallbackIfNull(ISymbol symbol, ITSPHPAst ast) {
+    private ISymbol fallbackIfNull(ISymbol symbol, ITSPHPAst ast) {
         if (symbol == null) {
             symbol = globalDefaultNamespace.resolve(ast);
         }
@@ -96,33 +96,17 @@ public class SymbolResolver implements ISymbolResolver
     }
 
     private ISymbol resolveIdentifierCompriseAlias(ITSPHPAst typeAst) {
-        ISymbol symbol = null;
-        INamespaceScope scope = getEnclosingNamespaceScope(typeAst);
-        if (scope != null) {
-            symbol = scope.resolve(typeAst);
+        INamespaceScope scope = scopeHelper.getEnclosingNamespaceScope(typeAst);
+        ISymbol symbol = scope.resolve(typeAst);
 
-            String alias = getPotentialAlias(typeAst.getText());
-            ITSPHPAst useDefinition = scope.getCaseInsensitiveFirstUseDefinitionAst(alias);
-            useDefinition = checkTypeNameClashAndRecoverIfNecessary(useDefinition, symbol);
+        String alias = getPotentialAlias(typeAst.getText());
+        ITSPHPAst useDefinition = scope.getCaseInsensitiveFirstUseDefinitionAst(alias);
+        useDefinition = checkTypeNameClashAndRecoverIfNecessary(useDefinition, symbol);
 
-            if (useDefinition != null) {
-                symbol = resolveAlias(useDefinition, alias, typeAst);
-            }
+        if (useDefinition != null) {
+            symbol = resolveAlias(useDefinition, alias, typeAst);
         }
         return symbol;
-    }
-
-    private INamespaceScope getEnclosingNamespaceScope(ITSPHPAst ast) {
-        INamespaceScope namespaceScope = null;
-
-        IScope scope = ast.getScope();
-        while (scope != null && !(scope instanceof INamespaceScope)) {
-            scope = scope.getEnclosingScope();
-        }
-        if (scope != null) {
-            namespaceScope = (INamespaceScope) scope;
-        }
-        return namespaceScope;
     }
 
     private String getPotentialAlias(String typeName) {
@@ -141,7 +125,7 @@ public class SymbolResolver implements ISymbolResolver
                 ErrorReporterRegistry.get().alreadyDefined(useDefinition, typeDefinition);
             } else {
                 ErrorReporterRegistry.get().alreadyDefined(typeDefinition, useDefinition);
-                //we do not use the alias if it was defined later than typeSymbol
+                //we do not use the alias if it was defined later than the typeSymbol
                 useDefinition = null;
             }
         }
@@ -257,7 +241,7 @@ public class SymbolResolver implements ISymbolResolver
         if (ast.getText().contains("\\")) {
             symbol = resolveGlobalIdentifierWithFallback(ast);
         } else {
-            INamespaceScope scope = getEnclosingNamespaceScope(ast);
+            INamespaceScope scope = scopeHelper.getEnclosingNamespaceScope(ast);
             symbol = scope.resolve(ast);
             symbol = fallbackIfNull(symbol, ast);
         }

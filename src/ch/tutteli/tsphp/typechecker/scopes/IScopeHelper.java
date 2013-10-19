@@ -36,5 +36,20 @@ public interface IScopeHelper
     IGlobalNamespaceScope getCorrespondingGlobalNamespace(
             ILowerCaseStringMap<IGlobalNamespaceScope> globalNamespaceScopes, String typeName);
 
+    /**
+     * Return the enclosing namespace for the given typeName.
+     *
+     * As a quick reminder, namespace identifier always end with an \ (backslash) for instance:
+     *
+     * - \
+     * - \ch\
+     * - \ch\tutteli\
+     *
+     * @return The corresponding namespace or null if the ast does not have an enclosing namespace
+     */
+    INamespaceScope getEnclosingNamespaceScope(ITSPHPAst ast);
+
     ISymbol resolve(IScope scope, ITSPHPAst ast);
+
+
 }

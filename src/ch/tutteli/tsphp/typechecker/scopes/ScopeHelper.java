@@ -62,6 +62,20 @@ public class ScopeHelper implements IScopeHelper
         return symbol;
     }
 
+    @Override
+    public INamespaceScope getEnclosingNamespaceScope(ITSPHPAst ast) {
+        INamespaceScope namespaceScope = null;
+
+        IScope scope = ast.getScope();
+        while (scope != null && !(scope instanceof INamespaceScope)) {
+            scope = scope.getEnclosingScope();
+        }
+        if (scope != null) {
+            namespaceScope = (INamespaceScope) scope;
+        }
+        return namespaceScope;
+    }
+
     /**
      * Represents a delegate which calls the appropriate method on ErrorReporter.
      */
