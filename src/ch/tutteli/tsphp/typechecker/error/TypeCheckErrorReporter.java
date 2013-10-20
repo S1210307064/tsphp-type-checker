@@ -23,14 +23,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class ErrorReporter implements IErrorReporter
+public class TypeCheckErrorReporter implements ITypeCheckErrorReporter
 {
 
     private final IErrorMessageProvider errorMessageProvider;
     private final Collection<IErrorLogger> errorLoggers = new ArrayDeque<>();
     private boolean hasFoundError;
 
-    public ErrorReporter(IErrorMessageProvider anErrorMessageProvider) {
+    public TypeCheckErrorReporter(IErrorMessageProvider anErrorMessageProvider) {
         errorMessageProvider = anErrorMessageProvider;
     }
 

@@ -398,7 +398,7 @@ public class OverloadResolver implements IOverloadResolver
     }
 
     //CHECKSTYLE:OFF:VisibilityModifier|ParameterNumber
-    private class ExplicitCastingDto extends PromotionExplicitCastingLevelDto
+    private static class ExplicitCastingDto extends PromotionExplicitCastingLevelDto
     {
 
         public IVariableSymbol formalParameter;

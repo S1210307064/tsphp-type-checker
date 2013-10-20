@@ -1,22 +1,24 @@
-package ch.tutteli.tsphp.typechecker.antlr;
+package ch.tutteli.tsphp.typechecker.antlrmod;
 
 import ch.tutteli.tsphp.common.IErrorLogger;
 import ch.tutteli.tsphp.common.IErrorReporter;
 import ch.tutteli.tsphp.common.exceptions.TSPHPException;
-import ch.tutteli.tsphp.typechecker.ITypeCheckerController;
+import ch.tutteli.tsphp.typechecker.IDefiner;
 import java.util.ArrayDeque;
 import java.util.Collection;
+
+import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.TreeNodeStream;
 
-public class ErrorReportingTSPHPTypeCheckWalker extends TSPHPTypeCheckWalker implements IErrorReporter
+public class ErrorReportingTSPHPDefinitionWalker extends TSPHPDefinitionWalker implements IErrorReporter
 {
 
     private final Collection<IErrorLogger> errorLoggers = new ArrayDeque<>();
     private boolean hasFoundError;
 
-    public ErrorReportingTSPHPTypeCheckWalker(TreeNodeStream input, ITypeCheckerController theController) {
-        super(input, theController);
+    public ErrorReportingTSPHPDefinitionWalker(TreeNodeStream input, IDefiner theDefiner) {
+        super(input, theDefiner);
     }
 
     @Override
@@ -32,7 +34,7 @@ public class ErrorReportingTSPHPTypeCheckWalker extends TSPHPTypeCheckWalker imp
                 : "Unknown token";
         for (IErrorLogger logger : errorLoggers) {
             logger.log(new TSPHPException("Line " + exception.line + "|" + exception.charPositionInLine
-                    + " type checker exception occurred. " + tokenText, exception));
+                    + " definition phase exception occurred. " + tokenText, exception));
         }
     }
 

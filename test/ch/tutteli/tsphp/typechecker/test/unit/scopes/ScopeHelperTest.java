@@ -6,7 +6,7 @@ import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.LowerCaseStringMap;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
-import ch.tutteli.tsphp.typechecker.error.IErrorReporter;
+import ch.tutteli.tsphp.typechecker.error.ITypeCheckErrorReporter;
 import ch.tutteli.tsphp.typechecker.scopes.IAlreadyDefinedMethodCaller;
 import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.IScopeHelper;
@@ -186,7 +186,7 @@ public class ScopeHelperTest
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     @Test
     public void doubleDefinitionCheck_DefinedTwiceCheckingSecond_ReturnFalse() {
-        IErrorReporter errorReporter = mock(IErrorReporter.class);
+        ITypeCheckErrorReporter errorReporter = mock(ITypeCheckErrorReporter.class);
         ErrorReporterRegistry.set(errorReporter);
         ISymbol symbol1 = createSymbol(SYMBOL_NAME);
         ISymbol symbol2 = createSymbol(SYMBOL_NAME);

@@ -5,11 +5,11 @@ import ch.tutteli.tsphp.common.IErrorLogger;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeChecker;
 import ch.tutteli.tsphp.common.exceptions.TSPHPException;
-import ch.tutteli.tsphp.typechecker.antlr.ErrorReportingTSPHPDefinitionWalker;
-import ch.tutteli.tsphp.typechecker.antlr.ErrorReportingTSPHPReferenceWalker;
-import ch.tutteli.tsphp.typechecker.antlr.ErrorReportingTSPHPTypeCheckWalker;
+import ch.tutteli.tsphp.typechecker.antlrmod.ErrorReportingTSPHPDefinitionWalker;
+import ch.tutteli.tsphp.typechecker.antlrmod.ErrorReportingTSPHPReferenceWalker;
+import ch.tutteli.tsphp.typechecker.antlrmod.ErrorReportingTSPHPTypeCheckWalker;
 import ch.tutteli.tsphp.typechecker.error.ErrorMessageProvider;
-import ch.tutteli.tsphp.typechecker.error.ErrorReporter;
+import ch.tutteli.tsphp.typechecker.error.TypeCheckErrorReporter;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.scopes.IScopeHelper;
 import ch.tutteli.tsphp.typechecker.scopes.ScopeFactory;
@@ -30,7 +30,7 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
     private boolean hasFoundError = false;
 
     public TypeChecker() {
-        ErrorReporterRegistry.set(new ErrorReporter(new ErrorMessageProvider()));
+        ErrorReporterRegistry.set(new TypeCheckErrorReporter(new ErrorMessageProvider()));
 
         init();
     }

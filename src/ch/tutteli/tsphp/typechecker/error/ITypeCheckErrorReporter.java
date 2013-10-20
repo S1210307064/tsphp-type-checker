@@ -13,7 +13,7 @@ import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolWithAccessModifier;
 import java.util.List;
 
-public interface IErrorReporter extends ch.tutteli.tsphp.common.IErrorReporter
+public interface ITypeCheckErrorReporter extends ch.tutteli.tsphp.common.IErrorReporter
 {
 
     /**

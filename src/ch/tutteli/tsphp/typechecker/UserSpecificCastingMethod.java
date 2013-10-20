@@ -12,7 +12,7 @@ import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ITypeSymbolWithPHPBuiltInCasting;
 import org.antlr.runtime.Token;
 
-public class UserSpecificCastingMethod extends ACastingMethod implements ICastingMethod
+public class UserSpecificCastingMethod extends ACastingMethod
 {
 
     private final IMethodSymbol methodSymbol;

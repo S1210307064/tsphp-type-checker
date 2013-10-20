@@ -5,9 +5,9 @@ import ch.tutteli.tsphp.common.IParser;
 import ch.tutteli.tsphp.common.exceptions.TSPHPException;
 import ch.tutteli.tsphp.parser.ParserFacade;
 import ch.tutteli.tsphp.typechecker.error.ErrorMessageProvider;
-import ch.tutteli.tsphp.typechecker.error.ErrorReporter;
+import ch.tutteli.tsphp.typechecker.error.TypeCheckErrorReporter;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
-import ch.tutteli.tsphp.typechecker.error.IErrorReporter;
+import ch.tutteli.tsphp.typechecker.error.ITypeCheckErrorReporter;
 import org.junit.Ignore;
 
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ public abstract class ATest implements IErrorLogger
 
     public ATest() {
         parser = new ParserFacade();
-        IErrorReporter errorReporter = new ErrorReporter(new ErrorMessageProvider());
+        ITypeCheckErrorReporter errorReporter = new TypeCheckErrorReporter(new ErrorMessageProvider());
         errorReporter.registerErrorLogger(this);
         ErrorReporterRegistry.set(errorReporter);
     }

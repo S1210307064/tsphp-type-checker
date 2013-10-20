@@ -306,7 +306,10 @@
 
         <replaceReportProperty dir="${checkstyle.config}" file="checkstyle.properties"/>
 
-        <checkstyle config="${checkstyle.config}/tsphp_checks.xml" properties="${checkstyle.config}/checkstyle.properties" failonviolation="false">
+        <checkstyle config="${checkstyle.config}/tsphp_checks.xml"
+                    properties="${checkstyle.config}/checkstyle.properties"
+                    failonviolation="false"
+                    classpathref="libset">
             <formatter type="xml" toFile="${checkstyle}/checkstyle.xml" />
             <fileset dir="${src.main}" includes="**/*.java" excludes="${checkstyle.excludes}" />
         </checkstyle>
@@ -329,6 +332,7 @@
                        toFile="${pmd}/pmd.xml"
                        linkPrefix="../java2html/" />
             <fileset dir="${src.main}" includes="**/*.java" excludes="${pmd.excludes}"/>
+            <auxclasspath refid="libset"/>
         </pmd>
         <xslt in="${pmd}/pmd.xml"
               out="${pmd}/index.html"
@@ -341,7 +345,7 @@
     <target name="cpd" depends="init" description="cpd report">
         <taskdef name="cpd" classname="net.sourceforge.pmd.cpd.CPDTask" classpathref="libsetdev" />
         <mkdir dir="${cpd}" />
-        <cpd minimumTokenCount="100" outputFile="${cpd}/cpd.xml" format="xml">
+        <cpd minimumtokencount="50" outputFile="${cpd}/cpd.xml" format="xml">
             <fileset dir="${src.main}" includes="**/*.java" excludes="${cpd.excludes}" />
         </cpd>
         <xslt in="${cpd}/cpd.xml" out="${cpd}/index.html" style="${libdev}/pmd/style/cpdhtml.xslt" />
@@ -355,12 +359,17 @@
         <mkdir dir="${findbugs}" />
         <findbugs home="${libdev}/findbugs"
                   output="xml:withMessages"
-                  outputFile="${findbugs}/findbugs.xml" >
+                  outputFile="${findbugs}/findbugs.xml"
+                  effort="max"
+                  reportlevel="low">
             <auxclasspath>
-                <path refid="libset" />
+                <path refid="libset"/>
+                <path>
+                    <fileset dir="${classes}" includes="**/*.class"/>
+                </path>
             </auxclasspath>
             <sourcepath path="${src.main}" />
-            <class location="${classes}" />
+            <fileset dir="${classes}" includes="**/*.class" excludes="${findbugs.excludes}"/>
         </findbugs>
         <xslt in="${findbugs}/findbugs.xml" out="${findbugs}/index.html" style="${libdev}/findbugs/style/fancy.xsl"/>
     </target>
@@ -383,12 +392,6 @@
                  doctitle="${javadoc.doctitle}">
             <fileset dir="${src.main}" includes="**/*.java" excludes="${javadoc.excludes}"/>
         </javadoc>
-        <zip destfile="${javadoc}/javadoc.zip">
-            <fileset dir="${javadoc}">
-                <include name="**/*" />
-                <exclude name="**/*.zip" />
-            </fileset>
-        </zip>
     </target>
 
     <target name="copyCommon" depends="" description="copy common library to the lib folder">

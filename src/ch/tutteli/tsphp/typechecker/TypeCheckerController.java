@@ -27,6 +27,7 @@ import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousTypeSymbol;
 import ch.tutteli.tsphp.typechecker.utils.IAstHelper;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -319,7 +320,7 @@ public class TypeCheckerController implements ITypeCheckerController
         int count = 0;
 
         @SuppressWarnings("unchecked") //has to be ITSPHPAst
-        List<ITSPHPAst> ancestors = (List<ITSPHPAst>) root.getAncestors();
+                List<ITSPHPAst> ancestors = (List<ITSPHPAst>) root.getAncestors();
         for (ITSPHPAst ancestor : ancestors) {
             int type = ancestor.getType();
             if (isLoop(type)) {
@@ -1202,17 +1203,17 @@ public class TypeCheckerController implements ITypeCheckerController
     public void addDefaultValue(ITSPHPAst variableId) {
         ITypeSymbol typeSymbol = variableId.getSymbol().getType();
         ITSPHPAst initValue = typeSymbol.getDefaultValue();
-        if(typeSymbol.isNullable()){
+        if (typeSymbol.isNullable()) {
             initValue.setEvalType(typeSystem.getNullTypeSymbol());
-        }else{
+        } else {
             initValue.setEvalType(typeSymbol);
         }
         variableId.addChild(initValue);
-        
+
     }
 
     /**
-     * A "delegate" which represents a call of a method on an IErrorReporter.
+     * A "delegate" which represents a call of a method on an ITypeCheckErrorReporter.
      */
     private interface IErrorReporterCaller
     {
@@ -1221,7 +1222,7 @@ public class TypeCheckerController implements ITypeCheckerController
     }
 
     /**
-     * A "delegate" which represents a call of a method on an IErrorReporter.
+     * A "delegate" which represents a call of a method on an ITypeCheckErrorReporter.
      */
     private interface IWrongOperatorUsageReporter
     {
@@ -1230,7 +1231,7 @@ public class TypeCheckerController implements ITypeCheckerController
     }
 
     /**
-     * A "delegate" which represents a call of a method on an IErrorReporter.
+     * A "delegate" which represents a call of a method on an ITypeCheckErrorReporter.
      */
     private interface IAmbiguousCallReporter
     {
@@ -1239,7 +1240,7 @@ public class TypeCheckerController implements ITypeCheckerController
     }
 
     /**
-     * A "delegate" which represents a call of a visibility violation method on an IErrorReporter.
+     * A "delegate" which represents a call of a visibility violation method on an ITypeCheckErrorReporter.
      */
     private interface IVisibilityViolationCaller
     {
@@ -1247,6 +1248,7 @@ public class TypeCheckerController implements ITypeCheckerController
         void callAppropriateMethod(ITSPHPAst identifier, ISymbolWithAccessModifier symbol, int accessFrom);
     }
 
+    //CHECKSTYLE:OFF:VisibilityModifier|ParameterNumber
     private class OperatorResolvingDto
     {
 
@@ -1271,9 +1273,10 @@ public class TypeCheckerController implements ITypeCheckerController
             wrongOperatorUsageReporter = theWrongOperatorUsageCaller;
         }
     }
+    //CHECKSTYLE:ON:VisibilityModifier|ParameterNumber
 
     /**
-     * A "delegate" which returns an IErroneuousTypeSymbol if it founds one otherwise null
+     * A "delegate" which returns an IErroneousTypeSymbol if it founds one otherwise null
      */
     private interface IErroneousChecker
     {
@@ -1281,7 +1284,7 @@ public class TypeCheckerController implements ITypeCheckerController
         IErroneousTypeSymbol getErroneousTypeSymbol();
     }
 
-    private class BinaryOperatorErroneousChecker implements IErroneousChecker
+    private static class BinaryOperatorErroneousChecker implements IErroneousChecker
     {
 
         private final ITypeSymbol leftType;
@@ -1304,7 +1307,7 @@ public class TypeCheckerController implements ITypeCheckerController
         }
     }
 
-    private class UnaryOperatorErroneousChecker implements IErroneousChecker
+    private static class UnaryOperatorErroneousChecker implements IErroneousChecker
     {
 
         private final ITypeSymbol leftType;
@@ -1329,7 +1332,7 @@ public class TypeCheckerController implements ITypeCheckerController
         List<ITSPHPAst> getActualParameters();
     }
 
-    private class BinaryActualParameterGetter implements IActualParameterGetter
+    private static class BinaryActualParameterGetter implements IActualParameterGetter
     {
 
         private final ITSPHPAst left;
@@ -1349,7 +1352,7 @@ public class TypeCheckerController implements ITypeCheckerController
         }
     }
 
-    private class UnaryActualParameterGetter implements IActualParameterGetter
+    private static class UnaryActualParameterGetter implements IActualParameterGetter
     {
 
         private final ITSPHPAst expression;

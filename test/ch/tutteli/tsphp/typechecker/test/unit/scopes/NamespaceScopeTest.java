@@ -5,7 +5,7 @@ import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
-import ch.tutteli.tsphp.typechecker.error.IErrorReporter;
+import ch.tutteli.tsphp.typechecker.error.ITypeCheckErrorReporter;
 import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.IScopeHelper;
@@ -398,7 +398,7 @@ public class NamespaceScopeTest
 
     @Test
     public void useDefinitionCheck_IsNotDoubleDefinedAndTypeDefinedEarlierInSameNamespace_ReturnFalse() {
-        IErrorReporter errorReporter = mock(IErrorReporter.class);
+        ITypeCheckErrorReporter errorReporter = mock(ITypeCheckErrorReporter.class);
         ErrorReporterRegistry.set(errorReporter);
 
         ITSPHPAst useDefinitionAst = mock(ITSPHPAst.class);
@@ -427,7 +427,7 @@ public class NamespaceScopeTest
 
     @Test
     public void useDefinitionCheck_IsNotDoubleDefinedAndTypeDefinedEarlierInOtherNamespace_ReturnFalse() {
-        IErrorReporter errorReporter = mock(IErrorReporter.class);
+        ITypeCheckErrorReporter errorReporter = mock(ITypeCheckErrorReporter.class);
         ErrorReporterRegistry.set(errorReporter);
 
         ITSPHPAst useDefinitionAst = mock(ITSPHPAst.class);
@@ -457,7 +457,7 @@ public class NamespaceScopeTest
 
     @Test
     public void useDefinitionCheck_IsNotDoubleDefinedAndTypeDefinedLaterInSameNamespace_ReturnFalse() {
-        IErrorReporter errorReporter = mock(IErrorReporter.class);
+        ITypeCheckErrorReporter errorReporter = mock(ITypeCheckErrorReporter.class);
         ErrorReporterRegistry.set(errorReporter);
 
         ITSPHPAst useDefinitionAst = mock(ITSPHPAst.class);

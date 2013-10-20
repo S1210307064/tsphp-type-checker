@@ -77,7 +77,7 @@ public class ScopeHelper implements IScopeHelper
     }
 
     /**
-     * Represents a delegate which calls the appropriate method on ErrorReporter.
+     * Represents a delegate which calls the appropriate method on TypeCheckErrorReporter.
      */
     private class StandardAlreadyDefinedMethodCaller implements IAlreadyDefinedMethodCaller
     {

@@ -5,9 +5,9 @@ import ch.tutteli.tsphp.common.IErrorLogger;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.exceptions.DefinitionException;
 import ch.tutteli.tsphp.common.exceptions.TSPHPException;
-import ch.tutteli.tsphp.typechecker.error.ErrorReporter;
+import ch.tutteli.tsphp.typechecker.error.TypeCheckErrorReporter;
 import ch.tutteli.tsphp.typechecker.error.IErrorMessageProvider;
-import ch.tutteli.tsphp.typechecker.error.IErrorReporter;
+import ch.tutteli.tsphp.typechecker.error.ITypeCheckErrorReporter;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
@@ -21,14 +21,14 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
-public class ErrorReporterTest
+public class TypeCheckErrorReporterTest
 {
     private final List<Exception> exceptions = new ArrayList<>();
-    private IErrorReporter errorReporter;
+    private ITypeCheckErrorReporter errorReporter;
 
     @Before
     public void setUp() {
-        errorReporter = new ErrorReporter(mock(IErrorMessageProvider.class));
+        errorReporter = new TypeCheckErrorReporter(mock(IErrorMessageProvider.class));
         errorReporter.registerErrorLogger(new IErrorLogger()
         {
             @Override

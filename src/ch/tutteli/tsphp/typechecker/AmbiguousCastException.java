@@ -6,7 +6,7 @@ import java.util.List;
 public class AmbiguousCastException extends TypeCheckerException
 {
 
-    private List<CastingDto> ambiguousCasts;
+    private final List<CastingDto> ambiguousCasts;
 
     public AmbiguousCastException(List<CastingDto> theAmbiguousCasts) {
 

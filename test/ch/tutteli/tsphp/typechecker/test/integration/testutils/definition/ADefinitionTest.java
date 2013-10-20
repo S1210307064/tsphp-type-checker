@@ -15,7 +15,7 @@ import ch.tutteli.tsphp.typechecker.OverloadResolver;
 import ch.tutteli.tsphp.typechecker.SymbolResolver;
 import ch.tutteli.tsphp.typechecker.TypeCheckerController;
 import ch.tutteli.tsphp.typechecker.TypeSystem;
-import ch.tutteli.tsphp.typechecker.antlr.ErrorReportingTSPHPDefinitionWalker;
+import ch.tutteli.tsphp.typechecker.antlrmod.ErrorReportingTSPHPDefinitionWalker;
 import ch.tutteli.tsphp.typechecker.scopes.IScopeHelper;
 import ch.tutteli.tsphp.typechecker.scopes.ScopeHelper;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.ATest;

@@ -9,7 +9,7 @@ import java.util.List;
 public class AmbiguousCallException extends TypeCheckerException
 {
 
-    private List<OverloadDto> ambiguousOverloads;
+    private final List<OverloadDto> ambiguousOverloads;
 
     AmbiguousCallException(List<OverloadDto> theAmbiguousMethodDtos) {
         ambiguousOverloads = theAmbiguousMethodDtos;

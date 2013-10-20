@@ -1,4 +1,4 @@
-package ch.tutteli.tsphp.typechecker.antlr;
+package ch.tutteli.tsphp.typechecker.antlrmod;
 
 import ch.tutteli.tsphp.common.IErrorLogger;
 import ch.tutteli.tsphp.common.IErrorReporter;
@@ -6,6 +6,8 @@ import ch.tutteli.tsphp.common.exceptions.TSPHPException;
 import ch.tutteli.tsphp.typechecker.ITypeCheckerController;
 import java.util.ArrayDeque;
 import java.util.Collection;
+
+import ch.tutteli.tsphp.typechecker.antlr.TSPHPReferenceWalker;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.TreeNodeStream;
 
