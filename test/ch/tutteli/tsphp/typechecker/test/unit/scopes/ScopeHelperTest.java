@@ -9,8 +9,10 @@ import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.error.ITypeCheckErrorReporter;
 import ch.tutteli.tsphp.typechecker.scopes.IAlreadyDefinedMethodCaller;
 import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
+import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.IScopeHelper;
 import ch.tutteli.tsphp.typechecker.scopes.ScopeHelper;
+import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -32,7 +34,7 @@ public class ScopeHelperTest
     public static final String SYMBOL_NAME = "symbolName";
 
     @Test
-    public void define_OneSymbol_AddtoScopeSymbolsAndSetDefinitionScope() {
+    public void define_OneSymbol_AddToScopeSymbolsAndSetDefinitionScope() {
         Map<String, List<ISymbol>> symbols = new HashMap<>();
         IScope scope = createScope(symbols);
         ISymbol symbol = createSymbol(SYMBOL_NAME);
@@ -294,6 +296,55 @@ public class ScopeHelperTest
         ISymbol result = scopeHelper.resolve(scope, ast);
 
         assertThat(result, is(symbol));
+    }
+
+    @Test
+    public void getEnclosingNamespaceScope_InNamespace_ReturnNamespace(){
+        INamespaceScope namespaceScope = mock(INamespaceScope.class);
+        ITSPHPAst ast = createAst(SYMBOL_NAME);
+        when(ast.getScope()).thenReturn(namespaceScope);
+
+        IScopeHelper scopeHelper = new ScopeHelper();
+        IScope result = scopeHelper.getEnclosingNamespaceScope(ast);
+
+        assertThat(result, is((IScope)namespaceScope));
+    }
+
+    @Test
+    public void getEnclosingNamespaceScope_InMethod_ReturnNamespace(){
+        INamespaceScope namespaceScope = mock(INamespaceScope.class);
+        ITSPHPAst ast = createAst(SYMBOL_NAME);
+        IMethodSymbol methodSymbol = mock(IMethodSymbol.class);
+        when(methodSymbol.getEnclosingScope()).thenReturn(namespaceScope);
+        when(ast.getScope()).thenReturn(methodSymbol);
+
+        IScopeHelper scopeHelper = new ScopeHelper();
+        IScope result = scopeHelper.getEnclosingNamespaceScope(ast);
+
+        assertThat(result, is((IScope)namespaceScope));
+    }
+
+    @Test
+    public void getEnclosingNamespaceScope_AstHasNoScope_ReturnNull(){
+        ITSPHPAst ast = createAst(SYMBOL_NAME);
+
+        IScopeHelper scopeHelper = new ScopeHelper();
+        IScope result = scopeHelper.getEnclosingNamespaceScope(ast);
+
+        assertNull(result);
+    }
+
+    @Test
+    public void getEnclosingNamespaceScope_InMethodHasNoScope_ReturnNull(){
+        ITSPHPAst ast = createAst(SYMBOL_NAME);
+        IMethodSymbol methodSymbol = mock(IMethodSymbol.class);
+        when(methodSymbol.getEnclosingScope()).thenReturn(null);
+        when(ast.getScope()).thenReturn(methodSymbol);
+
+        IScopeHelper scopeHelper = new ScopeHelper();
+        IScope result = scopeHelper.getEnclosingNamespaceScope(ast);
+
+        assertNull(result);
     }
 
     private Map<String, List<ISymbol>> CreateSymbolsForStandardName(ISymbol... symbols) {

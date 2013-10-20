@@ -1,5 +1,6 @@
 package ch.tutteli.tsphp.typechecker.antlrmod;
 
+import ch.tutteli.tsphp.common.ErrorReporterHelper;
 import ch.tutteli.tsphp.common.IErrorLogger;
 import ch.tutteli.tsphp.common.IErrorReporter;
 import ch.tutteli.tsphp.typechecker.ITypeCheckerController;

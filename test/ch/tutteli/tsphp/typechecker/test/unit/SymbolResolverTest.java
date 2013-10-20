@@ -101,7 +101,6 @@ public class SymbolResolverTest
         verify(globalNamespaceScope).resolve(ast);
     }
 
-
     @Test
     public void resolveGlobalIdentifier_AbsoluteIdentifierGlobalNamespaceDoesNotExists_ReturnNull(){
         ITSPHPAst ast = createAst("\\nonExistingNamespace\\symbol");
@@ -127,7 +126,7 @@ public class SymbolResolverTest
     }
 
     @Test
-    public void resolveGlobalIdentifier_LocalNoEnclosingNamespace_DelegateToNamespaceScope(){
+    public void resolveGlobalIdentifier_Relative_(){
         ITSPHPAst ast = createAst("symbol");
         INamespaceScope namespaceScope = mock(INamespaceScope.class);
         when(scopeHelper.getEnclosingNamespaceScope(ast)).thenReturn(namespaceScope);
