@@ -18,6 +18,7 @@ import ch.tutteli.tsphp.typechecker.symbols.IArrayTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolWithAccessModifier;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -121,8 +122,12 @@ public class TypeCheckErrorReporter implements ITypeCheckErrorReporter
 
         String errorMessage = errorMessageProvider.getDefinitionErrorMessage(key,
                 new DefinitionErrorDto(
-                        existingDefinition.getText(), existingDefinition.getLine(), existingDefinition.getCharPositionInLine(),
-                        newDefinition.getText(), newDefinition.getLine(), newDefinition.getCharPositionInLine()));
+                        existingDefinition.getText(),
+                        existingDefinition.getLine(),
+                        existingDefinition.getCharPositionInLine(),
+                        newDefinition.getText(),
+                        newDefinition.getLine(),
+                        newDefinition.getCharPositionInLine()));
 
         DefinitionException exception = new DefinitionException(errorMessage, existingDefinition, newDefinition);
         reportError(exception);
@@ -207,9 +212,9 @@ public class TypeCheckErrorReporter implements ITypeCheckErrorReporter
         return exception;
     }
 
-    private boolean noAmbiguousCasts(List<CastingDto> leftAmbiguities, List<CastingDto> rightAmbiguties) {
+    private boolean noAmbiguousCasts(List<CastingDto> leftAmbiguities, List<CastingDto> rightAmbiguities) {
         return leftAmbiguities == null || leftAmbiguities.isEmpty()
-                && rightAmbiguties == null || rightAmbiguties.isEmpty();
+                && rightAmbiguities == null || rightAmbiguities.isEmpty();
     }
 
     @Override
@@ -253,7 +258,7 @@ public class TypeCheckErrorReporter implements ITypeCheckErrorReporter
 
         String errorMessage = errorMessageProvider.getOperatorAmbiguousCastingErrorMessage(key,
                 new AmbiguousCastsErrorDto(operator.getText(), operator.getLine(), operator.getCharPositionInLine(),
-                leftToRightReturnTypes, rightToLeftReturnTypes, leftReturnTypes, rightReturnTypes));
+                        leftToRightReturnTypes, rightToLeftReturnTypes, leftReturnTypes, rightReturnTypes));
         ReferenceException exception = new ReferenceException(errorMessage, operator);
         reportError(exception);
         return exception;
@@ -376,7 +381,7 @@ public class TypeCheckErrorReporter implements ITypeCheckErrorReporter
         }
         String errorMessage = errorMessageProvider.getWrongArgumentTypeErrorMessage(key,
                 new WrongArgumentTypeErrorDto(call.getText(), call.getLine(), call.getCharPositionInLine(),
-                actualParameterTypes, existingOverloads));
+                        actualParameterTypes, existingOverloads));
         ReferenceException exception = new ReferenceException(errorMessage, call);
         reportError(exception);
         return exception;
@@ -399,8 +404,8 @@ public class TypeCheckErrorReporter implements ITypeCheckErrorReporter
     public UnsupportedOperationException unsupportedOperator(ITSPHPAst operator) {
         UnsupportedOperationException exception = new UnsupportedOperationException(
                 "Unsupported operator exception occurred. Please report bug to http://tsphp.tutteli.ch\nException "
-                + "was caused by operator \"" + operator.getText()
-                + " on line " + operator.getLine() + "|" + operator.getCharPositionInLine(), operator);
+                        + "was caused by operator \"" + operator.getText()
+                        + " on line " + operator.getLine() + "|" + operator.getCharPositionInLine(), operator);
         reportError(exception);
         return exception;
     }
@@ -429,7 +434,7 @@ public class TypeCheckErrorReporter implements ITypeCheckErrorReporter
             ITSPHPAst right) {
         String errorMessage = errorMessageProvider.getTypeCheckErrorMessage(key,
                 new TypeCheckErrorDto(statement.getText(), statement.getLine(), statement.getCharPositionInLine(),
-                getAbsoluteTypeName(left.getEvalType()), getAbsoluteTypeName(right.getEvalType())));
+                        getAbsoluteTypeName(left.getEvalType()), getAbsoluteTypeName(right.getEvalType())));
         ReferenceException exception = new ReferenceException(errorMessage, statement);
         reportError(exception);
         return exception;
@@ -544,7 +549,7 @@ public class TypeCheckErrorReporter implements ITypeCheckErrorReporter
 
         String errorMessage = errorMessageProvider.getTypeCheckErrorMessage(key,
                 new TypeCheckErrorDto(statement.getText(), statement.getLine(), statement.getCharPositionInLine(),
-                getAbsoluteTypeName(typeSymbol), getAbsoluteTypeName(expression.getEvalType())));
+                        getAbsoluteTypeName(typeSymbol), getAbsoluteTypeName(expression.getEvalType())));
         ReferenceException exception = new ReferenceException(errorMessage, statement);
         reportError(exception);
         return exception;
@@ -574,7 +579,7 @@ public class TypeCheckErrorReporter implements ITypeCheckErrorReporter
             ITypeSymbol typeSymbol) {
         String errorMessage = errorMessageProvider.getTypeCheckErrorMessage(key,
                 new TypeCheckErrorDto(operator.getText(), operator.getLine(), operator.getCharPositionInLine(),
-                "class-/interface-type", getAbsoluteTypeName(typeSymbol)));
+                        "class-/interface-type", getAbsoluteTypeName(typeSymbol)));
         ReferenceException exception = new ReferenceException(errorMessage, operator);
         reportError(exception);
         return exception;
@@ -624,7 +629,7 @@ public class TypeCheckErrorReporter implements ITypeCheckErrorReporter
 
         String errorMessage = errorMessageProvider.getVisibilityErrorMessage(key,
                 new VisibilityErrorDto(symbol.getName(), identifier.getLine(),
-                identifier.getCharPositionInLine(), visibility, wasAccessedFrom));
+                        identifier.getCharPositionInLine(), visibility, wasAccessedFrom));
         ReferenceException exception = new ReferenceException(errorMessage, identifier);
         reportError(exception);
         return exception;

@@ -23,7 +23,11 @@ public class NamespaceScope implements INamespaceScope
     private final String scopeName;
     private final IScope globalNamespaceScope;
 
-    public NamespaceScope(IScopeHelper theScopeHelper, String theScopeName, IGlobalNamespaceScope theGlobalNamespaceScope) {
+    public NamespaceScope(
+            IScopeHelper theScopeHelper,
+            String theScopeName,
+            IGlobalNamespaceScope theGlobalNamespaceScope) {
+
         scopeHelper = theScopeHelper;
         scopeName = theScopeName;
         globalNamespaceScope = theGlobalNamespaceScope;
@@ -50,13 +54,13 @@ public class NamespaceScope implements INamespaceScope
 
     @Override
     public boolean doubleDefinitionCheck(ISymbol symbol) {
-        //check in global namespace scope, because they have been defined there
+        //check in global namespace scope because they have been defined there
         return globalNamespaceScope.doubleDefinitionCheck(symbol);
     }
 
     @Override
     public boolean doubleDefinitionCheckCaseInsensitive(ISymbol symbol) {
-        //check in global namespace scope, because they have been defined there
+        //check in global namespace scope because they have been defined there
         return ((ICaseInsensitiveScope) globalNamespaceScope).doubleDefinitionCheckCaseInsensitive(symbol);
     }
 
@@ -116,8 +120,8 @@ public class NamespaceScope implements INamespaceScope
     }
 
     @SuppressWarnings("unchecked")
-    private <T> T unsafeCast(Object o){
-        return (T) o;
+    private <TCastTo> TCastTo unsafeCast(Object o) {
+        return (TCastTo) o;
     }
 
     @Override
@@ -127,6 +131,8 @@ public class NamespaceScope implements INamespaceScope
 
     @Override
     public ITSPHPAst getCaseInsensitiveFirstUseDefinitionAst(String alias) {
-        return usesCaseInsensitive.containsKey(alias) ? usesCaseInsensitive.get(alias).get(0).getDefinitionAst() : null;
+        return usesCaseInsensitive.containsKey(alias)
+                ? usesCaseInsensitive.get(alias).get(0).getDefinitionAst()
+                : null;
     }
 }

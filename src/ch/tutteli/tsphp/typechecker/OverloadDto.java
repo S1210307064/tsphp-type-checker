@@ -1,9 +1,11 @@
 package ch.tutteli.tsphp.typechecker;
 
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
+
+import java.io.Serializable;
 import java.util.List;
 
-public class OverloadDto
+public class OverloadDto implements Serializable
 {
 
     public IMethodSymbol methodSymbol;

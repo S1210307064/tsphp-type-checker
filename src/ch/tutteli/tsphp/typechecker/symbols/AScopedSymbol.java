@@ -6,12 +6,13 @@ import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.LowerCaseStringMap;
 import ch.tutteli.tsphp.typechecker.scopes.IScopeHelper;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * Adopted from the book "Language Implementation Patterns" by Terence Parr
+ * Adopted from the book "Language Implementation Patterns" by Terence Parr.
  */
 public abstract class AScopedSymbol extends ASymbolWithModifier implements IScope
 {
@@ -20,7 +21,7 @@ public abstract class AScopedSymbol extends ASymbolWithModifier implements IScop
     protected final Map<String, List<ISymbol>> members = new LowerCaseStringMap<>();
 
     public AScopedSymbol(
-              IScopeHelper theScopeHelper
+            IScopeHelper theScopeHelper
             , ITSPHPAst definitionAst
             , Set<Integer> modifiers
             , String name

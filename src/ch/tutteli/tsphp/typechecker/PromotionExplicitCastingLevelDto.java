@@ -1,6 +1,8 @@
 package ch.tutteli.tsphp.typechecker;
 
-public class PromotionExplicitCastingLevelDto
+import java.io.Serializable;
+
+public class PromotionExplicitCastingLevelDto implements Serializable
 {
 
     public int promotionLevel;

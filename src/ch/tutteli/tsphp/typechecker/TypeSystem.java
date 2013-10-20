@@ -3,7 +3,6 @@ package ch.tutteli.tsphp.typechecker;
 import ch.tutteli.tsphp.common.IAstHelper;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
-import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.*;
 import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.symbols.IArrayTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
@@ -15,12 +14,78 @@ import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
 import ch.tutteli.tsphp.typechecker.symbols.ITypeSymbolWithPHPBuiltInCasting;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IVoidTypeSymbol;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.Assign;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.At;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.BitwiseAnd;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.BitwiseAndAssign;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.BitwiseNot;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.BitwiseOr;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.BitwiseOrAssign;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.BitwiseXor;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.BitwiseXorAssign;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.Bool;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.CASTING;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.CASTING_ASSIGN;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.CLASS_MODIFIER;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.Divide;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.DivideAssign;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.Dot;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.DotAssign;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.Equal;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.Float;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.GreaterEqualThan;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.GreaterThan;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.Identical;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.Identifier;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.Int;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.LessEqualThan;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.LessThan;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.LogicAnd;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.LogicAndWeak;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.LogicNot;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.LogicOr;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.LogicOrWeak;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.LogicXorWeak;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.METHOD_MODIFIER;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.Minus;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.MinusAssign;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.Modulo;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.ModuloAssign;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.Multiply;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.MultiplyAssign;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.NotEqual;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.NotIdentical;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.Null;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.POST_DECREMENT;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.POST_INCREMENT;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.PRE_DECREMENT;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.PRE_INCREMENT;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.Plus;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.PlusAssign;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.Public;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.ShiftLeft;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.ShiftLeftAssign;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.ShiftRight;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.ShiftRightAssign;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.String;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.TYPE_MODIFIER;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.TYPE_NAME;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.TypeArray;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.TypeBool;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.TypeFloat;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.TypeInt;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.TypeString;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.UNARY_MINUS;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.UNARY_PLUS;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.VariableId;
 
 public class TypeSystem implements ITypeSystem
 {
@@ -244,26 +309,26 @@ public class TypeSystem implements ITypeSystem
 
     private void initMaps() {
         int[] unaryOperatorTypes = new int[]{
-            PRE_INCREMENT, PRE_DECREMENT,
-            At, BitwiseNot, LogicNot, UNARY_MINUS, UNARY_PLUS,
-            POST_INCREMENT, POST_DECREMENT
+                PRE_INCREMENT, PRE_DECREMENT,
+                At, BitwiseNot, LogicNot, UNARY_MINUS, UNARY_PLUS,
+                POST_INCREMENT, POST_DECREMENT
         };
         for (int unaryOperatorType : unaryOperatorTypes) {
             unaryOperators.put(unaryOperatorType, new ArrayList<IMethodSymbol>());
         }
 
         int[] binaryOperatorTypes = new int[]{
-            LogicOrWeak, LogicXorWeak, LogicAndWeak,
-            Assign, PlusAssign, MinusAssign, MultiplyAssign, DivideAssign,
-            BitwiseAndAssign, BitwiseOrAssign, BitwiseXorAssign,
-            ModuloAssign, DotAssign, ShiftLeftAssign, ShiftRightAssign, CASTING_ASSIGN,
-            LogicOr, LogicAnd,
-            BitwiseOr, BitwiseAnd, BitwiseXor,
-            Equal, Identical, NotEqual, NotIdentical,
-            LessThan, LessEqualThan, GreaterThan, GreaterEqualThan,
-            ShiftLeft, ShiftRight,
-            Plus, Minus, Multiply, Divide, Modulo, Dot,
-            CASTING
+                LogicOrWeak, LogicXorWeak, LogicAndWeak,
+                Assign, PlusAssign, MinusAssign, MultiplyAssign, DivideAssign,
+                BitwiseAndAssign, BitwiseOrAssign, BitwiseXorAssign,
+                ModuloAssign, DotAssign, ShiftLeftAssign, ShiftRightAssign, CASTING_ASSIGN,
+                LogicOr, LogicAnd,
+                BitwiseOr, BitwiseAnd, BitwiseXor,
+                Equal, Identical, NotEqual, NotIdentical,
+                LessThan, LessEqualThan, GreaterThan, GreaterEqualThan,
+                ShiftLeft, ShiftRight,
+                Plus, Minus, Multiply, Divide, Modulo, Dot,
+                CASTING
         };
         for (int binaryOperatorType : binaryOperatorTypes) {
             binaryOperators.put(binaryOperatorType, new ArrayList<IMethodSymbol>());
@@ -318,11 +383,11 @@ public class TypeSystem implements ITypeSystem
 
     private void defineLogicOperators() {
         Object[][] operators = new Object[][]{
-            {"or", LogicOrWeak},
-            {"xor", LogicXorWeak},
-            {"and", LogicAndWeak},
-            {"&&", LogicAnd},
-            {"||", LogicOr}
+                {"or", LogicOrWeak},
+                {"xor", LogicXorWeak},
+                {"and", LogicAndWeak},
+                {"&&", LogicAnd},
+                {"||", LogicOr}
         };
         for (Object[] operator : operators) {
             IMethodSymbol methodSymbol = createInBuiltMethodSymbol((String) operator[0]);
@@ -340,11 +405,11 @@ public class TypeSystem implements ITypeSystem
 
     private void defineBitLevelOperators() {
         Object[][] operators = new Object[][]{
-            {"|", BitwiseOr},
-            {"^", BitwiseXor},
-            {"&", BitwiseAnd},
-            {"<<", ShiftLeft},
-            {">>", ShiftRight}
+                {"|", BitwiseOr},
+                {"^", BitwiseXor},
+                {"&", BitwiseAnd},
+                {"<<", ShiftLeft},
+                {">>", ShiftRight}
         };
         for (Object[] operator : operators) {
             addIntOperator(operator);
@@ -376,10 +441,10 @@ public class TypeSystem implements ITypeSystem
 
     private void defineRelationalOperators() {
         Object[][] operators = new Object[][]{
-            {"<", LessThan},
-            {"<=", LessEqualThan},
-            {">", GreaterThan},
-            {">=", GreaterEqualThan}
+                {"<", LessThan},
+                {"<=", LessEqualThan},
+                {">", GreaterThan},
+                {">=", GreaterEqualThan}
         };
         for (Object[] operator : operators) {
             IMethodSymbol methodSymbol = createInBuiltMethodSymbol((String) operator[0]);
@@ -392,11 +457,11 @@ public class TypeSystem implements ITypeSystem
 
     private void defineArithmeticOperators() {
         Object[][] operators = new Object[][]{
-            {"+", Plus},
-            {"-", Minus},
-            {"*", Multiply},
-            {"/", Divide},
-            {"%", Modulo}
+                {"+", Plus},
+                {"-", Minus},
+                {"*", Multiply},
+                {"/", Divide},
+                {"%", Modulo}
         };
 
         for (Object[] operator : operators) {
@@ -416,12 +481,12 @@ public class TypeSystem implements ITypeSystem
         }
 
         operators = new Object[][]{
-            {"++", PRE_INCREMENT},
-            {"++", POST_INCREMENT},
-            {"--", PRE_DECREMENT},
-            {"--", POST_DECREMENT},
-            {"-", UNARY_MINUS},
-            {"+", UNARY_PLUS}
+                {"++", PRE_INCREMENT},
+                {"++", POST_INCREMENT},
+                {"--", PRE_DECREMENT},
+                {"--", POST_DECREMENT},
+                {"-", UNARY_MINUS},
+                {"+", UNARY_PLUS}
         };
         for (Object[] operator : operators) {
             IMethodSymbol methodSymbol = createInBuiltMethodSymbol((String) operator[0]);
@@ -465,24 +530,24 @@ public class TypeSystem implements ITypeSystem
 
     private void defineExplicitCastings() {
         ITypeSymbol[][] castings = new ITypeSymbol[][]{
-            //everything is castable to bool and array
-            {objectTypeSymbol, boolNullableTypeSymbol},
-            {objectTypeSymbol, boolTypeSymbol},
-            {objectTypeSymbol, arrayTypeSymbol},
-            //
-            {boolNullableTypeSymbol, intTypeSymbol},
-            {boolNullableTypeSymbol, floatTypeSymbol},
-            {boolNullableTypeSymbol, stringTypeSymbol},
-            {intNullableTypeSymbol, floatTypeSymbol},
-            {intNullableTypeSymbol, stringTypeSymbol},
-            {floatNullableTypeSymbol, stringTypeSymbol},
-            //
-            {intTypeSymbol, boolNullableTypeSymbol},
-            {floatTypeSymbol, boolNullableTypeSymbol},
-            {floatTypeSymbol, intNullableTypeSymbol},
-            {stringTypeSymbol, boolNullableTypeSymbol},
-            {stringTypeSymbol, intNullableTypeSymbol},
-            {stringTypeSymbol, floatNullableTypeSymbol}, //
+                //everything is castable to bool and array
+                {objectTypeSymbol, boolNullableTypeSymbol},
+                {objectTypeSymbol, boolTypeSymbol},
+                {objectTypeSymbol, arrayTypeSymbol},
+                //
+                {boolNullableTypeSymbol, intTypeSymbol},
+                {boolNullableTypeSymbol, floatTypeSymbol},
+                {boolNullableTypeSymbol, stringTypeSymbol},
+                {intNullableTypeSymbol, floatTypeSymbol},
+                {intNullableTypeSymbol, stringTypeSymbol},
+                {floatNullableTypeSymbol, stringTypeSymbol},
+                //
+                {intTypeSymbol, boolNullableTypeSymbol},
+                {floatTypeSymbol, boolNullableTypeSymbol},
+                {floatTypeSymbol, intNullableTypeSymbol},
+                {stringTypeSymbol, boolNullableTypeSymbol},
+                {stringTypeSymbol, intNullableTypeSymbol},
+                {stringTypeSymbol, floatNullableTypeSymbol}, //
         };
 
         for (ITypeSymbol[] fromTo : castings) {

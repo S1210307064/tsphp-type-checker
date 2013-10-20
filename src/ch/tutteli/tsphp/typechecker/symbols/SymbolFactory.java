@@ -46,15 +46,25 @@ public class SymbolFactory implements ISymbolFactory
     @Override
     public IScalarTypeSymbol createScalarTypeSymbol(String name, int tokenTypeForCasting, ITypeSymbol parentTypeSymbol,
             boolean isNullable, int defaultValueTokenType, String defaultValue) {
-        return new ScalarTypeSymbol(name, parentTypeSymbol, tokenTypeForCasting, isNullable,
-                defaultValueTokenType, defaultValue);
+        return new ScalarTypeSymbol(
+                name,
+                parentTypeSymbol,
+                tokenTypeForCasting,
+                isNullable,
+                defaultValueTokenType,
+                defaultValue);
     }
 
     @Override
-    public IScalarTypeSymbol createScalarTypeSymbol(String name, int tokenTypeForCasting, Set<ITypeSymbol> parentTypeSymbol,
-            boolean isNullable, int defaultValueTokenType, String defaultValue) {
-        return new ScalarTypeSymbol(name, parentTypeSymbol, tokenTypeForCasting, isNullable,
-                defaultValueTokenType, defaultValue);
+    public IScalarTypeSymbol createScalarTypeSymbol(String name, int tokenTypeForCasting,
+            Set<ITypeSymbol> parentTypeSymbol, boolean isNullable, int defaultValueTokenType, String defaultValue) {
+        return new ScalarTypeSymbol(
+                name,
+                parentTypeSymbol,
+                tokenTypeForCasting,
+                isNullable,
+                defaultValueTokenType,
+                defaultValue);
     }
 
     @Override

@@ -3,10 +3,11 @@ package ch.tutteli.tsphp.typechecker.symbols;
 import ch.tutteli.tsphp.common.AstHelperRegistry;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
+
 import java.util.Set;
 
 /**
- * Adopted from the book "Language Implementation Patterns" by Terence Parr
+ * Adopted from the book "Language Implementation Patterns" by Terence Parr.
  */
 public class ScalarTypeSymbol extends ATypeSymbol implements IScalarTypeSymbol
 {
@@ -16,16 +17,28 @@ public class ScalarTypeSymbol extends ATypeSymbol implements IScalarTypeSymbol
     private boolean isNullable;
     private String defaultValue;
 
-    public ScalarTypeSymbol(String name, Set<ITypeSymbol> parentTypeSymbol, int tokenTypeForCasting, boolean isItNullable,
-            int defaultValueTokenType, String defaultValue) {
+    public ScalarTypeSymbol(
+            String name,
+            Set<ITypeSymbol> parentTypeSymbol,
+            int theTokenTypeForCasting,
+            boolean isItNullable,
+            int theDefaultValueTokenType,
+            String theDefaultValue) {
+
         super(null, name, parentTypeSymbol);
-        init(tokenTypeForCasting, isItNullable, defaultValueTokenType, defaultValue);
+        init(theTokenTypeForCasting, isItNullable, theDefaultValueTokenType, theDefaultValue);
     }
 
-    public ScalarTypeSymbol(String name, ITypeSymbol parentTypeSymbol, int tokenTypeForCasting, boolean isItNullable,
-            int defaultValueTokenType, String defaultValue) {
+    public ScalarTypeSymbol(
+            String name,
+            ITypeSymbol parentTypeSymbol,
+            int theTokenTypeForCasting,
+            boolean isItNullable,
+            int theDefaultValueTokenType,
+            String theDefaultValue) {
+
         super(null, name, parentTypeSymbol);
-        init(tokenTypeForCasting, isItNullable, defaultValueTokenType, defaultValue);
+        init(theTokenTypeForCasting, isItNullable, theDefaultValueTokenType, theDefaultValue);
     }
 
     private void init(int theTokenTypeForCasting, boolean isItNullable,

@@ -371,7 +371,8 @@ public class TypeCheckerController implements ITypeCheckerController
     }
 
     @Override
-    public ITypeSymbol resolveBinaryOperatorEvalType(final ITSPHPAst operator, final ITSPHPAst left, final ITSPHPAst right) {
+    public ITypeSymbol resolveBinaryOperatorEvalType(final ITSPHPAst operator, final ITSPHPAst left,
+            final ITSPHPAst right) {
 
         IAmbiguousCallReporter caller = new IAmbiguousCallReporter()
         {
@@ -538,7 +539,8 @@ public class TypeCheckerController implements ITypeCheckerController
                 keyTypeSymbol = arrayType.getKeyTypeSymbol();
                 returnTypeArrayAccess = arrayType.getValueTypeSymbol();
             } else {
-                ReferenceException exception = ErrorReporterRegistry.get().wrongTypeArrayAccess(expression, arrayTypeSymbol);
+                ReferenceException exception = ErrorReporterRegistry.get().wrongTypeArrayAccess(expression,
+                        arrayTypeSymbol);
                 returnTypeArrayAccess = symbolFactory.createErroneousTypeSymbol(statement, exception);
             }
         } else {

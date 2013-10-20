@@ -2,9 +2,8 @@ package ch.tutteli.tsphp.typechecker.symbols.erroneous;
 
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
-import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
-import ch.tutteli.tsphp.typechecker.symbols.ModifierHelper;
+
 import java.util.List;
 
 public class ErroneousMethodSymbol extends AErroneousScopedSymbol implements IErroneousMethodSymbol

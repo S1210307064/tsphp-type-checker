@@ -13,15 +13,15 @@ public class ErrorMessageProvider extends AErrorMessageProvider
                 + "line %line%|%pos% %id%");
         definitionErrors.put("definedInOuterScope",
                 "Line %lineN%|%posN% - %idN% was either already defined in outer scope or in another conditional scope."
-                + " First definition was on line %line%|%pos% %id%\n"
-                + "Please be aware, that conditional scopes are not real scopes, they do not actually create a new "
-                + "scope");
+                        + " First definition was on line %line%|%pos% %id%\n"
+                        + "Please be aware, that conditional scopes are not real scopes, they do not actually create a new "
+                        + "scope");
         definitionErrors.put("aliasForwardReference",
                 "Line %lineN%|%posN% - alias %idN% is used before its use declaration. Corresponding use declaration is"
-                + " on line %line%|%pos%");
+                        + " on line %line%|%pos%");
         definitionErrors.put("forwardReference",
                 "Line %lineN%|%posN% - %idN% is used before its declaration. Corresponding declaration is "
-                + "on line %line%|%pos%");
+                        + "on line %line%|%pos%");
         definitionErrors.put("methodNotDefined", "Line %lineN%|%posN% - method %idN% is not defined in %id%");
         definitionErrors.put("memberNotDefined", "Line %lineN%|%posN% - class member %idN% is not defined in %id%");
 
@@ -151,8 +151,6 @@ public class ErrorMessageProvider extends AErrorMessageProvider
 
         typeCheckErrors.put("wrongTypeClassMemberAccess", "Line %line%|%pos% - %id% evaluates to "
                 + "a wrong type. Can only retrieve class members from class-types but %tFound% found.");
-
-
     }
 
     @Override
@@ -190,7 +188,7 @@ public class ErrorMessageProvider extends AErrorMessageProvider
                 + "constant %id%.\n"
                 + "%id%'s visibility is %vis% and it would need at least %access% access in order that you can "
                 + "access it from this location.");
-         visibilityViolationErrors.put("methodCall", "Line %line%|%pos% - cannot call the method %id%.\n"
+        visibilityViolationErrors.put("methodCall", "Line %line%|%pos% - cannot call the method %id%.\n"
                 + "%id%'s visibility is %vis% and it would need at least %access% access in order that you can "
                 + "call it from this location.");
     }
@@ -251,7 +249,7 @@ public class ErrorMessageProvider extends AErrorMessageProvider
                 + "Please report bug to http://tsphp.tutteli.ch/jira\n"
                 + "However, the following information was gathered.\n"
                 + "Line " + dto.line + "|" + dto.position + " - cannot access " + dto.identifier + ".\n"
-                + dto.identifier + "'s visibility is " + dto.visibility + " and it would need at least " + dto.accessedFrom + " "
-                + "access in order that you can access it from this location.";
+                + dto.identifier + "'s visibility is " + dto.visibility + " and it would need at least "
+                + dto.accessedFrom + " access in order that you can access it from this location.";
     }
 }

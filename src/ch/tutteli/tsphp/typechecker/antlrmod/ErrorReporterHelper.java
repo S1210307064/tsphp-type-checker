@@ -6,14 +6,14 @@ import org.antlr.runtime.RecognitionException;
 
 import java.util.Collection;
 
-public class ErrorReporterHelper
+public final class ErrorReporterHelper
 {
     private ErrorReporterHelper() {
     }
 
-    public static void reportError(Collection<IErrorLogger> errorLoggers,
-            RecognitionException exception, String phase) {
-        String tokenText = exception.token != null
+    public static void reportError(final Collection<IErrorLogger> errorLoggers,
+            final RecognitionException exception, final String phase) {
+        final String tokenText = exception.token != null
                 ? "Unexpected token: " + exception.token.getText()
                 : "Unknown token";
         for (IErrorLogger logger : errorLoggers) {
