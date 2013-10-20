@@ -5,6 +5,7 @@ import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.INullTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -322,8 +323,7 @@ public class OverloadResolver implements IOverloadResolver
     }
 
     @Override
-    public OverloadDto getMostSpecificApplicableOverload(List<OverloadDto> methods)
-            throws AmbiguousCallException {
+    public OverloadDto getMostSpecificApplicableOverload(List<OverloadDto> methods) throws AmbiguousCallException {
 
         List<OverloadDto> ambiguousMethodDtos = new ArrayList<>();
 

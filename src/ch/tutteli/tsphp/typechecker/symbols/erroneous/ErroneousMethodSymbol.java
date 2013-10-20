@@ -9,18 +9,20 @@ import java.util.List;
 public class ErroneousMethodSymbol extends AErroneousScopedSymbol implements IErroneousMethodSymbol
 {
 
+    public static final String ERROR_MESSAGE = "ErroneousMethodSymbol is not a real method.";
+
     public ErroneousMethodSymbol(ITSPHPAst ast, TypeCheckerException exception) {
         super(ast, exception);
     }
 
     @Override
     public void addParameter(IVariableSymbol variableSymbol) {
-        throw new UnsupportedOperationException("ErroneousMethodSymbol is not a real method.");
+        throw new UnsupportedOperationException(ERROR_MESSAGE);
     }
 
     @Override
     public List<IVariableSymbol> getParameters() {
-        throw new UnsupportedOperationException("ErroneousMethodSymbol is not a real method.");
+        throw new UnsupportedOperationException(ERROR_MESSAGE);
     }
 
     @Override

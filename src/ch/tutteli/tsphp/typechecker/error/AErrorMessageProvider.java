@@ -157,9 +157,9 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
     }
 
     private String replaceStandardPlaceholders(ReferenceErrorDto dto, String message) {
-        message = message.replace("%id%", dto.identifier);
-        message = message.replace("%line%", Integer.toString(dto.line));
-        return message.replace("%pos%", Integer.toString(dto.position));
+        String msg = message.replace("%id%", dto.identifier);
+        msg = msg.replace("%line%", Integer.toString(dto.line));
+        return msg.replace("%pos%", Integer.toString(dto.position));
     }
 
     protected String getOverloadSignatures(List<List<String>> ambiguousFormalParameterTypes) {

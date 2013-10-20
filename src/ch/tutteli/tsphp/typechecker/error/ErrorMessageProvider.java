@@ -14,8 +14,8 @@ public class ErrorMessageProvider extends AErrorMessageProvider
         definitionErrors.put("definedInOuterScope",
                 "Line %lineN%|%posN% - %idN% was either already defined in outer scope or in another conditional scope."
                         + " First definition was on line %line%|%pos% %id%\n"
-                        + "Please be aware, that conditional scopes are not real scopes, they do not actually create a new "
-                        + "scope");
+                        + "Please be aware, that conditional scopes are not real scopes, they do not actually create "
+                        + "a new scope");
         definitionErrors.put("aliasForwardReference",
                 "Line %lineN%|%posN% - alias %idN% is used before its use declaration. Corresponding use declaration is"
                         + " on line %line%|%pos%");

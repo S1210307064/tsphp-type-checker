@@ -633,14 +633,7 @@ public class TypeCheckerController implements ITypeCheckerController
     public IMethodSymbol resolveFunctionCall(ITSPHPAst identifier, ITSPHPAst arguments) {
 
         IMethodSymbol methodSymbol = (IMethodSymbol) symbolResolver.resolveGlobalIdentifierWithFallback(identifier);
-        IWrongCallReporter wrongCallReporter = new IWrongCallReporter()
-        {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
-            @Override
-            public void report(ITSPHPAst identifier, List<ITSPHPAst> actualParameters, List<IMethodSymbol> methods) {
-                ErrorReporterRegistry.get().wrongFunctionCall(identifier, actualParameters, methods);
-            }
-        };
+        IWrongCallReporter wrongCallReporter = new WrongFunctionCallReporter();
         if (methodSymbol != null) {
             resolveCallOverload(identifier, arguments, methodSymbol, wrongCallReporter);
         } else {
@@ -688,14 +681,7 @@ public class TypeCheckerController implements ITypeCheckerController
             IPolymorphicTypeSymbol polymorphicTypeSymbol = (IPolymorphicTypeSymbol) typeSymbol;
             methodSymbol = (IMethodSymbol) polymorphicTypeSymbol.resolveWithFallbackToParent(identifier);
 
-            IWrongCallReporter wrongCallReporter = new IWrongCallReporter()
-            {
-                @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
-                @Override
-                public void report(ITSPHPAst identifier, List<ITSPHPAst> actualParameters, List<IMethodSymbol> methods) {
-                    ErrorReporterRegistry.get().wrongFunctionCall(identifier, actualParameters, methods);
-                }
-            };
+            IWrongCallReporter wrongCallReporter = new WrongFunctionCallReporter();
             if (methodSymbol != null) {
                 methodSymbol = resolveCallOverload(identifier, arguments, methodSymbol, wrongCallReporter);
                 methodVisibilityCheck(methodSymbol, polymorphicTypeSymbol, callee, identifier);
@@ -1248,6 +1234,15 @@ public class TypeCheckerController implements ITypeCheckerController
     {
 
         void callAppropriateMethod(ITSPHPAst identifier, ISymbolWithAccessModifier symbol, int accessFrom);
+    }
+
+    private static class WrongFunctionCallReporter implements IWrongCallReporter
+    {
+        @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
+        @Override
+        public void report(ITSPHPAst identifier, List<ITSPHPAst> actualParameters, List<IMethodSymbol> methods) {
+            ErrorReporterRegistry.get().wrongFunctionCall(identifier, actualParameters, methods);
+        }
     }
 
     //CHECKSTYLE:OFF:VisibilityModifier|ParameterNumber

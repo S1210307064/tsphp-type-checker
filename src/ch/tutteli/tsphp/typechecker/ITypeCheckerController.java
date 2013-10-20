@@ -109,6 +109,6 @@ public interface ITypeCheckerController
     void checkInstanceof(ITSPHPAst operator, ITSPHPAst expression, ITSPHPAst typeAst);
 
     void checkNew(ITSPHPAst identifier, ITSPHPAst arguments);
-    
+
     void addDefaultValue(ITSPHPAst variableId);
 }

@@ -9,8 +9,8 @@ import org.antlr.runtime.Token;
 public abstract class ACastingMethod implements ICastingMethod
 {
 
-    protected IAstHelper astHelper;
-    protected ITypeSymbol typeSymbol;
+    protected final IAstHelper astHelper;
+    protected final ITypeSymbol typeSymbol;
     protected ITypeSymbol parentTypeWhichProvidesCast;
 
     public ACastingMethod(IAstHelper theAstHelper, ITypeSymbol theType) {

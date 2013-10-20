@@ -10,11 +10,13 @@ import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IPolymorphicTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
+
 import java.util.Set;
 
 public class ErroneousClassTypeSymbol extends AErroneousScopedSymbol implements IErroneousClassTypeSymbol
 {
 
+    public static final String ERROR_MESSAGE = "ErroneousClassSymbol is not a real class.";
     private final IMethodSymbol construct;
     private IVariableSymbol $this;
 
@@ -25,12 +27,12 @@ public class ErroneousClassTypeSymbol extends AErroneousScopedSymbol implements 
 
     @Override
     public ISymbol resolveWithFallbackToParent(ITSPHPAst ast) {
-        throw new UnsupportedOperationException("ErroneousClassSymbol is not a real class.");
+        throw new UnsupportedOperationException(ERROR_MESSAGE);
     }
 
     @Override
     public void setConstruct(IMethodSymbol newConstruct) {
-        throw new UnsupportedOperationException("ErroneousClassSymbol is not a real class.");
+        throw new UnsupportedOperationException(ERROR_MESSAGE);
     }
 
     @Override
@@ -40,7 +42,7 @@ public class ErroneousClassTypeSymbol extends AErroneousScopedSymbol implements 
 
     @Override
     public boolean doubleDefinitionCheckCaseInsensitive(ISymbol symbol) {
-        throw new UnsupportedOperationException("ErroneousClassSymbol is not a real class.");
+        throw new UnsupportedOperationException(ERROR_MESSAGE);
     }
 
     @Override
@@ -55,12 +57,12 @@ public class ErroneousClassTypeSymbol extends AErroneousScopedSymbol implements 
 
     @Override
     public void addParentTypeSymbol(IPolymorphicTypeSymbol aParent) {
-        throw new UnsupportedOperationException("ErroneousClassSymbol is not a real class.");
+        throw new UnsupportedOperationException(ERROR_MESSAGE);
     }
 
     @Override
     public Set<ITypeSymbol> getParentTypeSymbols() {
-        throw new UnsupportedOperationException("ErroneousClassSymbol is not a real class.");
+        throw new UnsupportedOperationException(ERROR_MESSAGE);
     }
 
     @Override
@@ -75,7 +77,7 @@ public class ErroneousClassTypeSymbol extends AErroneousScopedSymbol implements 
 
     @Override
     public void setParent(IClassTypeSymbol theParent) {
-        throw new UnsupportedOperationException("ErroneousClassSymbol is not a real class.");
+        throw new UnsupportedOperationException(ERROR_MESSAGE);
     }
 
     @Override

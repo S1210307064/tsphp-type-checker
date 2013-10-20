@@ -6,6 +6,7 @@ import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolWithModifier;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,7 +14,9 @@ import java.util.Set;
 public abstract class AErroneousScopedSymbol extends ASymbol implements IErroneousSymbol, IScope, ISymbolWithModifier
 {
 
-    private TypeCheckerException exception;
+    public static final String ERROR_MESSAGE_SCOPE = "AErroneousScopedSymbol is not a real scope.";
+    public static final String ERROR_MESSAGE_MODIFIER = "AErroneousScopedSymbol is not a real symbol with modifier.";
+    private final TypeCheckerException exception;
 
     public AErroneousScopedSymbol(ITSPHPAst ast, TypeCheckerException theException) {
         super(ast, ast.getText());
@@ -27,51 +30,51 @@ public abstract class AErroneousScopedSymbol extends ASymbol implements IErroneo
 
     @Override
     public String getScopeName() {
-        throw new UnsupportedOperationException("AErroneousScopedSymbol is not a real scope.");
+        throw new UnsupportedOperationException(ERROR_MESSAGE_SCOPE);
     }
 
     @Override
     public IScope getEnclosingScope() {
-        throw new UnsupportedOperationException("AErroneousScopedSymbol is not a real scope.");
+        throw new UnsupportedOperationException(ERROR_MESSAGE_SCOPE);
     }
 
     @Override
-    public void define(ISymbol is) {
-        throw new UnsupportedOperationException("AErroneousScopedSymbol is not a real scope.");
+    public void define(ISymbol symbol) {
+        throw new UnsupportedOperationException(ERROR_MESSAGE_SCOPE);
     }
 
     @Override
-    public boolean doubleDefinitionCheck(ISymbol is) {
-        throw new UnsupportedOperationException("AErroneousScopedSymbol is not a real scope.");
+    public boolean doubleDefinitionCheck(ISymbol symbol) {
+        throw new UnsupportedOperationException(ERROR_MESSAGE_SCOPE);
     }
 
     @Override
-    public ISymbol resolve(ITSPHPAst itsphp) {
-        throw new UnsupportedOperationException("AErroneousScopedSymbol is not a real scope.");
+    public ISymbol resolve(ITSPHPAst ast) {
+        throw new UnsupportedOperationException(ERROR_MESSAGE_SCOPE);
     }
 
     @Override
     public Map<String, List<ISymbol>> getSymbols() {
-        throw new UnsupportedOperationException("AErroneousScopedSymbol is not a real scope.");
+        throw new UnsupportedOperationException(ERROR_MESSAGE_SCOPE);
     }
 
     @Override
     public void addModifier(Integer modifier) {
-        throw new UnsupportedOperationException("AErroneousScopedSymbol is not a real symbol with modifier.");
+        throw new UnsupportedOperationException(ERROR_MESSAGE_MODIFIER);
     }
 
     @Override
     public boolean removeModifier(Integer modifier) {
-        throw new UnsupportedOperationException("AErroneousScopedSymbol is not a real symbol with modifier.");
+        throw new UnsupportedOperationException(ERROR_MESSAGE_MODIFIER);
     }
 
     @Override
     public Set<Integer> getModifiers() {
-        throw new UnsupportedOperationException("AErroneousScopedSymbol is not a real symbol with modifier.");
+        throw new UnsupportedOperationException(ERROR_MESSAGE_MODIFIER);
     }
 
     @Override
     public void setModifiers(Set<Integer> modifier) {
-        throw new UnsupportedOperationException("AErroneousScopedSymbol is not a real symbol with modifier.");
+        throw new UnsupportedOperationException(ERROR_MESSAGE_MODIFIER);
     }
 }

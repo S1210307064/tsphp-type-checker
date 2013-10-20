@@ -4,6 +4,7 @@ import ch.tutteli.tsphp.common.AstHelperRegistry;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
+
 import java.util.Set;
 
 public abstract class ANullableTypeSymbol extends ATypeSymbol
@@ -18,6 +19,7 @@ public abstract class ANullableTypeSymbol extends ATypeSymbol
     }
 
     @Override
+    @SuppressWarnings("PMD.EmptyMethodInAbstractClassShouldBeAbstract")
     public boolean isNullable() {
         return true;
     }
