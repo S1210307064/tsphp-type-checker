@@ -3,6 +3,7 @@ package ch.tutteli.tsphp.typechecker.test.unit.scopes;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
+import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.typechecker.scopes.GlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.IScopeHelper;
@@ -10,11 +11,18 @@ import ch.tutteli.tsphp.typechecker.utils.MapHelper;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyMap;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 public class GlobalNamespaceScopeTest
 {
@@ -29,7 +37,7 @@ public class GlobalNamespaceScopeTest
 
 
     @Test
-    public void getEnclosingScope_Standard_ReturnNull(){
+    public void getEnclosingScope_Standard_ReturnNull() {
         //no arrange necessary
 
         IGlobalNamespaceScope globalNamespaceScope = createGlobalScope();
@@ -39,7 +47,7 @@ public class GlobalNamespaceScopeTest
     }
 
     @Test
-    public void getScopeName_Standard_ReturnName(){
+    public void getScopeName_Standard_ReturnName() {
         //no arrange necessary
 
         IGlobalNamespaceScope globalNamespaceScope = createGlobalScope();
@@ -49,7 +57,7 @@ public class GlobalNamespaceScopeTest
     }
 
     @Test
-    public void define_Standard_DoesNotInteractWithTheSymbolOtherThanGetName(){
+    public void define_Standard_DoesNotInteractWithTheSymbolOtherThanGetName() {
         ISymbol symbol = createSymbol("symbol");
 
         IGlobalNamespaceScope globalNamespaceScope = createGlobalScope();
@@ -62,19 +70,19 @@ public class GlobalNamespaceScopeTest
 
     @SuppressWarnings("unchecked")
     @Test
-    public void doubleDefinitionCheckCaseInsensitive_Standard_DelegateToScopeHelper(){
+    public void doubleDefinitionCheckCaseInsensitive_Standard_DelegateToScopeHelper() {
         ISymbol symbol = createSymbol("symbol");
 
         IGlobalNamespaceScope globalNamespaceScope = createGlobalScope();
         globalNamespaceScope.doubleDefinitionCheckCaseInsensitive(symbol);
 
         ArgumentCaptor<ISymbol> argument = ArgumentCaptor.forClass(ISymbol.class);
-        verify(scopeHelper).doubleDefinitionCheck(anyMap(),argument.capture());
+        verify(scopeHelper).doubleDefinitionCheck(anyMap(), argument.capture());
         assertThat(argument.getValue(), is(symbol));
     }
 
     @Test
-    public void doubleDefinitionCheck_Standard_DelegateToScopeHelper(){
+    public void doubleDefinitionCheck_Standard_DelegateToScopeHelper() {
         ISymbol symbol = createSymbol("symbol");
 
         IGlobalNamespaceScope globalNamespaceScope = createGlobalScope();
@@ -86,7 +94,7 @@ public class GlobalNamespaceScopeTest
     }
 
     @Test
-    public void resolve_NothingDefined_ReturnNull(){
+    public void resolve_NothingDefined_ReturnNull() {
         ITSPHPAst ast = createAst("symbol");
 
         IGlobalNamespaceScope globalNamespaceScope = createGlobalScope();
@@ -96,7 +104,7 @@ public class GlobalNamespaceScopeTest
     }
 
     @Test
-    public void resolve_AbsoluteTypeNothingDefined_ReturnNull(){
+    public void resolve_AbsoluteTypeNothingDefined_ReturnNull() {
         ITSPHPAst ast = createAst(GLOBAL_NAMESPACE_NAME + "symbol");
 
         IGlobalNamespaceScope globalNamespaceScope = createGlobalScope();
@@ -106,62 +114,113 @@ public class GlobalNamespaceScopeTest
     }
 
     @Test
-    public void resolve_CaseWrong_ReturnNull(){
+    public void resolve_CaseWrong_ReturnNull() {
         ISymbol symbol = createSymbol("symbol");
         ITSPHPAst ast = createAst("SYMBOL");
+        arrangeScopeHelperForDefine();
 
         IGlobalNamespaceScope globalNamespaceScope = createGlobalScope();
-        addSymbolToScope(globalNamespaceScope, symbol);
-
+        globalNamespaceScope.define(symbol);
         ISymbol result = globalNamespaceScope.resolve(ast);
 
         assertNull(result);
     }
 
+
     @Test
-    public void resolve_AbsoluteTypeDifferentNamespace_ReturnNull(){
+    public void resolve_AbsoluteTypeDifferentNamespace_ReturnNull() {
         ISymbol symbol = createSymbol("symbol");
         ITSPHPAst ast = createAst("\\otherNamespace\\symbol");
+        arrangeScopeHelperForDefine();
 
         IGlobalNamespaceScope globalNamespaceScope = createGlobalScope();
-        addSymbolToScope(globalNamespaceScope, symbol);
+        globalNamespaceScope.define(symbol);
         ISymbol result = globalNamespaceScope.resolve(ast);
 
         assertNull(result);
     }
 
     @Test
-    public void resolve_AbsoluteTypeSubNamespace_ReturnNull(){
+    public void resolve_AbsoluteTypeSubNamespace_ReturnNull() {
         ISymbol symbol = createSymbol("symbol");
         ITSPHPAst ast = createAst(GLOBAL_NAMESPACE_NAME + "a\\symbol");
+        arrangeScopeHelperForDefine();
 
         IGlobalNamespaceScope globalNamespaceScope = createGlobalScope();
-        addSymbolToScope(globalNamespaceScope, symbol);
+        globalNamespaceScope.define(symbol);
         ISymbol result = globalNamespaceScope.resolve(ast);
 
         assertNull(result);
     }
 
     @Test
-    public void resolve_Standard_ReturnSymbol(){
+    public void resolve_Standard_ReturnSymbol() {
         ISymbol symbol = createSymbol("symbol");
         ITSPHPAst ast = createAst("symbol");
+        arrangeScopeHelperForDefine();
 
         IGlobalNamespaceScope globalNamespaceScope = createGlobalScope();
-        addSymbolToScope(globalNamespaceScope, symbol);
+        globalNamespaceScope.define(symbol);
         ISymbol result = globalNamespaceScope.resolve(ast);
 
         assertThat(result, is(symbol));
     }
 
     @Test
-    public void resolve_AbsoluteType_ReturnSymbol(){
+    public void resolve_AbsoluteType_ReturnSymbol() {
         ISymbol symbol = createSymbol("symbol");
         ITSPHPAst ast = createAst(GLOBAL_NAMESPACE_NAME + "symbol");
+        arrangeScopeHelperForDefine();
 
         IGlobalNamespaceScope globalNamespaceScope = createGlobalScope();
-        addSymbolToScope(globalNamespaceScope, symbol);
+        globalNamespaceScope.define(symbol);
         ISymbol result = globalNamespaceScope.resolve(ast);
+
+        assertThat(result, is(symbol));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getTypeSymbolWhichClashesWithUse_AbsoluteName_ReturnNull() {
+        ITSPHPAst ast = createAst("\\symbol");
+
+        IGlobalNamespaceScope globalNamespaceScope = createGlobalScope();
+        globalNamespaceScope.getTypeSymbolWhichClashesWithUse(ast);
+
+        //Assert via the @Test(expected) annotation
+    }
+
+    @Test
+    public void getTypeSymbolWhichClashesWithUse_NothingDefined_ReturnNull() {
+        ITSPHPAst ast = createAst("symbol");
+
+        IGlobalNamespaceScope globalNamespaceScope = createGlobalScope();
+        ISymbol result = globalNamespaceScope.getTypeSymbolWhichClashesWithUse(ast);
+
+        assertNull(result);
+    }
+
+    @Test
+    public void getTypeSymbolWhichClashesWithUse_SameCase_ReturnSymbol() {
+        ITypeSymbol symbol = createTypeSymbol("symbol");
+        ITSPHPAst ast = createAst("symbol");
+        arrangeScopeHelperForDefine();
+
+        IGlobalNamespaceScope globalNamespaceScope = createGlobalScope();
+        globalNamespaceScope.define(symbol);
+        ITypeSymbol result = globalNamespaceScope.getTypeSymbolWhichClashesWithUse(ast);
+
+        assertThat(result, is(symbol));
+    }
+
+    @Test
+    public void getTypeSymbolWhichClashesWithUse_DifferentCase_ReturnSymbol() {
+        ITypeSymbol symbol = createTypeSymbol("symbol");
+        ITSPHPAst ast = createAst("SYmbol");
+        arrangeScopeHelperForDefine();
+
+        IGlobalNamespaceScope globalNamespaceScope = createGlobalScope();
+        globalNamespaceScope.define(symbol);
+        ITypeSymbol result = globalNamespaceScope.getTypeSymbolWhichClashesWithUse(ast);
 
         assertThat(result, is(symbol));
     }
@@ -182,7 +241,23 @@ public class GlobalNamespaceScopeTest
         return ast;
     }
 
-    private void addSymbolToScope(IGlobalNamespaceScope globalNamespaceScope, ISymbol symbol) {
-        MapHelper.addToListMap(globalNamespaceScope.getSymbols(), symbol.getName(), symbol);
+    private ITypeSymbol createTypeSymbol(String name) {
+        ITypeSymbol symbol = mock(ITypeSymbol.class);
+        when(symbol.getName()).thenReturn(name);
+        return symbol;
+    }
+
+    private void arrangeScopeHelperForDefine() {
+        final ArgumentCaptor<IScope> scopeCaptor = ArgumentCaptor.forClass(IScope.class);
+        final ArgumentCaptor<ISymbol> symbolCaptor = ArgumentCaptor.forClass(ISymbol.class);
+
+        doAnswer(new Answer()
+        {
+            public Object answer(InvocationOnMock invocation) {
+                ISymbol symbol = symbolCaptor.getValue();
+                MapHelper.addToListMap(scopeCaptor.getValue().getSymbols(), symbol.getName(), symbol);
+                return null;
+            }
+        }).when(scopeHelper).define(scopeCaptor.capture(), symbolCaptor.capture());
     }
 }

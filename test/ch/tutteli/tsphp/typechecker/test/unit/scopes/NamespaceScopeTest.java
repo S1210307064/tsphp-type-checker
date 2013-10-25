@@ -32,7 +32,7 @@ public class NamespaceScopeTest
     }
 
     @Test
-    public void getScopeName_DefineTestAsScopeName_ReturnTest(){
+    public void getScopeName_DefineTestAsScopeName_ReturnTest() {
         //no arrange necessary, createNamespaceScope passes "test" as name
 
         INamespaceScope namespaceScope = createNamespaceScope();
@@ -42,7 +42,7 @@ public class NamespaceScopeTest
     }
 
     @Test
-    public void getEnclosingScope_DefineGlobalNamespaceScope_ReturnDefinedGlobalScope(){
+    public void getEnclosingScope_DefineGlobalNamespaceScope_ReturnDefinedGlobalScope() {
         IGlobalNamespaceScope globalNamespaceScope = mock(IGlobalNamespaceScope.class);
 
         INamespaceScope namespaceScope = createNamespaceScope(globalNamespaceScope);
@@ -259,7 +259,7 @@ public class NamespaceScopeTest
         assertThat(symbols, hasKey("aliasName"));
         List<ISymbol> list = symbols.get("aliasName");
         assertThat(list.size(), is(2));
-        assertThat(list, hasItems((ISymbol) aliasSymbol1,  aliasSymbol2));
+        assertThat(list, hasItems((ISymbol) aliasSymbol1, aliasSymbol2));
     }
 
     @Test
@@ -335,7 +335,7 @@ public class NamespaceScopeTest
 
         IGlobalNamespaceScope globalNamespaceScope = mock(IGlobalNamespaceScope.class);
         //there is not type with the name "aliasName" thus it returns null
-        when(globalNamespaceScope.resolve(useDefinitionAst)).thenReturn(null);
+        when(globalNamespaceScope.getTypeSymbolWhichClashesWithUse(useDefinitionAst)).thenReturn(null);
 
         //act
         INamespaceScope namespaceScope = createNamespaceScope(globalNamespaceScope);
@@ -344,7 +344,7 @@ public class NamespaceScopeTest
 
         assertTrue(result);
         verify(scopeHelper).doubleDefinitionCheck(symbol, symbol);
-        verify(globalNamespaceScope).resolve(useDefinitionAst);
+        verify(globalNamespaceScope).getTypeSymbolWhichClashesWithUse(useDefinitionAst);
     }
 
     @Test
@@ -363,7 +363,7 @@ public class NamespaceScopeTest
         IScope anotherScope = mock(IScope.class);
         ITypeSymbol typeSymbol = createTypeSymbol(classDefinitionAst, anotherScope);
         IGlobalNamespaceScope globalNamespaceScope = mock(IGlobalNamespaceScope.class);
-        when(globalNamespaceScope.resolve(useDefinitionAst)).thenReturn(typeSymbol);
+        when(globalNamespaceScope.getTypeSymbolWhichClashesWithUse(useDefinitionAst)).thenReturn(typeSymbol);
 
         when(useDefinitionAst.isDefinedEarlierThan(classDefinitionAst)).thenReturn(true);
 
@@ -374,7 +374,7 @@ public class NamespaceScopeTest
 
         assertTrue(result);
         verify(scopeHelper).doubleDefinitionCheck(symbol, symbol);
-        verify(globalNamespaceScope).resolve(useDefinitionAst);
+        verify(globalNamespaceScope).getTypeSymbolWhichClashesWithUse(useDefinitionAst);
         verify(useDefinitionAst).isDefinedEarlierThan(classDefinitionAst);
         verify(typeSymbol).getDefinitionScope();
     }
@@ -410,7 +410,7 @@ public class NamespaceScopeTest
         INamespaceScope namespaceScope = createNamespaceScope(globalNamespaceScope);
         ITSPHPAst classDefinitionAst = mock(ITSPHPAst.class);
         ITypeSymbol typeSymbol = createTypeSymbol(classDefinitionAst, namespaceScope);
-        when(globalNamespaceScope.resolve(useDefinitionAst)).thenReturn(typeSymbol);
+        when(globalNamespaceScope.getTypeSymbolWhichClashesWithUse(useDefinitionAst)).thenReturn(typeSymbol);
 
         when(useDefinitionAst.isDefinedEarlierThan(classDefinitionAst)).thenReturn(false);
 
@@ -420,7 +420,7 @@ public class NamespaceScopeTest
 
         assertFalse(result);
         verify(scopeHelper).doubleDefinitionCheck(symbol, symbol);
-        verify(globalNamespaceScope).resolve(useDefinitionAst);
+        verify(globalNamespaceScope).getTypeSymbolWhichClashesWithUse(useDefinitionAst);
         verify(useDefinitionAst).isDefinedEarlierThan(classDefinitionAst);
         verify(errorReporter).determineAlreadyDefined(symbol, typeSymbol);
     }
@@ -439,7 +439,7 @@ public class NamespaceScopeTest
         IScope anotherScope = mock(IScope.class);
         ITypeSymbol typeSymbol = createTypeSymbol(classDefinitionAst, anotherScope);
         IGlobalNamespaceScope globalNamespaceScope = mock(IGlobalNamespaceScope.class);
-        when(globalNamespaceScope.resolve(useDefinitionAst)).thenReturn(typeSymbol);
+        when(globalNamespaceScope.getTypeSymbolWhichClashesWithUse(useDefinitionAst)).thenReturn(typeSymbol);
 
         when(useDefinitionAst.isDefinedEarlierThan(classDefinitionAst)).thenReturn(false);
 
@@ -450,7 +450,7 @@ public class NamespaceScopeTest
 
         assertFalse(result);
         verify(scopeHelper).doubleDefinitionCheck(symbol, symbol);
-        verify(globalNamespaceScope).resolve(useDefinitionAst);
+        verify(globalNamespaceScope).getTypeSymbolWhichClashesWithUse(useDefinitionAst);
         verify(useDefinitionAst).isDefinedEarlierThan(classDefinitionAst);
         verify(errorReporter).determineAlreadyDefined(symbol, typeSymbol);
     }
@@ -469,7 +469,7 @@ public class NamespaceScopeTest
         INamespaceScope namespaceScope = createNamespaceScope(globalNamespaceScope);
         ITSPHPAst classDefinitionAst = mock(ITSPHPAst.class);
         ITypeSymbol typeSymbol = createTypeSymbol(classDefinitionAst, namespaceScope);
-        when(globalNamespaceScope.resolve(useDefinitionAst)).thenReturn(typeSymbol);
+        when(globalNamespaceScope.getTypeSymbolWhichClashesWithUse(useDefinitionAst)).thenReturn(typeSymbol);
 
         when(useDefinitionAst.isDefinedEarlierThan(classDefinitionAst)).thenReturn(true);
 
@@ -479,7 +479,7 @@ public class NamespaceScopeTest
 
         assertFalse(result);
         verify(scopeHelper).doubleDefinitionCheck(symbol, symbol);
-        verify(globalNamespaceScope).resolve(useDefinitionAst);
+        verify(globalNamespaceScope).getTypeSymbolWhichClashesWithUse(useDefinitionAst);
         verify(useDefinitionAst).isDefinedEarlierThan(classDefinitionAst);
         verify(typeSymbol).getDefinitionScope();
         verify(errorReporter).determineAlreadyDefined(symbol, typeSymbol);

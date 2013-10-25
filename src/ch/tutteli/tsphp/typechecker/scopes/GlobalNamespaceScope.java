@@ -3,8 +3,10 @@ package ch.tutteli.tsphp.typechecker.scopes;
 import ch.tutteli.tsphp.common.ILowerCaseStringMap;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
+import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.LowerCaseStringMap;
 import ch.tutteli.tsphp.typechecker.utils.MapHelper;
+
 import java.util.List;
 
 public class GlobalNamespaceScope extends AScope implements IGlobalNamespaceScope
@@ -43,5 +45,19 @@ public class GlobalNamespaceScope extends AScope implements IGlobalNamespaceScop
             typeName = typeName.substring(scopeNameLength);
         }
         return typeName;
+    }
+
+    @Override
+    public ITypeSymbol getTypeSymbolWhichClashesWithUse(ITSPHPAst identifier) {
+        String typeName = identifier.getText();
+        if (typeName.contains("\\")) {
+            throw new IllegalArgumentException("identifier contained \\ - " +
+                    "do not use this method other than with the right identifier of an use statement.");
+        }
+        ITypeSymbol typeSymbol = null;
+        if (symbolsCaseInsensitive.containsKey(typeName)) {
+            typeSymbol = (ITypeSymbol) symbolsCaseInsensitive.get(typeName).get(0);
+        }
+        return typeSymbol;
     }
 }

@@ -21,7 +21,7 @@ public class NamespaceScope implements INamespaceScope
     private final Map<String, List<IAliasSymbol>> uses = new LinkedHashMap<>();
     private final IScopeHelper scopeHelper;
     private final String scopeName;
-    private final IScope globalNamespaceScope;
+    private final IGlobalNamespaceScope globalNamespaceScope;
 
     public NamespaceScope(
             IScopeHelper theScopeHelper,
@@ -61,7 +61,7 @@ public class NamespaceScope implements INamespaceScope
     @Override
     public boolean doubleDefinitionCheckCaseInsensitive(ISymbol symbol) {
         //check in global namespace scope because they have been defined there
-        return ((ICaseInsensitiveScope) globalNamespaceScope).doubleDefinitionCheckCaseInsensitive(symbol);
+        return globalNamespaceScope.doubleDefinitionCheckCaseInsensitive(symbol);
     }
 
     @Override
@@ -81,7 +81,7 @@ public class NamespaceScope implements INamespaceScope
 
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     private boolean isNotAlreadyDefinedAsType(IAliasSymbol symbol) {
-        ITypeSymbol typeSymbol = (ITypeSymbol) resolve(symbol.getDefinitionAst());
+        ITypeSymbol typeSymbol = globalNamespaceScope.getTypeSymbolWhichClashesWithUse(symbol.getDefinitionAst());
         boolean ok = hasNoTypeNameClash(symbol.getDefinitionAst(), typeSymbol);
         if (!ok) {
             ErrorReporterRegistry.get().determineAlreadyDefined(symbol, typeSymbol);
