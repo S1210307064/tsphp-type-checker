@@ -51,8 +51,8 @@ public class GlobalNamespaceScope extends AScope implements IGlobalNamespaceScop
     public ITypeSymbol getTypeSymbolWhichClashesWithUse(ITSPHPAst identifier) {
         String typeName = identifier.getText();
         if (typeName.contains("\\")) {
-            throw new IllegalArgumentException("identifier contained \\ - " +
-                    "do not use this method other than with the right identifier of an use statement.");
+            throw new IllegalArgumentException("identifier contained \\ - "
+                    + "do not use this method other than with the right identifier of an use statement.");
         }
         ITypeSymbol typeSymbol = null;
         if (symbolsCaseInsensitive.containsKey(typeName)) {

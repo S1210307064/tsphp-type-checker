@@ -1,6 +1,7 @@
 package ch.tutteli.tsphp.typechecker;
 
 import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
+
 import java.util.List;
 
 /**
@@ -11,7 +12,7 @@ public class AmbiguousCallException extends TypeCheckerException
 
     private final List<OverloadDto> ambiguousOverloads;
 
-    AmbiguousCallException(List<OverloadDto> theAmbiguousMethodDtos) {
+    public AmbiguousCallException(List<OverloadDto> theAmbiguousMethodDtos) {
         ambiguousOverloads = theAmbiguousMethodDtos;
     }
 

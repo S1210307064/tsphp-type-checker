@@ -48,8 +48,12 @@ public class TypeCheckerController implements ITypeCheckerController
     //
     private final IGlobalNamespaceScope globalDefaultNamespace;
 
-    public TypeCheckerController(ISymbolFactory theSymbolFactory, ITypeSystem theTypeSystem,
-            IDefiner theDefiner, ISymbolResolver theSymbolResolver, IOverloadResolver theMethodResolver,
+    public TypeCheckerController(
+            ISymbolFactory theSymbolFactory,
+            ITypeSystem theTypeSystem,
+            IDefiner theDefiner,
+            ISymbolResolver theSymbolResolver,
+            IOverloadResolver theMethodResolver,
             IAstHelper theAstHelper) {
         symbolFactory = theSymbolFactory;
         typeSystem = theTypeSystem;
