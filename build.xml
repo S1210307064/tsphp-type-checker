@@ -1,8 +1,12 @@
-<project name="TSPHP-parser" default="build" basedir="." >
+<project name="typechecker" default="build" basedir="." >
 
     <property environment="env" />
-    <import file="${basedir}/build-common.xml" as="common"/>
+    <import file="${basedir}/ant/build-common.xml" as="common"/>
+    <import file="${basedir}/ant/copyCommon.xml" as="copyCommon"/>
+    <import file="${basedir}/ant/copyParser.xml" as="copyParser"/>
+    <import file="${basedir}/ant/copyAntlr.xml" as="copyAntlr"/>
 
+    <property file="${basedir}/ant/antlr.properties"/>
 
     <!-- ================================================================== -->
     <!-- Specialised Target: dist -->
@@ -11,12 +15,6 @@
             depends="antlr, common.dist"
             description="create distributions">
     </target>
-
-    <property name="antlr.output" location="${src.antlr}/output" />
-    <property name="antlr.copyLocation" location="${src.main}/ch/tutteli/tsphp/typechecker/antlr" />
-    <property name="parser" location="${basedir}/../TSPHP-parser"/>
-    <property name="parser.tokens" location="${parser}/antlr/output"/>
-    <property name="parser.jar" location="${parser}/build/lib"/>
 
     <target name="antlr">
         <java classname="org.antlr.Tool" fork="true" failonerror="true">
@@ -36,28 +34,4 @@
         </java>
     </target>
 
-    <target name="copyAntlr" description="copy antlr generated classes to src/java folder">
-        <delete>
-            <fileset dir="${antlr.copyLocation}" includes="TSPHP*.java"/>
-        </delete>
-        <copy todir="${antlr.copyLocation}">
-            <fileset dir="${antlr.output}" includes="TSPHP*.java"/>
-        </copy>
-    </target>
-
-
-    <target name="copyParser" depends="" description="copy parser jar and token file to lib/dev folder, /antlr respectively">
-        <delete>
-            <fileset dir="${src.antlr}" includes="*.tokens"/>
-        </delete>
-        <copy todir="${src.antlr}">
-            <fileset dir="${parser.tokens}" includes="*.tokens" />
-        </copy>
-        <delete>
-            <fileset dir="${libdev}" includes="TSPHP-parser-*.jar"/>
-        </delete>
-        <copy todir="${libdev}">
-            <fileset dir="${parser.jar}" includes="TSPHP-parser-*.jar"/>
-        </copy>
-    </target>
 </project>

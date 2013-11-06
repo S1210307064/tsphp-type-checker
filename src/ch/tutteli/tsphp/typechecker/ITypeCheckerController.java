@@ -5,7 +5,6 @@ import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IScalarTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
-import ch.tutteli.tsphp.typechecker.symbols.erroneous.ErroneousTypeSymbol;
 
 public interface ITypeCheckerController
 {
@@ -45,11 +44,12 @@ public interface ITypeCheckerController
     ITypeSymbol resolveUseType(ITSPHPAst typeAst, ITSPHPAst alias);
 
     /**
-     * Try to resolve the type for the given typeAst and returns an {@link ErroneousTypeSymbol} if the type could
-     * not be found.
+     * Try to resolve the type for the given typeAst and returns an
+     * {@link ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousTypeSymbol} if the type could not be found.
      *
      * @param typeAst The AST node which contains the type name. For instance, int, MyClass, \Exception etc.
-     * @return The corresponding type or a {@link ErroneousTypeSymbol} if could not be found.
+     * @return The corresponding type or a {@link ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousTypeSymbol}
+     * if could not be found.
      */
     ITypeSymbol resolveType(ITSPHPAst typeAst);
 

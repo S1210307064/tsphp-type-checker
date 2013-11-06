@@ -81,6 +81,7 @@ public class GlobalNamespaceScopeTest
         assertThat(argument.getValue(), is(symbol));
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void doubleDefinitionCheck_Standard_DelegateToScopeHelper() {
         ISymbol symbol = createSymbol("symbol");

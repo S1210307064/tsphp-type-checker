@@ -1,0 +1,14 @@
+<project name="copyAntlr" basedir="../">
+
+    <property file="${basedir}/ant/antlr.properties"/>
+
+    <target name="do" description="copy antlr generated classes to src/java folder">
+        <delete>
+            <fileset dir="${antlr.copyLocation}" includes="TSPHP*.java"/>
+        </delete>
+        <copy todir="${antlr.copyLocation}">
+            <fileset dir="${antlr.output}" includes="TSPHP*.java"/>
+        </copy>
+    </target>
+
+</project>
