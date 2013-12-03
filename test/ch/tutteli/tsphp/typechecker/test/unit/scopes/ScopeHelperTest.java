@@ -5,7 +5,7 @@ import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.LowerCaseStringMap;
-import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
+import ch.tutteli.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.error.ITypeCheckErrorReporter;
 import ch.tutteli.tsphp.typechecker.scopes.IAlreadyDefinedMethodCaller;
 import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
@@ -189,7 +189,7 @@ public class ScopeHelperTest
     @Test
     public void doubleDefinitionCheck_DefinedTwiceCheckingSecond_ReturnFalse() {
         ITypeCheckErrorReporter errorReporter = mock(ITypeCheckErrorReporter.class);
-        ErrorReporterRegistry.set(errorReporter);
+        TypeCheckErrorReporterRegistry.set(errorReporter);
         ISymbol symbol1 = createSymbol(SYMBOL_NAME);
         ISymbol symbol2 = createSymbol(SYMBOL_NAME);
         Map<String, List<ISymbol>> symbols = CreateSymbolsForStandardName(symbol1, symbol2);
@@ -275,7 +275,7 @@ public class ScopeHelperTest
 
     @Test
     public void resolve_WrongCaseUseCaseSensitiveMap_ReturnNull() {
-        Map<String,List<ISymbol>> symbols = CreateSymbolsForStandardName(createSymbol("AstText"));
+        Map<String, List<ISymbol>> symbols = CreateSymbolsForStandardName(createSymbol("AstText"));
         IScope scope = createScope(symbols);
         ITSPHPAst ast = createAst("astText");
 
@@ -288,7 +288,7 @@ public class ScopeHelperTest
     @Test
     public void resolve_DefinedInScope_ReturnCorrespondingSymbol() {
         ISymbol symbol = createSymbol(SYMBOL_NAME);
-        Map<String,List<ISymbol>> symbols = CreateSymbolsForStandardName(symbol);
+        Map<String, List<ISymbol>> symbols = CreateSymbolsForStandardName(symbol);
         IScope scope = createScope(symbols);
         ITSPHPAst ast = createAst(SYMBOL_NAME);
 
@@ -299,7 +299,7 @@ public class ScopeHelperTest
     }
 
     @Test
-    public void getEnclosingNamespaceScope_InNamespace_ReturnNamespace(){
+    public void getEnclosingNamespaceScope_InNamespace_ReturnNamespace() {
         INamespaceScope namespaceScope = mock(INamespaceScope.class);
         ITSPHPAst ast = createAst(SYMBOL_NAME);
         when(ast.getScope()).thenReturn(namespaceScope);
@@ -307,11 +307,11 @@ public class ScopeHelperTest
         IScopeHelper scopeHelper = new ScopeHelper();
         IScope result = scopeHelper.getEnclosingNamespaceScope(ast);
 
-        assertThat(result, is((IScope)namespaceScope));
+        assertThat(result, is((IScope) namespaceScope));
     }
 
     @Test
-    public void getEnclosingNamespaceScope_InMethod_ReturnNamespace(){
+    public void getEnclosingNamespaceScope_InMethod_ReturnNamespace() {
         INamespaceScope namespaceScope = mock(INamespaceScope.class);
         ITSPHPAst ast = createAst(SYMBOL_NAME);
         IMethodSymbol methodSymbol = mock(IMethodSymbol.class);
@@ -321,11 +321,11 @@ public class ScopeHelperTest
         IScopeHelper scopeHelper = new ScopeHelper();
         IScope result = scopeHelper.getEnclosingNamespaceScope(ast);
 
-        assertThat(result, is((IScope)namespaceScope));
+        assertThat(result, is((IScope) namespaceScope));
     }
 
     @Test
-    public void getEnclosingNamespaceScope_AstHasNoScope_ReturnNull(){
+    public void getEnclosingNamespaceScope_AstHasNoScope_ReturnNull() {
         ITSPHPAst ast = createAst(SYMBOL_NAME);
 
         IScopeHelper scopeHelper = new ScopeHelper();
@@ -335,7 +335,7 @@ public class ScopeHelperTest
     }
 
     @Test
-    public void getEnclosingNamespaceScope_InMethodHasNoScope_ReturnNull(){
+    public void getEnclosingNamespaceScope_InMethodHasNoScope_ReturnNull() {
         ITSPHPAst ast = createAst(SYMBOL_NAME);
         IMethodSymbol methodSymbol = mock(IMethodSymbol.class);
         when(methodSymbol.getEnclosingScope()).thenReturn(null);

@@ -1,11 +1,11 @@
 package ch.tutteli.tsphp.typechecker.error;
 
-public final class ErrorReporterRegistry
+public final class TypeCheckErrorReporterRegistry
 {
 
     private static ITypeCheckErrorReporter errorHelper;
 
-    private ErrorReporterRegistry() {
+    private TypeCheckErrorReporterRegistry() {
     }
 
     public static ITypeCheckErrorReporter get() {

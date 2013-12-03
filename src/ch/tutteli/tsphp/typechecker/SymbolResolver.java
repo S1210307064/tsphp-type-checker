@@ -8,7 +8,7 @@ import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.LowerCaseStringMap;
 import ch.tutteli.tsphp.common.exceptions.DefinitionException;
 import ch.tutteli.tsphp.common.exceptions.ReferenceException;
-import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
+import ch.tutteli.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.IScopeHelper;
@@ -122,9 +122,9 @@ public class SymbolResolver implements ISymbolResolver
         if (hasTypeNameClash(useDefinition, typeSymbol)) {
             ITSPHPAst typeDefinition = typeSymbol.getDefinitionAst();
             if (useDefinition.isDefinedEarlierThan(typeDefinition)) {
-                ErrorReporterRegistry.get().alreadyDefined(useDefinition, typeDefinition);
+                TypeCheckErrorReporterRegistry.get().alreadyDefined(useDefinition, typeDefinition);
             } else {
-                ErrorReporterRegistry.get().alreadyDefined(typeDefinition, useDefinition);
+                TypeCheckErrorReporterRegistry.get().alreadyDefined(typeDefinition, useDefinition);
                 //we do not use the alias if it was defined later than the typeSymbol
                 useDefinition = null;
             }
@@ -151,12 +151,12 @@ public class SymbolResolver implements ISymbolResolver
                 if (globalNamespaceScope != null) {
                     symbol = globalNamespaceScope.resolve(typeAst);
                 } else {
-                    ReferenceException ex = ErrorReporterRegistry.get().notDefined(typeAst);
+                    ReferenceException ex = TypeCheckErrorReporterRegistry.get().notDefined(typeAst);
                     symbol = symbolFactory.createErroneousTypeSymbol(typeAst, ex);
                 }
             }
         } else {
-            DefinitionException ex = ErrorReporterRegistry.get().aliasForwardReference(typeAst, useDefinition);
+            DefinitionException ex = TypeCheckErrorReporterRegistry.get().aliasForwardReference(typeAst, useDefinition);
             symbol = symbolFactory.createErroneousTypeSymbol(typeAst, ex);
         }
         return symbol;

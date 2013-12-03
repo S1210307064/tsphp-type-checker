@@ -35,27 +35,6 @@ public class GlobalNamespaceScopeTest
         scopeHelper = mock(IScopeHelper.class);
     }
 
-
-    @Test
-    public void getEnclosingScope_Standard_ReturnNull() {
-        //no arrange necessary
-
-        IGlobalNamespaceScope globalNamespaceScope = createGlobalScope();
-        IScope scope = globalNamespaceScope.getEnclosingScope();
-
-        assertNull(scope);
-    }
-
-    @Test
-    public void getScopeName_Standard_ReturnName() {
-        //no arrange necessary
-
-        IGlobalNamespaceScope globalNamespaceScope = createGlobalScope();
-        String name = globalNamespaceScope.getScopeName();
-
-        assertThat(name, is(GLOBAL_NAMESPACE_NAME));
-    }
-
     @Test
     public void define_Standard_DoesNotInteractWithTheSymbolOtherThanGetName() {
         ISymbol symbol = createSymbol("symbol");

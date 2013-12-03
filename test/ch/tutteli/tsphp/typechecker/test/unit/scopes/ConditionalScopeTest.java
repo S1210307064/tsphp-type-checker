@@ -4,6 +4,8 @@ import ch.tutteli.tsphp.common.ILowerCaseStringMap;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
+import ch.tutteli.tsphp.typechecker.error.ITypeCheckErrorReporter;
+import ch.tutteli.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.scopes.ConditionalScope;
 import ch.tutteli.tsphp.typechecker.scopes.IAlreadyDefinedMethodCaller;
 import ch.tutteli.tsphp.typechecker.scopes.IConditionalScope;
@@ -14,6 +16,8 @@ import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -56,9 +60,9 @@ public class ConditionalScopeTest
         verify(symbol2).setDefinitionScope(conditionalScope);
     }
 
-    @SuppressWarnings("unchecked")
+
     @Test
-    public void doubleDefinitionCheck_InNamespace_DelegateToScopeHelperAndUseGlobalNamespace(){
+    public void doubleDefinitionCheck_InNamespace_DelegateToScopeHelperAndUseGlobalNamespace() {
         ILowerCaseStringMap symbols = mock(ILowerCaseStringMap.class);
         IGlobalNamespaceScope globalNamespaceScope = createGlobalNamespaceScope(symbols);
         INamespaceScope namespaceScope = createNamespaceScope(globalNamespaceScope);
@@ -70,9 +74,8 @@ public class ConditionalScopeTest
         verifyScopeWasUsed(globalNamespaceScope, symbols, symbol);
     }
 
-    @SuppressWarnings("unchecked")
     @Test
-    public void doubleDefinitionCheck_InConditionalScopeInNamespace_DelegateToScopeHelperAndUseGlobalNamespace(){
+    public void doubleDefinitionCheck_InConditionalScopeInNamespace_DelegateToScopeHelperAndUseGlobalNamespace() {
         ILowerCaseStringMap symbols = mock(ILowerCaseStringMap.class);
         IGlobalNamespaceScope globalNamespaceScope = createGlobalNamespaceScope(symbols);
         INamespaceScope namespaceScope = createNamespaceScope(globalNamespaceScope);
@@ -85,9 +88,8 @@ public class ConditionalScopeTest
         verifyScopeWasUsed(globalNamespaceScope, symbols, symbol);
     }
 
-    @SuppressWarnings("unchecked")
     @Test
-    public void doubleDefinitionCheck_InMethod_DelegateToScopeHelperAndUseGlobalNamespace(){
+    public void doubleDefinitionCheck_InMethod_DelegateToScopeHelperAndUseGlobalNamespace() {
         ILowerCaseStringMap symbols = mock(ILowerCaseStringMap.class);
         IMethodSymbol methodSymbol = createMethodSymbol(symbols);
         ISymbol symbol = createSymbol("a", createAst(methodSymbol));
@@ -99,9 +101,8 @@ public class ConditionalScopeTest
     }
 
 
-    @SuppressWarnings("unchecked")
     @Test
-    public void doubleDefinitionCheck_InConditionalInMethod_DelegateToScopeHelperAndUseGlobalNamespace(){
+    public void doubleDefinitionCheck_InConditionalInMethod_DelegateToScopeHelperAndUseGlobalNamespace() {
         ILowerCaseStringMap symbols = mock(ILowerCaseStringMap.class);
         IMethodSymbol methodSymbol = createMethodSymbol(symbols);
         IConditionalScope conditionalScopeOuter = createConditionalScope(methodSymbol);
@@ -113,8 +114,35 @@ public class ConditionalScopeTest
         verifyScopeWasUsed(methodSymbol, symbols, symbol);
     }
 
+    @SuppressWarnings("unchecked")
     @Test
-    public void resolve_InNamespaceScope_DelegateToEnclosingScope(){
+    public void doubleDefinitionCheck_ScopeHelperCallsIAlreadyDefinedMethodCaller_DefinedInOuterScopeIsCalled() {
+        ILowerCaseStringMap symbols = mock(ILowerCaseStringMap.class);
+        IMethodSymbol methodSymbol = createMethodSymbol(symbols);
+        IConditionalScope conditionalScopeOuter = createConditionalScope(methodSymbol);
+        final ISymbol symbol = createSymbol("a", createAst(conditionalScopeOuter));
+
+        ITypeCheckErrorReporter errorReporter = mock(ITypeCheckErrorReporter.class);
+        TypeCheckErrorReporterRegistry.set(errorReporter);
+        final ISymbol earlierDefinedSymbol = mock(ISymbol.class);
+        when(scopeHelper.doubleDefinitionCheck(anyMap(), any(ISymbol.class), any(IAlreadyDefinedMethodCaller.class)))
+                .thenAnswer(new Answer()
+                {
+                    public Object answer(InvocationOnMock invocation) {
+                        Object[] args = invocation.getArguments();
+                        ((IAlreadyDefinedMethodCaller) args[2]).callAccordingAlreadyDefinedMethod(earlierDefinedSymbol, symbol);
+                        return false;
+                    }
+                });
+
+        IConditionalScope conditionalScope = createConditionalScope(conditionalScopeOuter);
+        conditionalScope.doubleDefinitionCheck(symbol);
+
+        verify(errorReporter).definedInOuterScope(earlierDefinedSymbol, symbol);
+    }
+
+    @Test
+    public void resolve_InNamespaceScope_DelegateToEnclosingScope() {
         INamespaceScope namespaceScope = mock(INamespaceScope.class);
         ITSPHPAst ast = mock(ITSPHPAst.class);
 
@@ -125,7 +153,7 @@ public class ConditionalScopeTest
     }
 
     @Test
-    public void resolve_InMethodSymbol_DelegateToEnclosingScope(){
+    public void resolve_InMethodSymbol_DelegateToEnclosingScope() {
         IMethodSymbol methodSymbol = mock(IMethodSymbol.class);
         ITSPHPAst ast = mock(ITSPHPAst.class);
 
@@ -141,7 +169,7 @@ public class ConditionalScopeTest
         verify(scope).getSymbols();
         ArgumentCaptor<ILowerCaseStringMap> symbolsArg = ArgumentCaptor.forClass(ILowerCaseStringMap.class);
         ArgumentCaptor<ISymbol> symbolArg = ArgumentCaptor.forClass(ISymbol.class);
-        verify(scopeHelper).doubleDefinitionCheck(symbolsArg.capture(),symbolArg.capture(), any(IAlreadyDefinedMethodCaller.class));
+        verify(scopeHelper).doubleDefinitionCheck(symbolsArg.capture(), symbolArg.capture(), any(IAlreadyDefinedMethodCaller.class));
         assertThat(symbolsArg.getValue(), is(symbols));
         assertThat(symbolArg.getValue(), is(symbol));
     }

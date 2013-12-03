@@ -6,7 +6,7 @@ import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.LowerCaseStringMap;
-import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
+import ch.tutteli.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasSymbol;
 import ch.tutteli.tsphp.typechecker.utils.MapHelper;
 
@@ -84,7 +84,7 @@ public class NamespaceScope implements INamespaceScope
         ITypeSymbol typeSymbol = globalNamespaceScope.getTypeSymbolWhichClashesWithUse(symbol.getDefinitionAst());
         boolean ok = hasNoTypeNameClash(symbol.getDefinitionAst(), typeSymbol);
         if (!ok) {
-            ErrorReporterRegistry.get().determineAlreadyDefined(symbol, typeSymbol);
+            TypeCheckErrorReporterRegistry.get().determineAlreadyDefined(symbol, typeSymbol);
         }
         return ok;
     }
@@ -112,11 +112,6 @@ public class NamespaceScope implements INamespaceScope
     @Override
     public Map<String, List<ISymbol>> getSymbols() {
         return unsafeCast(uses);
-    }
-
-    @Override
-    public String toString() {
-        return scopeName + ":" + uses.keySet().toString();
     }
 
     @SuppressWarnings("unchecked")

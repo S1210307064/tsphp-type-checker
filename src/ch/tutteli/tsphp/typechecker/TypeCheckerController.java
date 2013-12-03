@@ -9,7 +9,7 @@ import ch.tutteli.tsphp.common.exceptions.DefinitionException;
 import ch.tutteli.tsphp.common.exceptions.ReferenceException;
 import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
-import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
+import ch.tutteli.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.scopes.IConditionalScope;
 import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasTypeSymbol;
@@ -83,7 +83,7 @@ public class TypeCheckerController implements ITypeCheckerController
     public boolean checkIsInterface(ITSPHPAst typeAst, ITypeSymbol symbol) {
         boolean isInterface = symbol instanceof IInterfaceTypeSymbol || symbol instanceof IErroneousTypeSymbol;
         if (!isInterface) {
-            ErrorReporterRegistry.get().interfaceExpected(typeAst);
+            TypeCheckErrorReporterRegistry.get().interfaceExpected(typeAst);
         }
         return isInterface;
     }
@@ -93,7 +93,7 @@ public class TypeCheckerController implements ITypeCheckerController
     public boolean checkIsClass(ITSPHPAst typeAst, ITypeSymbol symbol) {
         boolean isClass = symbol instanceof IClassTypeSymbol || symbol instanceof IErroneousTypeSymbol;
         if (!isClass) {
-            ErrorReporterRegistry.get().classExpected(typeAst);
+            TypeCheckErrorReporterRegistry.get().classExpected(typeAst);
         }
         return isClass;
     }
@@ -107,7 +107,7 @@ public class TypeCheckerController implements ITypeCheckerController
             ITSPHPAst definitionAst = symbol.getDefinitionAst();
             isNotUsedBefore = definitionAst.isDefinedEarlierThan(ast);
             if (!isNotUsedBefore) {
-                DefinitionException exception = ErrorReporterRegistry.get().forwardReference(ast, definitionAst);
+                DefinitionException exception = TypeCheckErrorReporterRegistry.get().forwardReference(ast, definitionAst);
                 symbol = symbolFactory.createErroneousVariableSymbol(ast, exception);
                 ast.setSymbol(symbol);
             }
@@ -124,10 +124,10 @@ public class TypeCheckerController implements ITypeCheckerController
             IScope currentScope = ast.getScope();
             if (!(currentScope instanceof IConditionalScope)) {
                 ok = false;
-                ErrorReporterRegistry.get().variableDefinedInConditionalScope(ast.getSymbol().getDefinitionAst(), ast);
+                TypeCheckErrorReporterRegistry.get().variableDefinedInConditionalScope(ast.getSymbol().getDefinitionAst(), ast);
             } else if (isNotDefinedInThisNorOuterScope(symbol, currentScope)) {
                 ok = false;
-                ErrorReporterRegistry.get().variableDefinedInOtherConditionalScope(symbol.getDefinitionAst(), ast);
+                TypeCheckErrorReporterRegistry.get().variableDefinedInOtherConditionalScope(symbol.getDefinitionAst(), ast);
             }
         }
         return ok;
@@ -151,7 +151,7 @@ public class TypeCheckerController implements ITypeCheckerController
         IVariableSymbol symbol = symbolResolver.resolveConstant(ast);
 
         if (symbol == null) {
-            ReferenceException exception = ErrorReporterRegistry.get().notDefined(ast);
+            ReferenceException exception = TypeCheckErrorReporterRegistry.get().notDefined(ast);
             symbol = symbolFactory.createErroneousVariableSymbol(ast, exception);
         }
         return symbol;
@@ -164,7 +164,7 @@ public class TypeCheckerController implements ITypeCheckerController
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
             @Override
             public void callAppropriateMethod(ITSPHPAst identifier, ISymbolWithAccessModifier symbol, int accessFrom) {
-                ErrorReporterRegistry.get().visibilityViolationStaticClassMemberAccess(identifier, symbol, accessFrom);
+                TypeCheckErrorReporterRegistry.get().visibilityViolationStaticClassMemberAccess(identifier, symbol, accessFrom);
             }
         });
     }
@@ -176,7 +176,7 @@ public class TypeCheckerController implements ITypeCheckerController
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
             @Override
             public void callAppropriateMethod(ITSPHPAst identifier, ISymbolWithAccessModifier symbol, int accessFrom) {
-                ErrorReporterRegistry.get().visibilityViolationClassConstantAccess(identifier, symbol, accessFrom);
+                TypeCheckErrorReporterRegistry.get().visibilityViolationClassConstantAccess(identifier, symbol, accessFrom);
             }
         });
     }
@@ -186,7 +186,7 @@ public class TypeCheckerController implements ITypeCheckerController
             IVisibilityViolationCaller caller) {
         IVariableSymbol variableSymbol = resolveClassMemberOrStaticMemberOrConstantAccess(accessor, id, caller);
         if (!variableSymbol.isStatic()) {
-            ErrorReporterRegistry.get().notStatic(accessor);
+            TypeCheckErrorReporterRegistry.get().notStatic(accessor);
         }
         return variableSymbol;
     }
@@ -233,7 +233,7 @@ public class TypeCheckerController implements ITypeCheckerController
                 classTypeSymbol.setThis(variableSymbol);
             }
         } else {
-            ReferenceException exception = ErrorReporterRegistry.get().notInClass($this);
+            ReferenceException exception = TypeCheckErrorReporterRegistry.get().notInClass($this);
             variableSymbol = symbolFactory.createErroneousVariableSymbol($this, exception);
         }
         return variableSymbol;
@@ -248,7 +248,7 @@ public class TypeCheckerController implements ITypeCheckerController
     public IVariableSymbol resolveVariable(ITSPHPAst ast) {
         ISymbol symbol = ast.getScope().resolve(ast);
         if (symbol == null) {
-            ReferenceException exception = ErrorReporterRegistry.get().notDefined(ast);
+            ReferenceException exception = TypeCheckErrorReporterRegistry.get().notDefined(ast);
             symbol = symbolFactory.createErroneousVariableSymbol(ast, exception);
         }
         return (IVariableSymbol) symbol;
@@ -269,13 +269,13 @@ public class TypeCheckerController implements ITypeCheckerController
 
         if (symbol == null) {
             rewriteToAbsoluteNotFoundType(typeAst);
-            ReferenceException ex = ErrorReporterRegistry.get().unknownType(typeAst);
+            ReferenceException ex = TypeCheckErrorReporterRegistry.get().unknownType(typeAst);
             symbol = symbolFactory.createErroneousClassTypeSymbol(typeAst, ex);
 
         } else if (symbol instanceof IAliasTypeSymbol) {
 
             typeAst.setText(symbol.getName());
-            ReferenceException ex = ErrorReporterRegistry.get().unknownType(typeAst);
+            ReferenceException ex = TypeCheckErrorReporterRegistry.get().unknownType(typeAst);
             symbol = symbolFactory.createErroneousClassTypeSymbol(symbol.getDefinitionAst(), ex);
         }
         return symbol;
@@ -310,7 +310,7 @@ public class TypeCheckerController implements ITypeCheckerController
         ITypeSymbol typeSymbol = (ITypeSymbol) globalDefaultNamespace.resolve(typeAst);
         if (typeSymbol == null) {
             rewriteToAbsoluteNotFoundType(typeAst);
-            ReferenceException ex = ErrorReporterRegistry.get().unknownType(typeAst);
+            ReferenceException ex = TypeCheckErrorReporterRegistry.get().unknownType(typeAst);
             typeSymbol = symbolFactory.createErroneousTypeSymbol(typeAst, ex);
 
         }
@@ -332,7 +332,7 @@ public class TypeCheckerController implements ITypeCheckerController
             }
         }
         if (count < levels) {
-            ErrorReporterRegistry.get().toManyBreakContinueLevels(root);
+            TypeCheckErrorReporterRegistry.get().toManyBreakContinueLevels(root);
         }
     }
 
@@ -349,7 +349,7 @@ public class TypeCheckerController implements ITypeCheckerController
     private IClassTypeSymbol getEnclosingClass(ITSPHPAst ast) {
         IClassTypeSymbol classTypeSymbol = symbolResolver.getEnclosingClass(ast);
         if (classTypeSymbol == null) {
-            ReferenceException ex = ErrorReporterRegistry.get().notInClass(ast);
+            ReferenceException ex = TypeCheckErrorReporterRegistry.get().notInClass(ast);
             classTypeSymbol = symbolFactory.createErroneousClassTypeSymbol(ast, ex);
         }
         return classTypeSymbol;
@@ -358,7 +358,7 @@ public class TypeCheckerController implements ITypeCheckerController
     private IMethodSymbol getEnclosingMethod(ITSPHPAst ast) {
         IMethodSymbol methodSymbol = symbolResolver.getEnclosingMethod(ast);
         if (methodSymbol == null) {
-            ReferenceException ex = ErrorReporterRegistry.get().notInMethod(ast);
+            ReferenceException ex = TypeCheckErrorReporterRegistry.get().notInMethod(ast);
             methodSymbol = symbolFactory.createErroneousMethodSymbol(ast, ex);
         }
         return methodSymbol;
@@ -368,7 +368,7 @@ public class TypeCheckerController implements ITypeCheckerController
         IClassTypeSymbol classTypeSymbol = getEnclosingClass(ast);
         IClassTypeSymbol parent = classTypeSymbol.getParent();
         if (parent == null) {
-            TypeCheckerException ex = ErrorReporterRegistry.get().noParentClass(ast);
+            TypeCheckerException ex = TypeCheckErrorReporterRegistry.get().noParentClass(ast);
             parent = symbolFactory.createErroneousClassTypeSymbol(ast, ex);
         }
         return parent;
@@ -383,14 +383,14 @@ public class TypeCheckerController implements ITypeCheckerController
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
             @Override
             public void report(AmbiguousCallException exception) {
-                ErrorReporterRegistry.get().ambiguousBinaryOperatorUsage(operator, left, right, exception);
+                TypeCheckErrorReporterRegistry.get().ambiguousBinaryOperatorUsage(operator, left, right, exception);
             }
         };
         IWrongOperatorUsageReporter wrongOperatorUsageCaller = new IWrongOperatorUsageReporter()
         {
             @Override
             public ReferenceException report(List<IMethodSymbol> methods) {
-                return ErrorReporterRegistry.get().wrongBinaryOperatorUsage(operator, left, right, methods);
+                return TypeCheckErrorReporterRegistry.get().wrongBinaryOperatorUsage(operator, left, right, methods);
             }
         };
 
@@ -414,7 +414,7 @@ public class TypeCheckerController implements ITypeCheckerController
                     typeSymbol = symbolFactory.createErroneousTypeSymbol(dto.operator, ex);
                 }
             } else {
-                TypeCheckerException exception = ErrorReporterRegistry.get().unsupportedOperator(dto.operator);
+                TypeCheckerException exception = TypeCheckErrorReporterRegistry.get().unsupportedOperator(dto.operator);
                 typeSymbol = symbolFactory.createErroneousTypeSymbol(dto.operator, exception);
             }
 
@@ -474,14 +474,14 @@ public class TypeCheckerController implements ITypeCheckerController
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
             @Override
             public void report(AmbiguousCallException exception) {
-                ErrorReporterRegistry.get().ambiguousUnaryOperatorUsage(operator, expression, exception);
+                TypeCheckErrorReporterRegistry.get().ambiguousUnaryOperatorUsage(operator, expression, exception);
             }
         };
         IWrongOperatorUsageReporter wrongOperatorUsageReporter = new IWrongOperatorUsageReporter()
         {
             @Override
             public ReferenceException report(List<IMethodSymbol> methods) {
-                return ErrorReporterRegistry.get().wrongUnaryOperatorUsage(operator, expression, methods);
+                return TypeCheckErrorReporterRegistry.get().wrongUnaryOperatorUsage(operator, expression, methods);
             }
         };
 
@@ -500,7 +500,7 @@ public class TypeCheckerController implements ITypeCheckerController
         ITypeSymbol typeSymbol = caseTrue.getEvalType();
 
         if (areNotSameAndNoneIsSubType(caseTrue, caseFalse)) {
-            ErrorReporterRegistry.get().wrongTypeTernaryCases(caseTrue, caseFalse);
+            TypeCheckErrorReporterRegistry.get().wrongTypeTernaryCases(caseTrue, caseFalse);
         } else {
             ITypeSymbol caseFalseType = caseFalse.getEvalType();
             int promotionLevel = overloadResolver.getPromotionLevelFromTo(typeSymbol, caseFalseType);
@@ -522,7 +522,7 @@ public class TypeCheckerController implements ITypeCheckerController
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
             @Override
             public void callAppropriateMethod() {
-                ErrorReporterRegistry.get().wrongTypeTernaryCondition(operator, condition, typeExpected);
+                TypeCheckErrorReporterRegistry.get().wrongTypeTernaryCondition(operator, condition, typeExpected);
             }
         });
     }
@@ -543,7 +543,7 @@ public class TypeCheckerController implements ITypeCheckerController
                 keyTypeSymbol = arrayType.getKeyTypeSymbol();
                 returnTypeArrayAccess = arrayType.getValueTypeSymbol();
             } else {
-                ReferenceException exception = ErrorReporterRegistry.get().wrongTypeArrayAccess(expression,
+                ReferenceException exception = TypeCheckErrorReporterRegistry.get().wrongTypeArrayAccess(expression,
                         arrayTypeSymbol);
                 returnTypeArrayAccess = symbolFactory.createErroneousTypeSymbol(statement, exception);
             }
@@ -561,7 +561,7 @@ public class TypeCheckerController implements ITypeCheckerController
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
             @Override
             public void callAppropriateMethod() {
-                ErrorReporterRegistry.get().wrongArrayIndexType(expression, index, typeSymbol);
+                TypeCheckErrorReporterRegistry.get().wrongArrayIndexType(expression, index, typeSymbol);
             }
         });
 
@@ -578,7 +578,7 @@ public class TypeCheckerController implements ITypeCheckerController
             @Override
             public void callAppropriateMethod(ITSPHPAst identifier, ISymbolWithAccessModifier symbol,
                     int accessFrom) {
-                ErrorReporterRegistry.get().visibilityViolationClassMemberAccess(
+                TypeCheckErrorReporterRegistry.get().visibilityViolationClassMemberAccess(
                         identifier, symbol, accessFrom);
             }
         };
@@ -611,7 +611,7 @@ public class TypeCheckerController implements ITypeCheckerController
             variableSymbol = resolveAccess((IPolymorphicTypeSymbol) evalType, expression,
                     identifier, visibilityViolationCaller);
         } else {
-            ReferenceException exception = ErrorReporterRegistry.get().wrongTypeClassMemberAccess(identifier);
+            ReferenceException exception = TypeCheckErrorReporterRegistry.get().wrongTypeClassMemberAccess(identifier);
             variableSymbol = symbolFactory.createErroneousVariableSymbol(identifier, exception);
             variableSymbol.setType(symbolFactory.createErroneousTypeSymbol(identifier, exception));
         }
@@ -627,7 +627,7 @@ public class TypeCheckerController implements ITypeCheckerController
         if (symbol != null) {
             checkAccess(symbol, polymorphicTypeSymbol, visibilityViolationCaller, accessor, identifier);
         } else {
-            DefinitionException exception = ErrorReporterRegistry.get().memberNotDefined(accessor, identifier);
+            DefinitionException exception = TypeCheckErrorReporterRegistry.get().memberNotDefined(accessor, identifier);
             symbol = symbolFactory.createErroneousVariableSymbol(identifier, exception);
         }
         return symbol;
@@ -641,7 +641,7 @@ public class TypeCheckerController implements ITypeCheckerController
         if (methodSymbol != null) {
             resolveCallOverload(identifier, arguments, methodSymbol, wrongCallReporter);
         } else {
-            ReferenceException exception = ErrorReporterRegistry.get().notDefined(identifier);
+            ReferenceException exception = TypeCheckErrorReporterRegistry.get().notDefined(identifier);
             ITypeSymbol typeSymbol = symbolFactory.createErroneousClassTypeSymbol(identifier, exception);
             methodSymbol = symbolFactory.createErroneousMethodSymbol(identifier, exception);
             methodSymbol.setType(typeSymbol);
@@ -690,13 +690,13 @@ public class TypeCheckerController implements ITypeCheckerController
                 methodSymbol = resolveCallOverload(identifier, arguments, methodSymbol, wrongCallReporter);
                 methodVisibilityCheck(methodSymbol, polymorphicTypeSymbol, callee, identifier);
             } else {
-                DefinitionException exception = ErrorReporterRegistry.get().methodNotDefined(callee, identifier);
+                DefinitionException exception = TypeCheckErrorReporterRegistry.get().methodNotDefined(callee, identifier);
                 typeSymbol = symbolFactory.createErroneousClassTypeSymbol(identifier, exception);
                 methodSymbol = symbolFactory.createErroneousMethodSymbol(identifier, exception);
                 methodSymbol.setType(typeSymbol);
             }
         } else {
-            ReferenceException exception = ErrorReporterRegistry.get().wrongTypeMethodCall(callee);
+            ReferenceException exception = TypeCheckErrorReporterRegistry.get().wrongTypeMethodCall(callee);
             typeSymbol = symbolFactory.createErroneousClassTypeSymbol(identifier, exception);
             methodSymbol = symbolFactory.createErroneousMethodSymbol(identifier, exception);
             methodSymbol.setType(typeSymbol);
@@ -713,7 +713,7 @@ public class TypeCheckerController implements ITypeCheckerController
             @Override
             public void callAppropriateMethod(ITSPHPAst identifier, ISymbolWithAccessModifier symbol,
                     int accessedFrom) {
-                ErrorReporterRegistry.get().visibilityViolationMethodCall(identifier, symbol, accessedFrom);
+                TypeCheckErrorReporterRegistry.get().visibilityViolationMethodCall(identifier, symbol, accessedFrom);
             }
         };
 
@@ -725,7 +725,7 @@ public class TypeCheckerController implements ITypeCheckerController
     public IMethodSymbol resolveStaticMethodCall(ITSPHPAst callee, ITSPHPAst identifier, ITSPHPAst arguments) {
         IMethodSymbol symbol = resolveMethodCall(callee, identifier, arguments);
         if (!symbol.isStatic()) {
-            ErrorReporterRegistry.get().notStatic(identifier);
+            TypeCheckErrorReporterRegistry.get().notStatic(identifier);
         }
         return symbol;
     }
@@ -742,7 +742,7 @@ public class TypeCheckerController implements ITypeCheckerController
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
             @Override
             public void report(AmbiguousCallException exception) {
-                ErrorReporterRegistry.get().ambiguousCall(identifier, exception, actualParameters);
+                TypeCheckErrorReporterRegistry.get().ambiguousCall(identifier, exception, actualParameters);
             }
         };
         overloadDto = getMostSpecificOverload(methods, actualParameters, ambiguousCallReporter);
@@ -765,17 +765,17 @@ public class TypeCheckerController implements ITypeCheckerController
             CastingDto rightToLeft = overloadResolver.getCastingDtoAlwaysCasting(leftSymbol, right);
 
             if (haveBothSideCast(leftToRight, rightToLeft)) {
-                ErrorReporterRegistry.get().operatorAmbiguousCasts(operator, left, right, leftToRight, rightToLeft,
+                TypeCheckErrorReporterRegistry.get().operatorAmbiguousCasts(operator, left, right, leftToRight, rightToLeft,
                         leftToRight.ambiguousCasts, rightToLeft.ambiguousCasts);
 
             } else if (haveNoSideCast(leftToRight, rightToLeft)) {
-                ErrorReporterRegistry.get().wrongEqualityUsage(operator, left, right);
+                TypeCheckErrorReporterRegistry.get().wrongEqualityUsage(operator, left, right);
 
             } else if (hasAmbiguousCast(rightToLeft)) {
-                ErrorReporterRegistry.get().ambiguousCasts(operator, left, right, rightToLeft.ambiguousCasts);
+                TypeCheckErrorReporterRegistry.get().ambiguousCasts(operator, left, right, rightToLeft.ambiguousCasts);
 
             } else if (hasAmbiguousCast(leftToRight)) {
-                ErrorReporterRegistry.get().ambiguousCasts(operator, left, right, leftToRight.ambiguousCasts);
+                TypeCheckErrorReporterRegistry.get().ambiguousCasts(operator, left, right, leftToRight.ambiguousCasts);
             }
         }
     }
@@ -817,13 +817,13 @@ public class TypeCheckerController implements ITypeCheckerController
                         astHelper.prependCasting(castingDto);
                     }
                     if (castingDto.ambiguousCasts != null) {
-                        ErrorReporterRegistry.get().ambiguousCasts(operator, left, right, castingDto.ambiguousCasts);
+                        TypeCheckErrorReporterRegistry.get().ambiguousCasts(operator, left, right, castingDto.ambiguousCasts);
                     }
                 } else {
-                    ErrorReporterRegistry.get().wrongAssignment(operator, left, right);
+                    TypeCheckErrorReporterRegistry.get().wrongAssignment(operator, left, right);
                 }
             } else {
-                ErrorReporterRegistry.get().variableExpected(left);
+                TypeCheckErrorReporterRegistry.get().variableExpected(left);
             }
         }
     }
@@ -858,7 +858,7 @@ public class TypeCheckerController implements ITypeCheckerController
     @Override
     public void checkIdentity(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right) {
         if (areNotSameAndNoneIsSubType(left, right)) {
-            ErrorReporterRegistry.get().wrongIdentityUsage(operator, left, right);
+            TypeCheckErrorReporterRegistry.get().wrongIdentityUsage(operator, left, right);
         }
 
     }
@@ -892,9 +892,9 @@ public class TypeCheckerController implements ITypeCheckerController
 
             castingDto = overloadResolver.getCastingDtoAlwaysCasting(leftSymbol, right);
             if (castingDto == null) {
-                ErrorReporterRegistry.get().wrongCast(operator, left, right);
+                TypeCheckErrorReporterRegistry.get().wrongCast(operator, left, right);
             } else if (castingDto.ambiguousCasts != null && !castingDto.ambiguousCasts.isEmpty()) {
-                ErrorReporterRegistry.get().ambiguousCasts(operator, left, right, castingDto.ambiguousCasts);
+                TypeCheckErrorReporterRegistry.get().ambiguousCasts(operator, left, right, castingDto.ambiguousCasts);
             }
             operator.setText("casting");
         }
@@ -925,7 +925,7 @@ public class TypeCheckerController implements ITypeCheckerController
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
             @Override
             public void callAppropriateMethod() {
-                ErrorReporterRegistry.get().wrongTypeIf(ifRoot, expression, typeSymbol);
+                TypeCheckErrorReporterRegistry.get().wrongTypeIf(ifRoot, expression, typeSymbol);
             }
         });
     }
@@ -949,7 +949,7 @@ public class TypeCheckerController implements ITypeCheckerController
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
             @Override
             public void callAppropriateMethod() {
-                ErrorReporterRegistry.get().wrongTypeSwitch(switchRoot, expression, typeSymbol);
+                TypeCheckErrorReporterRegistry.get().wrongTypeSwitch(switchRoot, expression, typeSymbol);
             }
         });
     }
@@ -962,7 +962,7 @@ public class TypeCheckerController implements ITypeCheckerController
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
             @Override
             public void callAppropriateMethod() {
-                ErrorReporterRegistry.get().wrongTypeSwitchCase(switchRoot, switchCase, typeSymbol);
+                TypeCheckErrorReporterRegistry.get().wrongTypeSwitchCase(switchRoot, switchCase, typeSymbol);
             }
         });
     }
@@ -975,7 +975,7 @@ public class TypeCheckerController implements ITypeCheckerController
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
             @Override
             public void callAppropriateMethod() {
-                ErrorReporterRegistry.get().wrongTypeFor(forRoot, expression, typeSymbol);
+                TypeCheckErrorReporterRegistry.get().wrongTypeFor(forRoot, expression, typeSymbol);
             }
         });
     }
@@ -996,7 +996,7 @@ public class TypeCheckerController implements ITypeCheckerController
                 keyTypeSymbol = arrayType.getKeyTypeSymbol();
                 valueTypeSymbol = arrayType.getValueTypeSymbol();
             } else {
-                ErrorReporterRegistry.get().wrongTypeForeach(foreachRoot, array, arrayTypeSymbol);
+                TypeCheckErrorReporterRegistry.get().wrongTypeForeach(foreachRoot, array, arrayTypeSymbol);
             }
         }
         if (keyVariableId != null) {
@@ -1015,7 +1015,7 @@ public class TypeCheckerController implements ITypeCheckerController
         ITypeSymbol expressionType = expression.getEvalType();
         if (areNotErroneousTypes(expressionType, typeSymbol)) {
             if (!overloadResolver.isSameOrParentTypeConsiderNull(expressionType, typeSymbol)) {
-                ErrorReporterRegistry.get().notSameOrParentType(statement, expression, typeSymbol);
+                TypeCheckErrorReporterRegistry.get().notSameOrParentType(statement, expression, typeSymbol);
             }
         }
     }
@@ -1028,7 +1028,7 @@ public class TypeCheckerController implements ITypeCheckerController
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
             @Override
             public void callAppropriateMethod() {
-                ErrorReporterRegistry.get().wrongTypeWhile(whileRoot, expression, typeSymbol);
+                TypeCheckErrorReporterRegistry.get().wrongTypeWhile(whileRoot, expression, typeSymbol);
             }
         });
     }
@@ -1041,7 +1041,7 @@ public class TypeCheckerController implements ITypeCheckerController
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
             @Override
             public void callAppropriateMethod() {
-                ErrorReporterRegistry.get().wrongTypeDoWhile(doWhileRoot, expression, typeSymbol);
+                TypeCheckErrorReporterRegistry.get().wrongTypeDoWhile(doWhileRoot, expression, typeSymbol);
             }
         });
     }
@@ -1054,7 +1054,7 @@ public class TypeCheckerController implements ITypeCheckerController
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
             @Override
             public void callAppropriateMethod() {
-                ErrorReporterRegistry.get().wrongTypeThrow(throwRoot, expression, typeSymbol);
+                TypeCheckErrorReporterRegistry.get().wrongTypeThrow(throwRoot, expression, typeSymbol);
             }
         });
     }
@@ -1067,7 +1067,7 @@ public class TypeCheckerController implements ITypeCheckerController
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
             @Override
             public void callAppropriateMethod() {
-                ErrorReporterRegistry.get().wrongTypeCatch(castRoot, variableId, typeSymbol);
+                TypeCheckErrorReporterRegistry.get().wrongTypeCatch(castRoot, variableId, typeSymbol);
             }
         });
     }
@@ -1081,17 +1081,17 @@ public class TypeCheckerController implements ITypeCheckerController
             final ITypeSymbol typeSymbol = methodSymbol.getType();
             if (typeSymbol instanceof IVoidTypeSymbol) {
                 if (expression != null) {
-                    ErrorReporterRegistry.get().noReturnValueExpected(returnRoot, expression, typeSymbol);
+                    TypeCheckErrorReporterRegistry.get().noReturnValueExpected(returnRoot, expression, typeSymbol);
                 }
             } else {
                 if (expression == null) {
-                    ErrorReporterRegistry.get().returnValueExpected(returnRoot, expression, typeSymbol);
+                    TypeCheckErrorReporterRegistry.get().returnValueExpected(returnRoot, expression, typeSymbol);
                 } else {
                     checkIsSameOrSubType(expression, typeSymbol, new IErrorReporterCaller()
                     {
                         @Override
                         public void callAppropriateMethod() {
-                            ErrorReporterRegistry.get().wrongTypeReturn(returnRoot, expression, typeSymbol);
+                            TypeCheckErrorReporterRegistry.get().wrongTypeReturn(returnRoot, expression, typeSymbol);
                         }
                     });
                 }
@@ -1111,9 +1111,9 @@ public class TypeCheckerController implements ITypeCheckerController
     @Override
     public void checkConstantInitialValue(ITSPHPAst variableId, ITSPHPAst expression) {
         if (expression.getType() != TSPHPDefinitionWalker.TypeArray && expression.getChildCount() > 1) {
-            ErrorReporterRegistry.get().onlySingleValue(variableId, expression);
+            TypeCheckErrorReporterRegistry.get().onlySingleValue(variableId, expression);
         } else if (isNotConstantValue(expression)) {
-            ErrorReporterRegistry.get().onlyConstantValue(variableId, expression);
+            TypeCheckErrorReporterRegistry.get().onlyConstantValue(variableId, expression);
         } else {
             checkInitialValue(variableId, expression);
         }
@@ -1152,7 +1152,7 @@ public class TypeCheckerController implements ITypeCheckerController
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
             @Override
             public void callAppropriateMethod() {
-                ErrorReporterRegistry.get().wrongTypeEcho(expression, typeSymbol);
+                TypeCheckErrorReporterRegistry.get().wrongTypeEcho(expression, typeSymbol);
             }
         });
     }
@@ -1162,7 +1162,7 @@ public class TypeCheckerController implements ITypeCheckerController
     public void checkClone(ITSPHPAst clone, ITSPHPAst expression) {
         ITypeSymbol typeSymbol = expression.getEvalType();
         if (!(typeSymbol instanceof IErroneousSymbol) && !(typeSymbol instanceof IPolymorphicTypeSymbol)) {
-            ErrorReporterRegistry.get().wrongTypeClone(clone, expression);
+            TypeCheckErrorReporterRegistry.get().wrongTypeClone(clone, expression);
         }
     }
 
@@ -1177,10 +1177,10 @@ public class TypeCheckerController implements ITypeCheckerController
         } else {
             if (areNotErroneousTypes(leftType, rightType)) {
                 if (!(leftType instanceof IPolymorphicTypeSymbol)) {
-                    ErrorReporterRegistry.get().wrongTypeInstanceof(expression);
+                    TypeCheckErrorReporterRegistry.get().wrongTypeInstanceof(expression);
                 }
                 if (!(rightType instanceof IPolymorphicTypeSymbol)) {
-                    ErrorReporterRegistry.get().wrongTypeInstanceof(typeAst);
+                    TypeCheckErrorReporterRegistry.get().wrongTypeInstanceof(typeAst);
                 }
             }
         }
@@ -1245,7 +1245,7 @@ public class TypeCheckerController implements ITypeCheckerController
         @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
         @Override
         public void report(ITSPHPAst identifier, List<ITSPHPAst> actualParameters, List<IMethodSymbol> methods) {
-            ErrorReporterRegistry.get().wrongFunctionCall(identifier, actualParameters, methods);
+            TypeCheckErrorReporterRegistry.get().wrongFunctionCall(identifier, actualParameters, methods);
         }
     }
 

@@ -4,8 +4,9 @@ import ch.tutteli.tsphp.common.ILowerCaseStringMap;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
+import ch.tutteli.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.utils.MapHelper;
+
 import java.util.List;
 import java.util.Map;
 
@@ -85,7 +86,7 @@ public class ScopeHelper implements IScopeHelper
         @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
         @Override
         public void callAccordingAlreadyDefinedMethod(ISymbol firstDefinition, ISymbol symbolToCheck) {
-            ErrorReporterRegistry.get().alreadyDefined(firstDefinition, symbolToCheck);
+            TypeCheckErrorReporterRegistry.get().alreadyDefined(firstDefinition, symbolToCheck);
         }
     }
 }

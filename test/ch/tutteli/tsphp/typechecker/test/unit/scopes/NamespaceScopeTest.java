@@ -4,7 +4,7 @@ import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
-import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
+import ch.tutteli.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.error.ITypeCheckErrorReporter;
 import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
@@ -399,7 +399,7 @@ public class NamespaceScopeTest
     @Test
     public void useDefinitionCheck_IsNotDoubleDefinedAndTypeDefinedEarlierInSameNamespace_ReturnFalse() {
         ITypeCheckErrorReporter errorReporter = mock(ITypeCheckErrorReporter.class);
-        ErrorReporterRegistry.set(errorReporter);
+        TypeCheckErrorReporterRegistry.set(errorReporter);
 
         ITSPHPAst useDefinitionAst = mock(ITSPHPAst.class);
         IAliasSymbol symbol = createAliasSymbol("aliasName", useDefinitionAst);
@@ -428,7 +428,7 @@ public class NamespaceScopeTest
     @Test
     public void useDefinitionCheck_IsNotDoubleDefinedAndTypeDefinedEarlierInOtherNamespace_ReturnFalse() {
         ITypeCheckErrorReporter errorReporter = mock(ITypeCheckErrorReporter.class);
-        ErrorReporterRegistry.set(errorReporter);
+        TypeCheckErrorReporterRegistry.set(errorReporter);
 
         ITSPHPAst useDefinitionAst = mock(ITSPHPAst.class);
         IAliasSymbol symbol = createAliasSymbol("aliasName", useDefinitionAst);
@@ -458,7 +458,7 @@ public class NamespaceScopeTest
     @Test
     public void useDefinitionCheck_IsNotDoubleDefinedAndTypeDefinedLaterInSameNamespace_ReturnFalse() {
         ITypeCheckErrorReporter errorReporter = mock(ITypeCheckErrorReporter.class);
-        ErrorReporterRegistry.set(errorReporter);
+        TypeCheckErrorReporterRegistry.set(errorReporter);
 
         ITSPHPAst useDefinitionAst = mock(ITSPHPAst.class);
         IAliasSymbol symbol = createAliasSymbol("aliasName", useDefinitionAst);

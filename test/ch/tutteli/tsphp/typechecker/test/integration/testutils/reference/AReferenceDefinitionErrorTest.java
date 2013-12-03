@@ -3,8 +3,10 @@ package ch.tutteli.tsphp.typechecker.test.integration.testutils.reference;
 import ch.tutteli.tsphp.common.IErrorReporter;
 import ch.tutteli.tsphp.common.exceptions.DefinitionException;
 import ch.tutteli.tsphp.typechecker.error.DefinitionErrorDto;
-import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
+import ch.tutteli.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
+
 import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Ignore;
 
@@ -28,11 +30,11 @@ public abstract class AReferenceDefinitionErrorTest extends AReferenceTest
     public void verifyReferences() {
         verifyReferences(errorMessagePrefix, exceptions, errorDtos);
     }
-    
+
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
-    public static void verifyReferences(String errorMessagePrefix, List<Exception> exceptions, DefinitionErrorDto[] errorDtos){
-        
-        IErrorReporter errorReporter = ErrorReporterRegistry.get();
+    public static void verifyReferences(String errorMessagePrefix, List<Exception> exceptions, DefinitionErrorDto[] errorDtos) {
+
+        IErrorReporter errorReporter = TypeCheckErrorReporterRegistry.get();
         Assert.assertTrue(errorMessagePrefix + " failed. No exception occurred.", errorReporter.hasFoundError());
 
         Assert.assertEquals(errorMessagePrefix + " failed. More or less exceptions occurred." + exceptions.toString(),
@@ -55,6 +57,6 @@ public abstract class AReferenceDefinitionErrorTest extends AReferenceTest
             Assert.assertEquals(errorMessagePrefix + " failed. wrong new position. ",
                     errorDtos[i].positionNewDefinition, exception.getNewDefinition().getCharPositionInLine());
         }
-    
+
     }
 }

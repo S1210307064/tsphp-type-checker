@@ -3,7 +3,7 @@ package ch.tutteli.tsphp.typechecker.scopes;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
+import ch.tutteli.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
 
 public class ConditionalScope extends AScope implements IConditionalScope
 {
@@ -30,7 +30,7 @@ public class ConditionalScope extends AScope implements IConditionalScope
                     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
                     @Override
                     public void callAccordingAlreadyDefinedMethod(ISymbol firstDefinition, ISymbol symbolToCheck) {
-                        ErrorReporterRegistry.get().definedInOuterScope(firstDefinition, symbolToCheck);
+                        TypeCheckErrorReporterRegistry.get().definedInOuterScope(firstDefinition, symbolToCheck);
                     }
                 });
     }

@@ -4,7 +4,7 @@ import ch.tutteli.tsphp.common.IErrorLogger;
 import ch.tutteli.tsphp.common.IErrorReporter;
 import ch.tutteli.tsphp.common.exceptions.TSPHPException;
 import ch.tutteli.tsphp.typechecker.antlrmod.ErrorReportingTSPHPTypeCheckWalker;
-import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
+import ch.tutteli.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.reference.AReferenceTest;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -37,7 +37,7 @@ public abstract class ATypeCheckTest extends AReferenceTest
     }
 
     protected void checkErrors() {
-        IErrorReporter errorHelper = ErrorReporterRegistry.get();
+        IErrorReporter errorHelper = TypeCheckErrorReporterRegistry.get();
         Assert.assertFalse(testString + " failed. Exceptions occurred." + exceptions,
                 errorHelper.hasFoundError());
 

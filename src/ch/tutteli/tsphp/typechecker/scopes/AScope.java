@@ -2,6 +2,7 @@ package ch.tutteli.tsphp.typechecker.scopes;
 
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,13 +24,8 @@ public abstract class AScope implements IScope
     }
 
     @Override
-    public void define(ISymbol symbol) {
-        scopeHelper.define(this, symbol);
-    }
-
-    @Override
     public boolean doubleDefinitionCheck(ISymbol symbol) {
-       return scopeHelper.doubleDefinitionCheck(symbols, symbol);
+        return scopeHelper.doubleDefinitionCheck(symbols, symbol);
     }
 
     @Override
@@ -45,10 +41,5 @@ public abstract class AScope implements IScope
     @Override
     public Map<String, List<ISymbol>> getSymbols() {
         return symbols;
-    }
-
-    @Override
-    public String toString() {
-        return scopeName + ":" + symbols.keySet().toString();
     }
 }

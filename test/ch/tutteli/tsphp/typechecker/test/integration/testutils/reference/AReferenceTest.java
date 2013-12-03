@@ -4,7 +4,7 @@ import ch.tutteli.tsphp.common.IErrorLogger;
 import ch.tutteli.tsphp.common.IErrorReporter;
 import ch.tutteli.tsphp.common.exceptions.TSPHPException;
 import ch.tutteli.tsphp.typechecker.antlrmod.ErrorReportingTSPHPReferenceWalker;
-import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
+import ch.tutteli.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.definition.ADefinitionTest;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -22,7 +22,7 @@ public abstract class AReferenceTest extends ADefinitionTest
     protected abstract void verifyReferences();
 
     protected void checkReferences() {
-        IErrorReporter errorHelper = ErrorReporterRegistry.get();
+        IErrorReporter errorHelper = TypeCheckErrorReporterRegistry.get();
         Assert.assertFalse(testString + " failed. Exceptions occurred." + exceptions,
                 errorHelper.hasFoundError());
 

@@ -10,7 +10,7 @@ import ch.tutteli.tsphp.typechecker.antlrmod.ErrorReportingTSPHPReferenceWalker;
 import ch.tutteli.tsphp.typechecker.antlrmod.ErrorReportingTSPHPTypeCheckWalker;
 import ch.tutteli.tsphp.typechecker.error.ErrorMessageProvider;
 import ch.tutteli.tsphp.typechecker.error.TypeCheckErrorReporter;
-import ch.tutteli.tsphp.typechecker.error.ErrorReporterRegistry;
+import ch.tutteli.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.scopes.IScopeHelper;
 import ch.tutteli.tsphp.typechecker.scopes.ScopeFactory;
 import ch.tutteli.tsphp.typechecker.scopes.ScopeHelper;
@@ -30,7 +30,7 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
     private boolean hasFoundError = false;
 
     public TypeChecker() {
-        ErrorReporterRegistry.set(new TypeCheckErrorReporter(new ErrorMessageProvider()));
+        TypeCheckErrorReporterRegistry.set(new TypeCheckErrorReporter(new ErrorMessageProvider()));
 
         init();
     }
@@ -87,13 +87,13 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
 
     @Override
     public boolean hasFoundError() {
-        return hasFoundError || ErrorReporterRegistry.get().hasFoundError();
+        return hasFoundError || TypeCheckErrorReporterRegistry.get().hasFoundError();
     }
 
     @Override
     public void registerErrorLogger(IErrorLogger errorLogger) {
         errorLoggers.add(errorLogger);
-        ErrorReporterRegistry.get().registerErrorLogger(errorLogger);
+        TypeCheckErrorReporterRegistry.get().registerErrorLogger(errorLogger);
     }
 
     @Override
@@ -113,7 +113,7 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
         hasFoundError = false;
         init();
 
-        ErrorReporterRegistry.get().reset();
+        TypeCheckErrorReporterRegistry.get().reset();
     }
 
     @Override
