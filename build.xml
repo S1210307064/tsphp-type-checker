@@ -1,10 +1,10 @@
-<project name="typechecker" default="build" basedir="." >
+<project name="typechecker" default="build" basedir=".">
 
-    <property environment="env" />
+    <property environment="env"/>
     <import file="${basedir}/ant/build-common.xml" as="common"/>
-    <import file="${basedir}/ant/copyCommon.xml" as="copyCommon"/>
-    <import file="${basedir}/ant/copyParser.xml" as="copyParser"/>
-    <import file="${basedir}/ant/copyAntlr.xml" as="copyAntlr"/>
+    <import file="${basedir}/ant/copyCommon.xml" as="cp"/>
+    <import file="${basedir}/ant/copyParser.xml" as="cp"/>
+    <import file="${basedir}/ant/copyAntlr.xml" as="cp"/>
 
     <property file="${basedir}/ant/antlr.properties"/>
 

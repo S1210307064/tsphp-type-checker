@@ -8,7 +8,7 @@
     <property name="parser.tokens" location="${parser}/antlr/output"/>
     <property name="parser.jar" location="${parser}/build/lib"/>
 
-    <target name="do" depends="" description="copy parser jar and token file to /lib/dev/, /antlr respectively">
+    <target name="parser" depends="" description="copy parser jar and token file to /lib/dev/, /antlr respectively">
         <delete>
             <fileset dir="${src.antlr}" includes="*.tokens"/>
         </delete>
