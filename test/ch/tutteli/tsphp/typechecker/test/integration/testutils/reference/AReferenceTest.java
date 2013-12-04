@@ -24,18 +24,22 @@ public abstract class AReferenceTest extends ADefinitionTest
     protected void checkReferences() {
         IErrorReporter errorHelper = TypeCheckErrorReporterRegistry.get();
         Assert.assertFalse(testString + " failed. Exceptions occurred." + exceptions,
-                errorHelper.hasFoundError());
+            errorHelper.hasFoundError());
 
         Assert.assertFalse(testString + " failed. reference walker exceptions occurred.",
-                reference.hasFoundError());
+            reference.hasFoundError());
 
         verifyReferences();
 
     }
 
     @Override
-    protected final void verifyDefinitions() {
+    protected void verifyDefinitions() {
         super.verifyDefinitions();
+        afterVerifyDefinitions();
+    }
+
+    protected void afterVerifyDefinitions() {
         commonTreeNodeStream.reset();
         reference = new ErrorReportingTSPHPReferenceWalker(commonTreeNodeStream, controller);
         reference.downup(ast);

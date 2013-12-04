@@ -80,7 +80,7 @@ interfaceExtendsDeclaration[ITSPHPAst identifier]
 			(allTypes[true]{	
 				ITypeSymbol typeSymbol = $allTypes.type;
 				if(controller.checkIsInterface($allTypes.start, typeSymbol)){
-				    ((IPolymorphicTypeSymbol)identifier.getSymbol()).addParentTypeSymbol((IPolymorphicTypeSymbol)typeSymbol);
+				    ((IInterfaceTypeSymbol)identifier.getSymbol()).addParentTypeSymbol((IInterfaceTypeSymbol)typeSymbol);
 				}
 			})+
 		) 

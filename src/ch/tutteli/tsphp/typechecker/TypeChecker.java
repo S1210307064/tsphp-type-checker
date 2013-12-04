@@ -16,7 +16,7 @@ import ch.tutteli.tsphp.typechecker.scopes.ScopeFactory;
 import ch.tutteli.tsphp.typechecker.scopes.ScopeHelper;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
 import ch.tutteli.tsphp.typechecker.symbols.SymbolFactory;
-import ch.tutteli.tsphp.typechecker.utils.AstHelper;
+import ch.tutteli.tsphp.typechecker.utils.TypeCheckerAstHelper;
 import org.antlr.runtime.tree.TreeNodeStream;
 
 import java.util.ArrayDeque;
@@ -41,31 +41,31 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
         IDefiner definer = new Definer(symbolFactory, new ScopeFactory(scopeHelper));
 
         ITypeSystem typeSystem = new TypeSystem(
-                symbolFactory,
-                AstHelperRegistry.get(),
-                definer.getGlobalDefaultNamespace());
+            symbolFactory,
+            AstHelperRegistry.get(),
+            definer.getGlobalDefaultNamespace());
 
         ISymbolResolver symbolResolver = new SymbolResolver(
-                scopeHelper,
-                symbolFactory,
-                definer.getGlobalNamespaceScopes(),
-                definer.getGlobalDefaultNamespace());
+            scopeHelper,
+            symbolFactory,
+            definer.getGlobalNamespaceScopes(),
+            definer.getGlobalDefaultNamespace());
 
         IOverloadResolver overloadResolver = new OverloadResolver(typeSystem);
 
         controller = new TypeCheckerController(
-                symbolFactory,
-                typeSystem,
-                definer,
-                symbolResolver,
-                overloadResolver,
-                new AstHelper());
+            symbolFactory,
+            typeSystem,
+            definer,
+            symbolResolver,
+            overloadResolver,
+            new TypeCheckerAstHelper());
     }
 
     @Override
     public void enrichWithDefinitions(ITSPHPAst ast, TreeNodeStream treeNodeStream) {
         ErrorReportingTSPHPDefinitionWalker definition =
-                new ErrorReportingTSPHPDefinitionWalker(treeNodeStream, controller.getDefiner());
+            new ErrorReportingTSPHPDefinitionWalker(treeNodeStream, controller.getDefiner());
         for (IErrorLogger logger : errorLoggers) {
             definition.registerErrorLogger(logger);
         }
@@ -77,7 +77,7 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
     public void enrichWithReferences(ITSPHPAst ast, TreeNodeStream treeNodeStream) {
         treeNodeStream.reset();
         ErrorReportingTSPHPReferenceWalker reference =
-                new ErrorReportingTSPHPReferenceWalker(treeNodeStream, controller);
+            new ErrorReportingTSPHPReferenceWalker(treeNodeStream, controller);
         for (IErrorLogger logger : errorLoggers) {
             reference.registerErrorLogger(logger);
         }
@@ -100,7 +100,7 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
     public void doTypeChecking(ITSPHPAst ast, TreeNodeStream treeNodeStream) {
         treeNodeStream.reset();
         ErrorReportingTSPHPTypeCheckWalker typeCheckWalker =
-                new ErrorReportingTSPHPTypeCheckWalker(treeNodeStream, controller);
+            new ErrorReportingTSPHPTypeCheckWalker(treeNodeStream, controller);
         for (IErrorLogger logger : errorLoggers) {
             typeCheckWalker.registerErrorLogger(logger);
         }

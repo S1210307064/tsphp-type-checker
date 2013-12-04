@@ -17,7 +17,7 @@ import ch.tutteli.tsphp.typechecker.test.integration.testutils.ATest;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.TestDefiner;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.TestScopeFactory;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.TestSymbolFactory;
-import ch.tutteli.tsphp.typechecker.utils.AstHelper;
+import ch.tutteli.tsphp.typechecker.utils.TypeCheckerAstHelper;
 import org.junit.Ignore;
 
 @Ignore
@@ -36,24 +36,24 @@ public class ATypeSystemTest extends ATest
         IDefiner definer = new TestDefiner(symbolFactory, scopeFactory);
 
         ITypeSystem typeSystem = new TypeSystem(
-                symbolFactory,
-                AstHelperRegistry.get(),
-                definer.getGlobalDefaultNamespace());
+            symbolFactory,
+            AstHelperRegistry.get(),
+            definer.getGlobalDefaultNamespace());
 
         ISymbolResolver symbolResolver = new SymbolResolver(
-                scopeHelper,
-                symbolFactory,
-                definer.getGlobalNamespaceScopes(),
-                definer.getGlobalDefaultNamespace());
+            scopeHelper,
+            symbolFactory,
+            definer.getGlobalNamespaceScopes(),
+            definer.getGlobalDefaultNamespace());
 
         IOverloadResolver methodResolver = new OverloadResolver(typeSystem);
 
         controller = new TypeCheckerController(
-                symbolFactory,
-                typeSystem,
-                definer,
-                symbolResolver,
-                methodResolver,
-                new AstHelper());
+            symbolFactory,
+            typeSystem,
+            definer,
+            symbolResolver,
+            methodResolver,
+            new TypeCheckerAstHelper());
     }
 }

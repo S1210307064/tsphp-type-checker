@@ -4,7 +4,7 @@ import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.typechecker.CastingDto;
 import ch.tutteli.tsphp.typechecker.ICastingMethod;
 
-public class AstHelper implements IAstHelper
+public class TypeCheckerAstHelper implements ITypeCheckerAstHelper
 {
 
     @Override

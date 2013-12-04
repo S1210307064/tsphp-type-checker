@@ -22,8 +22,8 @@ import ch.tutteli.tsphp.typechecker.test.integration.testutils.ATest;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.TestDefiner;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.TestScopeFactory;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.TestSymbolFactory;
-import ch.tutteli.tsphp.typechecker.utils.AstHelper;
-import ch.tutteli.tsphp.typechecker.utils.IAstHelper;
+import ch.tutteli.tsphp.typechecker.utils.ITypeCheckerAstHelper;
+import ch.tutteli.tsphp.typechecker.utils.TypeCheckerAstHelper;
 import org.antlr.runtime.tree.CommonTreeNodeStream;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -41,7 +41,7 @@ public abstract class ADefinitionTest extends ATest
     protected ITSPHPAst ast;
     protected CommonTreeNodeStream commonTreeNodeStream;
     protected ITSPHPAstAdaptor adaptor;
-    protected IAstHelper astHelper;
+    protected ITypeCheckerAstHelper astHelper;
     protected ErrorReportingTSPHPDefinitionWalker definition;
 
     protected void verifyDefinitions() {
@@ -59,7 +59,7 @@ public abstract class ADefinitionTest extends ATest
         IScopeHelper scopeHelper = new ScopeHelper();
 
         adaptor = new TSPHPAstAdaptor();
-        astHelper = new AstHelper();
+        astHelper = new TypeCheckerAstHelper();
         scopeFactory = new TestScopeFactory(scopeHelper);
 
         TestSymbolFactory symbolFactory = new TestSymbolFactory(scopeHelper);
@@ -67,20 +67,20 @@ public abstract class ADefinitionTest extends ATest
         typeSystem = new TypeSystem(symbolFactory, AstHelperRegistry.get(), definer.getGlobalDefaultNamespace());
 
         ISymbolResolver symbolResolver = new SymbolResolver(
-                scopeHelper,
-                symbolFactory,
-                definer.getGlobalNamespaceScopes(),
-                definer.getGlobalDefaultNamespace());
+            scopeHelper,
+            symbolFactory,
+            definer.getGlobalNamespaceScopes(),
+            definer.getGlobalDefaultNamespace());
 
         IOverloadResolver methodResolver = new OverloadResolver(typeSystem);
 
         controller = new TypeCheckerController(
-                symbolFactory,
-                typeSystem,
-                definer,
-                symbolResolver,
-                methodResolver,
-                astHelper);
+            symbolFactory,
+            typeSystem,
+            definer,
+            symbolResolver,
+            methodResolver,
+            astHelper);
     }
 
     public void check() {
@@ -103,7 +103,7 @@ public abstract class ADefinitionTest extends ATest
         definition.downup(ast);
 
         Assert.assertFalse(testString.replaceAll("\n", " ") + " failed - definition throw exception",
-                definition.hasFoundError());
+            definition.hasFoundError());
 
         verifyDefinitions();
     }

@@ -4,7 +4,6 @@ import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
-import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousTypeSymbol;
 
@@ -20,10 +19,10 @@ public interface ISymbolFactory
     IVoidTypeSymbol createVoidTypeSymbol();
 
     IScalarTypeSymbol createScalarTypeSymbol(String name, int tokenType, ITypeSymbol parentTypeSymbol,
-            boolean isNullable, int defaultValueTokenType, String defaultValue);
+        boolean isNullable, int defaultValueTokenType, String defaultValue);
 
     IScalarTypeSymbol createScalarTypeSymbol(String name, int tokenType, Set<ITypeSymbol> parentTypeSymbol,
-            boolean isNullable, int defaultValueTokenType, String defaultValue);
+        boolean isNullable, int defaultValueTokenType, String defaultValue);
 
     IArrayTypeSymbol createArrayTypeSymbol(String name, int tokenType, ITypeSymbol keyValue, ITypeSymbol valueType);
 
@@ -38,7 +37,7 @@ public interface ISymbolFactory
     IClassTypeSymbol createClassTypeSymbol(ITSPHPAst classModifier, ITSPHPAst identifier, IScope currentScope);
 
     IMethodSymbol createMethodSymbol(ITSPHPAst methodModifier, ITSPHPAst returnTypeModifier, ITSPHPAst identifier,
-            IScope currentScope);
+        IScope currentScope);
 
     IVariableSymbol createThisSymbol(ITSPHPAst variableId, IPolymorphicTypeSymbol polymorphicTypeSymbol);
 
@@ -46,9 +45,7 @@ public interface ISymbolFactory
 
     IErroneousTypeSymbol createErroneousTypeSymbol(ITSPHPAst ast, TypeCheckerException exception);
 
-    IErroneousClassTypeSymbol createErroneousClassTypeSymbol(ITSPHPAst ast, TypeCheckerException ex);
-
-    IErroneousMethodSymbol createErroneousMethodSymbol(ITSPHPAst ast, TypeCheckerException ex);
+    IErroneousMethodSymbol createErroneousMethodSymbol(ITSPHPAst ast, TypeCheckerException exception);
 
     IVariableSymbol createErroneousVariableSymbol(ITSPHPAst ast, TypeCheckerException exception);
 }

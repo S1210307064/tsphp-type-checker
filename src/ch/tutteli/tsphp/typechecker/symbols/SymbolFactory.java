@@ -5,11 +5,9 @@ import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
 import ch.tutteli.tsphp.typechecker.scopes.IScopeHelper;
-import ch.tutteli.tsphp.typechecker.symbols.erroneous.ErroneousClassTypeSymbol;
-import ch.tutteli.tsphp.typechecker.symbols.erroneous.ErroneousMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.ErroneousTypeSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.erroneous.ErroneousMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.ErroneousVariableSymbol;
-import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousTypeSymbol;
 
@@ -45,31 +43,31 @@ public class SymbolFactory implements ISymbolFactory
 
     @Override
     public IScalarTypeSymbol createScalarTypeSymbol(String name, int tokenTypeForCasting, ITypeSymbol parentTypeSymbol,
-            boolean isNullable, int defaultValueTokenType, String defaultValue) {
+        boolean isNullable, int defaultValueTokenType, String defaultValue) {
         return new ScalarTypeSymbol(
-                name,
-                parentTypeSymbol,
-                tokenTypeForCasting,
-                isNullable,
-                defaultValueTokenType,
-                defaultValue);
+            name,
+            parentTypeSymbol,
+            tokenTypeForCasting,
+            isNullable,
+            defaultValueTokenType,
+            defaultValue);
     }
 
     @Override
     public IScalarTypeSymbol createScalarTypeSymbol(String name, int tokenTypeForCasting,
-            Set<ITypeSymbol> parentTypeSymbol, boolean isNullable, int defaultValueTokenType, String defaultValue) {
+        Set<ITypeSymbol> parentTypeSymbol, boolean isNullable, int defaultValueTokenType, String defaultValue) {
         return new ScalarTypeSymbol(
-                name,
-                parentTypeSymbol,
-                tokenTypeForCasting,
-                isNullable,
-                defaultValueTokenType,
-                defaultValue);
+            name,
+            parentTypeSymbol,
+            tokenTypeForCasting,
+            isNullable,
+            defaultValueTokenType,
+            defaultValue);
     }
 
     @Override
     public IArrayTypeSymbol createArrayTypeSymbol(String name, int tokenType,
-            ITypeSymbol keyValue, ITypeSymbol valueType) {
+        ITypeSymbol keyValue, ITypeSymbol valueType) {
         return new ArrayTypeSymbol(name, tokenType, keyValue, valueType, objectTypeSymbol);
     }
 
@@ -90,38 +88,38 @@ public class SymbolFactory implements ISymbolFactory
 
     @Override
     public IInterfaceTypeSymbol createInterfaceTypeSymbol(ITSPHPAst modifier, ITSPHPAst identifier,
-            IScope currentScope) {
+        IScope currentScope) {
         return new InterfaceTypeSymbol(
-                scopeHelper,
-                identifier,
-                getModifiers(modifier),
-                identifier.getText(),
-                currentScope,
-                objectTypeSymbol);
+            scopeHelper,
+            identifier,
+            getModifiers(modifier),
+            identifier.getText(),
+            currentScope,
+            objectTypeSymbol);
     }
 
     @Override
     public IClassTypeSymbol createClassTypeSymbol(ITSPHPAst classModifierAst, ITSPHPAst identifier,
-            IScope currentScope) {
+        IScope currentScope) {
         return new ClassTypeSymbol(
-                scopeHelper,
-                identifier,
-                getModifiers(classModifierAst),
-                identifier.getText(),
-                currentScope,
-                objectTypeSymbol);
+            scopeHelper,
+            identifier,
+            getModifiers(classModifierAst),
+            identifier.getText(),
+            currentScope,
+            objectTypeSymbol);
     }
 
     @Override
     public IMethodSymbol createMethodSymbol(ITSPHPAst methodModifier, ITSPHPAst returnTypeModifier,
-            ITSPHPAst identifier, IScope currentScope) {
+        ITSPHPAst identifier, IScope currentScope) {
         return new MethodSymbol(
-                scopeHelper,
-                identifier,
-                getModifiers(methodModifier),
-                getModifiers(returnTypeModifier),
-                identifier.getText(),
-                currentScope);
+            scopeHelper,
+            identifier,
+            getModifiers(methodModifier),
+            getModifiers(returnTypeModifier),
+            identifier.getText(),
+            currentScope);
     }
 
     @Override
@@ -137,13 +135,8 @@ public class SymbolFactory implements ISymbolFactory
 
     @Override
     public IErroneousTypeSymbol createErroneousTypeSymbol(ITSPHPAst ast, TypeCheckerException exception) {
-        return new ErroneousTypeSymbol(ast, exception);
-    }
-
-    @Override
-    public IErroneousClassTypeSymbol createErroneousClassTypeSymbol(ITSPHPAst ast, TypeCheckerException ex) {
-        IMethodSymbol methodSymbol = createErroneousMethodSymbol(ast, ex);
-        return new ErroneousClassTypeSymbol(ast, ex, methodSymbol);
+        IMethodSymbol methodSymbol = createErroneousMethodSymbol(ast, exception);
+        return new ErroneousTypeSymbol(ast, exception, methodSymbol);
     }
 
     @Override
