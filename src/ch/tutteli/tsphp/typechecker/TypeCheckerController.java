@@ -91,7 +91,7 @@ public class TypeCheckerController implements ITypeCheckerController
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     @Override
     public boolean checkIsClass(ITSPHPAst typeAst, ITypeSymbol symbol) {
-        boolean isClass = symbol instanceof IClassTypeSymbol || symbol instanceof IErroneousTypeSymbol;
+        boolean isClass = symbol instanceof IClassTypeSymbol;
         if (!isClass) {
             TypeCheckErrorReporterRegistry.get().classExpected(typeAst);
         }
