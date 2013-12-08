@@ -10,6 +10,7 @@ package ch.tutteli.tsphp.typechecker.antlr;
 
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
+import ch.tutteli.tsphp.common.ITSPHPErrorAst;
 import ch.tutteli.tsphp.typechecker.ITypeCheckerController;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.ICaseInsensitiveScope;
@@ -167,7 +168,7 @@ constantDeclarationList
 
 constantDeclaration[ITypeSymbol type]
 	:	^(identifier=Identifier .)
-		{ 
+		{
 			IVariableSymbol variableSymbol = (IVariableSymbol) $identifier.getSymbol();
 			variableSymbol.setType(type); 
 			$identifier.getScope().doubleDefinitionCheck(variableSymbol); 
@@ -260,7 +261,6 @@ staticAccessor
 		{$par.setSymbol(controller.resolveParent($par).getType());}							
 	;
 
-
 returnTypes[boolean isNullable] returns [ITypeSymbol type]
 	:	allTypes[isNullable] {$type = $allTypes.type;}
 	|	voidType {$type = $voidType.type;}
@@ -330,6 +330,13 @@ voidType returns [ITypeSymbol type]
  	;
  	
 allTypes[boolean isNullable] returns [ITypeSymbol type]
+@init{
+    if(state.backtracking == 1 && $start instanceof ITSPHPErrorAst){
+        $type = controller.createErroneousTypeSymbol((ITSPHPErrorAst)$start);
+        input.consume();
+        return retval;
+    }
+}
 	:	scalarTypes[isNullable]
 		{$type = $scalarTypes.type;}
 	|	(	'array'
@@ -349,6 +356,13 @@ allTypes[boolean isNullable] returns [ITypeSymbol type]
 	;
 	
 scalarTypes[boolean isNullable] returns [ITypeSymbol type]
+@init{
+    if(state.backtracking == 1 && $start instanceof ITSPHPErrorAst){
+        $type = controller.createErroneousTypeSymbol((ITSPHPErrorAst)$start);
+        input.consume();
+        return retval;
+    }
+}
 	:	(	'bool'
 		|	'int'
 		|	'float'

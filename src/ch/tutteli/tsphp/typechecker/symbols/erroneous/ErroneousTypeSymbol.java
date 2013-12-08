@@ -4,7 +4,7 @@ import ch.tutteli.tsphp.common.AstHelperRegistry;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
-import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
+import ch.tutteli.tsphp.common.exceptions.TSPHPException;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
@@ -20,7 +20,7 @@ public class ErroneousTypeSymbol extends AErroneousScopedSymbol implements IErro
     private final IMethodSymbol construct;
     private IVariableSymbol $this;
 
-    public ErroneousTypeSymbol(ITSPHPAst ast, TypeCheckerException exception, IMethodSymbol theConstruct) {
+    public ErroneousTypeSymbol(ITSPHPAst ast, TSPHPException exception, IMethodSymbol theConstruct) {
         super(ast, exception);
         construct = theConstruct;
     }

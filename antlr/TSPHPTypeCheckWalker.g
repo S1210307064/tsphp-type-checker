@@ -151,7 +151,10 @@ variableInit
 constantInit
 	:	^(CONSTANT_DECLARATION_LIST type=.
 			(	^(Identifier expression)
-				{controller.checkConstantInitialValue($Identifier, $expression.start);}
+				{
+				    $Identifier.setEvalType($Identifier.getSymbol().getType());
+				    controller.checkConstantInitialValue($Identifier, $expression.start);
+				}
 			)+
 		)	
 	;
@@ -165,9 +168,9 @@ parameterDefaultValue
 expression returns [ITypeSymbol type]
 @after { $start.setEvalType($type); } // do after any alternative
 	:   	Bool			{$type = typeSystem.getBoolTypeSymbol();}
-    	|   	Int     		{$type =  typeSystem.getIntTypeSymbol();}
+    	|   	Int     		{$type = typeSystem.getIntTypeSymbol();}
     	|   	Float			{$type = typeSystem.getFloatTypeSymbol();}
-    	|   	String			{$type =  typeSystem.getStringTypeSymbol();}
+    	|   	String			{$type = typeSystem.getStringTypeSymbol();}
     	|	^(TypeArray .*)		{$type = typeSystem.getArrayTypeSymbol();}
     	|	Null			{$type = typeSystem.getNullTypeSymbol();}
     	|  	symbol			{$type = $symbol.type;}

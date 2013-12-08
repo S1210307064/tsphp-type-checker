@@ -1,7 +1,7 @@
 package ch.tutteli.tsphp.typechecker.symbols.erroneous;
 
 import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
+import ch.tutteli.tsphp.common.exceptions.TSPHPException;
 
 import java.util.Set;
 
@@ -10,7 +10,7 @@ public class ErroneousVariableSymbol extends AErroneousSymbol implements IErrone
 
     public static final String ERROR_MESSAGE = "ErroneousVariableSymbol is not a real variable symbol.";
 
-    public ErroneousVariableSymbol(ITSPHPAst ast, TypeCheckerException exception) {
+    public ErroneousVariableSymbol(ITSPHPAst ast, TSPHPException exception) {
         super(ast, exception);
     }
 

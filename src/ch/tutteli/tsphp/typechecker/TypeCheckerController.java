@@ -4,9 +4,11 @@ import ch.tutteli.tsphp.common.AstHelperRegistry;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
+import ch.tutteli.tsphp.common.ITSPHPErrorAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.exceptions.DefinitionException;
 import ch.tutteli.tsphp.common.exceptions.ReferenceException;
+import ch.tutteli.tsphp.common.exceptions.TSPHPException;
 import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tutteli.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
@@ -569,6 +571,11 @@ public class TypeCheckerController implements ITypeCheckerController
     }
 
     @Override
+    public IErroneousTypeSymbol createErroneousTypeSymbol(ITSPHPErrorAst erroneousTypeAst) {
+        return symbolFactory.createErroneousTypeSymbol(erroneousTypeAst, erroneousTypeAst.getException());
+    }
+
+    @Override
     public IVariableSymbol resolveClassMemberAccess(ITSPHPAst expression, ITSPHPAst identifier) {
         String variableName = identifier.getText();
         identifier.setText("$" + variableName);
@@ -671,7 +678,7 @@ public class TypeCheckerController implements ITypeCheckerController
         if (!(typeSymbol instanceof IErroneousTypeSymbol)) {
             methodSymbol = checkCalleeAndResolveCall(typeSymbol, callee, identifier, arguments);
         } else {
-            TypeCheckerException exception = ((IErroneousTypeSymbol) typeSymbol).getException();
+            TSPHPException exception = ((IErroneousTypeSymbol) typeSymbol).getException();
             methodSymbol = symbolFactory.createErroneousMethodSymbol(identifier, exception);
             methodSymbol.setType(typeSymbol);
         }
@@ -876,7 +883,7 @@ public class TypeCheckerController implements ITypeCheckerController
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     private CastingDto checkAndGetCast(final ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right) {
         CastingDto castingDto = null;
-        if (!(right.getEvalType() instanceof IErroneousSymbol)) {
+        if (!(right.getEvalType() instanceof IErroneousTypeSymbol)) {
             operator.setText("==");
 
             ISymbol symbol = left.getSymbol();

@@ -30,7 +30,6 @@ public abstract class AReferenceTest extends ADefinitionTest
             reference.hasFoundError());
 
         verifyReferences();
-
     }
 
     @Override

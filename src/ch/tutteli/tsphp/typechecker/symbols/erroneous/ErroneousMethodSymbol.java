@@ -1,7 +1,7 @@
 package ch.tutteli.tsphp.typechecker.symbols.erroneous;
 
 import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
+import ch.tutteli.tsphp.common.exceptions.TSPHPException;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 
 import java.util.List;
@@ -11,7 +11,7 @@ public class ErroneousMethodSymbol extends AErroneousScopedSymbol implements IEr
 
     public static final String ERROR_MESSAGE = "ErroneousMethodSymbol is not a real method.";
 
-    public ErroneousMethodSymbol(ITSPHPAst ast, TypeCheckerException exception) {
+    public ErroneousMethodSymbol(ITSPHPAst ast, TSPHPException exception) {
         super(ast, exception);
     }
 

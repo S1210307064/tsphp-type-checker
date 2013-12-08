@@ -1,10 +1,12 @@
 package ch.tutteli.tsphp.typechecker;
 
 import ch.tutteli.tsphp.common.ITSPHPAst;
+import ch.tutteli.tsphp.common.ITSPHPErrorAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IScalarTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousTypeSymbol;
 
 public interface ITypeCheckerController
 {
@@ -49,7 +51,7 @@ public interface ITypeCheckerController
      *
      * @param typeAst The AST node which contains the type name. For instance, int, MyClass, \Exception etc.
      * @return The corresponding type or a {@link ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousTypeSymbol}
-     * if could not be found.
+     *         if could not be found.
      */
     ITypeSymbol resolveType(ITSPHPAst typeAst);
 
@@ -64,9 +66,11 @@ public interface ITypeCheckerController
     ITypeSymbol resolveUnaryOperatorEvalType(ITSPHPAst operator, ITSPHPAst expression);
 
     ITypeSymbol resolveTernaryOperatorEvalType(ITSPHPAst operator, ITSPHPAst condition,
-            ITSPHPAst caseTrue, ITSPHPAst caseFalse);
+        ITSPHPAst caseTrue, ITSPHPAst caseFalse);
 
     ITypeSymbol resolveReturnTypeArrayAccess(ITSPHPAst statement, ITSPHPAst expression, ITSPHPAst index);
+
+    IErroneousTypeSymbol createErroneousTypeSymbol(ITSPHPErrorAst typeAst);
 
     void checkEquality(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
 

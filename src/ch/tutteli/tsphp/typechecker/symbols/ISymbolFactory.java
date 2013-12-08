@@ -3,7 +3,7 @@ package ch.tutteli.tsphp.typechecker.symbols;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
-import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
+import ch.tutteli.tsphp.common.exceptions.TSPHPException;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousTypeSymbol;
 
@@ -43,9 +43,9 @@ public interface ISymbolFactory
 
     IVariableSymbol createVariableSymbol(ITSPHPAst typeModifier, ITSPHPAst variableId);
 
-    IErroneousTypeSymbol createErroneousTypeSymbol(ITSPHPAst ast, TypeCheckerException exception);
+    IErroneousTypeSymbol createErroneousTypeSymbol(ITSPHPAst ast, TSPHPException exception);
 
-    IErroneousMethodSymbol createErroneousMethodSymbol(ITSPHPAst ast, TypeCheckerException exception);
+    IErroneousMethodSymbol createErroneousMethodSymbol(ITSPHPAst ast, TSPHPException exception);
 
-    IVariableSymbol createErroneousVariableSymbol(ITSPHPAst ast, TypeCheckerException exception);
+    IVariableSymbol createErroneousVariableSymbol(ITSPHPAst ast, TSPHPException exception);
 }

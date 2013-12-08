@@ -4,7 +4,7 @@ import ch.tutteli.tsphp.common.ASymbol;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
+import ch.tutteli.tsphp.common.exceptions.TSPHPException;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolWithModifier;
 
 import java.util.List;
@@ -16,15 +16,15 @@ public abstract class AErroneousScopedSymbol extends ASymbol implements IErroneo
 
     public static final String ERROR_MESSAGE_SCOPE = "AErroneousScopedSymbol is not a real scope.";
     public static final String ERROR_MESSAGE_MODIFIER = "AErroneousScopedSymbol is not a real symbol with modifier.";
-    private final TypeCheckerException exception;
+    private final TSPHPException exception;
 
-    public AErroneousScopedSymbol(ITSPHPAst ast, TypeCheckerException theException) {
+    public AErroneousScopedSymbol(ITSPHPAst ast, TSPHPException theException) {
         super(ast, ast.getText());
         exception = theException;
     }
 
     @Override
-    public TypeCheckerException getException() {
+    public TSPHPException getException() {
         return exception;
     }
 

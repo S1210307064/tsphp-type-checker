@@ -3,10 +3,10 @@ package ch.tutteli.tsphp.typechecker.symbols;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
-import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
+import ch.tutteli.tsphp.common.exceptions.TSPHPException;
 import ch.tutteli.tsphp.typechecker.scopes.IScopeHelper;
-import ch.tutteli.tsphp.typechecker.symbols.erroneous.ErroneousTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.ErroneousMethodSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.erroneous.ErroneousTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.ErroneousVariableSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousTypeSymbol;
@@ -134,18 +134,18 @@ public class SymbolFactory implements ISymbolFactory
     }
 
     @Override
-    public IErroneousTypeSymbol createErroneousTypeSymbol(ITSPHPAst ast, TypeCheckerException exception) {
+    public IErroneousTypeSymbol createErroneousTypeSymbol(ITSPHPAst ast, TSPHPException exception) {
         IMethodSymbol methodSymbol = createErroneousMethodSymbol(ast, exception);
         return new ErroneousTypeSymbol(ast, exception, methodSymbol);
     }
 
     @Override
-    public IErroneousMethodSymbol createErroneousMethodSymbol(ITSPHPAst ast, TypeCheckerException ex) {
+    public IErroneousMethodSymbol createErroneousMethodSymbol(ITSPHPAst ast, TSPHPException ex) {
         return new ErroneousMethodSymbol(ast, ex);
     }
 
     @Override
-    public IVariableSymbol createErroneousVariableSymbol(ITSPHPAst ast, TypeCheckerException exception) {
+    public IVariableSymbol createErroneousVariableSymbol(ITSPHPAst ast, TSPHPException exception) {
         return new ErroneousVariableSymbol(ast, exception);
     }
 

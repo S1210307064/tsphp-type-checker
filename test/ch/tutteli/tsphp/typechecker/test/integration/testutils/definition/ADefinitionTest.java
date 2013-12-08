@@ -25,8 +25,9 @@ import ch.tutteli.tsphp.typechecker.test.integration.testutils.TestSymbolFactory
 import ch.tutteli.tsphp.typechecker.utils.ITypeCheckerAstHelper;
 import ch.tutteli.tsphp.typechecker.utils.TypeCheckerAstHelper;
 import org.antlr.runtime.tree.CommonTreeNodeStream;
-import org.junit.Assert;
 import org.junit.Ignore;
+
+import static org.junit.Assert.assertFalse;
 
 @Ignore
 public abstract class ADefinitionTest extends ATest
@@ -45,7 +46,7 @@ public abstract class ADefinitionTest extends ATest
     protected ErrorReportingTSPHPDefinitionWalker definition;
 
     protected void verifyDefinitions() {
-        Assert.assertFalse(testString.replaceAll("\n", " ") + " failed - definition phase throw exception", definition.hasFoundError());
+        assertFalse(testString.replaceAll("\n", " ") + " failed - definition phase throw exception", definition.hasFoundError());
     }
 
     public ADefinitionTest(String theTestString) {
@@ -83,14 +84,18 @@ public abstract class ADefinitionTest extends ATest
             astHelper);
     }
 
+    protected void verifyParser() {
+        assertFalse(testString.replaceAll("\n", " ") + " failed - parser throw exception", parser.hasFoundError());
+    }
+
     public void check() {
         ParserUnitDto parserUnit = parser.parse(testString);
         ast = parserUnit.compilationUnit;
 
-        Assert.assertFalse(testString.replaceAll("\n", " ") + " failed - parser throw exception", parser.hasFoundError());
+        verifyParser();
 
         commonTreeNodeStream = new CommonTreeNodeStream(adaptor, ast);
-        commonTreeNodeStream.setTokenStream(parserUnit.tokenStream);
+        //commonTreeNodeStream.setTokenStream(parserUnit.tokenStream);
 
         definition = new ErrorReportingTSPHPDefinitionWalker(commonTreeNodeStream, controller.getDefiner());
         definition.registerErrorLogger(new IErrorLogger()
@@ -102,7 +107,7 @@ public abstract class ADefinitionTest extends ATest
         });
         definition.downup(ast);
 
-        Assert.assertFalse(testString.replaceAll("\n", " ") + " failed - definition throw exception",
+        assertFalse(testString.replaceAll("\n", " ") + " failed - definition throw exception",
             definition.hasFoundError());
 
         verifyDefinitions();
