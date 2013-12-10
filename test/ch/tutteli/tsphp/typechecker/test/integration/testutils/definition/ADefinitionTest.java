@@ -1,12 +1,10 @@
 package ch.tutteli.tsphp.typechecker.test.integration.testutils.definition;
 
 import ch.tutteli.tsphp.common.AstHelperRegistry;
-import ch.tutteli.tsphp.common.IErrorLogger;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITSPHPAstAdaptor;
 import ch.tutteli.tsphp.common.ParserUnitDto;
 import ch.tutteli.tsphp.common.TSPHPAstAdaptor;
-import ch.tutteli.tsphp.common.exceptions.TSPHPException;
 import ch.tutteli.tsphp.typechecker.IOverloadResolver;
 import ch.tutteli.tsphp.typechecker.ISymbolResolver;
 import ch.tutteli.tsphp.typechecker.ITypeCheckerController;
@@ -22,9 +20,11 @@ import ch.tutteli.tsphp.typechecker.test.integration.testutils.ATest;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.TestDefiner;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.TestScopeFactory;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.TestSymbolFactory;
+import ch.tutteli.tsphp.typechecker.test.integration.testutils.WriteExceptionToConsole;
 import ch.tutteli.tsphp.typechecker.utils.ITypeCheckerAstHelper;
 import ch.tutteli.tsphp.typechecker.utils.TypeCheckerAstHelper;
 import org.antlr.runtime.tree.CommonTreeNodeStream;
+import org.junit.Assert;
 import org.junit.Ignore;
 
 import static org.junit.Assert.assertFalse;
@@ -46,7 +46,8 @@ public abstract class ADefinitionTest extends ATest
     protected ErrorReportingTSPHPDefinitionWalker definition;
 
     protected void verifyDefinitions() {
-        assertFalse(testString.replaceAll("\n", " ") + " failed - definition phase throw exception", definition.hasFoundError());
+        assertFalse(testString.replaceAll("\n", " ") + " failed - definition phase throw exception",
+                definition.hasFoundError());
     }
 
     public ADefinitionTest(String theTestString) {
@@ -68,20 +69,20 @@ public abstract class ADefinitionTest extends ATest
         typeSystem = new TypeSystem(symbolFactory, AstHelperRegistry.get(), definer.getGlobalDefaultNamespace());
 
         ISymbolResolver symbolResolver = new SymbolResolver(
-            scopeHelper,
-            symbolFactory,
-            definer.getGlobalNamespaceScopes(),
-            definer.getGlobalDefaultNamespace());
+                scopeHelper,
+                symbolFactory,
+                definer.getGlobalNamespaceScopes(),
+                definer.getGlobalDefaultNamespace());
 
         IOverloadResolver methodResolver = new OverloadResolver(typeSystem);
 
         controller = new TypeCheckerController(
-            symbolFactory,
-            typeSystem,
-            definer,
-            symbolResolver,
-            methodResolver,
-            astHelper);
+                symbolFactory,
+                typeSystem,
+                definer,
+                symbolResolver,
+                methodResolver,
+                astHelper);
     }
 
     protected void verifyParser() {
@@ -98,18 +99,19 @@ public abstract class ADefinitionTest extends ATest
         //commonTreeNodeStream.setTokenStream(parserUnit.tokenStream);
 
         definition = new ErrorReportingTSPHPDefinitionWalker(commonTreeNodeStream, controller.getDefiner());
-        definition.registerErrorLogger(new IErrorLogger()
-        {
-            @Override
-            public void log(TSPHPException exception) {
-                System.out.println(exception.getMessage());
-            }
-        });
-        definition.downup(ast);
+        definition.registerErrorLogger(new WriteExceptionToConsole());
+        try {
+            definition.downup(ast);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail(testString + " failed. Unexpected exception occurred in the definition phase.\n" + e
+                    .getMessage());
+        }
 
         assertFalse(testString.replaceAll("\n", " ") + " failed - definition throw exception",
-            definition.hasFoundError());
+                definition.hasFoundError());
 
         verifyDefinitions();
     }
+
 }

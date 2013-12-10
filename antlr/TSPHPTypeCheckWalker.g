@@ -17,9 +17,8 @@ import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 }
 
 @members {
-ITypeCheckerController controller;
-ITypeSystem typeSystem;
-
+private ITypeCheckerController controller;
+private ITypeSystem typeSystem;
 
 public TSPHPTypeCheckWalker(TreeNodeStream input, ITypeCheckerController theController) {
     this(input);
@@ -28,13 +27,12 @@ public TSPHPTypeCheckWalker(TreeNodeStream input, ITypeCheckerController theCont
 }
 }
 
-
 bottomup 
-    	:	expressionLists
-   	|	expressionRoot 
-   	|	variableInit
+	:	expressionLists
+	|	expressionRoot 
+	|	variableInit
 	|	constantInit
-   	|	parameterDefaultValue
+	|	parameterDefaultValue
 	;
     
 expressionLists
@@ -370,4 +368,3 @@ postFixOperators returns [ITypeSymbol type]
 		    $type = methodSymbol.getType();
  		}
 	;
-	

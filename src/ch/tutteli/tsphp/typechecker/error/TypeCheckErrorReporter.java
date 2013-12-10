@@ -184,6 +184,26 @@ public class TypeCheckErrorReporter implements ITypeCheckErrorReporter
         return addAndGetReferenceException("toManyBreakContinueLevels", root);
     }
 
+    @Override
+    public ReferenceException partialReturnFromFunction(ITSPHPAst identifier) {
+        return addAndGetReferenceException("partialReturnFromFunction", identifier);
+    }
+
+    @Override
+    public ReferenceException noReturnFromFunction(ITSPHPAst identifier) {
+        return addAndGetReferenceException("noReturnFromFunction", identifier);
+    }
+
+    @Override
+    public ReferenceException partialReturnFromMethod(ITSPHPAst identifier) {
+        return addAndGetReferenceException("partialReturnFromMethod", identifier);
+    }
+
+    @Override
+    public ReferenceException noReturnFromMethod(ITSPHPAst identifier) {
+        return addAndGetReferenceException("noReturnFromMethod", identifier);
+    }
+
     private ReferenceException addAndGetReferenceException(String key,
             ITSPHPAst typeAst) {
         String errorMessage = errorMessageProvider.getReferenceErrorMessage(key,
@@ -609,6 +629,7 @@ public class TypeCheckErrorReporter implements ITypeCheckErrorReporter
             int accessedFrom) {
         return addAndGetVisibilityViolatedError("methodCall", identifier, symbol, accessedFrom);
     }
+
 
     private ReferenceException addAndGetVisibilityViolatedError(String key, ITSPHPAst identifier,
             ISymbolWithAccessModifier symbol, int accessedFrom) {

@@ -1,7 +1,10 @@
 package ch.tutteli.tsphp.typechecker.test.integration.testutils.typecheck;
 
+import ch.tutteli.tsphp.common.IErrorReporter;
+import ch.tutteli.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
 import org.junit.Ignore;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @Ignore
@@ -19,8 +22,16 @@ public abstract class ATypeCheckWithParserErrorTest extends ATypeCheckTest
     @Override
     protected void verifyParser() {
         assertTrue(
-            testString.replaceAll("\n", " ") + " failed - parser exception was expected but nothing was thrown",
-            parser.hasFoundError()
+                testString.replaceAll("\n", " ") + " failed - parser exception was expected but nothing was thrown",
+                parser.hasFoundError()
         );
+    }
+
+    @Override
+    protected void checkReferences() {
+        IErrorReporter errorHelper = TypeCheckErrorReporterRegistry.get();
+        assertFalse(testString + " failed. Exceptions occurred." + exceptions, errorHelper.hasFoundError());
+        assertTrue(testString + " failed. reference walker exceptions expected but nothing was thrown.",
+                reference.hasFoundError());
     }
 }

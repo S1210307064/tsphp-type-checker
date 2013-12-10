@@ -11,6 +11,7 @@ import ch.tutteli.tsphp.typechecker.CastingDto;
 import ch.tutteli.tsphp.typechecker.symbols.IArrayTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolWithAccessModifier;
+
 import java.util.List;
 
 public interface ITypeCheckErrorReporter extends ch.tutteli.tsphp.common.IErrorReporter
@@ -161,4 +162,12 @@ public interface ITypeCheckErrorReporter extends ch.tutteli.tsphp.common.IErrorR
 
     ReferenceException visibilityViolationMethodCall(ITSPHPAst identifier, ISymbolWithAccessModifier symbol,
             int accessedFrom);
+
+    ReferenceException partialReturnFromFunction(ITSPHPAst identifier);
+
+    ReferenceException noReturnFromFunction(ITSPHPAst identifier);
+
+    ReferenceException partialReturnFromMethod(ITSPHPAst identifier);
+
+    ReferenceException noReturnFromMethod(ITSPHPAst identifier);
 }

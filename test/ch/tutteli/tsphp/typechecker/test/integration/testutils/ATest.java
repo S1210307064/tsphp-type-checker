@@ -22,6 +22,8 @@ public abstract class ATest implements IErrorLogger
 
     public ATest() {
         parser = new ParserFacade();
+        parser.registerErrorLogger(new WriteExceptionToConsole());
+
         ITypeCheckErrorReporter errorReporter = new TypeCheckErrorReporter(new ErrorMessageProvider());
         errorReporter.registerErrorLogger(this);
         TypeCheckErrorReporterRegistry.set(errorReporter);

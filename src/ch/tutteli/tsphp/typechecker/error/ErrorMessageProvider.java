@@ -50,6 +50,14 @@ public class ErrorMessageProvider extends AErrorMessageProvider
         referenceErrors.put("notDefined", "Line %line%|%pos% - %id% was never defined.");
         referenceErrors.put("notStatic", "Line %line%|%pos% - %id% is not static.");
         referenceErrors.put("toManyBreakContinueLevels", "Line %line%|%pos% - cannot %id% so many levels.");
+        referenceErrors.put("partialReturnFromFunction", "Line %line%|%pos% - function %id% does not return/throw "
+                + "in all cases.");
+        referenceErrors.put("noReturnFromFunction", "Line %line%|%pos% - function %id% does not contain "
+                + "one single return/throw statement even though a return type was defined.");
+        referenceErrors.put("partialReturnFromMethod", "Line %line%|%pos% - method %id% does not return/throw "
+                + "in all cases.");
+        referenceErrors.put("noReturnFromMethod", "Line %line%|%pos% - method %id% does not contain "
+                + "one single return/throw statement even though a return type was defined.");
     }
 
     @Override
@@ -228,7 +236,7 @@ public class ErrorMessageProvider extends AErrorMessageProvider
                 + "However, the following information was gathered.\n"
                 + "Line " + dto.line + "|" + dto.position + " - usage of " + dto.identifier + " was wrong.\n"
                 + "type expected: " + dto.typeExpected + "\n"
-                + "type found:: " + dto.typeFound;
+                + "type found: " + dto.typeFound;
     }
 
     @Override

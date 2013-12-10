@@ -61,16 +61,24 @@ public interface ITypeCheckerController
 
     void checkBreakContinueLevel(ITSPHPAst root, ITSPHPAst expression);
 
+    IErroneousTypeSymbol createErroneousTypeSymbol(ITSPHPErrorAst typeAst);
+
+    EReturnState evaluateReturnStateAnd(EReturnState firstInstruction, EReturnState secondInstruction);
+
+    EReturnState evaluateReturnStateOr(EReturnState firstInstruction, EReturnState secondInstruction);
+
+    void checkReturnsFromFunction(EReturnState returnState, ITSPHPAst identifier);
+
+    void checkReturnsFromMethod(EReturnState returnState, ITSPHPAst identifier);
+
     ITypeSymbol resolveBinaryOperatorEvalType(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
 
     ITypeSymbol resolveUnaryOperatorEvalType(ITSPHPAst operator, ITSPHPAst expression);
 
     ITypeSymbol resolveTernaryOperatorEvalType(ITSPHPAst operator, ITSPHPAst condition,
-        ITSPHPAst caseTrue, ITSPHPAst caseFalse);
+            ITSPHPAst caseTrue, ITSPHPAst caseFalse);
 
     ITypeSymbol resolveReturnTypeArrayAccess(ITSPHPAst statement, ITSPHPAst expression, ITSPHPAst index);
-
-    IErroneousTypeSymbol createErroneousTypeSymbol(ITSPHPErrorAst typeAst);
 
     void checkEquality(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
 

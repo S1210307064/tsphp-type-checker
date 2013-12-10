@@ -1,10 +1,9 @@
 package ch.tutteli.tsphp.typechecker.test.integration.testutils.typecheck;
 
-import ch.tutteli.tsphp.common.IErrorLogger;
 import ch.tutteli.tsphp.common.IErrorReporter;
-import ch.tutteli.tsphp.common.exceptions.TSPHPException;
 import ch.tutteli.tsphp.typechecker.antlrmod.ErrorReportingTSPHPTypeCheckWalker;
 import ch.tutteli.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
+import ch.tutteli.tsphp.typechecker.test.integration.testutils.WriteExceptionToConsole;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.reference.AReferenceTest;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -25,14 +24,14 @@ public abstract class ATypeCheckTest extends AReferenceTest
     protected void verifyReferences() {
         commonTreeNodeStream.reset();
         typeCheckWalker = new ErrorReportingTSPHPTypeCheckWalker(commonTreeNodeStream, controller);
-        typeCheckWalker.registerErrorLogger(new IErrorLogger()
-        {
-            @Override
-            public void log(TSPHPException exception) {
-                System.out.println(exception.getMessage());
-            }
-        });
-        typeCheckWalker.downup(ast);
+        typeCheckWalker.registerErrorLogger(new WriteExceptionToConsole());
+        try {
+            typeCheckWalker.downup(ast);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail(testString + " failed. unexpected exception occurred in the type check phase.\n" + e
+                    .getMessage());
+        }
         checkErrors();
     }
 

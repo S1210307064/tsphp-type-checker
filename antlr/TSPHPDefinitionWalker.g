@@ -17,8 +17,8 @@ import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 
 @members {
 
-protected IDefiner definer;
-protected IScope currentScope;
+private IDefiner definer;
+private IScope currentScope;
 
 
 public TSPHPDefinitionWalker(TreeNodeStream input, IDefiner theDefiner) {

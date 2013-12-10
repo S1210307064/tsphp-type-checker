@@ -32,12 +32,15 @@ public abstract class AReferenceDefinitionErrorTest extends AReferenceTest
     }
 
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
-    public static void verifyReferences(String errorMessagePrefix, List<Exception> exceptions, DefinitionErrorDto[] errorDtos) {
+    public static void verifyReferences(String errorMessagePrefix, List<Exception> exceptions,
+            DefinitionErrorDto[] errorDtos) {
 
         IErrorReporter errorReporter = TypeCheckErrorReporterRegistry.get();
-        Assert.assertTrue(errorMessagePrefix + " failed. No exception occurred.", errorReporter.hasFoundError());
+        Assert.assertTrue(errorMessagePrefix + " failed. No reference exception occurred.",
+                errorReporter.hasFoundError());
 
-        Assert.assertEquals(errorMessagePrefix + " failed. More or less exceptions occurred." + exceptions.toString(),
+        Assert.assertEquals(errorMessagePrefix + " failed. More or less reference exceptions occurred." + exceptions
+                .toString(),
                 errorDtos.length, exceptions.size());
 
         for (int i = 0; i < errorDtos.length; ++i) {

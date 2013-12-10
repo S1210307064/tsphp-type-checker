@@ -1,13 +1,15 @@
 package ch.tutteli.tsphp.typechecker.test.integration.testutils.reference;
 
-import ch.tutteli.tsphp.common.IErrorLogger;
 import ch.tutteli.tsphp.common.IErrorReporter;
-import ch.tutteli.tsphp.common.exceptions.TSPHPException;
 import ch.tutteli.tsphp.typechecker.antlrmod.ErrorReportingTSPHPReferenceWalker;
 import ch.tutteli.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
+import ch.tutteli.tsphp.typechecker.test.integration.testutils.WriteExceptionToConsole;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.definition.ADefinitionTest;
+import org.antlr.runtime.RecognitionException;
 import org.junit.Assert;
 import org.junit.Ignore;
+
+import static org.junit.Assert.assertFalse;
 
 @Ignore
 public abstract class AReferenceTest extends ADefinitionTest
@@ -23,11 +25,8 @@ public abstract class AReferenceTest extends ADefinitionTest
 
     protected void checkReferences() {
         IErrorReporter errorHelper = TypeCheckErrorReporterRegistry.get();
-        Assert.assertFalse(testString + " failed. Exceptions occurred." + exceptions,
-            errorHelper.hasFoundError());
-
-        Assert.assertFalse(testString + " failed. reference walker exceptions occurred.",
-            reference.hasFoundError());
+        assertFalse(testString + " failed. Exceptions occurred." + exceptions, errorHelper.hasFoundError());
+        assertFalse(testString + " failed. reference walker exceptions occurred.", reference.hasFoundError());
 
         verifyReferences();
     }
@@ -41,14 +40,19 @@ public abstract class AReferenceTest extends ADefinitionTest
     protected void afterVerifyDefinitions() {
         commonTreeNodeStream.reset();
         reference = new ErrorReportingTSPHPReferenceWalker(commonTreeNodeStream, controller);
-        reference.downup(ast);
-        reference.registerErrorLogger(new IErrorLogger()
-        {
-            @Override
-            public void log(TSPHPException exception) {
-                System.out.println(exception.getMessage());
-            }
-        });
+        reference.registerErrorLogger(new WriteExceptionToConsole());
+        try {
+            reference.compilationUnit();
+        } catch (RecognitionException e) {
+            Assert.fail(testString + " failed. Unexpected exception occurred, " +
+                    "should be caught by the ErrorReportingTSPHPReferenceWalker.\n"
+                    + e.getMessage());
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail(testString + " failed. Unexpected exception occurred in the reference phase.\n" + e
+                    .getMessage());
+        }
         checkReferences();
     }
 
