@@ -1,11 +1,13 @@
 package ch.tutteli.tsphp.typechecker.test.integration.testutils.reference;
 
 import ch.tutteli.tsphp.common.IErrorReporter;
+import ch.tutteli.tsphp.typechecker.ITypeCheckerController;
 import ch.tutteli.tsphp.typechecker.antlrmod.ErrorReportingTSPHPReferenceWalker;
 import ch.tutteli.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.WriteExceptionToConsole;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.definition.ADefinitionTest;
 import org.antlr.runtime.RecognitionException;
+import org.antlr.runtime.tree.CommonTreeNodeStream;
 import org.junit.Assert;
 import org.junit.Ignore;
 
@@ -39,7 +41,7 @@ public abstract class AReferenceTest extends ADefinitionTest
 
     protected void afterVerifyDefinitions() {
         commonTreeNodeStream.reset();
-        reference = new ErrorReportingTSPHPReferenceWalker(commonTreeNodeStream, controller);
+        reference = createReferenceWalker(commonTreeNodeStream, controller);
         reference.registerErrorLogger(new WriteExceptionToConsole());
         try {
             reference.compilationUnit();
@@ -66,5 +68,10 @@ public abstract class AReferenceTest extends ADefinitionTest
             fullType = namespace + type;
         }
         return fullType;
+    }
+
+    protected ErrorReportingTSPHPReferenceWalker createReferenceWalker(CommonTreeNodeStream theCommonTreeNodeStream,
+            ITypeCheckerController theController) {
+        return new ErrorReportingTSPHPReferenceWalker(theCommonTreeNodeStream, theController);
     }
 }

@@ -326,8 +326,8 @@ public class TypeCheckerController implements ITypeCheckerController
 
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     @Override
-    public void checkBreakContinueLevel(ITSPHPAst root, ITSPHPAst expression) {
-        int levels = expression == null ? 1 : Integer.parseInt(expression.getText());
+    public void checkBreakContinueLevel(ITSPHPAst root, ITSPHPAst level) {
+        int levels = level == null ? 1 : Integer.parseInt(level.getText());
         int count = 0;
 
         @SuppressWarnings("unchecked") //has to be ITSPHPAst

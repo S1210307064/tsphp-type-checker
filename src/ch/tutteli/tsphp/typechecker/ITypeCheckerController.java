@@ -59,7 +59,7 @@ public interface ITypeCheckerController
 
     ITypeSymbol resolvePrimitiveType(ITSPHPAst typeASt);
 
-    void checkBreakContinueLevel(ITSPHPAst root, ITSPHPAst expression);
+    void checkBreakContinueLevel(ITSPHPAst root, ITSPHPAst level);
 
     IErroneousTypeSymbol createErroneousTypeSymbol(ITSPHPErrorAst typeAst);
 

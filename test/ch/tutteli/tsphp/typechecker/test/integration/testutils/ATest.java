@@ -5,9 +5,9 @@ import ch.tutteli.tsphp.common.IParser;
 import ch.tutteli.tsphp.common.exceptions.TSPHPException;
 import ch.tutteli.tsphp.parser.ParserFacade;
 import ch.tutteli.tsphp.typechecker.error.ErrorMessageProvider;
+import ch.tutteli.tsphp.typechecker.error.ITypeCheckErrorReporter;
 import ch.tutteli.tsphp.typechecker.error.TypeCheckErrorReporter;
 import ch.tutteli.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
-import ch.tutteli.tsphp.typechecker.error.ITypeCheckErrorReporter;
 import org.junit.Ignore;
 
 import java.util.ArrayList;
@@ -21,15 +21,23 @@ public abstract class ATest implements IErrorLogger
     protected IParser parser;
 
     public ATest() {
-        parser = new ParserFacade();
+        parser = createParser();
         parser.registerErrorLogger(new WriteExceptionToConsole());
 
-        ITypeCheckErrorReporter errorReporter = new TypeCheckErrorReporter(new ErrorMessageProvider());
+        ITypeCheckErrorReporter errorReporter = createTypeCheckErrorReporter();
         errorReporter.registerErrorLogger(this);
         TypeCheckErrorReporterRegistry.set(errorReporter);
     }
 
     public void log(TSPHPException exception) {
         exceptions.add(exception);
+    }
+
+    protected IParser createParser() {
+        return new ParserFacade();
+    }
+
+    protected ITypeCheckErrorReporter createTypeCheckErrorReporter() {
+        return new TypeCheckErrorReporter(new ErrorMessageProvider());
     }
 }

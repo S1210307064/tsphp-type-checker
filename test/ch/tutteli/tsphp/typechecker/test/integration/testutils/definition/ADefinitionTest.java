@@ -42,8 +42,13 @@ public abstract class ADefinitionTest extends ATest
     protected ITSPHPAst ast;
     protected CommonTreeNodeStream commonTreeNodeStream;
     protected ITSPHPAstAdaptor adaptor;
-    protected ITypeCheckerAstHelper astHelper;
+    protected ITypeCheckerAstHelper typeCheckerAstHelper;
     protected ErrorReportingTSPHPDefinitionWalker definition;
+    protected TestSymbolFactory symbolFactory;
+    protected ISymbolResolver symbolResolver;
+    protected IOverloadResolver methodResolver;
+    protected IScopeHelper scopeHelper;
+
 
     protected void verifyDefinitions() {
         assertFalse(testString.replaceAll("\n", " ") + " failed - definition phase throw exception",
@@ -58,31 +63,21 @@ public abstract class ADefinitionTest extends ATest
     }
 
     private void init() {
-        IScopeHelper scopeHelper = new ScopeHelper();
+        IScopeHelper scopeHelper = createScopeHelper();
 
-        adaptor = new TSPHPAstAdaptor();
-        astHelper = new TypeCheckerAstHelper();
-        scopeFactory = new TestScopeFactory(scopeHelper);
+        adaptor = createAstAdaptor();
+        typeCheckerAstHelper = createTypeCheckerAstHelper();
+        scopeFactory = createTestScopeFactory(scopeHelper);
 
-        TestSymbolFactory symbolFactory = new TestSymbolFactory(scopeHelper);
-        definer = new TestDefiner(symbolFactory, scopeFactory);
-        typeSystem = new TypeSystem(symbolFactory, AstHelperRegistry.get(), definer.getGlobalDefaultNamespace());
+        symbolFactory = createSymbolFactory(scopeHelper);
+        definer = createTestDefiner(symbolFactory, scopeFactory);
+        typeSystem = createTypeSystem(symbolFactory);
 
-        ISymbolResolver symbolResolver = new SymbolResolver(
-                scopeHelper,
-                symbolFactory,
-                definer.getGlobalNamespaceScopes(),
-                definer.getGlobalDefaultNamespace());
+        symbolResolver = createSymbolResolver(scopeHelper, symbolFactory);
 
-        IOverloadResolver methodResolver = new OverloadResolver(typeSystem);
+        methodResolver = createOverloadResolver(typeSystem);
 
-        controller = new TypeCheckerController(
-                symbolFactory,
-                typeSystem,
-                definer,
-                symbolResolver,
-                methodResolver,
-                astHelper);
+        controller = createTypeCheckerController(symbolFactory, typeSystem, definer, symbolResolver, methodResolver);
     }
 
     protected void verifyParser() {
@@ -114,4 +109,60 @@ public abstract class ADefinitionTest extends ATest
         verifyDefinitions();
     }
 
+    protected IScopeHelper createScopeHelper() {
+        return new ScopeHelper();
+    }
+
+    protected ITSPHPAstAdaptor createAstAdaptor() {
+        return new TSPHPAstAdaptor();
+    }
+
+
+    protected ITypeCheckerAstHelper createTypeCheckerAstHelper() {
+        return new TypeCheckerAstHelper();
+    }
+
+
+    protected TestScopeFactory createTestScopeFactory(IScopeHelper theScopeHelper) {
+        return new TestScopeFactory(theScopeHelper);
+    }
+
+    protected TestSymbolFactory createSymbolFactory(IScopeHelper theScopeHelper) {
+        return new TestSymbolFactory(theScopeHelper);
+    }
+
+    protected TestDefiner createTestDefiner(TestSymbolFactory theSymbolFactory, TestScopeFactory theScopeFactory) {
+        return new TestDefiner(theSymbolFactory, theScopeFactory);
+    }
+
+    protected ITypeSystem createTypeSystem(TestSymbolFactory symbolFactory) {
+        return new TypeSystem(symbolFactory, AstHelperRegistry.get(), definer.getGlobalDefaultNamespace());
+    }
+
+    protected ISymbolResolver createSymbolResolver(IScopeHelper theScopeHelper, TestSymbolFactory theSymbolFactory) {
+        return new SymbolResolver(
+                theScopeHelper,
+                theSymbolFactory,
+                definer.getGlobalNamespaceScopes(),
+                definer.getGlobalDefaultNamespace());
+    }
+
+    protected IOverloadResolver createOverloadResolver(ITypeSystem theTypeSystem) {
+        return new OverloadResolver(theTypeSystem);
+    }
+
+    protected ITypeCheckerController createTypeCheckerController(
+            TestSymbolFactory theSymbolFactory,
+            ITypeSystem theTypeSystem,
+            TestDefiner theDefiner,
+            ISymbolResolver theSymbolResolver,
+            IOverloadResolver theMethodResolver) {
+        return new TypeCheckerController(
+                theSymbolFactory,
+                theTypeSystem,
+                theDefiner,
+                theSymbolResolver,
+                theMethodResolver,
+                typeCheckerAstHelper);
+    }
 }
