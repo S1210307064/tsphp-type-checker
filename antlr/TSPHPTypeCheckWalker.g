@@ -136,7 +136,7 @@ variableInit
 					    if($list.getParent().getType() != CLASS_MEMBER){
 					         controller.checkInitialValue($variableId, $expression.start);
 					    } else {
-					        controller.checkConstantInitialValue($variableId, $expression.start);
+					        controller.checkClassMemberInitialValue($variableId, $expression.start);
 					    }
 					}
 				|	variableId=VariableId

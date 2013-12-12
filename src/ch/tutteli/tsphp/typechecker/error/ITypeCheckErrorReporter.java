@@ -143,6 +143,8 @@ public interface ITypeCheckErrorReporter extends ch.tutteli.tsphp.common.IErrorR
 
     ReferenceException onlyConstantValue(ITSPHPAst variableId, ITSPHPAst expression);
 
+    ReferenceException wrongClassMemberInitialValue(ITSPHPAst variableId, ITSPHPAst expression, ITypeSymbol evalType);
+
     ReferenceException wrongTypeClone(ITSPHPAst clone, ITSPHPAst expression);
 
     ReferenceException wrongTypeMethodCall(ITSPHPAst callee);

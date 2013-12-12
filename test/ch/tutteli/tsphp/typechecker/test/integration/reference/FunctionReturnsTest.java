@@ -1,7 +1,7 @@
 package ch.tutteli.tsphp.typechecker.test.integration.reference;
 
-import ch.tutteli.tsphp.typechecker.test.integration.testutils.reference.AReferenceTest;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.ReturnCheckHelper;
+import ch.tutteli.tsphp.typechecker.test.integration.testutils.reference.AReferenceTest;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,6 +34,7 @@ public class FunctionReturnsTest extends AReferenceTest
         List<Object[]> collection = new ArrayList<>();
         collection.addAll(ReturnCheckHelper.getTestStringVariations("function int foo(){", "}"));
         collection.add(new Object[]{"function void foo(){}"});
+        collection.add(new Object[]{"function void foo(){return;}"});
         return collection;
     }
 }

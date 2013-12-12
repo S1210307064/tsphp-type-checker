@@ -564,6 +564,12 @@ public class TypeCheckErrorReporter implements ITypeCheckErrorReporter
         return addAndGetStatementTypeCheckError("onlyConstantValue", variableId, expression, variableId.getEvalType());
     }
 
+    @Override
+    public ReferenceException wrongClassMemberInitialValue(ITSPHPAst variableId, ITSPHPAst expression,
+            ITypeSymbol evalType) {
+        return addAndGetStatementTypeCheckError("wrongClassMemberInitialValue", variableId, expression, evalType);
+    }
+
     private ReferenceException addAndGetStatementTypeCheckError(String key, ITSPHPAst statement,
             ITSPHPAst expression, ITypeSymbol typeSymbol) {
 

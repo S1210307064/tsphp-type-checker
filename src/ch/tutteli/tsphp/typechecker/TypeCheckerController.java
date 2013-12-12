@@ -1216,6 +1216,24 @@ public class TypeCheckerController implements ITypeCheckerController
         }
     }
 
+    @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
+    @Override
+    public void checkClassMemberInitialValue(final ITSPHPAst variableId, final ITSPHPAst expression) {
+        IVariableSymbol symbol = (IVariableSymbol) variableId.getSymbol();
+        if (symbol.isAlwaysCasting()) {
+            final ITypeSymbol typeSymbol = variableId.getEvalType();
+            checkIsSameOrSubType(expression, typeSymbol, new IErrorReporterCaller()
+            {
+                @Override
+                public void callAppropriateMethod() {
+                    TypeCheckErrorReporterRegistry.get().wrongClassMemberInitialValue(variableId, expression,
+                            typeSymbol);
+                }
+            });
+        }
+        checkConstantInitialValue(variableId, expression);
+    }
+
     private boolean isNotConstantValue(ITSPHPAst expression) {
         boolean isNotConstantValue;
         switch (expression.getType()) {

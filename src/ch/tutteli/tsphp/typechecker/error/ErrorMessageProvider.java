@@ -145,8 +145,12 @@ public class ErrorMessageProvider extends AErrorMessageProvider
         typeCheckErrors.put("onlySingleValue", "Line %line%|%pos% - expressions are not allowed at this point. Only "
                 + "a single constant value of type %tExp% can be used (type %tFound% found).");
 
-        typeCheckErrors.put("onlyConstantValue", "Line %line%|%pos% - Only a constant value of type %tExp% is allowed "
+        typeCheckErrors.put("onlyConstantValue", "Line %line%|%pos% - only a constant value of type %tExp% is allowed "
                 + "at this point. Non constant value of type %tFound% found.");
+
+        typeCheckErrors.put("wrongClassMemberInitialValue", "Line %line%|%pos% - class member %id% was initialised "
+                + " with a wrong type. Type %tExp% or a sub-type expected but %tFound% found.\n" +
+                "Please notice that a cast modifier has no effects on the initialisation of a class member.");
 
         typeCheckErrors.put("wrongTypeMethodCall", "Line %line%|%pos% - the callee evaluates to "
                 + "a wrong type. Class-/Interface-type expected but %tFound% found.");

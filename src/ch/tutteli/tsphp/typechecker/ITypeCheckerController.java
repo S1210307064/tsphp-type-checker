@@ -51,7 +51,7 @@ public interface ITypeCheckerController
      *
      * @param typeAst The AST node which contains the type name. For instance, int, MyClass, \Exception etc.
      * @return The corresponding type or a {@link ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousTypeSymbol}
-     *         if could not be found.
+     * if could not be found.
      */
     ITypeSymbol resolveType(ITSPHPAst typeAst);
 
@@ -113,6 +113,8 @@ public interface ITypeCheckerController
     void checkInitialValue(ITSPHPAst variableId, ITSPHPAst expression);
 
     void checkConstantInitialValue(ITSPHPAst variableId, ITSPHPAst expression);
+
+    void checkClassMemberInitialValue(ITSPHPAst variableId, ITSPHPAst expression);
 
     void checkEcho(ITSPHPAst expression);
 

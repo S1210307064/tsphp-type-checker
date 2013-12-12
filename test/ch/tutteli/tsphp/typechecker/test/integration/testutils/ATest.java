@@ -19,14 +19,15 @@ public abstract class ATest implements IErrorLogger
 
     protected List<Exception> exceptions = new ArrayList<>();
     protected IParser parser;
+    protected ITypeCheckErrorReporter typeCheckErrorReporter;
 
     public ATest() {
         parser = createParser();
         parser.registerErrorLogger(new WriteExceptionToConsole());
 
-        ITypeCheckErrorReporter errorReporter = createTypeCheckErrorReporter();
-        errorReporter.registerErrorLogger(this);
-        TypeCheckErrorReporterRegistry.set(errorReporter);
+        typeCheckErrorReporter = createTypeCheckErrorReporter();
+        typeCheckErrorReporter.registerErrorLogger(this);
+        TypeCheckErrorReporterRegistry.set(typeCheckErrorReporter);
     }
 
     public void log(TSPHPException exception) {

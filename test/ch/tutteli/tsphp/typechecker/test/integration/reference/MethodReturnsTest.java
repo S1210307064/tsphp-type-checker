@@ -1,8 +1,8 @@
 package ch.tutteli.tsphp.typechecker.test.integration.reference;
 
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.MethodModifierHelper;
-import ch.tutteli.tsphp.typechecker.test.integration.testutils.reference.AReferenceTest;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.ReturnCheckHelper;
+import ch.tutteli.tsphp.typechecker.test.integration.testutils.reference.AReferenceTest;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,6 +40,7 @@ public class MethodReturnsTest extends AReferenceTest
                     "class a{ " + modifier + " function int foo(){", "}}"
             ));
             collection.add(new Object[]{"class a{ " + modifier + " function void foo(){} }"});
+            collection.add(new Object[]{"class a{ " + modifier + " function void foo(){return;} }"});
         }
 
         variations = MethodModifierHelper.getAbstractVariations();
