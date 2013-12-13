@@ -1,8 +1,8 @@
 package ch.tutteli.tsphp.typechecker.test.integration.reference;
 
 import ch.tutteli.tsphp.typechecker.error.ReferenceErrorDto;
-import ch.tutteli.tsphp.typechecker.test.integration.testutils.reference.AReferenceErrorTest;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.ReturnCheckHelper;
+import ch.tutteli.tsphp.typechecker.test.integration.testutils.reference.AReferenceErrorTest;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,6 +25,7 @@ public class FunctionReturnsErrorTest extends AReferenceErrorTest
 
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
-        return ReturnCheckHelper.getReferenceErrorPairs("", "");
+        return ReturnCheckHelper.getReferenceErrorPairs(
+                "function int\n foo(){", "}", new ReferenceErrorDto[]{new ReferenceErrorDto("foo()", 2, 1)});
     }
 }

@@ -34,11 +34,6 @@ public class ClassMemberInitialValueErrorTest extends ATypeCheckErrorTest
                 any(ITSPHPAst.class), any(ITSPHPAst.class), any(ITypeSymbol.class));
     }
 
-    @Override
-    protected ITypeCheckErrorReporter createTypeCheckErrorReporter() {
-        return spy(super.createTypeCheckErrorReporter());
-    }
-
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
         List<Object[]> collection = new ArrayList<>();
@@ -62,5 +57,10 @@ public class ClassMemberInitialValueErrorTest extends ATypeCheckErrorTest
         }
 
         return collection;
+    }
+
+    @Override
+    protected ITypeCheckErrorReporter createTypeCheckErrorReporter() {
+        return spy(super.createTypeCheckErrorReporter());
     }
 }
