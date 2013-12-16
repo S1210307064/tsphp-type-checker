@@ -31,6 +31,13 @@ public class ErrorMessageProvider extends AErrorMessageProvider
         definitionErrors.put("variableDefinedInConditionalScope", "Line %lineN%|%posN% - variable %idN% is defined in "
                 + "a nested conditional scope and can therefore not be used in the current (outer) scope.\n"
                 + "The definition was on line %line%|%pos% ");
+        definitionErrors.put("variablePartiallyInitialised", "Line %lineN%|%posN% - variable %idN% was not initialised "
+                + "during declaration in line %line%|%pos% and not in all branches up to this point and thus cannot "
+                + "be used.\n"
+                + "Local variables have to be initialised before their first usage.");
+        definitionErrors.put("variableNotInitialised", "Line %lineN%|%posN% - variable %idN% was never initialised "
+                + "since its declaration in line %line%|%pos% and thus cannot be used.\n"
+                + "Local variables have to be initialised before their first usage.");
     }
 
     @Override
@@ -51,11 +58,11 @@ public class ErrorMessageProvider extends AErrorMessageProvider
         referenceErrors.put("notStatic", "Line %line%|%pos% - %id% is not static.");
         referenceErrors.put("toManyBreakContinueLevels", "Line %line%|%pos% - cannot %id% so many levels.");
         referenceErrors.put("partialReturnFromFunction", "Line %line%|%pos% - function %id% does not return/throw "
-                + "in all cases.");
+                + "in all branches.");
         referenceErrors.put("noReturnFromFunction", "Line %line%|%pos% - function %id% does not contain "
                 + "one single return/throw statement even though a return type was defined.");
         referenceErrors.put("partialReturnFromMethod", "Line %line%|%pos% - method %id% does not return/throw "
-                + "in all cases.");
+                + "in all branches.");
         referenceErrors.put("noReturnFromMethod", "Line %line%|%pos% - method %id% does not contain "
                 + "one single return/throw statement even though a return type was defined.");
     }

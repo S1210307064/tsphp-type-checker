@@ -35,15 +35,19 @@ public interface ITypeCheckErrorReporter extends ch.tutteli.tsphp.common.IErrorR
 
     DefinitionException aliasForwardReference(ITSPHPAst typeAst, ITSPHPAst useDefinition);
 
-    DefinitionException forwardReference(ITSPHPAst typeAst, ITSPHPAst useDefinition);
+    DefinitionException forwardReference(ITSPHPAst definitionAst, ITSPHPAst identifier);
 
     DefinitionException methodNotDefined(ITSPHPAst callee, ITSPHPAst id);
 
     DefinitionException memberNotDefined(ITSPHPAst accessor, ITSPHPAst id);
 
-    DefinitionException variableDefinedInOtherConditionalScope(ITSPHPAst definitionAst, ITSPHPAst variable);
+    DefinitionException variableDefinedInOtherConditionalScope(ITSPHPAst definitionAst, ITSPHPAst variableId);
 
-    DefinitionException variableDefinedInConditionalScope(ITSPHPAst definitionAst, ITSPHPAst variable);
+    DefinitionException variableDefinedInConditionalScope(ITSPHPAst definitionAst, ITSPHPAst variableId);
+
+    DefinitionException variablePartiallyInitialised(ITSPHPAst definitionAst, ITSPHPAst variableId);
+
+    DefinitionException variableNotInitialised(ITSPHPAst definitionAst, ITSPHPAst variableId);
 
     ReferenceException unknownType(ITSPHPAst typeAst);
 
@@ -153,8 +157,8 @@ public interface ITypeCheckErrorReporter extends ch.tutteli.tsphp.common.IErrorR
 
     ReferenceException wrongTypeClassMemberAccess(ITSPHPAst expression);
 
-    ReferenceException visibilityViolationClassMemberAccess(ITSPHPAst identifier, ISymbolWithAccessModifier symbol,
-            int accessedFrom);
+    ReferenceException visibilityViolationClassMemberAccess(ITSPHPAst identifier,
+            ISymbolWithAccessModifier symbol, int accessedFrom);
 
     ReferenceException visibilityViolationStaticClassMemberAccess(ITSPHPAst identifier,
             ISymbolWithAccessModifier symbol, int accessedFrom);
@@ -162,8 +166,8 @@ public interface ITypeCheckErrorReporter extends ch.tutteli.tsphp.common.IErrorR
     ReferenceException visibilityViolationClassConstantAccess(ITSPHPAst identifier,
             ISymbolWithAccessModifier symbol, int accessedFrom);
 
-    ReferenceException visibilityViolationMethodCall(ITSPHPAst identifier, ISymbolWithAccessModifier symbol,
-            int accessedFrom);
+    ReferenceException visibilityViolationMethodCall(ITSPHPAst identifier,
+            ISymbolWithAccessModifier symbol, int accessedFrom);
 
     ReferenceException partialReturnFromFunction(ITSPHPAst identifier);
 

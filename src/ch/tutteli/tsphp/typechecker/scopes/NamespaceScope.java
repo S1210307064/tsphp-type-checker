@@ -114,6 +114,27 @@ public class NamespaceScope implements INamespaceScope
         return unsafeCast(uses);
     }
 
+
+    @Override
+    public void addToInitialisedSymbols(ISymbol symbol, boolean isFullyInitialised) {
+        globalNamespaceScope.addToInitialisedSymbols(symbol, isFullyInitialised);
+    }
+
+    @Override
+    public Map<String, Boolean> getInitialisedSymbols() {
+        return globalNamespaceScope.getInitialisedSymbols();
+    }
+
+    @Override
+    public boolean isFullyInitialised(ISymbol symbol) {
+        return globalNamespaceScope.isFullyInitialised(symbol);
+    }
+
+    @Override
+    public boolean isPartiallyInitialised(ISymbol symbol) {
+        return globalNamespaceScope.isPartiallyInitialised(symbol);
+    }
+
     @SuppressWarnings("unchecked")
     private <TCastTo> TCastTo unsafeCast(Object o) {
         return (TCastTo) o;
@@ -130,4 +151,5 @@ public class NamespaceScope implements INamespaceScope
                 ? usesCaseInsensitive.get(alias).get(0).getDefinitionAst()
                 : null;
     }
+
 }

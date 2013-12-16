@@ -77,4 +77,26 @@ public abstract class AErroneousScopedSymbol extends ASymbol implements IErroneo
     public void setModifiers(Set<Integer> modifier) {
         throw new UnsupportedOperationException(ERROR_MESSAGE_MODIFIER);
     }
+
+    @Override
+    public void addToInitialisedSymbols(ISymbol symbol, boolean isFullyInitialised) {
+        throw new UnsupportedOperationException(ERROR_MESSAGE_MODIFIER);
+    }
+
+    @Override
+    public Map<String, Boolean> getInitialisedSymbols() {
+        throw new UnsupportedOperationException(ERROR_MESSAGE_MODIFIER);
+    }
+
+    @Override
+    public boolean isFullyInitialised(ISymbol symbol) {
+        return true;
+    }
+
+    @Override
+    public boolean isPartiallyInitialised(ISymbol symbol) {
+        return true;
+    }
+
+
 }

@@ -93,8 +93,8 @@ public class TypeCheckErrorReporter implements ITypeCheckErrorReporter
     }
 
     @Override
-    public DefinitionException forwardReference(ITSPHPAst typeAst, ITSPHPAst useDefinition) {
-        return addAndGetDefinitionException("forwardReference", typeAst, useDefinition);
+    public DefinitionException forwardReference(ITSPHPAst definitionAst, ITSPHPAst identifier) {
+        return addAndGetDefinitionException("forwardReference", definitionAst, identifier);
     }
 
     @Override
@@ -108,13 +108,23 @@ public class TypeCheckErrorReporter implements ITypeCheckErrorReporter
     }
 
     @Override
-    public DefinitionException variableDefinedInOtherConditionalScope(ITSPHPAst definitionAst, ITSPHPAst variable) {
-        return addAndGetDefinitionException("variableDefinedInOtherConditionalScope", definitionAst, variable);
+    public DefinitionException variableDefinedInOtherConditionalScope(ITSPHPAst definitionAst, ITSPHPAst variableId) {
+        return addAndGetDefinitionException("variableDefinedInOtherConditionalScope", definitionAst, variableId);
     }
 
     @Override
-    public DefinitionException variableDefinedInConditionalScope(ITSPHPAst definitionAst, ITSPHPAst variable) {
-        return addAndGetDefinitionException("variableDefinedInConditionalScope", definitionAst, variable);
+    public DefinitionException variableDefinedInConditionalScope(ITSPHPAst definitionAst, ITSPHPAst variableId) {
+        return addAndGetDefinitionException("variableDefinedInConditionalScope", definitionAst, variableId);
+    }
+
+    @Override
+    public DefinitionException variablePartiallyInitialised(ITSPHPAst definitionAst, ITSPHPAst variableId) {
+        return addAndGetDefinitionException("variablePartiallyInitialised", definitionAst, variableId);
+    }
+
+    @Override
+    public DefinitionException variableNotInitialised(ITSPHPAst definitionAst, ITSPHPAst variableId) {
+        return addAndGetDefinitionException("variableNotInitialised", definitionAst, variableId);
     }
 
     private DefinitionException addAndGetDefinitionException(String key,

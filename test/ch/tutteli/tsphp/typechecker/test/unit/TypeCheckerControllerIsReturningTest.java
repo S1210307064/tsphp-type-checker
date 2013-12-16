@@ -1,6 +1,5 @@
 package ch.tutteli.tsphp.typechecker.test.unit;
 
-import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.typechecker.EReturnState;
 import ch.tutteli.tsphp.typechecker.IDefiner;
 import ch.tutteli.tsphp.typechecker.IOverloadResolver;
@@ -19,8 +18,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 public class TypeCheckerControllerIsReturningTest
 {
@@ -358,69 +355,69 @@ public class TypeCheckerControllerIsReturningTest
     }
 
 
-    @Test
-    public void checkReturnsFromFunction_IsReturning_NoErrorIsReported() {
-        // no arrange necessary
-
-        ITypeCheckerController controller = createTypeCheckController();
-        controller.checkReturnsFromFunction(EReturnState.IsReturning, mock(ITSPHPAst.class));
-
-        verifyNoMoreInteractions(errorReporter);
-    }
-
-    @Test
-    public void checkReturnsFromMethod_IsReturning_NoErrorIsReported() {
-        // no arrange necessary
-
-        ITypeCheckerController controller = createTypeCheckController();
-        controller.checkReturnsFromMethod(EReturnState.IsReturning, mock(ITSPHPAst.class));
-
-        verifyNoMoreInteractions(errorReporter);
-    }
-
-    @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
-    @Test
-    public void checkReturnsFromFunction_IsPartiallyReturning_PartialReturnFromFunctionIsReported() {
-        ITSPHPAst identifier = mock(ITSPHPAst.class);
-
-        ITypeCheckerController controller = createTypeCheckController();
-        controller.checkReturnsFromFunction(EReturnState.IsPartiallyReturning, identifier);
-
-        verify(errorReporter).partialReturnFromFunction(identifier);
-    }
-
-    @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
-    @Test
-    public void checkReturnsFromMethod_IsPartiallyReturning_PartialReturnFromMethodIsReported() {
-        ITSPHPAst identifier = mock(ITSPHPAst.class);
-
-        ITypeCheckerController controller = createTypeCheckController();
-        controller.checkReturnsFromMethod(EReturnState.IsPartiallyReturning, identifier);
-
-        verify(errorReporter).partialReturnFromMethod(identifier);
-    }
-
-    @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
-    @Test
-    public void checkReturnsFromFunction_IsNotReturning_NoReturnFromFunctionIsReported() {
-        ITSPHPAst identifier = mock(ITSPHPAst.class);
-
-        ITypeCheckerController controller = createTypeCheckController();
-        controller.checkReturnsFromFunction(EReturnState.IsNotReturning, identifier);
-
-        verify(errorReporter).noReturnFromFunction(identifier);
-    }
-
-    @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
-    @Test
-    public void checkReturnsFromMethod_IsNotReturning_NoReturnFromMethodIsReported() {
-        ITSPHPAst identifier = mock(ITSPHPAst.class);
-
-        ITypeCheckerController controller = createTypeCheckController();
-        controller.checkReturnsFromMethod(EReturnState.IsNotReturning, identifier);
-
-        verify(errorReporter).noReturnFromMethod(identifier);
-    }
+//    @Test
+//    public void checkReturnsFromFunction_IsReturning_NoErrorIsReported() {
+//        // no arrange necessary
+//
+//        ITypeCheckerController controller = createTypeCheckController();
+//        controller.checkReturnsFromFunction(EReturnState.IsReturning, mock(ITSPHPAst.class));
+//
+//        verifyNoMoreInteractions(errorReporter);
+//    }
+//
+//    @Test
+//    public void checkReturnsFromMethod_IsReturning_NoErrorIsReported() {
+//        // no arrange necessary
+//
+//        ITypeCheckerController controller = createTypeCheckController();
+//        controller.checkReturnsFromMethod(EReturnState.IsReturning, mock(ITSPHPAst.class));
+//
+//        verifyNoMoreInteractions(errorReporter);
+//    }
+//
+//    @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
+//    @Test
+//    public void checkReturnsFromFunction_IsPartiallyReturning_PartialReturnFromFunctionIsReported() {
+//        ITSPHPAst identifier = mock(ITSPHPAst.class);
+//
+//        ITypeCheckerController controller = createTypeCheckController();
+//        controller.checkReturnsFromFunction(EReturnState.IsPartiallyReturning, identifier);
+//
+//        verify(errorReporter).partialReturnFromFunction(identifier);
+//    }
+//
+//    @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
+//    @Test
+//    public void checkReturnsFromMethod_IsPartiallyReturning_PartialReturnFromMethodIsReported() {
+//        ITSPHPAst identifier = mock(ITSPHPAst.class);
+//
+//        ITypeCheckerController controller = createTypeCheckController();
+//        controller.checkReturnsFromMethod(EReturnState.IsPartiallyReturning, identifier);
+//
+//        verify(errorReporter).partialReturnFromMethod(identifier);
+//    }
+//
+//    @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
+//    @Test
+//    public void checkReturnsFromFunction_IsNotReturning_NoReturnFromFunctionIsReported() {
+//        ITSPHPAst identifier = mock(ITSPHPAst.class);
+//
+//        ITypeCheckerController controller = createTypeCheckController();
+//        controller.checkReturnsFromFunction(EReturnState.IsNotReturning, identifier);
+//
+//        verify(errorReporter).noReturnFromFunction(identifier);
+//    }
+//
+//    @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
+//    @Test
+//    public void checkReturnsFromMethod_IsNotReturning_NoReturnFromMethodIsReported() {
+//        ITSPHPAst identifier = mock(ITSPHPAst.class);
+//
+//        ITypeCheckerController controller = createTypeCheckController();
+//        controller.checkReturnsFromMethod(EReturnState.IsNotReturning, identifier);
+//
+//        verify(errorReporter).noReturnFromMethod(identifier);
+//    }
 
 
     private ITypeCheckerController createTypeCheckController() {

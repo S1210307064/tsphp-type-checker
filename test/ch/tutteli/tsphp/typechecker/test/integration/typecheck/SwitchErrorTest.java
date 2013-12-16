@@ -2,15 +2,14 @@ package ch.tutteli.tsphp.typechecker.test.integration.typecheck;
 
 import ch.tutteli.tsphp.typechecker.error.ReferenceErrorDto;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.typecheck.ATypeCheckErrorTest;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @RunWith(Parameterized.class)
 public class SwitchErrorTest extends ATypeCheckErrorTest
@@ -31,58 +30,131 @@ public class SwitchErrorTest extends ATypeCheckErrorTest
         ReferenceErrorDto[] errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto("switch", 2, 1)};
 
         //wrong switch condition type
-        String[] types = new String[]{"array", "resource", "object", "Exception", "ErrorException"};
-        for (String type : types) {
-            collection.add(new Object[]{type + " $b;\n switch($b){}", errorDto});
+        String[][] types = new String[][]{
+                {"array", "null"},
+                {"resource", "null"},
+                {"object", "null"},
+                {"Exception", "null"},
+                {"ErrorException", "null"}
+        };
+        for (String type[] : types) {
+            collection.add(new Object[]{type[0] + " $b=" + type[1] + ";\n switch($b){}", errorDto});
         }
 
         // case label not same type or sub-type of condition
         errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto("$b", 2, 1)};
-        types = new String[]{"bool?", "int", "int?", "float", "float?", "string", "string?",
-                "array", "resource", "object", "Exception", "ErrorException"};
-        for (String type : types) {
-            collection.add(new Object[]{"bool $a; " + type + " $b;switch($a){case\n $b:}", errorDto});
-        }
 
-        types = new String[]{"int", "int?", "float", "float?", "string", "string?",
-                "array", "resource", "object", "Exception", "ErrorException"};
-        for (String type : types) {
-            collection.add(new Object[]{"bool? $a; " + type + " $b;switch($a){case\n $b:}", errorDto});
-        }
+        addToCollection(collection, errorDto, "bool", "false", new String[][]{
+                {"bool?", "null"},
+                {"int", "0"},
+                {"int?", "null"},
+                {"float", "0.0"},
+                {"float?", "null"},
+                {"string", "''"},
+                {"string?", "null"},
+                {"array", "null"},
+                {"resource", "null"},
+                {"object", "null"},
+                {"Exception", "null"},
+                {"ErrorException", "null"}
+        });
 
-        types = new String[]{"bool?", "int?", "float", "float?", "string", "string?", "array", "resource",
-                "object", "Exception", "ErrorException"};
-        for (String type : types) {
-            collection.add(new Object[]{"int $a; " + type + " $b;switch($a){case\n $b:}", errorDto});
-        }
+        addToCollection(collection, errorDto, "bool?", "null", new String[][]{
+                {"int", "0"},
+                {"int?", "null"},
+                {"float", "0.0"},
+                {"float?", "null"},
+                {"string", "''"},
+                {"string?", "null"},
+                {"array", "null"},
+                {"resource", "null"},
+                {"object", "null"},
+                {"Exception", "null"},
+                {"ErrorException", "null"}
+        });
 
-        types = new String[]{"float", "float?", "string", "string?", "array", "resource", "object",
-                "Exception", "ErrorException"};
-        for (String type : types) {
-            collection.add(new Object[]{"int? $a; " + type + " $b;switch($a){case\n $b:}", errorDto});
-        }
+        addToCollection(collection, errorDto, "int", "1", new String[][]{
+                {"bool?", "null"},
+                {"int?", "null"},
+                {"float", "0.0"},
+                {"float?", "null"},
+                {"string", "''"},
+                {"string?", "null"},
+                {"array", "null"},
+                {"resource", "null"},
+                {"object", "null"},
+                {"Exception", "null"},
+                {"ErrorException", "null"}
+        });
 
-        types = new String[]{"bool?", "int?", "float?", "string", "string?", "array", "resource", "object",
-                "Exception", "ErrorException"};
-        for (String type : types) {
-            collection.add(new Object[]{"float $a; " + type + " $b;switch($a){case\n $b:}", errorDto});
-        }
+        addToCollection(collection, errorDto, "int?", "null", new String[][]{
+                {"float", "0.0"},
+                {"float?", "null"},
+                {"string", "''"},
+                {"string?", "null"},
+                {"array", "null"},
+                {"resource", "null"},
+                {"object", "null"},
+                {"Exception", "null"},
+                {"ErrorException", "null"}
+        });
 
-        types = new String[]{"string", "string?", "array", "resource", "object", "Exception", "ErrorException"};
-        for (String type : types) {
-            collection.add(new Object[]{"float? $a; " + type + " $b;switch($a){case\n $b:}", errorDto});
-        }
+        addToCollection(collection, errorDto, "float", "1.2", new String[][]{
+                {"bool?", "null"},
+                {"int?", "null"},
+                {"float?", "null"},
+                {"string", "''"},
+                {"string?", "null"},
+                {"array", "null"},
+                {"resource", "null"},
+                {"object", "null"},
+                {"Exception", "null"},
+                {"ErrorException", "null"}
+        });
 
-        types = new String[]{"bool?", "int?", "string?", "array", "resource", "object", "Exception", "ErrorException"};
-        for (String type : types) {
-            collection.add(new Object[]{"string $a; " + type + " $b;switch($a){case\n $b:}", errorDto});
-        }
+        addToCollection(collection, errorDto, "float?", "null", new String[][]{
+                {"string", "''"},
+                {"string?", "null"},
+                {"array", "null"},
+                {"resource", "null"},
+                {"object", "null"},
+                {"Exception", "null"},
+                {"ErrorException", "null"}
+        });
 
-        types = new String[]{"array", "resource", "object", "Exception", "ErrorException"};
-        for (String type : types) {
-            collection.add(new Object[]{"string? $a; " + type + " $b;switch($a){case\n $b:}", errorDto});
-        }
+        addToCollection(collection, errorDto, "string", "''", new String[][]{
+                {"bool?", "null"},
+                {"int?", "null"},
+                {"float?", "null"},
+                {"string?", "null"},
+                {"array", "null"},
+                {"resource", "null"},
+                {"object", "null"},
+                {"Exception", "null"},
+                {"ErrorException", "null"}
+        });
+
+        addToCollection(collection, errorDto, "string?", "null", new String[][]{
+                {"array", "null"},
+                {"resource", "null"},
+                {"object", "null"},
+                {"Exception", "null"},
+                {"ErrorException", "null"}
+        });
+
 
         return collection;
+    }
+
+    private static void addToCollection(List<Object[]> collection, ReferenceErrorDto[] errorDto,
+            String variableType, String initialValue, String[][] types) {
+        for (String type[] : types) {
+            collection.add(new Object[]{
+                    variableType + " $a=" + initialValue + "; "
+                            + type[0] + " $b=" + type[1] + ";switch($a){case\n $b:}",
+                    errorDto
+            });
+        }
+
     }
 }

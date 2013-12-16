@@ -10,7 +10,6 @@ package ch.tutteli.tsphp.typechecker.antlr;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITSPHPErrorAst;
-import ch.tutteli.tsphp.typechecker.EReturnState;
 import ch.tutteli.tsphp.typechecker.ITypeCheckerController;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.ICaseInsensitiveScope;
@@ -18,7 +17,6 @@ import ch.tutteli.tsphp.typechecker.symbols.IAliasSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IInterfaceTypeSymbol;
-import ch.tutteli.tsphp.typechecker.symbols.IPolymorphicTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IVoidTypeSymbol;
 
@@ -26,6 +24,7 @@ import ch.tutteli.tsphp.typechecker.symbols.IVoidTypeSymbol;
 
 @members {
 private ITypeCheckerController controller;
+private boolean hasAtLeastOneReturnOrThrow;
 
 public TSPHPReferenceWalker(TreeNodeStream input, ITypeCheckerController theController) {
     this(input);
@@ -187,13 +186,13 @@ staticAccessor
 	;
 	
 classMemberDeclaration
-	:	^(CLASS_MEMBER variableDeclarationList)
+	:	^(CLASS_MEMBER variableDeclarationList[true])
 	;
 	
-variableDeclarationList 
+variableDeclarationList[boolean isImplicitlyInitialised] 
 	:	^(VARIABLE_DECLARATION_LIST 
 			^(TYPE variableModifier allTypes[$variableModifier.isNullable]) 
-			variableDeclaration[$allTypes.type]+ 
+			variableDeclaration[$allTypes.type, isImplicitlyInitialised]+ 
 		)
         ;
 
@@ -210,9 +209,10 @@ variableModifier returns[boolean isNullable]
 	|	TYPE_MODIFIER	
 	;	
         
-variableDeclaration[ITypeSymbol type] returns [IVariableSymbol variableSymbol]
-	:	(	^(variableId=VariableId expression)
-		|	variableId=VariableId	
+variableDeclaration[ITypeSymbol type, boolean isImplicitlyInitialised] returns [IVariableSymbol variableSymbol]
+@init{boolean isInitialised = false;}
+	:	(	^(variableId=VariableId expression) {isInitialised = true;}
+		|	variableId=VariableId
 		)
 		{ 
 			//Warning! start duplicated code as in parameterNormalOrOptional
@@ -220,6 +220,9 @@ variableDeclaration[ITypeSymbol type] returns [IVariableSymbol variableSymbol]
 			$variableSymbol.setType(type); 
 			$variableId.getScope().doubleDefinitionCheck($variableId.getSymbol());
 			//Warning! end duplicated code as in parameterNormalOrOptional
+			if(isInitialised || isImplicitlyInitialised){
+			    $variableId.getScope().addToInitialisedSymbols($variableSymbol, true);
+			}
 		}
 	;
 	
@@ -244,7 +247,13 @@ constructDeclaration
 	;
 		
 methodDeclaration
-@init{boolean shallCheckIfReturns = false;}
+//Warning! start duplicated code as in functionDeclaration
+	@init{
+	    hasAtLeastOneReturnOrThrow = false;
+	    boolean shallCheckIfReturns = false;
+	}
+//Warning! end duplicated code as in functionDeclaration
+
 	:	^(METHOD_DECLARATION 
 			^(METHOD_MODIFIER methodModifier)
 			^(TYPE returnTypeModifier returnTypes[$returnTypeModifier.isNullable]) 
@@ -259,7 +268,7 @@ methodDeclaration
 			scope.doubleDefinitionCheckCaseInsensitive(methodSymbol);
 			if(shallCheckIfReturns){
 		//Warning! end duplicated code as in functionDeclaration
-			    controller.checkReturnsFromMethod($block.returnState, $identifier);
+			    controller.checkReturnsFromMethod($block.isReturning, hasAtLeastOneReturnOrThrow, $identifier);
 			}
 		}
 
@@ -296,7 +305,12 @@ returnTypeModifier returns[boolean isNullable]
 	;
 	
 functionDeclaration
-@init{boolean shallCheckIfReturns = false;}
+//Warning! start duplicated code as in functionDeclaration
+	@init{
+	    hasAtLeastOneReturnOrThrow = false;
+	    boolean shallCheckIfReturns = false;
+	}
+//Warning! start duplicated code as in functionDeclaration
 	:	^('function'
 			.
 			^(TYPE returnTypeModifier returnTypes[$returnTypeModifier.isNullable]) {shallCheckIfReturns = !($returnTypes.type instanceof IVoidTypeSymbol);}
@@ -310,7 +324,7 @@ functionDeclaration
 			scope.doubleDefinitionCheckCaseInsensitive(methodSymbol);
 			if(shallCheckIfReturns){
 		//Warning! end duplicated code as in functionDeclaration
-			    controller.checkReturnsFromFunction($block.returnState, $identifier);
+			    controller.checkReturnsFromFunction($block.isReturning, hasAtLeastOneReturnOrThrow, $identifier);
 			}
 		}
 	;
@@ -342,12 +356,13 @@ parameterNormalOrOptional[ITypeSymbol type] returns [IVariableSymbol variableSym
 			$variableSymbol.setType(type); 
 			$variableId.getScope().doubleDefinitionCheck($variableId.getSymbol());
 			//Warning! end duplicated code as in variableDeclaration
+			$variableId.getScope().addToInitialisedSymbols($variableSymbol, true);
 		} 
 	;
 	
-block[boolean shallCheckIfReturns] returns[EReturnState returnState]
-	:	^(BLOCK instructions[$shallCheckIfReturns]) {$returnState = $instructions.returnState;}
-	|	BLOCK {$returnState = EReturnState.IsNotReturning;}
+block[boolean shallCheckIfReturns] returns[boolean isReturning]
+	:	^(BLOCK instructions[$shallCheckIfReturns]) {$isReturning = $instructions.isReturning;}
+	|	BLOCK {$isReturning = false;}
 	;
 
 interfaceDeclaration
@@ -380,79 +395,87 @@ interfaceBodyDefinition
 	|	constructDeclaration
 	;	
 
-instructions[boolean shallCheckIfReturns] returns[EReturnState returnState]
+instructions[boolean shallCheckIfReturns] returns[boolean isReturning]
 @init{boolean isBreaking = false;}
 	:	(	instruction[$shallCheckIfReturns]
 			{
-			    if(shallCheckIfReturns && $returnState != EReturnState.IsReturning){
-			        if(!isBreaking){
-			            isBreaking = $instruction.isBreaking;
-			            $returnState = controller.evaluateReturnStateOr($returnState, $instruction.returnState);
-			        }
+			    if(shallCheckIfReturns){
+			        $isReturning = $isReturning || (!isBreaking && $instruction.isReturning);
+			        isBreaking = $instruction.isBreaking;
 			    }
 			}
 		)+
-		{
-		    if(isBreaking){
-		        $returnState = EReturnState.IsNotReturning;
-		    }
-		}
 	;
 
-instruction[boolean shallCheckIfReturns] returns[EReturnState returnState, boolean isBreaking]
-	:	variableDeclarationList 		{$returnState = EReturnState.IsNotReturning;}
-	|	ifCondition[$shallCheckIfReturns]	{$returnState = $ifCondition.returnState;}
-	|	switchCondition[$shallCheckIfReturns]	{$returnState = $switchCondition.returnState;}
-	|	forLoop					{$returnState = EReturnState.IsNotReturning;}
-	|	foreachLoop 				{$returnState = EReturnState.IsNotReturning;}
-	|	whileLoop 				{$returnState = EReturnState.IsNotReturning;}
-	|	doWhileLoop[$shallCheckIfReturns]	{$returnState = $doWhileLoop.returnState;}
-	|	tryCatch[$shallCheckIfReturns]		{$returnState = $tryCatch.returnState;}
-	|	^(EXPRESSION expression?)		{$returnState = EReturnState.IsNotReturning;}
-	|	^('return' expression?) 		{$returnState = EReturnState.IsReturning;}
-	|	^('throw' expression)			{$returnState = EReturnState.IsReturning;}
-	|	^('echo' expression+)			{$returnState = EReturnState.IsNotReturning;}
+instruction[boolean shallCheckIfReturns] returns[boolean isReturning, boolean isBreaking]
+	// those statement which do not have an isReturning block can never return. 
+	// Yet, it might be that they contain a return or throw statement and thus hasAtLeastOneReturnOrThrow has been set to true
+	:	variableDeclarationList[false] 		
+	|	ifCondition[$shallCheckIfReturns]	{$isReturning = $ifCondition.isReturning;}
+	|	switchCondition[$shallCheckIfReturns]	{$isReturning = $switchCondition.isReturning;}
+	|	forLoop					
+	|	foreachLoop
+	|	whileLoop
+	|	doWhileLoop[$shallCheckIfReturns]	{$isReturning = $doWhileLoop.isReturning;}
+	|	tryCatch[$shallCheckIfReturns]		{$isReturning = $tryCatch.isReturning;}
+	|	^(EXPRESSION expression?)
+	|	^('return' expression?) 		{$isReturning = true; hasAtLeastOneReturnOrThrow = true;}
+	|	^('throw' expression)			{$isReturning = true; hasAtLeastOneReturnOrThrow = true;}
+	|	^('echo' expression+)
 	|	breakContinue				{$isBreaking = true;}
 	;
 	
-ifCondition[boolean shallCheckIfReturns] returns[EReturnState returnState]
+ifCondition[boolean shallCheckIfReturns] returns[boolean isReturning]
 	:	^('if' 
 			expression 
 			ifBlock=blockConditional[$shallCheckIfReturns]
 			(elseBlock=blockConditional[$shallCheckIfReturns])?
 		)
 		{
-		    if(shallCheckIfReturns){
-		        if($elseBlock.returnState == null || $elseBlock.returnState == EReturnState.IsNotReturning){
-		            $returnState = $ifBlock.returnState != EReturnState.IsNotReturning ? EReturnState.IsPartiallyReturning : EReturnState.IsNotReturning;
-		        } else if($elseBlock.returnState == EReturnState.IsPartiallyReturning){
-		            $returnState = EReturnState.IsPartiallyReturning;
-		        } else {
-		            $returnState = $ifBlock.returnState == EReturnState.IsReturning ? EReturnState.IsReturning : EReturnState.IsPartiallyReturning;
-		        }
-		    }
+		    $isReturning = shallCheckIfReturns && $ifBlock.isReturning && $elseBlock.isReturning;
+		    controller.sendUpInitialisedSymbolsAfterIf($ifBlock.ast, $elseBlock.ast);
 		}
 	;
 
-blockConditional[boolean shallCheckIfReturns] returns[EReturnState returnState]
-	:	^(BLOCK_CONDITIONAL instructions[$shallCheckIfReturns]) {$returnState = $instructions.returnState;}
-	|	BLOCK_CONDITIONAL {$returnState = EReturnState.IsNotReturning;}
+blockConditional[boolean shallCheckIfReturns] returns[boolean isReturning, ITSPHPAst ast]
+	:	^(BLOCK_CONDITIONAL instructions[$shallCheckIfReturns]) 
+		{
+		    $isReturning = $instructions.isReturning; 
+		    $ast = $BLOCK_CONDITIONAL;
+		}
+		
+	|	BLOCK_CONDITIONAL 
+		{
+		    $isReturning = false; 
+		    $ast = $BLOCK_CONDITIONAL;
+		}
 	;
 	
-switchCondition[boolean shallCheckIfReturns] returns[EReturnState returnState]
+switchCondition[boolean shallCheckIfReturns] returns[boolean isReturning]
 	:	^('switch' expression switchContents[$shallCheckIfReturns]?) 
-		{$returnState = $switchContents.hasDefault ? $switchContents.returnState : EReturnState.IsNotReturning;}
+		{
+		    $isReturning = $switchContents.hasDefault && $switchContents.isReturning;
+		}
 	;
 	
-switchContents[boolean shallCheckIfReturns] returns[EReturnState returnState, boolean hasDefault]
+switchContents[boolean shallCheckIfReturns] returns[boolean isReturning, boolean hasDefault]
+//Warning! start duplicated code as in catchBlocks
+@init{
+    boolean isFirst = true;
+    List<ITSPHPAst> asts = new ArrayList<>();
+}
+//Warning! start duplicated code as in catchBlocks
 	:	(	^(SWITCH_CASES caseLabels) blockConditional[$shallCheckIfReturns]
 			{
 			    if(shallCheckIfReturns){
 			    	$hasDefault = $hasDefault || $caseLabels.hasDefault;
-			    	$returnState = controller.evaluateReturnStateAnd($returnState,$blockConditional.returnState);		    	
+			    	$isReturning = $blockConditional.isReturning && ($isReturning || isFirst);		
+			    	isFirst = false;    	
 			    }
+			    asts.add($blockConditional.ast);
 			}
 		)+
+		{controller.sendUpInitialisedSymbolsAfterSwitch(asts, $hasDefault);}
 	;
 
 caseLabels returns[boolean hasDefault]
@@ -463,11 +486,12 @@ caseLabels returns[boolean hasDefault]
 	
 forLoop
 	:	^('for' 
-			(init=variableDeclarationList|init=expressionList)
+			(init=variableDeclarationList[false]|init=expressionList)
 			expressionList 
 			expressionList
 			blockConditional[false]
 		)
+		{controller.sendUpInitialisedSymbols($blockConditional.ast);}
 	;
 
 expressionList
@@ -477,48 +501,56 @@ expressionList
 
 foreachLoop
 	:
-		^('foreach' 
+		^(foreach='foreach' 
 			expression 
-			variableDeclarationList
-			// corresponding to the parser the first variableDeclarationList (the key) should be option
+			variableDeclarationList[true]
+			// corresponding to the parser the first variableDeclarationList (the key) should be optional
 			// however, it does not matter here since both are just variable declarations
-			variableDeclarationList? 
+			variableDeclarationList[true]? 
 			blockConditional[false]
-		)		
+		)     		
+		{
+		    controller.sendUpInitialisedSymbols($blockConditional.ast);
+  		    controller.sendUpInitialisedSymbols($foreach);
+		}
 	;
 
 whileLoop
 	:	^('while' expression blockConditional[false])
+		{controller.sendUpInitialisedSymbols($blockConditional.ast);}
 	;
 
 
-doWhileLoop[boolean shallCheckIfReturns] returns[EReturnState returnState]
+doWhileLoop[boolean shallCheckIfReturns] returns[boolean isReturning]
 	:	^('do' block[$shallCheckIfReturns] expression)
-		{$returnState = $block.returnState;}
+		{$isReturning = $block.isReturning;}
 	;
 
-tryCatch[boolean shallCheckIfReturns] returns[EReturnState returnState]
+tryCatch[boolean shallCheckIfReturns] returns[boolean isReturning]
 	:	^('try' blockConditional[$shallCheckIfReturns] catchBlocks[$shallCheckIfReturns]) 
 		{
-		    if(shallCheckIfReturns){
-		        $returnState = controller.evaluateReturnStateAnd($blockConditional.returnState, $catchBlocks.returnState);		    	
-		    }
+		    $isReturning = shallCheckIfReturns && $blockConditional.isReturning && $catchBlocks.isReturning;
+		    $catchBlocks.asts.add($blockConditional.ast);
+		    controller.sendUpInitialisedSymbolsAfterTryCatch($catchBlocks.asts);
 		}
 	;
-catchBlocks[boolean shallCheckIfReturns] returns[EReturnState returnState]
-	:	(	catchBlock[$shallCheckIfReturns]
+catchBlocks[boolean shallCheckIfReturns] returns[boolean isReturning,List<ITSPHPAst> asts]
+//Warning! start duplicated code as in catchBlocks
+@init{
+    boolean isFirst = true;
+    $asts = new ArrayList<>();
+}
+//Warning! start duplicated code as in catchBlocks
+	:	(	^('catch' variableDeclarationList[true] blockConditional[$shallCheckIfReturns])
 			{
 			    if(shallCheckIfReturns){
-			        $returnState = controller.evaluateReturnStateAnd($returnState, $catchBlock.returnState);		    	
+			        $isReturning = $blockConditional.isReturning && ($isReturning || isFirst);
+			        isFirst = false;
 			    }
+			    $asts.add($blockConditional.ast);
 			}
 		)+ 
 	;
-
-catchBlock[boolean shallCheckIfReturns] returns[EReturnState returnState]
-	:	^('catch' variableDeclarationList blockConditional[$shallCheckIfReturns])
-		{$returnState = $blockConditional.returnState;}
-	;	
 	
 breakContinue
 	:	(	nil=Break
@@ -549,8 +581,7 @@ variable
 	: 	varId=VariableId
 		{
       			$varId.setSymbol(controller.resolveVariable($varId));
-			controller.checkIsForwardReference($varId);
-			controller.checkIsOutOfConditionalScope($varId);
+      			controller.checkVariable($varId);
       		}
 	;
 	
@@ -560,9 +591,15 @@ thisVariable
 	;
 
 operator
-		//includes clone
  	:	^(unaryOperator expression)
-	|	^(binaryOperator expression expression)
+	|	^(binaryOperatorExcludingAssign expression expression)
+	|	^(assignOperator varId=expression expression)
+		{
+		    ITSPHPAst variableId = $varId.start;
+		    if(variableId.getType()==VariableId){
+		        variableId.getScope().addToInitialisedSymbols(variableId.getSymbol(), true);
+		    }
+		}
 	|	^('?' expression expression expression)
 	|	^(CASTING ^(TYPE variableModifier allTypes[$variableModifier.isNullable]) expression) 
 	|	^(Instanceof expr=expression (variable|classInterfaceType))  
@@ -582,24 +619,10 @@ unaryOperator
     	|	POST_DECREMENT
 	;
 	
-binaryOperator
+binaryOperatorExcludingAssign
 	:	'or' 
 	|	'xor' 
 	|	'and' 
-	
-	|	'=' 
-	|	'+='
-	|	'-='
-	|	'*='
-	|	'/='
-	|	'&='
-	|	'|='
-	|	'^='
-	|	'%='
-	|	'.='
-	|	'<<=' 
-	|	'>>=' 
-	|	CASTING_ASSIGN
 	
 	|	'||' 
 	|	'&&' 
@@ -628,6 +651,25 @@ binaryOperator
 	|	'*' 
 	|	'/' 
 	|	'%' 
+	;
+	
+assignOperator
+	:	(	'=' 
+		|	'+='
+		|	'-='
+		|	'*='
+		|	'/='
+		|	'&='
+		|	'|='
+		|	'^='
+		|	'%='
+		|	'.='
+		|	'<<=' 
+		|	'>>=' 
+		|	CASTING_ASSIGN	
+		)
+		{
+		}
 	;
 
 actualParameters

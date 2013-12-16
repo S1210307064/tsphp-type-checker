@@ -25,6 +25,12 @@ public class GlobalNamespaceScope extends AScope implements IGlobalNamespaceScop
     }
 
     @Override
+    public boolean doubleDefinitionCheck(ISymbol symbol) {
+        return scopeHelper.doubleDefinitionCheck(symbols, symbol);
+    }
+
+
+    @Override
     public boolean doubleDefinitionCheckCaseInsensitive(ISymbol symbol) {
         return scopeHelper.doubleDefinitionCheck(symbolsCaseInsensitive, symbol);
     }
@@ -38,6 +44,20 @@ public class GlobalNamespaceScope extends AScope implements IGlobalNamespaceScop
         }
         return symbol;
     }
+
+    //Warning! start code duplication - same as in MethodSymbol
+    @Override
+    public boolean isFullyInitialised(ISymbol symbol) {
+        String symbolName = symbol.getName();
+        return initialisedSymbols.containsKey(symbolName) && initialisedSymbols.get(symbolName);
+    }
+
+    @Override
+    public boolean isPartiallyInitialised(ISymbol symbol) {
+        String symbolName = symbol.getName();
+        return initialisedSymbols.containsKey(symbolName) && !initialisedSymbols.get(symbolName);
+    }
+    //Warning! end code duplication - same as in MethodSymbol
 
     private String getTypeNameWithoutNamespacePrefix(String typeName) {
         int scopeNameLength = scopeName.length();

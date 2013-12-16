@@ -13,6 +13,7 @@ import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.mockito.exceptions.base.MockitoAssertionError;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,11 +34,16 @@ public class BreakContinueTest extends AReferenceTest
     @Test
     public void test() throws RecognitionException {
         check();
+        try {
+            verify(controller).checkBreakContinueLevel(any(ITSPHPAst.class), any(ITSPHPAst.class));
+        } catch (MockitoAssertionError e) {
+            System.err.println(testString + " failed.");
+            throw e;
+        }
     }
 
     @Override
     protected void verifyReferences() {
-        verify(controller).checkBreakContinueLevel(any(ITSPHPAst.class), any(ITSPHPAst.class));
     }
 
     @Parameterized.Parameters
@@ -45,28 +51,28 @@ public class BreakContinueTest extends AReferenceTest
         List<Object[]> collection = new ArrayList<>();
 
         String[][] loops = new String[][]{
-            //switch is treated like a loop in PHP
-            {"int $a; switch($a){case 1:", "}"},
-            {"for(;;){", "}"},
-            {"foreach([1,2] as object $v){", "}"},
-            {"while(true){", "}"},
-            {"do{", "}while(true);"}
+                //switch is treated like a loop in PHP
+                {"int $a=1; switch($a){case 1:", "}"},
+                {"for(;;){", "}"},
+                {"foreach([1,2] as object $v){", "}"},
+                {"while(true){", "}"},
+                {"do{", "}while(true);"}
         };
         String[][] loops2 = new String[][]{
-            //switch is treated like a loop in PHP
-            {"int $b; switch($b){case 1:", "}"},
-            {"for(;;){", "}"},
-            {"foreach([1,2] as object $v2){", "}"},
-            {"while(true){", "}"},
-            {"do{", "}while(true);"}
+                //switch is treated like a loop in PHP
+                {"int $b=1; switch($b){case 1:", "}"},
+                {"for(;;){", "}"},
+                {"foreach([1,2] as object $v2){", "}"},
+                {"while(true){", "}"},
+                {"do{", "}while(true);"}
         };
         String[][] loops3 = new String[][]{
-            //switch is treated like a loop in PHP
-            {"int $c; switch($c){case 1:", "}"},
-            {"for(;;){", "}"},
-            {"foreach([1,2] as object $v3){", "}"},
-            {"while(true){", "}"},
-            {"do{", "}while(true);"}
+                //switch is treated like a loop in PHP
+                {"int $c=3; switch($c){case 1:", "}"},
+                {"for(;;){", "}"},
+                {"foreach([1,2] as object $v3){", "}"},
+                {"while(true){", "}"},
+                {"do{", "}while(true);"}
         };
 
         for (String[] loop : loops) {
@@ -79,10 +85,10 @@ public class BreakContinueTest extends AReferenceTest
                 collection.add(new Object[]{loop[0] + loop2[0] + "continue 2;" + loop2[1] + loop[1]});
                 for (String[] loop3 : loops3) {
                     collection.add(new Object[]{
-                        loop[0] + loop2[0] + loop3[0] + "break 3;" + loop3[1] + loop2[1] + loop[1]
+                            loop[0] + loop2[0] + loop3[0] + "break 3;" + loop3[1] + loop2[1] + loop[1]
                     });
                     collection.add(new Object[]{
-                        loop[0] + loop2[0] + loop3[0] + "continue 3;" + loop3[1] + loop2[1] + loop[1]
+                            loop[0] + loop2[0] + loop3[0] + "continue 3;" + loop3[1] + loop2[1] + loop[1]
                     });
                 }
             }

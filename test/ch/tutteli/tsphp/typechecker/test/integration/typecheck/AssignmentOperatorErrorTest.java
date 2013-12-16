@@ -1,4 +1,3 @@
-
 package ch.tutteli.tsphp.typechecker.test.integration.typecheck;
 
 import ch.tutteli.tsphp.typechecker.error.ReferenceErrorDto;
@@ -32,16 +31,18 @@ public class AssignmentOperatorErrorTest extends ATypeCheckErrorTest
 
         //see TSPHP-490 - erroneous symbols should not been investigated further
         collection.addAll(Arrays.asList(new Object[][]{
-                {"int $a =\n nonExistingFunction();", dto("nonExistingFunction()", 2, 1)},
-                {"int $notAClassSymbol; int $a =\n $notAClassSymbol->foo();", dto("$notAClassSymbol", 2, 1)},
-                {"int $a; $a =\n nonExistingFunction();", dto("nonExistingFunction()", 2, 1)},
-                {"int $notAClassSymbol; int $a; $a =\n $notAClassSymbol->foo();", dto("$notAClassSymbol", 2, 1)},
+                {"int $a =\n nonExistingFunction();", refErrorDto("nonExistingFunction()", 2, 1)},
+                {
+                        "int $notAClassSymbol=1; int $a =\n $notAClassSymbol->foo();",
+                        refErrorDto("$notAClassSymbol", 2, 1)
+                },
+                {"int $a; $a =\n nonExistingFunction();", refErrorDto("nonExistingFunction()", 2, 1)},
+                {
+                        "int $notAClassSymbol=1; int $a; $a =\n $notAClassSymbol->foo();",
+                        refErrorDto("$notAClassSymbol", 2, 1)
+                },
         }));
         return collection;
-    }
-
-    private static ReferenceErrorDto[] dto(String identifier, int line, int position) {
-        return new ReferenceErrorDto[]{new ReferenceErrorDto(identifier, line, position)};
     }
 }
 

@@ -1,6 +1,7 @@
 package ch.tutteli.tsphp.typechecker.symbols;
 
 import ch.tutteli.tsphp.common.IScope;
+import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tutteli.tsphp.typechecker.scopes.IScopeHelper;
@@ -81,4 +82,18 @@ public class MethodSymbol extends AScopedSymbol implements IMethodSymbol
     public String toString() {
         return super.toString() + ModifierHelper.getModifiers(new TreeSet<>(returnTypeModifier));
     }
+
+    //Warning! start code duplication - same as in GlobalNamespaceScope
+    @Override
+    public boolean isFullyInitialised(ISymbol symbol) {
+        String symbolName = symbol.getName();
+        return initialisedSymbols.containsKey(symbolName) && initialisedSymbols.get(symbolName);
+    }
+
+    @Override
+    public boolean isPartiallyInitialised(ISymbol symbol) {
+        String symbolName = symbol.getName();
+        return initialisedSymbols.containsKey(symbolName) && !initialisedSymbols.get(symbolName);
+    }
+    //Warning! end code duplication - same as in GlobalNamespaceScope
 }

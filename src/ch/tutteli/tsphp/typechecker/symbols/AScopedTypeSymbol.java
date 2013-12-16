@@ -11,6 +11,7 @@ import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tutteli.tsphp.typechecker.scopes.ICaseInsensitiveScope;
 import ch.tutteli.tsphp.typechecker.scopes.IScopeHelper;
 import ch.tutteli.tsphp.typechecker.utils.MapHelper;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -83,5 +84,17 @@ public abstract class AScopedTypeSymbol extends AScopedSymbol implements ICaseIn
     @Override
     public ITSPHPAst getDefaultValue() {
         return AstHelperRegistry.get().createAst(TSPHPDefinitionWalker.Null, "null");
+    }
+
+    @Override
+    public boolean isFullyInitialised(ISymbol symbol) {
+        //all symbols in a scoped type symbol are implicitly initialised
+        return true;
+    }
+
+    @Override
+    public boolean isPartiallyInitialised(ISymbol symbol) {
+        //all symbols in a scoped type symbol are implicitly initialised
+        return false;
     }
 }

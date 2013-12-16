@@ -3,6 +3,7 @@ package ch.tutteli.tsphp.typechecker.scopes;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,10 +13,14 @@ import java.util.Map;
  */
 public abstract class AScope implements IScope
 {
-    protected final IScopeHelper scopeHelper;
     protected final String scopeName;
+
+    //Warning! start code duplication - same as in AScopedSymbol
+    protected final IScopeHelper scopeHelper;
     protected final IScope enclosingScope;
     protected final Map<String, List<ISymbol>> symbols = new LinkedHashMap<>();
+    protected final Map<String, Boolean> initialisedSymbols = new HashMap<>();
+    //Warning! end code duplication - same as in AScopedSymbol
 
     public AScope(IScopeHelper theScopeHelper, String theScopeName, IScope theEnclosingScope) {
         scopeHelper = theScopeHelper;
@@ -23,11 +28,7 @@ public abstract class AScope implements IScope
         enclosingScope = theEnclosingScope;
     }
 
-    @Override
-    public boolean doubleDefinitionCheck(ISymbol symbol) {
-        return scopeHelper.doubleDefinitionCheck(symbols, symbol);
-    }
-
+    //Warning! start code duplication - same as in AScopedSymbol
     @Override
     public IScope getEnclosingScope() {
         return enclosingScope;
@@ -42,4 +43,20 @@ public abstract class AScope implements IScope
     public Map<String, List<ISymbol>> getSymbols() {
         return symbols;
     }
+    //Warning! end code duplication - same as in AScopedSymbol
+
+    //Warning! start code duplication - same as in AScopedSymbol
+    @Override
+    public void addToInitialisedSymbols(ISymbol symbol, boolean isFullyInitialised) {
+        String symbolName = symbol.getName();
+        if (!initialisedSymbols.containsKey(symbolName) || !initialisedSymbols.get(symbolName)) {
+            initialisedSymbols.put(symbol.getName(), isFullyInitialised);
+        }
+    }
+
+    @Override
+    public Map<String, Boolean> getInitialisedSymbols() {
+        return initialisedSymbols;
+    }
+    //Warning! end code duplication - same as in AScopedSymbol
 }

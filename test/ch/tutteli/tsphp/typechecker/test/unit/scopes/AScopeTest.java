@@ -11,11 +11,9 @@ import org.junit.Test;
 import java.util.List;
 import java.util.Map;
 
-
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 public class AScopeTest
 {
@@ -38,19 +36,24 @@ public class AScopeTest
         }
 
         @Override
+        public boolean doubleDefinitionCheck(ISymbol symbol) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
         public ISymbol resolve(ITSPHPAst typeAst) {
             throw new UnsupportedOperationException();
         }
-    }
 
-    @Test
-    public void doubleDefinitionCheck_Standard_DelegateToScopeHelper() {
-        ISymbol symbol = mock(ISymbol.class);
+        @Override
+        public boolean isFullyInitialised(ISymbol symbol) {
+            throw new UnsupportedOperationException();
+        }
 
-        AScope scope = createScope("scope", mock(IScope.class));
-        scope.doubleDefinitionCheck(symbol);
-
-        verify(scopeHelper).doubleDefinitionCheck(scope.getSymbols(), symbol);
+        @Override
+        public boolean isPartiallyInitialised(ISymbol symbol) {
+            throw new UnsupportedOperationException();
+        }
     }
 
     @Test

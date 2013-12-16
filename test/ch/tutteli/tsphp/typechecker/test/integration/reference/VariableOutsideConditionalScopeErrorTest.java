@@ -30,25 +30,25 @@ public class VariableOutsideConditionalScopeErrorTest extends AReferenceDefiniti
         List<Object[]> collection = new ArrayList<>();
 
         //global variables
-        collection.addAll(getVariations("", "", "int\n $a;", "\n $a;"));
-        collection.addAll(getVariations("namespace a;", "", "int\n $a;", "\n $a;"));
-        collection.addAll(getVariations("namespace a\\b;", "", "int\n $a;", "\n $a;"));
+        collection.addAll(getVariations("", "", "int\n $a=1;", "\n $a;"));
+        collection.addAll(getVariations("namespace a;", "", "int\n $a=0;", "\n $a;"));
+        collection.addAll(getVariations("namespace a\\b;", "", "int\n $a=2;", "\n $a;"));
         collection.addAll(getVariations("namespace{", "}"));
         collection.addAll(getVariations("namespace a{", "}"));
         collection.addAll(getVariations("namespace a\\b\\z{", "}"));
 
         //functions
-        collection.addAll(getVariations("function void foo(){", "}", "int\n $a;", "\n $a;"));
-        collection.addAll(getVariations("namespace a;function void foo(){", "}", "int\n $a;", "\n $a;"));
-        collection.addAll(getVariations("namespace a\\b;function void foo(){", "}", "int\n $a;", "\n $a;"));
+        collection.addAll(getVariations("function void foo(){", "}", "int\n $a=0;", "\n $a;"));
+        collection.addAll(getVariations("namespace a;function void foo(){", "}", "int\n $a=0;", "\n $a;"));
+        collection.addAll(getVariations("namespace a\\b;function void foo(){", "}", "int\n $a=0;", "\n $a;"));
         collection.addAll(getVariations("namespace{function void foo(){", "}}"));
         collection.addAll(getVariations("namespace a{function void foo(){", "}}"));
         collection.addAll(getVariations("namespace a\\b\\z{function void foo(){", "}}"));
 
         //methods
-        collection.addAll(getVariations("class a{ function void foo(){", "}}", "int\n $a;", "\n $a;"));
-        collection.addAll(getVariations("namespace a;class a{ function void foo(){", "}}", "int\n $a;", "\n $a;"));
-        collection.addAll(getVariations("namespace a\\b;class a{ function void foo(){", "}}", "int\n $a;", "\n $a;"));
+        collection.addAll(getVariations("class a{ function void foo(){", "}}", "int\n $a=0;", "\n $a;"));
+        collection.addAll(getVariations("namespace a;class a{ function void foo(){", "}}", "int\n $a=0;", "\n $a;"));
+        collection.addAll(getVariations("namespace a\\b;class a{ function void foo(){", "}}", "int\n $a=0;", "\n $a;"));
         collection.addAll(getVariations("namespace{class a{ function void foo(){", "}}}"));
         collection.addAll(getVariations("namespace a{class a{ function void foo(){", "}}}"));
         collection.addAll(getVariations("namespace a\\b\\z{class a{ function void foo(){", "}}}"));
@@ -58,15 +58,15 @@ public class VariableOutsideConditionalScopeErrorTest extends AReferenceDefiniti
 
     public static Collection<Object[]> getVariations(String prefix, String appendix) {
         List<Object[]> collection = new ArrayList<>();
-        collection.addAll(getVariations(prefix, appendix, "int\n $a;", "\n $a;"));
+        collection.addAll(getVariations(prefix, appendix, "int\n $a=1;", "\n $a;"));
 
         //ensure check is also done when accessing a member
-        collection.addAll(getVariations("namespace z{class Z{public int $foo;}}" + prefix, appendix,
-                "\\z\\Z \n $a;", "\n $a->foo;"));
+        collection.addAll(getVariations(
+                "namespace z{class Z{public int $foo;}}" + prefix, appendix, "\\z\\Z \n $a=null;", "\n $a->foo;"));
 
         //ensure check is also done when calling a method - see TSPHP-655
         collection.addAll(getVariations("namespace z{class Z{public function void foo(){}}}" + prefix, appendix,
-                "\\z\\Z \n $a;", "\n $a->foo();"));
+                "\\z\\Z \n $a=null;", "\n $a->foo();"));
 
         DefinitionErrorDto[] errorDto = new DefinitionErrorDto[]{new DefinitionErrorDto("$a", 2, 1, "$a", 3, 1)};
         collection.addAll(Arrays.asList(new Object[][]{
@@ -86,7 +86,7 @@ public class VariableOutsideConditionalScopeErrorTest extends AReferenceDefiniti
                 {prefix + "if(true){" + declaration + "}" + statement + "" + appendix, errorDto},
                 {prefix + "if(true);else " + declaration + "" + statement + "" + appendix, errorDto},
                 {prefix + "if(true){}else{ " + declaration + "} " + statement + " " + appendix, errorDto},
-                {prefix + "int $b; switch($b){case 1: " + declaration + "} " + statement + "" + appendix, errorDto},
+                {prefix + "int $b=1; switch($b){case 1: " + declaration + "} " + statement + "" + appendix, errorDto},
                 {prefix + "for(;;)" + declaration + " " + statement + " " + appendix, errorDto},
                 {prefix + "for(;;){" + declaration + "} " + statement + " " + appendix, errorDto},
                 {prefix + "foreach([1,2] as object $b){" + declaration + "} " + statement + " " + appendix, errorDto},

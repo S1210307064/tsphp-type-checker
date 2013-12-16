@@ -4,8 +4,8 @@ import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
-import ch.tutteli.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.error.ITypeCheckErrorReporter;
+import ch.tutteli.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.IScopeHelper;
@@ -14,13 +14,21 @@ import ch.tutteli.tsphp.typechecker.symbols.IAliasSymbol;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.collection.IsMapContaining.hasKey;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class NamespaceScopeTest
 {
@@ -92,7 +100,7 @@ public class NamespaceScopeTest
     }
 
     @Test
-    public void doubleDefinitionCheck_standard_DelegateToEnclosingScope() {
+    public void doubleDefinitionCheck_Standard_DelegateToEnclosingScope() {
         IGlobalNamespaceScope globalNamespaceScope = mock(IGlobalNamespaceScope.class);
         ISymbol symbol = mock(ISymbol.class);
 
@@ -103,7 +111,7 @@ public class NamespaceScopeTest
     }
 
     @Test
-    public void doubleDefinitionCheckCaseInsensitive_standard_DelegateToEnclosingScope() {
+    public void doubleDefinitionCheckCaseInsensitive_Standard_DelegateToEnclosingScope() {
         IGlobalNamespaceScope globalNamespaceScope = mock(IGlobalNamespaceScope.class);
         ISymbol symbol = mock(ISymbol.class);
 
@@ -115,7 +123,7 @@ public class NamespaceScopeTest
 
 
     @Test
-    public void defineUse_standard_SetDefinitionScope() {
+    public void defineUse_Standard_SetDefinitionScope() {
         IAliasSymbol aliasSymbol = createAliasSymbol("aliasName");
 
         INamespaceScope namespaceScope = createNamespaceScope();
@@ -485,6 +493,71 @@ public class NamespaceScopeTest
         verify(errorReporter).determineAlreadyDefined(symbol, typeSymbol);
     }
 
+    @Test
+    public void isFullyInitialised_Standard_DelegateToEnclosingScope() {
+        IGlobalNamespaceScope globalNamespaceScope = mock(IGlobalNamespaceScope.class);
+        ISymbol symbol = mock(ISymbol.class);
+
+        INamespaceScope namespaceScope = createNamespaceScope(globalNamespaceScope);
+        namespaceScope.isFullyInitialised(symbol);
+
+        verify(globalNamespaceScope).isFullyInitialised(symbol);
+    }
+
+    @Test
+    public void isPartiallyInitialised_Standard_DelegateToEnclosingScope() {
+        IGlobalNamespaceScope globalNamespaceScope = mock(IGlobalNamespaceScope.class);
+        ISymbol symbol = mock(ISymbol.class);
+
+        INamespaceScope namespaceScope = createNamespaceScope(globalNamespaceScope);
+        namespaceScope.isPartiallyInitialised(symbol);
+
+        verify(globalNamespaceScope).isPartiallyInitialised(symbol);
+    }
+
+    @Test
+    public void addToInitialisedSymbols_IsFullyInitialised_DelegateToEnclosingScope() {
+        IGlobalNamespaceScope globalNamespaceScope = mock(IGlobalNamespaceScope.class);
+        ISymbol symbol = mock(ISymbol.class);
+
+        INamespaceScope namespaceScope = createNamespaceScope(globalNamespaceScope);
+        namespaceScope.addToInitialisedSymbols(symbol, true);
+
+        verify(globalNamespaceScope).addToInitialisedSymbols(symbol, true);
+    }
+
+    @Test
+    public void addToInitialisedSymbols_IsPartiallyInitialised_DelegateToEnclosingScope() {
+        IGlobalNamespaceScope globalNamespaceScope = mock(IGlobalNamespaceScope.class);
+        ISymbol symbol = mock(ISymbol.class);
+
+        INamespaceScope namespaceScope = createNamespaceScope(globalNamespaceScope);
+        namespaceScope.addToInitialisedSymbols(symbol, false);
+
+        verify(globalNamespaceScope).addToInitialisedSymbols(symbol, false);
+    }
+
+    @Test
+    public void getInitialisedSymbols_IsPartiallyInitialised_DelegateToEnclosingScope() {
+        IGlobalNamespaceScope globalNamespaceScope = mock(IGlobalNamespaceScope.class);
+        Map<String, Boolean> initialisedSymbols = new HashMap<>();
+        when(globalNamespaceScope.getInitialisedSymbols()).thenReturn(initialisedSymbols);
+
+        INamespaceScope namespaceScope = createNamespaceScope(globalNamespaceScope);
+        Map<String, Boolean> result = namespaceScope.getInitialisedSymbols();
+
+        assertThat(result, is(initialisedSymbols));
+        verify(globalNamespaceScope).getInitialisedSymbols();
+    }
+
+    protected INamespaceScope createNamespaceScope() {
+        return createNamespaceScope(mock(IGlobalNamespaceScope.class));
+    }
+
+    protected INamespaceScope createNamespaceScope(IGlobalNamespaceScope globalNamespaceScope) {
+        return new NamespaceScope(scopeHelper, "test", globalNamespaceScope);
+    }
+
     private ISymbol createSymbol(String name) {
         ISymbol symbol = mock(ISymbol.class);
         when(symbol.getName()).thenReturn(name);
@@ -510,11 +583,5 @@ public class NamespaceScopeTest
         return aliasSymbol;
     }
 
-    private INamespaceScope createNamespaceScope() {
-        return createNamespaceScope(mock(IGlobalNamespaceScope.class));
-    }
 
-    private INamespaceScope createNamespaceScope(IGlobalNamespaceScope globalNamespaceScope) {
-        return new NamespaceScope(scopeHelper, "test", globalNamespaceScope);
-    }
 }

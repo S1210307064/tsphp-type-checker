@@ -21,7 +21,11 @@ import org.mockito.stubbing.Answer;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyMap;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class ConditionalScopeTest
 {
@@ -102,7 +106,7 @@ public class ConditionalScopeTest
 
 
     @Test
-    public void doubleDefinitionCheck_InConditionalInMethod_DelegateToScopeHelperAndUseGlobalNamespace() {
+    public void doubleDefinitionCheck_InConditionalScopeInMethod_DelegateToScopeHelperAndUseGlobalNamespace() {
         ILowerCaseStringMap symbols = mock(ILowerCaseStringMap.class);
         IMethodSymbol methodSymbol = createMethodSymbol(symbols);
         IConditionalScope conditionalScopeOuter = createConditionalScope(methodSymbol);
@@ -114,7 +118,7 @@ public class ConditionalScopeTest
         verifyScopeWasUsed(methodSymbol, symbols, symbol);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "ThrowableResultOfMethodCallIgnored"})
     @Test
     public void doubleDefinitionCheck_ScopeHelperCallsIAlreadyDefinedMethodCaller_DefinedInOuterScopeIsCalled() {
         ILowerCaseStringMap symbols = mock(ILowerCaseStringMap.class);
@@ -130,7 +134,8 @@ public class ConditionalScopeTest
                 {
                     public Object answer(InvocationOnMock invocation) {
                         Object[] args = invocation.getArguments();
-                        ((IAlreadyDefinedMethodCaller) args[2]).callAccordingAlreadyDefinedMethod(earlierDefinedSymbol, symbol);
+                        ((IAlreadyDefinedMethodCaller) args[2]).callAccordingAlreadyDefinedMethod
+                                (earlierDefinedSymbol, symbol);
                         return false;
                     }
                 });
@@ -153,7 +158,7 @@ public class ConditionalScopeTest
     }
 
     @Test
-    public void resolve_InMethodSymbol_DelegateToEnclosingScope() {
+    public void resolve_InMethod_DelegateToEnclosingScope() {
         IMethodSymbol methodSymbol = mock(IMethodSymbol.class);
         ITSPHPAst ast = mock(ITSPHPAst.class);
 
@@ -163,13 +168,28 @@ public class ConditionalScopeTest
         verify(methodSymbol).resolve(ast);
     }
 
+    @Test
+    public void resolve_InConditionalScope_DelegateToEnclosingScope() {
+        IConditionalScope outerScope = mock(IConditionalScope.class);
+        ITSPHPAst ast = mock(ITSPHPAst.class);
+
+        IConditionalScope conditionalScope = createConditionalScope(outerScope);
+        conditionalScope.resolve(ast);
+
+        verify(outerScope).resolve(ast);
+    }
+
+    protected IConditionalScope createConditionalScope(IScope scope) {
+        return new ConditionalScope(scopeHelper, scope);
+    }
 
     @SuppressWarnings("unchecked")
     private void verifyScopeWasUsed(IScope scope, ILowerCaseStringMap symbols, ISymbol symbol) {
         verify(scope).getSymbols();
         ArgumentCaptor<ILowerCaseStringMap> symbolsArg = ArgumentCaptor.forClass(ILowerCaseStringMap.class);
         ArgumentCaptor<ISymbol> symbolArg = ArgumentCaptor.forClass(ISymbol.class);
-        verify(scopeHelper).doubleDefinitionCheck(symbolsArg.capture(), symbolArg.capture(), any(IAlreadyDefinedMethodCaller.class));
+        verify(scopeHelper).doubleDefinitionCheck(symbolsArg.capture(), symbolArg.capture(),
+                any(IAlreadyDefinedMethodCaller.class));
         assertThat(symbolsArg.getValue(), is(symbols));
         assertThat(symbolArg.getValue(), is(symbol));
     }
@@ -186,9 +206,6 @@ public class ConditionalScopeTest
         return ast;
     }
 
-    private IConditionalScope createConditionalScope(IScope scope) {
-        return new ConditionalScope(scopeHelper, scope);
-    }
 
     @SuppressWarnings("unchecked")
     private IMethodSymbol createMethodSymbol(ILowerCaseStringMap symbols) {

@@ -36,7 +36,7 @@ topdown
     	|	classDeclaration
     	|	constructDeclaration
     	|	methodFunctionDeclaration
-    	|	conditionalBlock
+    	|	blockConditional
     	|	foreachLoop
     
     		//symbols
@@ -109,14 +109,20 @@ methodFunctionDeclaration
 		{currentScope = definer.defineMethod(currentScope,$mMod, $rtMod, $returnType, $identifier); }
 	;
 	
-conditionalBlock
-	:	^(BLOCK_CONDITIONAL .*) 
-		{currentScope = definer.defineConditionalScope(currentScope); }	
+blockConditional
+	:	^(block=BLOCK_CONDITIONAL .*) 
+		{
+		    currentScope = definer.defineConditionalScope(currentScope); 
+		    $block.setScope(currentScope);
+		}	
 	;
 	
 foreachLoop
 	:	^(Foreach .*)
-		{currentScope = definer.defineConditionalScope(currentScope); }	
+		{
+		    currentScope = definer.defineConditionalScope(currentScope);
+		    $Foreach.setScope(currentScope);
+		}	
 	;
 	
 constantDeclarationList

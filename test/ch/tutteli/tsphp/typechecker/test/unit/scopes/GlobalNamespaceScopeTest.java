@@ -205,7 +205,7 @@ public class GlobalNamespaceScopeTest
         assertThat(result, is(symbol));
     }
 
-    private IGlobalNamespaceScope createGlobalScope() {
+    protected IGlobalNamespaceScope createGlobalScope() {
         return new GlobalNamespaceScope(scopeHelper, GLOBAL_NAMESPACE_NAME);
     }
 

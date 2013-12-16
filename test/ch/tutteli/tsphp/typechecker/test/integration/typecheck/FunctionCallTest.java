@@ -1,19 +1,19 @@
 package ch.tutteli.tsphp.typechecker.test.integration.typecheck;
 
+import ch.tutteli.tsphp.typechecker.test.integration.testutils.TypeHelper;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.reference.ReferenceScopeTestStruct;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.typecheck.AReferenceScopeTypeCheckTest;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.typecheck.TypeCheckStruct;
+import org.antlr.runtime.RecognitionException;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-
-import org.antlr.runtime.RecognitionException;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
 @RunWith(Parameterized.class)
 public class FunctionCallTest extends AReferenceScopeTypeCheckTest
@@ -33,27 +33,12 @@ public class FunctionCallTest extends AReferenceScopeTypeCheckTest
     public static Collection<Object[]> testStrings() {
         List<Object[]> collection = new ArrayList<>();
 
-        Object[][] types = new Object[][]{
-                {"bool", Bool},
-                {"int", Int},
-                {"float", Float},
-                {"string", String},
-                {"bool?", BoolNullable},
-                {"int?", IntNullable},
-                {"float?", FloatNullable},
-                {"string?", StringNullable},
-                {"array", Array},
-                {"resource", Resource},
-                {"object", Object},
-                {"\\Exception", Exception},
-                {"\\ErrorException", ErrorException},
-                {"void", Void}
-        };
+        Object[][] types = TypeHelper.getTypesInclTokenAndDefaultValue();
 
         int count = 0;
         for (Object[] type : types) {
             ++count;
-            String stat = type[0] + " $a; return $a;";
+            String stat = type[0] + " $a=" + type[2] + "; return $a;";
             if (count == 14) {
                 stat = "";
             }

@@ -1,19 +1,19 @@
 package ch.tutteli.tsphp.typechecker.test.integration.typecheck;
 
+import ch.tutteli.tsphp.typechecker.test.integration.testutils.TypeHelper;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.reference.ReferenceScopeTestStruct;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.typecheck.AReferenceScopeTypeCheckTest;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.typecheck.TypeCheckStruct;
+import org.antlr.runtime.RecognitionException;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-
-import org.antlr.runtime.RecognitionException;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
 @RunWith(Parameterized.class)
 public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
@@ -34,28 +34,13 @@ public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
         List<Object[]> collection = new ArrayList<>();
         String dfault = "\\.\\.";
 
-        Object[][] types = new Object[][]{
-                {"bool", Bool},
-                {"int", Int},
-                {"float", Float},
-                {"string", String},
-                {"bool?", BoolNullable},
-                {"int?", IntNullable},
-                {"float?", FloatNullable},
-                {"string?", StringNullable},
-                {"array", Array},
-                {"resource", Resource},
-                {"object", Object},
-                {"\\Exception", Exception},
-                {"\\ErrorException", ErrorException},
-                {"void", Void}
-        };
+        Object[][] types = TypeHelper.getTypesInclTokenAndDefaultValue();
 
         int count = 0;
         for (Object[] type : types) {
             ++count;
             String kind = "class";
-            String body = "{" + type[0] + " $a; return $a;}";
+            String body = "{" + type[0] + " $a=" + type[2] + "; return $a;}";
             if (count == 14) {
                 body = "{}";
             }
@@ -69,7 +54,7 @@ public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
             for (int i = 0; i < 2; ++i) {
                 collection.addAll(Arrays.asList(new Object[][]{
                         {
-                                kind + " a{function " + type[0] + " foo()" + body + "} a $a; $a->foo();",
+                                kind + " a{function " + type[0] + " foo()" + body + "} a $a=null; $a->foo();",
                                 new ReferenceScopeTestStruct[]{
                                         callee("a", dfault, "$a", dfault, 1, 2, 0, 0),
                                         functionDefault(returnTypeString, 1, 2, 0, 1)
@@ -77,8 +62,8 @@ public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
                                 typeStruct("mCall", returnType, 1, 2, 0)
                         },
                         {
-                                "namespace{" + kind + " a{function " + type[0] + " foo()" + body + "} a $a; $a->foo()" +
-                                        ";}",
+                                "namespace{" + kind + " a{function " + type[0] + " foo()" + body + "} "
+                                        + "a $a=null; $a->foo();}",
                                 new ReferenceScopeTestStruct[]{
                                         callee("a", dfault, "$a", dfault, 1, 2, 0, 0),
                                         functionDefault(returnTypeString, 1, 2, 0, 1)
@@ -87,7 +72,7 @@ public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
                         },
                         {
                                 "namespace a{" + kind + " a{function " + type[0] + " foo()" + body + "} "
-                                        + "a $a; $a->foo();}",
+                                        + "a $a=null; $a->foo();}",
                                 new ReferenceScopeTestStruct[]{
                                         callee("a", "\\a\\.\\a\\.", "$a", "\\a\\.\\a\\.", 1, 2, 0, 0),
                                         function(returnTypeString, "\\a\\.\\a\\.", 1, 2, 0, 1)
@@ -96,7 +81,7 @@ public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
                         },
                         {
                                 "namespace {" + kind + " a{function " + type[0] + " foo()" + body + "}} " +
-                                        "namespace { a $a; $a->foo();}",
+                                        "namespace { a $a=null; $a->foo();}",
                                 new ReferenceScopeTestStruct[]{
                                         callee("a", dfault, "$a", dfault, 1, 1, 1, 0, 0),
                                         functionDefault(returnTypeString, 1, 1, 1, 0, 1)
@@ -104,7 +89,7 @@ public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
                                 typeStruct("mCall", returnType, 1, 1, 1, 0)
                         },
                         {
-                                "namespace{ a $a; $a->foo();} "
+                                "namespace{ a $a=null; $a->foo();} "
                                         + "namespace{" + kind + " a{function " + type[0] + " foo()" + body + "}}",
                                 new ReferenceScopeTestStruct[]{
                                         callee("a", dfault, "$a", dfault, 0, 1, 1, 0, 0),
@@ -114,7 +99,7 @@ public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
                         },
                         {
                                 "namespace a{" + kind + " a{function " + type[0] + " foo()" + body + "}} "
-                                        + "namespace a{ a $a; $a->foo();}",
+                                        + "namespace a{ a $a=null; $a->foo();}",
                                 new ReferenceScopeTestStruct[]{
                                         callee("a", "\\a\\.\\a\\.", "$a", "\\a\\.\\a\\.", 1, 1, 1, 0, 0),
                                         function(returnTypeString, "\\a\\.\\a\\.", 1, 1, 1, 0, 1)
@@ -122,7 +107,7 @@ public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
                                 typeStruct("mCall", returnType, 1, 1, 1, 0)
                         },
                         {
-                                "namespace a{ a $a; $a->foo();} "
+                                "namespace a{ a $a=null; $a->foo();} "
                                         + "namespace a{" + kind + " a{function " + type[0] + " foo()" + body + "}}",
                                 new ReferenceScopeTestStruct[]{
                                         callee("a", "\\a\\.\\a\\.", "$a", "\\a\\.\\a\\.", 0, 1, 1, 0, 0),
@@ -133,7 +118,7 @@ public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
                         //absolute path
                         {
                                 "namespace{" + kind + " a{function " + type[0] + " foo()" + body + "}} "
-                                        + "namespace a{ \\a $a; $a->foo();}",
+                                        + "namespace a{ \\a $a=null; $a->foo();}",
                                 new ReferenceScopeTestStruct[]{
                                         callee("a", dfault, "$a", "\\a\\.\\a\\.", 1, 1, 1, 0, 0),
                                         functionDefault(returnTypeString, 1, 1, 1, 0, 1)
@@ -142,7 +127,7 @@ public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
                         },
                         {
                                 "namespace a\\b{" + kind + " a{function " + type[0] + " foo()" + body + "}} "
-                                        + "namespace x{ \\a\\b\\a $a; $a->foo();}",
+                                        + "namespace x{ \\a\\b\\a $a=null; $a->foo();}",
                                 new ReferenceScopeTestStruct[]{
                                         callee("a", "\\a\\b\\.\\a\\b\\.", "$a", "\\x\\.\\x\\.", 1, 1, 1, 0, 0),
                                         function(returnTypeString, "\\a\\b\\.\\a\\b\\.", 1, 1, 1, 0, 1)
@@ -152,7 +137,7 @@ public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
                         //relative
                         {
                                 "namespace a\\b{" + kind + " a{function " + type[0] + " foo()" + body + "}} "
-                                        + " namespace a{ b\\a $a; $a->foo();}",
+                                        + " namespace a{ b\\a $a=null; $a->foo();}",
                                 new ReferenceScopeTestStruct[]{
                                         callee("a", "\\a\\b\\.\\a\\b\\.", "$a", "\\a\\.\\a\\.", 1, 1, 1, 0, 0),
                                         function(returnTypeString, "\\a\\b\\.\\a\\b\\.", 1, 1, 1, 0, 1)
@@ -161,7 +146,7 @@ public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
                         },
                         {
                                 "namespace a\\b{" + kind + " a{function " + type[0] + " foo()" + body + "}} "
-                                        + "namespace { a\\b\\a $a; $a->foo();}",
+                                        + "namespace { a\\b\\a $a=null; $a->foo();}",
                                 new ReferenceScopeTestStruct[]{
                                         callee("a", "\\a\\b\\.\\a\\b\\.", "$a", dfault, 1, 1, 1, 0, 0),
                                         function(returnTypeString, "\\a\\b\\.\\a\\b\\.", 1, 1, 1, 0, 1)
@@ -171,7 +156,7 @@ public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
                         //using an alias
                         {
                                 "namespace a{" + kind + " a{function " + type[0] + " foo()" + body + "}} "
-                                        + "namespace a\\a\\c{ use a as b; b\\a $a; $a->foo();}",
+                                        + "namespace a\\a\\c{ use a as b; b\\a $a=null; $a->foo();}",
                                 new ReferenceScopeTestStruct[]{
                                         callee("a", "\\a\\.\\a\\.", "$a", "\\a\\a\\c\\.\\a\\a\\c\\.", 1, 1, 2, 0, 0),
                                         function(returnTypeString, "\\a\\.\\a\\.", 1, 1, 2, 0, 1)
@@ -180,7 +165,7 @@ public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
                         },
                         {
                                 "namespace a{" + kind + " a{function " + type[0] + " foo()" + body + "}} "
-                                        + "namespace a\\a\\c{ use a\\a as b; b $a; $a->foo();}",
+                                        + "namespace a\\a\\c{ use a\\a as b; b $a=null; $a->foo();}",
                                 new ReferenceScopeTestStruct[]{
                                         callee("a", "\\a\\.\\a\\.", "$a", "\\a\\a\\c\\.\\a\\a\\c\\.", 1, 1, 2, 0, 0),
                                         function(returnTypeString, "\\a\\.\\a\\.", 1, 1, 2, 0, 1)
@@ -192,7 +177,7 @@ public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
                 body = ";";
             }
 
-            body = "{" + type[0] + " $a; return $a;}";
+            body = "{" + type[0] + " $a=" + type[2] + "; return $a;}";
             if (count == 14) {
                 body = "{}";
             }

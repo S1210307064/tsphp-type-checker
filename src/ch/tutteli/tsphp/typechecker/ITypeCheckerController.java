@@ -8,6 +8,8 @@ import ch.tutteli.tsphp.typechecker.symbols.IScalarTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousTypeSymbol;
 
+import java.util.List;
+
 public interface ITypeCheckerController
 {
 
@@ -22,6 +24,26 @@ public interface ITypeCheckerController
     boolean checkIsForwardReference(ITSPHPAst ast);
 
     boolean checkIsOutOfConditionalScope(ITSPHPAst ast);
+
+    boolean checkVariable(ITSPHPAst variableId);
+
+    void sendUpInitialisedSymbols(ITSPHPAst blockConditional);
+
+    void sendUpInitialisedSymbolsAfterIf(ITSPHPAst ifBlock, ITSPHPAst elseBlock);
+
+    void sendUpInitialisedSymbolsAfterSwitch(List<ITSPHPAst> conditionalBlocks, boolean hasDefaultLabel);
+
+    void sendUpInitialisedSymbolsAfterTryCatch(List<ITSPHPAst> conditionalBlocks);
+
+    boolean checkVariableIsInitialised(ITSPHPAst variableId);
+
+    EReturnState evaluateReturnStateAnd(EReturnState firstInstruction, EReturnState secondInstruction);
+
+    EReturnState evaluateReturnStateOr(EReturnState firstInstruction, EReturnState secondInstruction);
+
+    void checkReturnsFromFunction(boolean isReturning, boolean hasAtLeastOneReturnOrThrow, ITSPHPAst identifier);
+
+    void checkReturnsFromMethod(boolean isReturning, boolean hasAtLeastOneReturnOrThrow, ITSPHPAst identifier);
 
     IVariableSymbol resolveConstant(ITSPHPAst ast);
 
@@ -62,14 +84,6 @@ public interface ITypeCheckerController
     void checkBreakContinueLevel(ITSPHPAst root, ITSPHPAst level);
 
     IErroneousTypeSymbol createErroneousTypeSymbol(ITSPHPErrorAst typeAst);
-
-    EReturnState evaluateReturnStateAnd(EReturnState firstInstruction, EReturnState secondInstruction);
-
-    EReturnState evaluateReturnStateOr(EReturnState firstInstruction, EReturnState secondInstruction);
-
-    void checkReturnsFromFunction(EReturnState returnState, ITSPHPAst identifier);
-
-    void checkReturnsFromMethod(EReturnState returnState, ITSPHPAst identifier);
 
     ITypeSymbol resolveBinaryOperatorEvalType(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
 

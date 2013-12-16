@@ -2,13 +2,14 @@ package ch.tutteli.tsphp.typechecker.test.integration.reference;
 
 import ch.tutteli.tsphp.typechecker.error.ReferenceErrorDto;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.reference.AReferenceErrorTest;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @RunWith(Parameterized.class)
 public class BreakContinueErrorTest extends AReferenceErrorTest
@@ -32,28 +33,28 @@ public class BreakContinueErrorTest extends AReferenceErrorTest
 
 
         String[][] loops = new String[][]{
-            //switch is treated like a loop in PHP
-            {"int $a; switch($a){case 1:", "}"},
-            {"for(;;){", "}"},
-            {"foreach([1,2] as object $v){", "}"},
-            {"while(true){", "}"},
-            {"do{", "}while(true);"}
+                //switch is treated like a loop in PHP
+                {"int $a=1; switch($a){case 1:", "}"},
+                {"for(;;){", "}"},
+                {"foreach([1,2] as object $v){", "}"},
+                {"while(true){", "}"},
+                {"do{", "}while(true);"}
         };
         String[][] loops2 = new String[][]{
-            //switch is treated like a loop in PHP
-            {"int $b; switch($b){case 1:", "}"},
-            {"for(;;){", "}"},
-            {"foreach([1,2] as object $v2){", "}"},
-            {"while(true){", "}"},
-            {"do{", "}while(true);"}
+                //switch is treated like a loop in PHP
+                {"int $b=3; switch($b){case 1:", "}"},
+                {"for(;;){", "}"},
+                {"foreach([1,2] as object $v2){", "}"},
+                {"while(true){", "}"},
+                {"do{", "}while(true);"}
         };
         String[][] loops3 = new String[][]{
-            //switch is treated like a loop in PHP
-            {"int $c; switch($c){case 1:", "}"},
-            {"for(;;){", "}"},
-            {"foreach([1,2] as object $v3){", "}"},
-            {"while(true){", "}"},
-            {"do{", "}while(true);"}
+                //switch is treated like a loop in PHP
+                {"int $c=3; switch($c){case 1:", "}"},
+                {"for(;;){", "}"},
+                {"foreach([1,2] as object $v3){", "}"},
+                {"while(true){", "}"},
+                {"do{", "}while(true);"}
         };
 
         collection.add(new Object[]{"if(true){\n break;}", errorBreakDto});
@@ -72,16 +73,17 @@ public class BreakContinueErrorTest extends AReferenceErrorTest
             for (String[] loop2 : loops2) {
                 collection.add(new Object[]{loop[0] + loop2[0] + "\n break 4;" + loop2[1] + loop[1], errorBreakDto});
                 collection.add(new Object[]{
-                    loop[0] + loop2[0] + "\n continue 4;" + loop2[1] + loop[1],
-                    errorContinueDto
+                        loop[0] + loop2[0] + "\n continue 4;" + loop2[1] + loop[1],
+                        errorContinueDto
                 });
                 for (String[] loop3 : loops3) {
                     collection.add(new Object[]{
-                        loop[0] + loop2[0] + loop3[0] + "\n break 30;" + loop3[1] + loop2[1] + loop[1], errorBreakDto
+                            loop[0] + loop2[0] + loop3[0] + "\n break 30;" + loop3[1] + loop2[1] + loop[1],
+                            errorBreakDto
                     });
                     collection.add(new Object[]{
-                        loop[0] + loop2[0] + loop3[0] + "\n continue 30;" + loop3[1] + loop2[1] + loop[1],
-                        errorContinueDto
+                            loop[0] + loop2[0] + loop3[0] + "\n continue 30;" + loop3[1] + loop2[1] + loop[1],
+                            errorContinueDto
                     });
                 }
             }

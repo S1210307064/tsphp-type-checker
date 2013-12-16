@@ -29,16 +29,4 @@ public class ConditionalScope_AScope_LSPTest extends AScopeTest
 
         assertThat(result, is("cScope"));
     }
-
-    @Override
-    @Test
-    public void doubleDefinitionCheck_Standard_DelegateToScopeHelper() {
-        // different behaviour - check takes into account, that definitions could have been defined in the
-        // enclosing scope already and since conditional scopes aren't real scopes
-        // (see http://tsphp.tutteli.ch/wiki/display/TSPHP/Variable+Scope#VariableScope-ConditionalScopes)
-        // this would be a double definition as well.
-        // please have a look at the tests ConditionalScopeTest#doubleDefinitionCheck_*
-
-        // This behaviour breaks the LSP on purpose
-    }
 }

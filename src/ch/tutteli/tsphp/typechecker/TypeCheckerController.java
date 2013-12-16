@@ -11,6 +11,7 @@ import ch.tutteli.tsphp.common.exceptions.ReferenceException;
 import ch.tutteli.tsphp.common.exceptions.TSPHPException;
 import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
+import ch.tutteli.tsphp.typechecker.error.ITypeCheckErrorReporter;
 import ch.tutteli.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.scopes.IConditionalScope;
 import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
@@ -28,12 +29,15 @@ import ch.tutteli.tsphp.typechecker.symbols.IVoidTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousTypeSymbol;
+import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousVariableSymbol;
 import ch.tutteli.tsphp.typechecker.utils.ITypeCheckerAstHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class TypeCheckerController implements ITypeCheckerController
 {
@@ -136,6 +140,15 @@ public class TypeCheckerController implements ITypeCheckerController
             }
         }
         return ok;
+    }
+
+    @Override
+    public boolean checkVariable(ITSPHPAst variableId) {
+        boolean isNotForwardReference = checkIsForwardReference(variableId);
+        boolean isNotOutOfScope = checkIsOutOfConditionalScope(variableId);
+        return isNotForwardReference
+                && isNotOutOfScope
+                && checkVariableIsInitialised(variableId);
     }
 
     private boolean isNotDefinedInThisNorOuterScope(ISymbol symbol, IScope scope) {
@@ -395,34 +408,141 @@ public class TypeCheckerController implements ITypeCheckerController
 
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     @Override
-    public void checkReturnsFromFunction(EReturnState returnState, ITSPHPAst identifier) {
-        switch (returnState) {
-            case IsReturning:
-                //all fine
-                break;
-            case IsPartiallyReturning:
+    public void checkReturnsFromFunction(boolean isReturning, boolean hasAtLeastOneReturnOrThrow,
+            ITSPHPAst identifier) {
+        if (!isReturning) {
+            if (hasAtLeastOneReturnOrThrow) {
                 TypeCheckErrorReporterRegistry.get().partialReturnFromFunction(identifier);
-                break;
-            case IsNotReturning:
+            } else {
                 TypeCheckErrorReporterRegistry.get().noReturnFromFunction(identifier);
-            default:
+            }
         }
     }
 
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     @Override
-    public void checkReturnsFromMethod(EReturnState returnState, ITSPHPAst identifier) {
-        switch (returnState) {
-            case IsReturning:
-                //all fine
-                break;
-            case IsPartiallyReturning:
+    public void checkReturnsFromMethod(boolean isReturning, boolean hasAtLeastOneReturnOrThrow, ITSPHPAst identifier) {
+        if (!isReturning) {
+            if (hasAtLeastOneReturnOrThrow) {
                 TypeCheckErrorReporterRegistry.get().partialReturnFromMethod(identifier);
-                break;
-            case IsNotReturning:
+            } else {
                 TypeCheckErrorReporterRegistry.get().noReturnFromMethod(identifier);
-            default:
+            }
         }
+    }
+
+    @Override
+    public void sendUpInitialisedSymbols(ITSPHPAst blockConditional) {
+        IScope scope = blockConditional.getScope();
+        Map<String, Boolean> enclosingInitialisedSymbols = scope.getEnclosingScope().getInitialisedSymbols();
+        for (Map.Entry<String, Boolean> entry : scope.getInitialisedSymbols().entrySet()) {
+            String symbolName = entry.getKey();
+            if (!enclosingInitialisedSymbols.containsKey(symbolName)) {
+                enclosingInitialisedSymbols.put(symbolName, false);
+            }
+        }
+    }
+
+
+    @Override
+    public void sendUpInitialisedSymbolsAfterIf(ITSPHPAst ifBlock, ITSPHPAst elseBlock) {
+        if (elseBlock != null) {
+            List<ITSPHPAst> conditionalBlocks = new ArrayList<>();
+            conditionalBlocks.add(ifBlock);
+            conditionalBlocks.add(elseBlock);
+            sendUpInitialisedSymbolsAfterTryCatch(conditionalBlocks);
+        } else {
+            IScope scope = ifBlock.getScope();
+            Map<String, Boolean> enclosingInitialisedSymbols = scope.getEnclosingScope().getInitialisedSymbols();
+            for (String symbolName : scope.getInitialisedSymbols().keySet()) {
+                if (!enclosingInitialisedSymbols.containsKey(symbolName)) {
+                    enclosingInitialisedSymbols.put(symbolName, false);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void sendUpInitialisedSymbolsAfterSwitch(List<ITSPHPAst> conditionalBlocks, boolean hasDefaultLabel) {
+        if (hasDefaultLabel) {
+            sendUpInitialisedSymbolsAfterTryCatch(conditionalBlocks);
+        } else {
+            Map<String, Boolean> enclosingInitialisedSymbols =
+                    conditionalBlocks.get(0).getScope().getEnclosingScope().getInitialisedSymbols();
+            for (ITSPHPAst block : conditionalBlocks) {
+                for (String symbolName : block.getScope().getInitialisedSymbols().keySet()) {
+                    if (!enclosingInitialisedSymbols.containsKey(symbolName)) {
+                        //without default label they are only partially initialised
+                        enclosingInitialisedSymbols.put(symbolName, false);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void sendUpInitialisedSymbolsAfterTryCatch(List<ITSPHPAst> conditionalBlocks) {
+        if (conditionalBlocks.size() > 0) {
+            Set<String> allKeys = new HashSet<>();
+            Set<String> commonKeys = new HashSet<>();
+            boolean isFirst = true;
+            for (ITSPHPAst block : conditionalBlocks) {
+                Set<String> keys = block.getScope().getInitialisedSymbols().keySet();
+                allKeys.addAll(keys);
+                if (!isFirst) {
+                    commonKeys.retainAll(keys);
+                } else {
+                    commonKeys.addAll(keys);
+                    isFirst = false;
+                }
+            }
+
+            Map<String, Boolean> enclosingInitialisedSymbols =
+                    conditionalBlocks.get(0).getScope().getEnclosingScope().getInitialisedSymbols();
+
+            for (String symbolName : allKeys) {
+                if (!enclosingInitialisedSymbols.containsKey(symbolName)
+                        || !enclosingInitialisedSymbols.get(symbolName)) {
+
+                    boolean isFullyInitialised = commonKeys.contains(symbolName);
+                    if (isFullyInitialised) {
+                        for (ITSPHPAst block : conditionalBlocks) {
+                            if (!block.getScope().getInitialisedSymbols().get(symbolName)) {
+                                isFullyInitialised = false;
+                                break;
+                            }
+                        }
+                    }
+                    enclosingInitialisedSymbols.put(symbolName, isFullyInitialised);
+                }
+            }
+        }
+    }
+
+    @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
+    @Override
+    public boolean checkVariableIsInitialised(ITSPHPAst variableId) {
+        IScope scope = variableId.getScope();
+        ISymbol symbol = variableId.getSymbol();
+        if (!(symbol instanceof IErroneousVariableSymbol)) {
+            if (!scope.isFullyInitialised(symbol) && isNotLeftHandSideOfAssignment(variableId)) {
+                ITypeCheckErrorReporter errorReporter = TypeCheckErrorReporterRegistry.get();
+                if (scope.isPartiallyInitialised(symbol)) {
+                    errorReporter.variablePartiallyInitialised(symbol.getDefinitionAst(), variableId);
+                } else {
+                    errorReporter.variableNotInitialised(symbol.getDefinitionAst(), variableId);
+                }
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isNotLeftHandSideOfAssignment(ITSPHPAst variableId) {
+        ITSPHPAst parent = (ITSPHPAst) variableId.getParent();
+        int type = parent.getType();
+        return type != TSPHPDefinitionWalker.Assign && type != TSPHPDefinitionWalker.CASTING_ASSIGN
+                || !parent.getChild(0).equals(variableId);
     }
 
     private IClassTypeSymbol getEnclosingClass(ITSPHPAst ast) {

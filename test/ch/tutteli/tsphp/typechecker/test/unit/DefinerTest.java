@@ -22,7 +22,11 @@ import org.junit.Test;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 public class DefinerTest
 {
@@ -140,7 +144,7 @@ public class DefinerTest
     }
 
     @Test
-    public void defineVariable_standard_SetScopeForTypeAndCreateVariableSymbolAndDefineIt() {
+    public void defineVariable_Standard_SetScopeForTypeAndCreateVariableSymbolAndDefineIt() {
         INamespaceScope namespaceScope = mock(INamespaceScope.class);
         ITSPHPAst modifierAst = mock(ITSPHPAst.class);
         ITSPHPAst typeAst = mock(ITSPHPAst.class);
@@ -157,7 +161,7 @@ public class DefinerTest
     }
 
     @Test
-    public void defineConstant_standard_SetScopeForTypeAndCreateVariableSymbolAndDefineIt() {
+    public void defineConstant_Standard_SetScopeForTypeAndCreateVariableSymbolAndDefineIt() {
         INamespaceScope namespaceScope = mock(INamespaceScope.class);
         ITSPHPAst modifierAst = mock(ITSPHPAst.class);
         ITSPHPAst typeAst = mock(ITSPHPAst.class);
@@ -321,7 +325,7 @@ public class DefinerTest
     }
 
     @Test
-    public void defineMethod_standard_SetScopeForIdentifierAndReturnTypeAndCreateMethodSymbolAndDefineIt() {
+    public void defineMethod_Standard_SetScopeForIdentifierAndReturnTypeAndCreateMethodSymbolAndDefineIt() {
         INamespaceScope namespaceScope = mock(INamespaceScope.class);
         ITSPHPAst modifierAst = mock(ITSPHPAst.class);
         ITSPHPAst returnTypeModifierAst = mock(ITSPHPAst.class);
@@ -343,7 +347,7 @@ public class DefinerTest
     }
 
     @Test
-    public void defineConditionalScope_standard_CallScopeFactory() {
+    public void defineConditionalScope_Standard_CallScopeFactory() {
         IScope parentScope = mock(IScope.class);
         IConditionalScope conditionalScope = mock(IConditionalScope.class);
         when(scopeFactory.createConditionalScope(parentScope)).thenReturn(conditionalScope);

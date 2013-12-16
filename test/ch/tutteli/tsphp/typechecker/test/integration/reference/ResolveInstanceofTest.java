@@ -1,13 +1,14 @@
 package ch.tutteli.tsphp.typechecker.test.integration.reference;
 
-import ch.tutteli.tsphp.typechecker.test.integration.testutils.reference.AReferenceAstTest;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.ScopeTestStruct;
-import java.util.Arrays;
-import java.util.Collection;
+import ch.tutteli.tsphp.typechecker.test.integration.testutils.reference.AReferenceAstTest;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+
+import java.util.Arrays;
+import java.util.Collection;
 
 @RunWith(Parameterized.class)
 public class ResolveInstanceofTest extends AReferenceAstTest
@@ -25,56 +26,52 @@ public class ResolveInstanceofTest extends AReferenceAstTest
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
         return Arrays.asList(new Object[][]{
-                    {
-                        "class a{} a $a; $a instanceof a;",
+                {
+                        "class a{} a $a=null; $a instanceof a;",
+                        new ScopeTestStruct[]{instanceOf("a", "\\.\\.", 1, 2, 0, 1)}
+                },
+                {
+                        "namespace b{class a{} a $a=null; $a instanceof a;}",
+                        new ScopeTestStruct[]{instanceOf("a", "\\b\\.\\b\\.", 1, 2, 0, 1)}
+                },
+                {
+                        "class a{} use a as b; b $a=null; $a instanceof b;",
                         new ScopeTestStruct[]{
-                            instanceOf("a", "\\.\\.", 1, 2, 0, 1)
+                                instanceOf("b", "\\.\\.", 1, 3, 0, 1)
                         }
-                    },
-                    {
-                        "namespace b{class a{} a $a; $a instanceof a;}",
+                },
+                {
+                        "namespace b{class a{}} namespace x{ use b\\a as b; b $a=null; $a instanceof b;}",
                         new ScopeTestStruct[]{
-                            instanceOf("a", "\\b\\.\\b\\.", 1, 2, 0, 1)
+                                instanceOf("b", "\\b\\.\\b\\.", 1, 1, 2, 0, 1)
                         }
-                    },
-                    {
-                        "class a{} use a as b; b $a; $a instanceof b;",
+                },
+                //variable - see TSPHP-458
+                {
+                        "class a{} a $b=null; a $a=null; $a instanceof $b;",
                         new ScopeTestStruct[]{
-                            instanceOf("b", "\\.\\.", 1, 3, 0, 1)
+                                instanceOf("$b", "\\.\\.", 1, 3, 0, 1)
                         }
-                    },
-                    {
-                        "namespace b{class a{}} namespace x{ use b\\a as b; b $a; $a instanceof b;}",
+                },
+                {
+                        "namespace b{class a{} a $b=null; a $a=null; $a instanceof $b;}",
                         new ScopeTestStruct[]{
-                            instanceOf("b", "\\b\\.\\b\\.", 1, 1, 2, 0, 1)
+                                instanceOf("$b", "\\b\\.\\b\\.", 1, 3, 0, 1)
                         }
-                    },
-                    //variable - see TSPHP-458
-                      {
-                        "class a{} a $b; a $a; $a instanceof $b;",
+                },
+                {
+                        "class a{} use a as b; b $b=null; b $a=null; $a instanceof $b;",
                         new ScopeTestStruct[]{
-                            instanceOf("$b", "\\.\\.", 1, 3, 0, 1)
+                                instanceOf("$b", "\\.\\.", 1, 4, 0, 1)
                         }
-                    },
-                    {
-                        "namespace b{class a{} a $b; a $a; $a instanceof $b;}",
+                },
+                {
+                        "namespace b{class a{}} namespace x{ use b\\a as b; b $b=null; b $a=null; $a instanceof $b;}",
                         new ScopeTestStruct[]{
-                            instanceOf("$b", "\\b\\.\\b\\.", 1, 3, 0, 1)
+                                instanceOf("$b", "\\x\\.\\x\\.", 1, 1, 3, 0, 1)
                         }
-                    },
-                    {
-                        "class a{} use a as b; b $b; b $a; $a instanceof $b;",
-                        new ScopeTestStruct[]{
-                            instanceOf("$b", "\\.\\.", 1, 4, 0, 1)
-                        }
-                    },
-                    {
-                        "namespace b{class a{}} namespace x{ use b\\a as b; b $b; b $a; $a instanceof $b;}",
-                        new ScopeTestStruct[]{
-                            instanceOf("$b", "\\x\\.\\x\\.", 1, 1, 3, 0, 1)
-                        }
-                    }
-                });
+                }
+        });
     }
 
     public static ScopeTestStruct instanceOf(String callee, String scope, Integer... accessToScope) {

@@ -24,4 +24,8 @@ public abstract class ATypeCheckErrorTest extends ATypeCheckTest
     protected void verifyTypeCheck() {
         AReferenceErrorTest.verifyReferences(errorMessagePrefix, exceptions, errorDtos);
     }
+
+    public static ReferenceErrorDto[] refErrorDto(String identifier, int line, int position) {
+        return new ReferenceErrorDto[]{new ReferenceErrorDto(identifier, line, position)};
+    }
 }
