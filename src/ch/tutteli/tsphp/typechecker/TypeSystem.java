@@ -32,8 +32,8 @@ import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.BitwiseOr
 import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.BitwiseXor;
 import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.BitwiseXorAssign;
 import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.Bool;
-import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.CASTING;
-import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.CASTING_ASSIGN;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.CAST;
+import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.CAST_ASSIGN;
 import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.CLASS_MODIFIER;
 import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.Divide;
 import static ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker.DivideAssign;
@@ -321,14 +321,14 @@ public class TypeSystem implements ITypeSystem
                 LogicOrWeak, LogicXorWeak, LogicAndWeak,
                 Assign, PlusAssign, MinusAssign, MultiplyAssign, DivideAssign,
                 BitwiseAndAssign, BitwiseOrAssign, BitwiseXorAssign,
-                ModuloAssign, DotAssign, ShiftLeftAssign, ShiftRightAssign, CASTING_ASSIGN,
+                ModuloAssign, DotAssign, ShiftLeftAssign, ShiftRightAssign, CAST_ASSIGN,
                 LogicOr, LogicAnd,
                 BitwiseOr, BitwiseAnd, BitwiseXor,
                 Equal, Identical, NotEqual, NotIdentical,
                 LessThan, LessEqualThan, GreaterThan, GreaterEqualThan,
                 ShiftLeft, ShiftRight,
                 Plus, Minus, Multiply, Divide, Modulo, Dot,
-                CASTING
+                CAST
         };
         for (int binaryOperatorType : binaryOperatorTypes) {
             binaryOperators.put(binaryOperatorType, new ArrayList<IMethodSymbol>());

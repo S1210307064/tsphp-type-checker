@@ -34,4 +34,6 @@
         </java>
     </target>
 
+    <target name="cp.all" depends="cp.common, cp.parser"/>
+
 </project>

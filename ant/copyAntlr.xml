@@ -4,10 +4,10 @@
 
     <target name="Antlr" description="copy antlr generated classes to src/java folder">
         <delete>
-            <fileset dir="${antlr.copyLocation}" includes="*.java"/>
+            <fileset dir="${antlr.copyLocation}" includes="*.java" excludes="package-info.java"/>
         </delete>
         <copy todir="${antlr.copyLocation}">
-            <fileset dir="${antlr.output}" includes="*.java"/>
+            <fileset dir="${antlr.output}" includes="*.java" excludes="__Test__.java"/>
         </copy>
     </target>
 

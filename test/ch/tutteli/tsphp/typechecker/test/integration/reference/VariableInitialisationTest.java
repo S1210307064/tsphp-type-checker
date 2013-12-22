@@ -1,19 +1,11 @@
 package ch.tutteli.tsphp.typechecker.test.integration.reference;
 
 import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.typechecker.IOverloadResolver;
-import ch.tutteli.tsphp.typechecker.ISymbolResolver;
-import ch.tutteli.tsphp.typechecker.ITypeCheckerController;
-import ch.tutteli.tsphp.typechecker.ITypeSystem;
-import ch.tutteli.tsphp.typechecker.TypeCheckerController;
-import ch.tutteli.tsphp.typechecker.test.integration.testutils.TestDefiner;
-import ch.tutteli.tsphp.typechecker.test.integration.testutils.TestSymbolFactory;
-import ch.tutteli.tsphp.typechecker.test.integration.testutils.reference.AReferenceTest;
+import ch.tutteli.tsphp.typechecker.test.integration.testutils.reference.AVerifyTimesReferenceTest;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.mockito.exceptions.base.MockitoAssertionError;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,36 +13,29 @@ import java.util.Collection;
 import java.util.List;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @RunWith(Parameterized.class)
-public class VariableInitialisationTest extends AReferenceTest
+public class VariableInitialisationTest extends AVerifyTimesReferenceTest
 {
 
     private static List<Object[]> collection;
-    private int times;
 
     public VariableInitialisationTest(String testString, int howManyTimes) {
-        super(testString);
-        times = howManyTimes;
+        super(testString, howManyTimes);
     }
 
     @Test
     public void test() throws RecognitionException {
         check();
-        try {
-            verify(controller, times(times)).checkVariableIsInitialised(any(ITSPHPAst.class));
-        } catch (MockitoAssertionError e) {
-            System.err.println(testString + " failed.");
-            throw e;
-        }
     }
 
     @Override
-    protected void verifyReferences() {
+    protected void verifyTimes() {
+        verify(controller, times(howManyTimes)).checkVariableIsInitialised(any(ITSPHPAst.class));
     }
+
 
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
@@ -136,22 +121,5 @@ public class VariableInitialisationTest extends AReferenceTest
                 {prefix + "foreach([1] as int $v){$v;}" + appendix, 1},
                 {prefix + "foreach([1] as string $k => int $v){$k; $v;}" + appendix, 2}
         }));
-    }
-
-
-    @Override
-    protected ITypeCheckerController createTypeCheckerController(
-            TestSymbolFactory theSymbolFactory,
-            ITypeSystem theTypeSystem,
-            TestDefiner theDefiner,
-            ISymbolResolver theSymbolResolver,
-            IOverloadResolver theMethodResolver) {
-        return spy(new TypeCheckerController(
-                theSymbolFactory,
-                theTypeSystem,
-                theDefiner,
-                theSymbolResolver,
-                theMethodResolver,
-                typeCheckerAstHelper));
     }
 }

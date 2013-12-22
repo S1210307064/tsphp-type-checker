@@ -601,7 +601,7 @@ operator
 		    }
 		}
 	|	^('?' expression expression expression)
-	|	^(CASTING ^(TYPE variableModifier allTypes[$variableModifier.isNullable]) expression) 
+	|	^(CAST ^(TYPE variableModifier allTypes[$variableModifier.isNullable]) expression) 
 	|	^(Instanceof expr=expression (variable|classInterfaceType))  
 	|	^('new' classInterfaceType actualParameters)
 	|	^('clone' expression)	
@@ -666,7 +666,7 @@ assignOperator
 		|	'.='
 		|	'<<=' 
 		|	'>>=' 
-		|	CASTING_ASSIGN	
+		|	CAST_ASSIGN	
 		)
 		{
 		}

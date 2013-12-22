@@ -42,7 +42,7 @@ public abstract class ACastingMethod implements ICastingMethod
 
         //^(CASTING ^(TYPE (TYPE_MODIFIER ?) type) expression)
         Token token = cast.getToken();
-        token.setType(TSPHPDefinitionWalker.CASTING);
+        token.setType(TSPHPDefinitionWalker.CAST);
         token.setText("casting");
         ITSPHPAst typeRoot = astHelper.createAst(TSPHPDefinitionWalker.TYPE, "type");
         ITSPHPAst typeModifier = astHelper.createAst(TSPHPDefinitionWalker.TYPE_MODIFIER, "tMod");

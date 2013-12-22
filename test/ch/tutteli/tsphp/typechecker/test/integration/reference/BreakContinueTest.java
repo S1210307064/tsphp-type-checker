@@ -1,49 +1,35 @@
 package ch.tutteli.tsphp.typechecker.test.integration.reference;
 
 import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.typechecker.IOverloadResolver;
-import ch.tutteli.tsphp.typechecker.ISymbolResolver;
-import ch.tutteli.tsphp.typechecker.ITypeCheckerController;
-import ch.tutteli.tsphp.typechecker.ITypeSystem;
-import ch.tutteli.tsphp.typechecker.TypeCheckerController;
-import ch.tutteli.tsphp.typechecker.test.integration.testutils.TestDefiner;
-import ch.tutteli.tsphp.typechecker.test.integration.testutils.TestSymbolFactory;
-import ch.tutteli.tsphp.typechecker.test.integration.testutils.reference.AReferenceTest;
+import ch.tutteli.tsphp.typechecker.test.integration.testutils.reference.AVerifyTimesReferenceTest;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.mockito.exceptions.base.MockitoAssertionError;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 @RunWith(Parameterized.class)
-public class BreakContinueTest extends AReferenceTest
+public class BreakContinueTest extends AVerifyTimesReferenceTest
 {
 
     public BreakContinueTest(String testString) {
-        super(testString);
+        super(testString, 1);
     }
 
     @Test
     public void test() throws RecognitionException {
         check();
-        try {
-            verify(controller).checkBreakContinueLevel(any(ITSPHPAst.class), any(ITSPHPAst.class));
-        } catch (MockitoAssertionError e) {
-            System.err.println(testString + " failed.");
-            throw e;
-        }
     }
 
     @Override
-    protected void verifyReferences() {
+    protected void verifyTimes() {
+        verify(controller).checkBreakContinueLevel(any(ITSPHPAst.class), any(ITSPHPAst.class));
     }
 
     @Parameterized.Parameters
@@ -97,21 +83,4 @@ public class BreakContinueTest extends AReferenceTest
 
         return collection;
     }
-
-    @Override
-    protected ITypeCheckerController createTypeCheckerController(
-            TestSymbolFactory theSymbolFactory,
-            ITypeSystem theTypeSystem,
-            TestDefiner theDefiner,
-            ISymbolResolver theSymbolResolver,
-            IOverloadResolver theMethodResolver) {
-        return spy(new TypeCheckerController(
-                theSymbolFactory,
-                theTypeSystem,
-                theDefiner,
-                theSymbolResolver,
-                theMethodResolver,
-                typeCheckerAstHelper));
-    }
-
 }

@@ -541,7 +541,7 @@ public class TypeCheckerController implements ITypeCheckerController
     private boolean isNotLeftHandSideOfAssignment(ITSPHPAst variableId) {
         ITSPHPAst parent = (ITSPHPAst) variableId.getParent();
         int type = parent.getType();
-        return type != TSPHPDefinitionWalker.Assign && type != TSPHPDefinitionWalker.CASTING_ASSIGN
+        return type != TSPHPDefinitionWalker.Assign && type != TSPHPDefinitionWalker.CAST_ASSIGN
                 || !parent.getChild(0).equals(variableId);
     }
 

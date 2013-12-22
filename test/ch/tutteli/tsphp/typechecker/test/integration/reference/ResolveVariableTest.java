@@ -1,6 +1,7 @@
 package ch.tutteli.tsphp.typechecker.test.integration.reference;
 
-import ch.tutteli.tsphp.typechecker.test.integration.testutils.reference.AReferenceTest;
+import ch.tutteli.tsphp.common.ITSPHPAst;
+import ch.tutteli.tsphp.typechecker.test.integration.testutils.reference.AVerifyTimesReferenceTest;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,14 +12,18 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
 @RunWith(Parameterized.class)
-public class ResolveVariableTest extends AReferenceTest
+public class ResolveVariableTest extends AVerifyTimesReferenceTest
 {
 
     private static List<Object[]> collection;
 
-    public ResolveVariableTest(String testString) {
-        super(testString);
+    public ResolveVariableTest(String testString, int howManyTimes) {
+        super(testString, howManyTimes);
     }
 
     @Test
@@ -27,7 +32,8 @@ public class ResolveVariableTest extends AReferenceTest
     }
 
     @Override
-    protected void verifyReferences() {
+    protected void verifyTimes() {
+        verify(controller, times(howManyTimes)).resolveVariable(any(ITSPHPAst.class));
     }
 
     @Parameterized.Parameters
@@ -60,10 +66,10 @@ public class ResolveVariableTest extends AReferenceTest
 
         collection.addAll(Arrays.asList(new Object[][]{
                 //same namespace
-                {"namespace{int $a;} namespace{$a=1;}"},
-                {"namespace a{int $a;} namespace a{$a=1;}"},
-                {"namespace b\\c{int $a;} namespace b\\c{$a=1;}"},
-                {"namespace d\\e\\f{int $a;} namespace d\\e\\f{$a=1;}"}
+                {"namespace{int $a;} namespace{$a=1;}", 1},
+                {"namespace a{int $a;} namespace a{$a=1;}", 1},
+                {"namespace b\\c{int $a;} namespace b\\c{$a=1;}", 1},
+                {"namespace d\\e\\f{int $a;} namespace d\\e\\f{$a=1;}", 1}
         }));
 
         return collection;
@@ -73,39 +79,40 @@ public class ResolveVariableTest extends AReferenceTest
 
 
         collection.addAll(Arrays.asList(new Object[][]{
-                {prefix + "int $a=0;  $a;" + appendix},
-                {prefix + "int $a=0; { $a=2;}" + appendix},
-                {prefix + "int $a=0; if($a==1){}" + appendix},
-                {prefix + "int $a=0; if(true){ $a=2;}" + appendix},
-                {prefix + "int $a=0; if(true){}else{ $a=2;}" + appendix},
-                {prefix + "int $a=0; if(true){ if(true){ $a=2;}}" + appendix},
-                {prefix + "int $a=0;  int $b=0; switch($a = $b){case 1: $a;break;}" + appendix},
-                {prefix + "int $a=0;  int $b=0; switch($b){case 1: $a;break;}" + appendix},
-                {prefix + "int $a=0;  int $b=0; switch($b){case 1:{$a;}break;}" + appendix},
-                {prefix + "int $a=0;  int $b=0; switch($b){default:{$a;}break;}" + appendix},
-                {prefix + "int $a=0;  for($a=1;;){}" + appendix},
-                {prefix + "int $a=0;  for(;$a==1;){}" + appendix},
-                {prefix + "int $a=0;  for(;;++$a){}" + appendix},
-                {prefix + "int $a=0;  for(;;){$a=1;}" + appendix},
-                {prefix + "for(int $a=0;;){$a=1;}" + appendix},
-                {prefix + "foreach([1] as int $v){$v=1;}" + appendix},
-                {prefix + "int $a=1;  foreach([1] as int $v){$a=1;}" + appendix},
-                {prefix + "int $a=1;  while($a==1){}" + appendix},
-                {prefix + "int $a=1;  while(true)$a=1;" + appendix},
-                {prefix + "int $a=1;  while(true){$a=1;}" + appendix},
-                {prefix + "int $a=1;  do ; while($a==1);" + appendix},
-                {prefix + "int $a=1;  do $a; while(true);" + appendix},
-                {prefix + "int $a=1;  try{$a=1;}catch(\\Exception $ex){}" + appendix},
-                {prefix + "int $a=1;  try{}catch(\\Exception $ex){$a=1;}" + appendix},
-                //in expression (ok $a; is also an expression but at the top of the AST)
-                {prefix + "int $a=1;  !(1+$a-$a/$a*$a && $a) || $a;" + appendix},
+                {prefix + "int $a=0;  $a;" + appendix, 1},
+                {prefix + "int $a=0; { $a=2;}" + appendix, 1},
+                {prefix + "int $a=0; if($a==1){}" + appendix, 1},
+                {prefix + "int $a=0; if(true){ $a=2;}" + appendix, 1},
+                {prefix + "int $a=0; if(true){}else{ $a=2;}" + appendix, 1},
+                {prefix + "int $a=0; if(true){ if(true){ $a=2;}}" + appendix, 1},
+                {prefix + "int $a=0;  int $b=0; switch($a = $b){case 1: $a;break;}" + appendix, 3},
+                {prefix + "int $a=0;  int $b=0; switch($b){case 1: $a;break;}" + appendix, 2},
+                {prefix + "int $a=0;  int $b=0; switch($b){case 1:{$a;}break;}" + appendix, 2},
+                {prefix + "int $a=0;  int $b=0; switch($b){default:{$a;}break;}" + appendix, 2},
+                {prefix + "int $a=0;  for($a=1;;){}" + appendix, 1},
+                {prefix + "int $a=0;  for(;$a==1;){}" + appendix, 1},
+                {prefix + "int $a=0;  for(;;++$a){}" + appendix, 1},
+                {prefix + "int $a=0;  for(;;){$a=1;}" + appendix, 1},
+                {prefix + "for(int $a=0;;){$a=1;}" + appendix, 1},
+                {prefix + "foreach([1] as int $v){$v=1;}" + appendix, 1},
+                {prefix + "int $a=1;  foreach([1] as int $v){$a=1;}" + appendix, 1},
+                {prefix + "int $a=1;  while($a==1){}" + appendix, 1},
+                {prefix + "int $a=1;  while(true)$a=1;" + appendix, 1},
+                {prefix + "int $a=1;  while(true){$a=1;}" + appendix, 1},
+                {prefix + "int $a=1;  do ; while($a==1);" + appendix, 1},
+                {prefix + "int $a=1;  do $a; while(true);" + appendix, 1},
+                {prefix + "int $a=1;  try{$a=1;}catch(\\Exception $ex){}" + appendix, 1},
+                {prefix + "int $a=1;  try{}catch(\\Exception $ex){$a=1;}" + appendix, 1},
                 //definition in for header is not in a conditional scope and thus accessible from outer scope
-                {prefix + "for(int $a=1;;){} $a;" + appendix},
+                {prefix + "for(int $a=1;;){} $a;" + appendix, 1},
                 //definition in an catch header is not an conditional scope and thus accessible from outer scope
-                {prefix + "try{}catch(\\Exception $e){} $e;" + appendix},
+                {prefix + "try{}catch(\\Exception $e){} $e;" + appendix, 1},
                 //do while does not create a conditional scope
-                {prefix + "do int $a=0; while(true); $a;" + appendix},
-                {prefix + "do{ int $a=0; if(true){$a;} }while(true);" + appendix}
+                {prefix + "do int $a=0; while(true); $a;" + appendix, 1},
+                {prefix + "do{ int $a=0; if(true){$a;} }while(true);" + appendix, 1},
+                //in expressions
+                {prefix + "int $a=1;  !(1+$a-$a/$a*$a && $a) || $a;" + appendix, 6},
+                {prefix + "int $a=1; exit($a + $a);" + appendix, 2}
         }));
     }
 }

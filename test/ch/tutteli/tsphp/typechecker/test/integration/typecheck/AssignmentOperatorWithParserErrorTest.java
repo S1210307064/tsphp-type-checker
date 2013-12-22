@@ -19,7 +19,7 @@ public class AssignmentOperatorWithParserErrorTest extends ATypeCheckWithParserE
     @Override
     protected void verifyTypeCheck() {
         // nothing to check in addition.
-        // No error other than the parsing error should have occurred.
+        // No error other than the parsing error and reference parsing error should have occurred.
         // That's already checked in ATypeCheckWithParserErrorTest
     }
 
@@ -36,8 +36,8 @@ public class AssignmentOperatorWithParserErrorTest extends ATypeCheckWithParserE
     public static Collection<Object[]> testStrings() {
         Collection<Object[]> collection = new ArrayList<>();
         collection.addAll(Arrays.asList(new Object[][]{
-            //see TSPHP-535 - const type missing, should cause parser error but no type check error
-            {"const a = 1;"},
+                //see TSPHP-535 - const type missing, should cause parser error but no type check error
+                {"const a = 1;"},
         }));
         return collection;
     }
