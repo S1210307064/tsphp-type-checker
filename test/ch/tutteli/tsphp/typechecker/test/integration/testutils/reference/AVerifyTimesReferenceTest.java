@@ -2,7 +2,6 @@ package ch.tutteli.tsphp.typechecker.test.integration.testutils.reference;
 
 import ch.tutteli.tsphp.typechecker.IReferencePhaseController;
 import ch.tutteli.tsphp.typechecker.ISymbolResolver;
-import ch.tutteli.tsphp.typechecker.IVisibilityChecker;
 import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
 import org.junit.Ignore;
@@ -36,9 +35,8 @@ public abstract class AVerifyTimesReferenceTest extends AReferenceTest
     protected IReferencePhaseController createReferencePhaseController(
             ISymbolFactory theSymbolFactory,
             ISymbolResolver theSymbolResolver,
-            IVisibilityChecker theVisibilityChecker,
             IGlobalNamespaceScope theGlobalDefaultNamespace) {
         return spy(super.createReferencePhaseController(
-                theSymbolFactory, theSymbolResolver, theVisibilityChecker, theGlobalDefaultNamespace));
+                theSymbolFactory, theSymbolResolver, theGlobalDefaultNamespace));
     }
 }

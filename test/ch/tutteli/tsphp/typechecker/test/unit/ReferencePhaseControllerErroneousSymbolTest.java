@@ -1,9 +1,9 @@
 package ch.tutteli.tsphp.typechecker.test.unit;
 
 import ch.tutteli.tsphp.common.ITSPHPAst;
+import ch.tutteli.tsphp.typechecker.IAccessResolver;
 import ch.tutteli.tsphp.typechecker.IReferencePhaseController;
 import ch.tutteli.tsphp.typechecker.ISymbolResolver;
-import ch.tutteli.tsphp.typechecker.IVisibilityChecker;
 import ch.tutteli.tsphp.typechecker.ReferencePhaseController;
 import ch.tutteli.tsphp.typechecker.error.ITypeCheckErrorReporter;
 import ch.tutteli.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
@@ -25,14 +25,14 @@ public class ReferencePhaseControllerErroneousSymbolTest
 {
     private ISymbolFactory symbolFactory;
     private ISymbolResolver symbolResolver;
-    private IVisibilityChecker visibilityChecker;
+    private IAccessResolver visibilityChecker;
     private ITypeCheckErrorReporter errorReporter;
 
     @Before
     public void setUp() {
         symbolFactory = mock(ISymbolFactory.class);
         symbolResolver = mock(ISymbolResolver.class);
-        visibilityChecker = mock(IVisibilityChecker.class);
+        visibilityChecker = mock(IAccessResolver.class);
         errorReporter = mock(ITypeCheckErrorReporter.class);
         TypeCheckErrorReporterRegistry.set(errorReporter);
     }
@@ -97,6 +97,6 @@ public class ReferencePhaseControllerErroneousSymbolTest
 
     protected IReferencePhaseController createReferencePhaseController() {
         return new ReferencePhaseController(
-                symbolFactory, symbolResolver, visibilityChecker, mock(IGlobalNamespaceScope.class));
+                symbolFactory, symbolResolver, mock(IGlobalNamespaceScope.class));
     }
 }

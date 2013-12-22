@@ -2,12 +2,12 @@ package ch.tutteli.tsphp.typechecker.test.integration.testutils.reference;
 
 import ch.tutteli.tsphp.common.IErrorReporter;
 import ch.tutteli.tsphp.common.ILowerCaseStringMap;
+import ch.tutteli.tsphp.typechecker.AccessResolver;
+import ch.tutteli.tsphp.typechecker.IAccessResolver;
 import ch.tutteli.tsphp.typechecker.IReferencePhaseController;
 import ch.tutteli.tsphp.typechecker.ISymbolResolver;
-import ch.tutteli.tsphp.typechecker.IVisibilityChecker;
 import ch.tutteli.tsphp.typechecker.ReferencePhaseController;
 import ch.tutteli.tsphp.typechecker.SymbolResolver;
-import ch.tutteli.tsphp.typechecker.VisibilityChecker;
 import ch.tutteli.tsphp.typechecker.antlrmod.ErrorReportingTSPHPReferenceWalker;
 import ch.tutteli.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
@@ -30,7 +30,7 @@ public abstract class AReferenceTest extends ADefinitionTest
     protected ErrorReportingTSPHPReferenceWalker reference;
     protected IReferencePhaseController referencePhaseController;
     protected ISymbolResolver symbolResolver;
-    protected IVisibilityChecker visibilityChecker;
+    protected IAccessResolver accessResolver;
 
     public AReferenceTest(String testString) {
         super(testString);
@@ -41,9 +41,9 @@ public abstract class AReferenceTest extends ADefinitionTest
     private void init() {
         symbolResolver = createSymbolResolver(
                 scopeHelper, symbolFactory, definer.getGlobalNamespaceScopes(), definer.getGlobalDefaultNamespace());
-        visibilityChecker = createVisibilityChecker();
+        accessResolver = createAccessResolver(symbolFactory);
         referencePhaseController = createReferencePhaseController(
-                symbolFactory, symbolResolver, visibilityChecker, definer.getGlobalDefaultNamespace());
+                symbolFactory, symbolResolver, definer.getGlobalDefaultNamespace());
     }
 
     protected abstract void verifyReferences();
@@ -66,7 +66,7 @@ public abstract class AReferenceTest extends ADefinitionTest
 
 
         commonTreeNodeStream.reset();
-        reference = createReferenceWalker(commonTreeNodeStream, referencePhaseController);
+        reference = createReferenceWalker(commonTreeNodeStream, referencePhaseController, accessResolver);
         reference.registerErrorLogger(new WriteExceptionToConsole());
         try {
             reference.compilationUnit();
@@ -103,22 +103,23 @@ public abstract class AReferenceTest extends ADefinitionTest
         return new SymbolResolver(theScopeHelper, theSymbolFactory, namespaceScopes, theGlobalDefaultNamespace);
     }
 
-    protected IVisibilityChecker createVisibilityChecker() {
-        return new VisibilityChecker();
+    protected IAccessResolver createAccessResolver(ISymbolFactory theSymbolFactory) {
+        return new AccessResolver(theSymbolFactory);
     }
 
     protected IReferencePhaseController createReferencePhaseController(
             ISymbolFactory theSymbolFactory,
             ISymbolResolver theSymbolResolver,
-            IVisibilityChecker theVisibilityChecker,
             IGlobalNamespaceScope globalDefaultNamespace) {
 
         return new ReferencePhaseController(
-                theSymbolFactory, theSymbolResolver, theVisibilityChecker, globalDefaultNamespace);
+                theSymbolFactory, theSymbolResolver, globalDefaultNamespace);
     }
 
     protected ErrorReportingTSPHPReferenceWalker createReferenceWalker(
-            CommonTreeNodeStream theCommonTreeNodeStream, IReferencePhaseController theController) {
-        return new ErrorReportingTSPHPReferenceWalker(theCommonTreeNodeStream, theController);
+            CommonTreeNodeStream theCommonTreeNodeStream,
+            IReferencePhaseController theController,
+            IAccessResolver theAccessResolver) {
+        return new ErrorReportingTSPHPReferenceWalker(theCommonTreeNodeStream, theController, theAccessResolver);
     }
 }

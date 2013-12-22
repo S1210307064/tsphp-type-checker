@@ -10,6 +10,7 @@ package ch.tutteli.tsphp.typechecker.antlr;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITSPHPErrorAst;
+import ch.tutteli.tsphp.typechecker.IAccessResolver;
 import ch.tutteli.tsphp.typechecker.IReferencePhaseController;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.ICaseInsensitiveScope;
@@ -24,11 +25,13 @@ import ch.tutteli.tsphp.typechecker.symbols.IVoidTypeSymbol;
 
 @members {
 private IReferencePhaseController controller;
+private IAccessResolver accessResolver;
 private boolean hasAtLeastOneReturnOrThrow;
 
-public TSPHPReferenceWalker(TreeNodeStream input, IReferencePhaseController theController) {
+public TSPHPReferenceWalker(TreeNodeStream input, IReferencePhaseController theController, IAccessResolver theAccessResolver) {
     this(input);
     controller = theController;
+    accessResolver = theAccessResolver;
 }
 }
 
@@ -159,7 +162,7 @@ primitiveAtomWithConstant
 			controller.checkIsForwardReference($cnst);
 		}
 	|	^(CLASS_STATIC_ACCESS accessor=staticAccessor identifier=CONSTANT)
-		{$identifier.setSymbol(controller.resolveClassConstant($accessor.start, $identifier));}
+		{$identifier.setSymbol(accessResolver.resolveClassConstantAccess($accessor.start, $identifier));}
 	;
 	
 array	:	^(TypeArray arrayKeyValue*)
@@ -703,7 +706,7 @@ methodCallStatic
 	
 classStaticAccess
 	:	^(CLASS_STATIC_ACCESS accessor=staticAccessor identifier=CLASS_STATIC_ACCESS_VARIABLE_ID)
-		{$identifier.setSymbol(controller.resolveStaticMember($accessor.start, $identifier));}
+		{$identifier.setSymbol(accessResolver.resolveStaticMemberAccess($accessor.start, $identifier));}
 	;		
 
 postFixExpression

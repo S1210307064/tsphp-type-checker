@@ -1,12 +1,20 @@
 package ch.tutteli.tsphp.typechecker;
 
 import ch.tutteli.tsphp.common.ITSPHPAst;
+import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IPolymorphicTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolWithAccessModifier;
+import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 
-public interface IVisibilityChecker
+public interface IAccessResolver
 {
-    void checkAccess(ISymbolWithAccessModifier methodSymbol, IPolymorphicTypeSymbol polymorphicTypeSymbol,
+    IVariableSymbol resolveClassConstantAccess(ITSPHPAst accessor, ITSPHPAst id);
+
+    IVariableSymbol resolveStaticMemberAccess(ITSPHPAst accessor, ITSPHPAst id);
+
+    IVariableSymbol resolveClassMemberAccess(ITSPHPAst expression, ITSPHPAst identifier);
+
+    void checkVisibility(ISymbolWithAccessModifier methodSymbol, IPolymorphicTypeSymbol polymorphicTypeSymbol,
             IViolationCaller visibilityViolationCaller, ITSPHPAst calleeOrAccessor, ITSPHPAst identifier);
 
     /**

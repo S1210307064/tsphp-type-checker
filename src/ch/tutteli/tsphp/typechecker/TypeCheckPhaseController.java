@@ -34,7 +34,7 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
     private final ISymbolResolver symbolResolver;
     private final ITypeSystem typeSystem;
     private final IOverloadResolver overloadResolver;
-    private final IVisibilityChecker visibilityChecker;
+    private final IAccessResolver accessResolver;
     private final ITypeCheckerAstHelper astHelper;
 
     private Map<Integer, List<IMethodSymbol>> unaryOperators = new HashMap<>();
@@ -44,14 +44,14 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
             ISymbolFactory theSymbolFactory,
             ISymbolResolver theSymbolResolver, ITypeSystem theTypeSystem,
             IOverloadResolver theMethodResolver,
-            IVisibilityChecker theVisibilityChecker,
+            IAccessResolver theAccessResolver,
             ITypeCheckerAstHelper theAstHelper) {
 
         symbolFactory = theSymbolFactory;
         typeSystem = theTypeSystem;
         symbolResolver = theSymbolResolver;
         overloadResolver = theMethodResolver;
-        visibilityChecker = theVisibilityChecker;
+        accessResolver = theAccessResolver;
         astHelper = theAstHelper;
 
         unaryOperators = typeSystem.getUnaryOperators();
@@ -265,71 +265,6 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
     }
 
     @Override
-    public IVariableSymbol resolveClassMemberAccess(ITSPHPAst expression, ITSPHPAst identifier) {
-        String variableName = identifier.getText();
-        identifier.setText("$" + variableName);
-        IVisibilityChecker.IViolationCaller visibilityViolationCaller = new IVisibilityChecker.IViolationCaller()
-        {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
-            @Override
-            public void callAppropriateMethod(ITSPHPAst identifier, ISymbolWithAccessModifier symbol, int accessFrom) {
-                TypeCheckErrorReporterRegistry.get().visibilityViolationClassMemberAccess(
-                        identifier, symbol, accessFrom);
-            }
-        };
-        IVariableSymbol variableSymbol = resolveClassMemberOrStaticMemberOrConstantAccess(
-                expression, identifier, visibilityViolationCaller);
-
-        identifier.setText(variableName);
-        return variableSymbol;
-    }
-
-    private IVariableSymbol resolveClassMemberOrStaticMemberOrConstantAccess(ITSPHPAst expression,
-            ITSPHPAst identifier, IVisibilityChecker.IViolationCaller visibilityViolationCaller) {
-
-        IVariableSymbol variableSymbol;
-        ITypeSymbol evalType = expression.getEvalType();
-        if (!(evalType instanceof IErroneousSymbol)) {
-            variableSymbol = checkAccessorAndResolveAccess(evalType, expression, identifier, visibilityViolationCaller);
-        } else {
-            IErroneousSymbol erroneousSymbol = (IErroneousSymbol) evalType;
-            variableSymbol = symbolFactory.createErroneousVariableSymbol(expression, erroneousSymbol.getException());
-            variableSymbol.setType(evalType);
-        }
-        return variableSymbol;
-    }
-
-    private IVariableSymbol checkAccessorAndResolveAccess(ITypeSymbol evalType, ITSPHPAst expression,
-            ITSPHPAst identifier, IVisibilityChecker.IViolationCaller visibilityViolationCaller) {
-        IVariableSymbol variableSymbol;
-        if (evalType instanceof IPolymorphicTypeSymbol) {
-            variableSymbol = resolveAccess(
-                    (IPolymorphicTypeSymbol) evalType, expression, identifier, visibilityViolationCaller);
-        } else {
-            ReferenceException exception = TypeCheckErrorReporterRegistry.get().wrongTypeClassMemberAccess(identifier);
-            variableSymbol = symbolFactory.createErroneousVariableSymbol(identifier, exception);
-            variableSymbol.setType(symbolFactory.createErroneousTypeSymbol(identifier, exception));
-        }
-        return variableSymbol;
-    }
-
-    private IVariableSymbol resolveAccess(IPolymorphicTypeSymbol polymorphicTypeSymbol,
-            ITSPHPAst accessor, ITSPHPAst identifier, IVisibilityChecker.IViolationCaller
-            visibilityViolationCaller) {
-
-        IVariableSymbol symbol = (IVariableSymbol) polymorphicTypeSymbol.resolveWithFallbackToParent(identifier);
-
-        if (symbol != null) {
-            visibilityChecker.checkAccess(symbol, polymorphicTypeSymbol, visibilityViolationCaller, accessor,
-                    identifier);
-        } else {
-            DefinitionException exception = TypeCheckErrorReporterRegistry.get().memberNotDefined(accessor, identifier);
-            symbol = symbolFactory.createErroneousVariableSymbol(identifier, exception);
-        }
-        return symbol;
-    }
-
-    @Override
     public IMethodSymbol resolveFunctionCall(ITSPHPAst identifier, ITSPHPAst arguments) {
 
         IMethodSymbol methodSymbol = (IMethodSymbol) symbolResolver.resolveGlobalIdentifierWithFallback(identifier);
@@ -420,7 +355,7 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
     private void methodVisibilityCheck(IMethodSymbol methodSymbol, IPolymorphicTypeSymbol polymorphicTypeSymbol,
             ITSPHPAst callee, ITSPHPAst identifier) {
 
-        IVisibilityChecker.IViolationCaller visibilityViolationCaller = new IVisibilityChecker.IViolationCaller()
+        IAccessResolver.IViolationCaller visibilityViolationCaller = new IAccessResolver.IViolationCaller()
         {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
             @Override
@@ -430,7 +365,7 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
             }
         };
 
-        visibilityChecker.checkAccess(methodSymbol, polymorphicTypeSymbol, visibilityViolationCaller, callee,
+        accessResolver.checkVisibility(methodSymbol, polymorphicTypeSymbol, visibilityViolationCaller, callee,
                 identifier);
     }
 

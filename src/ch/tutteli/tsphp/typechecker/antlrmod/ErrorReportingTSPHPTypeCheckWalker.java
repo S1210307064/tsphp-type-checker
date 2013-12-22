@@ -3,6 +3,7 @@ package ch.tutteli.tsphp.typechecker.antlrmod;
 import ch.tutteli.tsphp.common.ErrorReporterHelper;
 import ch.tutteli.tsphp.common.IErrorLogger;
 import ch.tutteli.tsphp.common.IErrorReporter;
+import ch.tutteli.tsphp.typechecker.IAccessResolver;
 import ch.tutteli.tsphp.typechecker.ITypeCheckPhaseController;
 import ch.tutteli.tsphp.typechecker.ITypeSystem;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPTypeCheckWalker;
@@ -19,8 +20,11 @@ public class ErrorReportingTSPHPTypeCheckWalker extends TSPHPTypeCheckWalker imp
     private boolean hasFoundError;
 
     public ErrorReportingTSPHPTypeCheckWalker(
-            TreeNodeStream input, ITypeCheckPhaseController controller, ITypeSystem typeSystem) {
-        super(input, controller, typeSystem);
+            TreeNodeStream input,
+            ITypeCheckPhaseController controller,
+            IAccessResolver accessResolver,
+            ITypeSystem typeSystem) {
+        super(input, controller, accessResolver, typeSystem);
     }
 
     @Override

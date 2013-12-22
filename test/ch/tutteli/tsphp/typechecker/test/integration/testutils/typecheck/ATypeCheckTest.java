@@ -1,11 +1,11 @@
 package ch.tutteli.tsphp.typechecker.test.integration.testutils.typecheck;
 
 import ch.tutteli.tsphp.common.IErrorReporter;
+import ch.tutteli.tsphp.typechecker.IAccessResolver;
 import ch.tutteli.tsphp.typechecker.IOverloadResolver;
 import ch.tutteli.tsphp.typechecker.ISymbolResolver;
 import ch.tutteli.tsphp.typechecker.ITypeCheckPhaseController;
 import ch.tutteli.tsphp.typechecker.ITypeSystem;
-import ch.tutteli.tsphp.typechecker.IVisibilityChecker;
 import ch.tutteli.tsphp.typechecker.OverloadResolver;
 import ch.tutteli.tsphp.typechecker.TypeCheckPhaseController;
 import ch.tutteli.tsphp.typechecker.antlrmod.ErrorReportingTSPHPTypeCheckWalker;
@@ -43,14 +43,14 @@ public abstract class ATypeCheckTest extends AReferenceTest
         typeCheckerAstHelper = createTypeCheckerAstHelper();
 
         typeCheckPhaseController = createTypeCheckerController(
-                symbolFactory, symbolResolver, typeSystem, overloadResolver, visibilityChecker, typeCheckerAstHelper);
+                symbolFactory, symbolResolver, typeSystem, overloadResolver, accessResolver, typeCheckerAstHelper);
     }
 
     @Override
     protected void verifyReferences() {
         commonTreeNodeStream.reset();
         typeCheckWalker = new ErrorReportingTSPHPTypeCheckWalker(
-                commonTreeNodeStream, typeCheckPhaseController, typeSystem);
+                commonTreeNodeStream, typeCheckPhaseController, accessResolver, typeSystem);
 
         typeCheckWalker.registerErrorLogger(new WriteExceptionToConsole());
         try {
@@ -88,7 +88,7 @@ public abstract class ATypeCheckTest extends AReferenceTest
             TestSymbolFactory theSymbolFactory,
             ISymbolResolver theSymbolResolver, ITypeSystem theTypeSystem,
             IOverloadResolver theOverloadResolver,
-            IVisibilityChecker theVisibilityChecker,
+            IAccessResolver theVisibilityChecker,
             ITypeCheckerAstHelper theAstHelper) {
 
         return new TypeCheckPhaseController(

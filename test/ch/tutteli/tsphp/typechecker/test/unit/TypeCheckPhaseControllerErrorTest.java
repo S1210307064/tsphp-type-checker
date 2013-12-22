@@ -2,11 +2,11 @@ package ch.tutteli.tsphp.typechecker.test.unit;
 
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
+import ch.tutteli.tsphp.typechecker.IAccessResolver;
 import ch.tutteli.tsphp.typechecker.IOverloadResolver;
 import ch.tutteli.tsphp.typechecker.ISymbolResolver;
 import ch.tutteli.tsphp.typechecker.ITypeCheckPhaseController;
 import ch.tutteli.tsphp.typechecker.ITypeSystem;
-import ch.tutteli.tsphp.typechecker.IVisibilityChecker;
 import ch.tutteli.tsphp.typechecker.TypeCheckPhaseController;
 import ch.tutteli.tsphp.typechecker.error.ITypeCheckErrorReporter;
 import ch.tutteli.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
@@ -26,7 +26,7 @@ public class TypeCheckPhaseControllerErrorTest
     private ITypeSystem typeSystem;
     private ISymbolResolver symbolResolver;
     private IOverloadResolver overloadResolver;
-    private IVisibilityChecker visibilityChecker;
+    private IAccessResolver visibilityChecker;
     private ITypeCheckerAstHelper astHelper;
     private ITypeCheckErrorReporter errorReporter;
 
@@ -36,7 +36,7 @@ public class TypeCheckPhaseControllerErrorTest
         typeSystem = mock(ITypeSystem.class);
         symbolResolver = mock(ISymbolResolver.class);
         overloadResolver = mock(IOverloadResolver.class);
-        visibilityChecker = mock(IVisibilityChecker.class);
+        visibilityChecker = mock(IAccessResolver.class);
         astHelper = mock(ITypeCheckerAstHelper.class);
         errorReporter = mock(ITypeCheckErrorReporter.class);
         TypeCheckErrorReporterRegistry.set(errorReporter);

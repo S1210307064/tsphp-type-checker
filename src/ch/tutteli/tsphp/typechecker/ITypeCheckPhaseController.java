@@ -7,8 +7,6 @@ import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 
 public interface ITypeCheckPhaseController
 {
-    IVariableSymbol resolveClassMemberAccess(ITSPHPAst expression, ITSPHPAst identifier);
-
     IMethodSymbol resolveFunctionCall(ITSPHPAst identifier, ITSPHPAst arguments);
 
     IMethodSymbol resolveMethodCall(ITSPHPAst callee, ITSPHPAst identifier, ITSPHPAst arguments);

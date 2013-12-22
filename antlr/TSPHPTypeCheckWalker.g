@@ -10,19 +10,22 @@ package ch.tutteli.tsphp.typechecker.antlr;
 
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.typechecker.ITypeSystem;
+import ch.tutteli.tsphp.typechecker.IAccessResolver;
 import ch.tutteli.tsphp.typechecker.ITypeCheckPhaseController;
+import ch.tutteli.tsphp.typechecker.ITypeSystem;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 }
 
 @members {
 private ITypeCheckPhaseController controller;
+private IAccessResolver accessResolver;
 private ITypeSystem typeSystem;
 
-public TSPHPTypeCheckWalker(TreeNodeStream input, ITypeCheckPhaseController theController, ITypeSystem theTypeSystem) {
+public TSPHPTypeCheckWalker(TreeNodeStream input, ITypeCheckPhaseController theController, IAccessResolver theAccessResolver, ITypeSystem theTypeSystem) {
     this(input);
     controller = theController;
+    accessResolver = theAccessResolver;
     typeSystem = theTypeSystem;
 }
 }
@@ -357,7 +360,7 @@ specialOperators returns [ITypeSymbol type]
 postFixOperators returns [ITypeSymbol type]
 	:	^(CLASS_MEMBER_ACCESS accessor=expression Identifier)
 		{
-		    IVariableSymbol variableSymbol = controller.resolveClassMemberAccess($accessor.start, $Identifier);
+		    IVariableSymbol variableSymbol = accessResolver.resolveClassMemberAccess($accessor.start, $Identifier);
 		    $Identifier.setSymbol(variableSymbol);
 		    $type = variableSymbol.getType();
 		}	

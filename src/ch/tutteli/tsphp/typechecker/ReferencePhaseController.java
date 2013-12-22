@@ -16,10 +16,8 @@ import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IInterfaceTypeSymbol;
-import ch.tutteli.tsphp.typechecker.symbols.IPolymorphicTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IScalarTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
-import ch.tutteli.tsphp.typechecker.symbols.ISymbolWithAccessModifier;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousTypeSymbol;
@@ -35,17 +33,14 @@ public class ReferencePhaseController implements IReferencePhaseController
 {
     private final ISymbolFactory symbolFactory;
     private final ISymbolResolver symbolResolver;
-    private final IVisibilityChecker visibilityChecker;
     private final IGlobalNamespaceScope globalDefaultNamespace;
 
     public ReferencePhaseController(
             ISymbolFactory theSymbolFactory,
             ISymbolResolver theSymbolResolver,
-            IVisibilityChecker theVisibilityChecker,
             IGlobalNamespaceScope theGlobalDefaultNamespace) {
         symbolFactory = theSymbolFactory;
         symbolResolver = theSymbolResolver;
-        visibilityChecker = theVisibilityChecker;
         globalDefaultNamespace = theGlobalDefaultNamespace;
     }
 
@@ -56,87 +51,6 @@ public class ReferencePhaseController implements IReferencePhaseController
         if (symbol == null) {
             ReferenceException exception = TypeCheckErrorReporterRegistry.get().notDefined(ast);
             symbol = symbolFactory.createErroneousVariableSymbol(ast, exception);
-        }
-        return symbol;
-    }
-
-    @Override
-    public IVariableSymbol resolveClassConstant(ITSPHPAst accessor, ITSPHPAst identifier) {
-        return resolveStaticClassMemberOrClassConstant(accessor, identifier, new IVisibilityChecker.IViolationCaller()
-        {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
-            @Override
-            public void callAppropriateMethod(ITSPHPAst identifier, ISymbolWithAccessModifier symbol, int accessFrom) {
-                TypeCheckErrorReporterRegistry.get().visibilityViolationClassConstantAccess(
-                        identifier, symbol, accessFrom);
-            }
-        });
-    }
-
-
-    @Override
-    public IVariableSymbol resolveStaticMember(ITSPHPAst accessor, ITSPHPAst identifier) {
-        return resolveStaticClassMemberOrClassConstant(accessor, identifier, new IVisibilityChecker.IViolationCaller()
-        {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
-            @Override
-            public void callAppropriateMethod(ITSPHPAst identifier, ISymbolWithAccessModifier symbol, int accessFrom) {
-                TypeCheckErrorReporterRegistry.get().visibilityViolationStaticClassMemberAccess(
-                        identifier, symbol, accessFrom);
-            }
-        });
-    }
-
-    @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
-    private IVariableSymbol resolveStaticClassMemberOrClassConstant(ITSPHPAst accessor, ITSPHPAst id,
-            IVisibilityChecker.IViolationCaller caller) {
-        IVariableSymbol variableSymbol = resolveClassMemberOrStaticMemberOrConstantAccess(accessor, id, caller);
-        if (!variableSymbol.isStatic()) {
-            TypeCheckErrorReporterRegistry.get().notStatic(accessor);
-        }
-        return variableSymbol;
-    }
-
-    private IVariableSymbol resolveClassMemberOrStaticMemberOrConstantAccess(ITSPHPAst expression,
-            ITSPHPAst identifier, IVisibilityChecker.IViolationCaller visibilityViolationCaller) {
-
-        IVariableSymbol variableSymbol;
-        ITypeSymbol evalType = expression.getEvalType();
-        if (!(evalType instanceof IErroneousSymbol)) {
-            variableSymbol = checkAccessorAndResolveAccess(evalType, expression, identifier, visibilityViolationCaller);
-        } else {
-            IErroneousSymbol erroneousSymbol = (IErroneousSymbol) evalType;
-            variableSymbol = symbolFactory.createErroneousVariableSymbol(expression, erroneousSymbol.getException());
-            variableSymbol.setType(evalType);
-        }
-        return variableSymbol;
-    }
-
-    private IVariableSymbol checkAccessorAndResolveAccess(ITypeSymbol evalType, ITSPHPAst expression,
-            ITSPHPAst identifier, IVisibilityChecker.IViolationCaller visibilityViolationCaller) {
-        IVariableSymbol variableSymbol;
-        if (evalType instanceof IPolymorphicTypeSymbol) {
-            variableSymbol = resolveAccess(
-                    (IPolymorphicTypeSymbol) evalType, expression, identifier, visibilityViolationCaller);
-        } else {
-            ReferenceException exception = TypeCheckErrorReporterRegistry.get().wrongTypeClassMemberAccess(identifier);
-            variableSymbol = symbolFactory.createErroneousVariableSymbol(identifier, exception);
-            variableSymbol.setType(symbolFactory.createErroneousTypeSymbol(identifier, exception));
-        }
-        return variableSymbol;
-    }
-
-    private IVariableSymbol resolveAccess(IPolymorphicTypeSymbol polymorphicTypeSymbol,
-            ITSPHPAst accessor, ITSPHPAst identifier, IVisibilityChecker.IViolationCaller visibilityViolationCaller) {
-
-        IVariableSymbol symbol = (IVariableSymbol) polymorphicTypeSymbol.resolveWithFallbackToParent(identifier);
-
-        if (symbol != null) {
-            visibilityChecker.checkAccess(
-                    symbol, polymorphicTypeSymbol, visibilityViolationCaller, accessor, identifier);
-        } else {
-            DefinitionException exception = TypeCheckErrorReporterRegistry.get().memberNotDefined(accessor, identifier);
-            symbol = symbolFactory.createErroneousVariableSymbol(identifier, exception);
         }
         return symbol;
     }
@@ -207,7 +121,6 @@ public class ReferencePhaseController implements IReferencePhaseController
         }
         return typeSymbol;
     }
-
 
     @Override
     public ITypeSymbol resolvePrimitiveType(ITSPHPAst typeAst) {

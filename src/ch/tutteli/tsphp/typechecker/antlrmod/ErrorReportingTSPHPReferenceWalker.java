@@ -3,6 +3,7 @@ package ch.tutteli.tsphp.typechecker.antlrmod;
 import ch.tutteli.tsphp.common.ErrorReporterHelper;
 import ch.tutteli.tsphp.common.IErrorLogger;
 import ch.tutteli.tsphp.common.IErrorReporter;
+import ch.tutteli.tsphp.typechecker.IAccessResolver;
 import ch.tutteli.tsphp.typechecker.IReferencePhaseController;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPReferenceWalker;
 import org.antlr.runtime.RecognitionException;
@@ -17,8 +18,11 @@ public class ErrorReportingTSPHPReferenceWalker extends TSPHPReferenceWalker imp
     private final Collection<IErrorLogger> errorLoggers = new ArrayDeque<>();
     private boolean hasFoundError;
 
-    public ErrorReportingTSPHPReferenceWalker(TreeNodeStream input, IReferencePhaseController theController) {
-        super(input, theController);
+    public ErrorReportingTSPHPReferenceWalker(
+            TreeNodeStream input,
+            IReferencePhaseController controller,
+            IAccessResolver accessResolver) {
+        super(input, controller, accessResolver);
     }
 
     @Override

@@ -13,10 +13,6 @@ public interface IReferencePhaseController
 {
     IVariableSymbol resolveConstant(ITSPHPAst ast);
 
-    IVariableSymbol resolveClassConstant(ITSPHPAst accessor, ITSPHPAst id);
-
-    IVariableSymbol resolveStaticMember(ITSPHPAst accessor, ITSPHPAst id);
-
     IVariableSymbol resolveThisSelf(ITSPHPAst $this);
 
     IVariableSymbol resolveParent(ITSPHPAst $this);

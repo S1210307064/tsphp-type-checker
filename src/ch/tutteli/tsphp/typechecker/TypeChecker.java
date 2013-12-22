@@ -31,6 +31,7 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
     private IDefinitionPhaseController definitionPhaseController;
     private IReferencePhaseController referencePhaseController;
     private ITypeCheckPhaseController typeCheckPhaseController;
+    private IAccessResolver accessResolver;
     private ITypeSystem typeSystem;
 
     private final Collection<IErrorLogger> errorLoggers = new ArrayDeque<>();
@@ -49,16 +50,16 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
         typeSystem = createTypeSystem(symbolFactory, globalDefaultNamespace);
 
         ISymbolResolver symbolResolver = createSymbolResolver(scopeHelper, symbolFactory, globalDefaultNamespace);
-        IVisibilityChecker visibilityChecker = createVisibilityChecker();
+        accessResolver = createAccessResolver(symbolFactory);
 
         referencePhaseController = createReferencePhaseController(
-                symbolFactory, symbolResolver, visibilityChecker, globalDefaultNamespace);
+                symbolFactory, symbolResolver, globalDefaultNamespace);
 
         IOverloadResolver overloadResolver = createOverloadResolver(typeSystem);
         ITypeCheckerAstHelper typeCheckerAstHelper = createTypeCheckerAstHelper();
 
         typeCheckPhaseController = createTypeCheckPhaseController(
-                symbolFactory, typeSystem, symbolResolver, overloadResolver, visibilityChecker, typeCheckerAstHelper);
+                symbolFactory, typeSystem, symbolResolver, overloadResolver, accessResolver, typeCheckerAstHelper);
     }
 
     protected IScopeHelper createScopeHelper() {
@@ -86,19 +87,17 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
         );
     }
 
-    protected IVisibilityChecker createVisibilityChecker() {
-        return new VisibilityChecker();
+    protected IAccessResolver createAccessResolver(ISymbolFactory symbolFactory) {
+        return new AccessResolver(symbolFactory);
     }
 
     protected IReferencePhaseController createReferencePhaseController(
             ISymbolFactory symbolFactory,
             ISymbolResolver symbolResolver,
-            IVisibilityChecker visibilityChecker,
             IGlobalNamespaceScope globalDefaultNamespace) {
         return new ReferencePhaseController(
                 symbolFactory,
                 symbolResolver,
-                visibilityChecker,
                 globalDefaultNamespace);
     }
 
@@ -116,13 +115,13 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
             ITypeSystem typeSystem,
             ISymbolResolver symbolResolver,
             IOverloadResolver overloadResolver,
-            IVisibilityChecker visibilityChecker,
+            IAccessResolver accessResolver,
             ITypeCheckerAstHelper astHelper) {
         return new TypeCheckPhaseController(
                 symbolFactory,
                 symbolResolver, typeSystem,
                 overloadResolver,
-                visibilityChecker,
+                accessResolver,
                 astHelper);
     }
 
@@ -146,7 +145,7 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
     public void enrichWithReferences(ITSPHPAst ast, TreeNodeStream treeNodeStream) {
         treeNodeStream.reset();
         ErrorReportingTSPHPReferenceWalker reference =
-                new ErrorReportingTSPHPReferenceWalker(treeNodeStream, referencePhaseController);
+                new ErrorReportingTSPHPReferenceWalker(treeNodeStream, referencePhaseController, accessResolver);
         for (IErrorLogger logger : errorLoggers) {
             reference.registerErrorLogger(logger);
         }
@@ -167,8 +166,10 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
     @Override
     public void doTypeChecking(ITSPHPAst ast, TreeNodeStream treeNodeStream) {
         treeNodeStream.reset();
-        ErrorReportingTSPHPTypeCheckWalker typeCheckWalker =
-                new ErrorReportingTSPHPTypeCheckWalker(treeNodeStream, typeCheckPhaseController, typeSystem);
+
+        ErrorReportingTSPHPTypeCheckWalker typeCheckWalker = new ErrorReportingTSPHPTypeCheckWalker(
+                        treeNodeStream, typeCheckPhaseController, accessResolver, typeSystem);
+
         for (IErrorLogger logger : errorLoggers) {
             typeCheckWalker.registerErrorLogger(logger);
         }
