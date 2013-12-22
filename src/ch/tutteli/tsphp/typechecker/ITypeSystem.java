@@ -8,13 +8,12 @@ import ch.tutteli.tsphp.typechecker.symbols.INullTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IPseudoTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IScalarTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IVoidTypeSymbol;
+
 import java.util.List;
 import java.util.Map;
 
 public interface ITypeSystem
 {
-
-    void initTypeSystem();
 
     Map<Integer, List<IMethodSymbol>> getUnaryOperators();
 

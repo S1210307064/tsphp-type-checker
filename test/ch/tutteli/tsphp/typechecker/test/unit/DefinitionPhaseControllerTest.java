@@ -4,8 +4,8 @@ import ch.tutteli.tsphp.common.ILowerCaseStringMap;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.typechecker.Definer;
-import ch.tutteli.tsphp.typechecker.IDefiner;
+import ch.tutteli.tsphp.typechecker.DefinitionPhaseController;
+import ch.tutteli.tsphp.typechecker.IDefinitionPhaseController;
 import ch.tutteli.tsphp.typechecker.scopes.IConditionalScope;
 import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
@@ -28,7 +28,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-public class DefinerTest
+public class DefinitionPhaseControllerTest
 {
 
     private ISymbolFactory symbolFactory;
@@ -47,8 +47,8 @@ public class DefinerTest
     public void getGlobalDefaultNamespace_FirstCall_UsesScopeFactory() {
         initScopeFactoryForGlobalDefaultNamespace();
 
-        IDefiner definer = createDefiner();
-        IGlobalNamespaceScope scope = definer.getGlobalDefaultNamespace();
+        IDefinitionPhaseController controller = createDefinitionPhaseController();
+        IGlobalNamespaceScope scope = controller.getGlobalDefaultNamespace();
 
         assertThat(scope, is(globalDefaultScope));
         verify(scopeFactory).createGlobalNamespaceScope("\\");
@@ -58,13 +58,13 @@ public class DefinerTest
     public void getGlobalDefaultNamespace_SecondCall_UsesScopeFactoryOnlyOnce() {
         initScopeFactoryForGlobalDefaultNamespace();
 
-        IDefiner definer = createDefiner();
-        IGlobalNamespaceScope scope = definer.getGlobalDefaultNamespace();
+        IDefinitionPhaseController controller = createDefinitionPhaseController();
+        IGlobalNamespaceScope scope = controller.getGlobalDefaultNamespace();
 
         assertThat(scope, is(globalDefaultScope));
         verify(scopeFactory, times(1)).createGlobalNamespaceScope("\\");
 
-        scope = definer.getGlobalDefaultNamespace();
+        scope = controller.getGlobalDefaultNamespace();
 
         assertThat(scope, is(globalDefaultScope));
         verify(scopeFactory, times(1)).createGlobalNamespaceScope("\\");
@@ -74,8 +74,8 @@ public class DefinerTest
     public void defineNamespace_FirstCall_UsesScopeFactory() {
         NamespaceAndGlobalPair namespaceAndGlobal = initDefineNamespace("name");
 
-        IDefiner definer = createDefiner();
-        INamespaceScope namespaceScope = definer.defineNamespace("name");
+        IDefinitionPhaseController controller = createDefinitionPhaseController();
+        INamespaceScope namespaceScope = controller.defineNamespace("name");
 
         assertThat(namespaceScope, is(namespaceAndGlobal.namespaceScope));
         verify(scopeFactory, times(1)).createGlobalNamespaceScope("name");
@@ -90,9 +90,9 @@ public class DefinerTest
                 .thenReturn(namespaceAndGlobal.namespaceScope)
                 .thenReturn(secondNamespaceScope);
 
-        IDefiner definer = createDefiner();
-        INamespaceScope namespaceScope1 = definer.defineNamespace("name");
-        INamespaceScope namespaceScope2 = definer.defineNamespace("name");
+        IDefinitionPhaseController controller = createDefinitionPhaseController();
+        INamespaceScope namespaceScope1 = controller.defineNamespace("name");
+        INamespaceScope namespaceScope2 = controller.defineNamespace("name");
 
         assertThat(namespaceScope1, is(namespaceAndGlobal.namespaceScope));
         assertThat(namespaceScope2, is(secondNamespaceScope));
@@ -105,8 +105,8 @@ public class DefinerTest
     public void getGlobalNamespaceScopes_NothingDefined_ContainsGlobalDefaultNamespace() {
         initScopeFactoryForGlobalDefaultNamespace();
 
-        IDefiner definer = createDefiner();
-        ILowerCaseStringMap<IGlobalNamespaceScope> scopes = definer.getGlobalNamespaceScopes();
+        IDefinitionPhaseController controller = createDefinitionPhaseController();
+        ILowerCaseStringMap<IGlobalNamespaceScope> scopes = controller.getGlobalNamespaceScopes();
 
         assertThat(scopes, hasEntry("\\", globalDefaultScope));
         verify(scopeFactory, times(1)).createGlobalNamespaceScope("\\");
@@ -116,9 +116,9 @@ public class DefinerTest
     public void getGlobalNamespaceScopes_DefineAdditionalNamespace_ContainsBoth() {
         NamespaceAndGlobalPair namespaceAndGlobal = initDefineNamespace("name");
 
-        IDefiner definer = createDefiner();
-        definer.defineNamespace("name");
-        ILowerCaseStringMap<IGlobalNamespaceScope> scopes = definer.getGlobalNamespaceScopes();
+        IDefinitionPhaseController controller = createDefinitionPhaseController();
+        controller.defineNamespace("name");
+        ILowerCaseStringMap<IGlobalNamespaceScope> scopes = controller.getGlobalNamespaceScopes();
 
         assertThat(scopes, hasEntry("\\", globalDefaultScope));
         assertThat(scopes, hasEntry("name", namespaceAndGlobal.globalNamespaceScope));
@@ -133,8 +133,8 @@ public class DefinerTest
         IAliasSymbol aliasSymbol = mock(IAliasSymbol.class);
         when(symbolFactory.createAliasSymbol(aliasAst, "alias")).thenReturn(aliasSymbol);
 
-        IDefiner definer = createDefiner();
-        definer.defineUse(namespaceScope, typeAst, aliasAst);
+        IDefinitionPhaseController controller = createDefinitionPhaseController();
+        controller.defineUse(namespaceScope, typeAst, aliasAst);
 
         verify(typeAst).setScope(namespaceScope);
         verify(aliasAst).setSymbol(aliasSymbol);
@@ -152,8 +152,8 @@ public class DefinerTest
         IVariableSymbol variableSymbol = mock(IVariableSymbol.class);
         when(symbolFactory.createVariableSymbol(modifierAst, identifierAst)).thenReturn(variableSymbol);
 
-        IDefiner definer = createDefiner();
-        definer.defineVariable(namespaceScope, modifierAst, typeAst, identifierAst);
+        IDefinitionPhaseController controller = createDefinitionPhaseController();
+        controller.defineVariable(namespaceScope, modifierAst, typeAst, identifierAst);
 
         verify(typeAst).setScope(namespaceScope);
         verifyScopeSymbolAndDefine(namespaceScope, identifierAst, variableSymbol);
@@ -169,8 +169,8 @@ public class DefinerTest
         IVariableSymbol variableSymbol = mock(IVariableSymbol.class);
         when(symbolFactory.createVariableSymbol(modifierAst, identifierAst)).thenReturn(variableSymbol);
 
-        IDefiner definer = createDefiner();
-        definer.defineConstant(namespaceScope, modifierAst, typeAst, identifierAst);
+        IDefinitionPhaseController controller = createDefinitionPhaseController();
+        controller.defineConstant(namespaceScope, modifierAst, typeAst, identifierAst);
 
         verify(typeAst).setScope(namespaceScope);
         verifyScopeSymbolAndDefine(namespaceScope, identifierAst, variableSymbol);
@@ -190,8 +190,8 @@ public class DefinerTest
         when(symbolFactory.createInterfaceTypeSymbol(modifierAst, identifierAst, namespaceScope))
                 .thenReturn(interfaceTypeSymbol);
 
-        IDefiner definer = createDefiner();
-        IInterfaceTypeSymbol interfaceSymbol = definer.defineInterface(namespaceScope,
+        IDefinitionPhaseController controller = createDefinitionPhaseController();
+        IInterfaceTypeSymbol interfaceSymbol = controller.defineInterface(namespaceScope,
                 modifierAst, identifierAst, extendsAst);
 
         assertThat(interfaceSymbol, is(interfaceTypeSymbol));
@@ -244,8 +244,8 @@ public class DefinerTest
         when(symbolFactory.createClassTypeSymbol(modifierAst, identifierAst, namespaceScope))
                 .thenReturn(classTypeSymbol);
 
-        IDefiner definer = createDefiner();
-        IClassTypeSymbol classSymbol = definer.defineClass(namespaceScope, modifierAst, identifierAst,
+        IDefinitionPhaseController controller = createDefinitionPhaseController();
+        IClassTypeSymbol classSymbol = controller.defineClass(namespaceScope, modifierAst, identifierAst,
                 extendsAst, implementsAst);
 
         assertThat(classSymbol, is(classTypeSymbol));
@@ -336,8 +336,8 @@ public class DefinerTest
         when(symbolFactory.createMethodSymbol(modifierAst, returnTypeModifierAst, identifierAst, namespaceScope))
                 .thenReturn(expectedMethodSymbol);
 
-        IDefiner definer = createDefiner();
-        IMethodSymbol methodSymbol = definer.defineMethod(namespaceScope, modifierAst, returnTypeModifierAst,
+        IDefinitionPhaseController controller = createDefinitionPhaseController();
+        IMethodSymbol methodSymbol = controller.defineMethod(namespaceScope, modifierAst, returnTypeModifierAst,
                 returnTypeAst, identifierAst);
 
         assertThat(methodSymbol, is(expectedMethodSymbol));
@@ -352,8 +352,8 @@ public class DefinerTest
         IConditionalScope conditionalScope = mock(IConditionalScope.class);
         when(scopeFactory.createConditionalScope(parentScope)).thenReturn(conditionalScope);
 
-        IDefiner definer = createDefiner();
-        IConditionalScope scope = definer.defineConditionalScope(parentScope);
+        IDefinitionPhaseController controller = createDefinitionPhaseController();
+        IConditionalScope scope = controller.defineConditionalScope(parentScope);
 
         assertThat(scope, is(conditionalScope));
         verify(scopeFactory).createConditionalScope(parentScope);
@@ -362,8 +362,8 @@ public class DefinerTest
         verifyNoMoreInteractions(scopeFactory);
     }
 
-    private IDefiner createDefiner() {
-        return new Definer(symbolFactory, scopeFactory);
+    private IDefinitionPhaseController createDefinitionPhaseController() {
+        return new DefinitionPhaseController(symbolFactory, scopeFactory);
     }
 
     private void verifyScopeSymbolAndDefine(IScope scope, ITSPHPAst identifierAst, ISymbol symbol) {

@@ -10,7 +10,7 @@ package ch.tutteli.tsphp.typechecker.antlr;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITSPHPErrorAst;
-import ch.tutteli.tsphp.typechecker.ITypeCheckerController;
+import ch.tutteli.tsphp.typechecker.IReferencePhaseController;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.ICaseInsensitiveScope;
 import ch.tutteli.tsphp.typechecker.symbols.IAliasSymbol;
@@ -23,10 +23,10 @@ import ch.tutteli.tsphp.typechecker.symbols.IVoidTypeSymbol;
 }
 
 @members {
-private ITypeCheckerController controller;
+private IReferencePhaseController controller;
 private boolean hasAtLeastOneReturnOrThrow;
 
-public TSPHPReferenceWalker(TreeNodeStream input, ITypeCheckerController theController) {
+public TSPHPReferenceWalker(TreeNodeStream input, IReferencePhaseController theController) {
     this(input);
     controller = theController;
 }

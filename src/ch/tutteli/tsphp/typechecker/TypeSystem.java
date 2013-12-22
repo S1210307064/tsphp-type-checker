@@ -120,6 +120,11 @@ public class TypeSystem implements ITypeSystem
         symbolFactory = theSymbolFactory;
         astHelper = theAstHelper;
         globalDefaultNamespace = theGlobalDefaultNamespace;
+
+        defineBuiltInTypes();
+        initMaps();
+        defineOperators();
+        defineExplicitCastings();
     }
 
     @Override
@@ -216,14 +221,6 @@ public class TypeSystem implements ITypeSystem
             castingMethod = new ClassInterfaceCastingMethod(astHelper, typeSymbol);
         }
         return castingMethod;
-    }
-
-    @Override
-    public void initTypeSystem() {
-        defineBuiltInTypes();
-        initMaps();
-        defineOperators();
-        defineExplicitCastings();
     }
 
     protected void defineObjectTypeSymbol() {

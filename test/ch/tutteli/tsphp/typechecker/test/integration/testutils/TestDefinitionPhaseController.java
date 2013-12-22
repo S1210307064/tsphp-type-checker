@@ -5,25 +5,27 @@ import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.TSPHPAst;
-import ch.tutteli.tsphp.typechecker.Definer;
-import ch.tutteli.tsphp.typechecker.IDefiner;
+import ch.tutteli.tsphp.typechecker.DefinitionPhaseController;
+import ch.tutteli.tsphp.typechecker.IDefinitionPhaseController;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.IScopeFactory;
 import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IInterfaceTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TestDefiner extends Definer implements IDefiner, ICreateSymbolListener
+public class TestDefinitionPhaseController extends DefinitionPhaseController implements IDefinitionPhaseController,
+        ICreateSymbolListener
 {
 
     private List<Map.Entry<ISymbol, ITSPHPAst>> symbols = new ArrayList<>();
     private ISymbol newlyCreatedSymbol;
 
-    public TestDefiner(TestSymbolFactory aSymbolFactory, IScopeFactory aScopeFactory) {
+    public TestDefinitionPhaseController(TestSymbolFactory aSymbolFactory, IScopeFactory aScopeFactory) {
         super(aSymbolFactory, aScopeFactory);
         aSymbolFactory.registerListener(this);
     }
@@ -70,7 +72,8 @@ public class TestDefiner extends Definer implements IDefiner, ICreateSymbolListe
     @Override
     public IMethodSymbol defineMethod(IScope currentScope, ITSPHPAst methodModifier,
             ITSPHPAst returnTypeModifier, ITSPHPAst returnType, ITSPHPAst identifier) {
-        IMethodSymbol scope = super.defineMethod(currentScope, methodModifier, returnTypeModifier, returnType, identifier);
+        IMethodSymbol scope = super.defineMethod(currentScope, methodModifier, returnTypeModifier, returnType,
+                identifier);
         symbols.add(new HashMap.SimpleEntry<>(newlyCreatedSymbol, returnType));
         return scope;
     }

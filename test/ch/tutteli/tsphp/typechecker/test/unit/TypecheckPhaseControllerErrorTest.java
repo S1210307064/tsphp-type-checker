@@ -2,12 +2,12 @@ package ch.tutteli.tsphp.typechecker.test.unit;
 
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
-import ch.tutteli.tsphp.typechecker.IDefiner;
 import ch.tutteli.tsphp.typechecker.IOverloadResolver;
 import ch.tutteli.tsphp.typechecker.ISymbolResolver;
-import ch.tutteli.tsphp.typechecker.ITypeCheckerController;
+import ch.tutteli.tsphp.typechecker.ITypeCheckPhaseController;
 import ch.tutteli.tsphp.typechecker.ITypeSystem;
-import ch.tutteli.tsphp.typechecker.TypeCheckerController;
+import ch.tutteli.tsphp.typechecker.IVisibilityChecker;
+import ch.tutteli.tsphp.typechecker.TypeCheckPhaseController;
 import ch.tutteli.tsphp.typechecker.error.ITypeCheckErrorReporter;
 import ch.tutteli.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
@@ -20,13 +20,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class TypeCheckerControllerErrorTest
+public class TypeCheckPhaseControllerErrorTest
 {
     private ISymbolFactory symbolFactory;
     private ITypeSystem typeSystem;
-    private IDefiner definer;
     private ISymbolResolver symbolResolver;
     private IOverloadResolver overloadResolver;
+    private IVisibilityChecker visibilityChecker;
     private ITypeCheckerAstHelper astHelper;
     private ITypeCheckErrorReporter errorReporter;
 
@@ -34,9 +34,9 @@ public class TypeCheckerControllerErrorTest
     public void setUp() {
         symbolFactory = mock(ISymbolFactory.class);
         typeSystem = mock(ITypeSystem.class);
-        definer = mock(IDefiner.class);
         symbolResolver = mock(ISymbolResolver.class);
         overloadResolver = mock(IOverloadResolver.class);
+        visibilityChecker = mock(IVisibilityChecker.class);
         astHelper = mock(ITypeCheckerAstHelper.class);
         errorReporter = mock(ITypeCheckErrorReporter.class);
         TypeCheckErrorReporterRegistry.set(errorReporter);
@@ -54,7 +54,7 @@ public class TypeCheckerControllerErrorTest
         ITSPHPAst expression = createAst(wrongTypeSymbol);
         when(overloadResolver.getPromotionLevelFromToConsiderNull(typeSymbol, wrongTypeSymbol)).thenReturn(-1);
 
-        ITypeCheckerController typeCheckerController = createTypeCheckController();
+        ITypeCheckPhaseController typeCheckerController = createTypeCheckController();
         typeCheckerController.checkClassMemberInitialValue(variableId, expression);
 
         verify(errorReporter).wrongClassMemberInitialValue(variableId, expression, typeSymbol);
@@ -66,8 +66,8 @@ public class TypeCheckerControllerErrorTest
         return ast;
     }
 
-    private ITypeCheckerController createTypeCheckController() {
-        return new TypeCheckerController(
-                symbolFactory, typeSystem, definer, symbolResolver, overloadResolver, astHelper);
+    protected ITypeCheckPhaseController createTypeCheckController() {
+        return new TypeCheckPhaseController(
+                symbolFactory, symbolResolver, typeSystem, overloadResolver, visibilityChecker, astHelper);
     }
 }

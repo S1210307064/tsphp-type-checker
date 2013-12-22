@@ -1,56 +1,12 @@
 package ch.tutteli.tsphp.typechecker;
 
 import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.common.ITSPHPErrorAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
-import ch.tutteli.tsphp.typechecker.symbols.IScalarTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
-import ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousTypeSymbol;
 
-import java.util.List;
-
-public interface ITypeCheckerController
+public interface ITypeCheckPhaseController
 {
-
-    IDefiner getDefiner();
-
-    ITypeSystem getTypeSystem();
-
-    boolean checkIsInterface(ITSPHPAst typeAst, ITypeSymbol symbol);
-
-    boolean checkIsClass(ITSPHPAst typeAst, ITypeSymbol symbol);
-
-    boolean checkIsForwardReference(ITSPHPAst ast);
-
-    boolean checkIsOutOfConditionalScope(ITSPHPAst ast);
-
-    boolean checkVariable(ITSPHPAst variableId);
-
-    void sendUpInitialisedSymbols(ITSPHPAst blockConditional);
-
-    void sendUpInitialisedSymbolsAfterIf(ITSPHPAst ifBlock, ITSPHPAst elseBlock);
-
-    void sendUpInitialisedSymbolsAfterSwitch(List<ITSPHPAst> conditionalBlocks, boolean hasDefaultLabel);
-
-    void sendUpInitialisedSymbolsAfterTryCatch(List<ITSPHPAst> conditionalBlocks);
-
-    boolean checkVariableIsInitialised(ITSPHPAst variableId);
-
-    EReturnState evaluateReturnStateAnd(EReturnState firstInstruction, EReturnState secondInstruction);
-
-    EReturnState evaluateReturnStateOr(EReturnState firstInstruction, EReturnState secondInstruction);
-
-    void checkReturnsFromFunction(boolean isReturning, boolean hasAtLeastOneReturnOrThrow, ITSPHPAst identifier);
-
-    void checkReturnsFromMethod(boolean isReturning, boolean hasAtLeastOneReturnOrThrow, ITSPHPAst identifier);
-
-    IVariableSymbol resolveConstant(ITSPHPAst ast);
-
-    IVariableSymbol resolveStaticMember(ITSPHPAst accessor, ITSPHPAst id);
-
-    IVariableSymbol resolveClassConstant(ITSPHPAst accessor, ITSPHPAst id);
-
     IVariableSymbol resolveClassMemberAccess(ITSPHPAst expression, ITSPHPAst identifier);
 
     IMethodSymbol resolveFunctionCall(ITSPHPAst identifier, ITSPHPAst arguments);
@@ -58,32 +14,6 @@ public interface ITypeCheckerController
     IMethodSymbol resolveMethodCall(ITSPHPAst callee, ITSPHPAst identifier, ITSPHPAst arguments);
 
     IMethodSymbol resolveStaticMethodCall(ITSPHPAst callee, ITSPHPAst identifier, ITSPHPAst arguments);
-
-    IVariableSymbol resolveThisSelf(ITSPHPAst $this);
-
-    IVariableSymbol resolveParent(ITSPHPAst $this);
-
-    IVariableSymbol resolveVariable(ITSPHPAst ast);
-
-    ITypeSymbol resolveUseType(ITSPHPAst typeAst, ITSPHPAst alias);
-
-    /**
-     * Try to resolve the type for the given typeAst and returns an
-     * {@link ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousTypeSymbol} if the type could not be found.
-     *
-     * @param typeAst The AST node which contains the type name. For instance, int, MyClass, \Exception etc.
-     * @return The corresponding type or a {@link ch.tutteli.tsphp.typechecker.symbols.erroneous.IErroneousTypeSymbol}
-     * if could not be found.
-     */
-    ITypeSymbol resolveType(ITSPHPAst typeAst);
-
-    IScalarTypeSymbol resolveScalarType(ITSPHPAst typeAst, boolean isNullable);
-
-    ITypeSymbol resolvePrimitiveType(ITSPHPAst typeASt);
-
-    void checkBreakContinueLevel(ITSPHPAst root, ITSPHPAst level);
-
-    IErroneousTypeSymbol createErroneousTypeSymbol(ITSPHPErrorAst typeAst);
 
     ITypeSymbol resolveBinaryOperatorEvalType(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
 

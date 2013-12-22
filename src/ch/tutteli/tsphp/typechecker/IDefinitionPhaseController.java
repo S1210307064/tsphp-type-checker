@@ -10,7 +10,7 @@ import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IInterfaceTypeSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 
-public interface IDefiner
+public interface IDefinitionPhaseController
 {
 
     ILowerCaseStringMap<IGlobalNamespaceScope> getGlobalNamespaceScopes();

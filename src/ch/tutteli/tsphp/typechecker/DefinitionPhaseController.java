@@ -16,16 +16,16 @@ import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 
-public class Definer implements IDefiner
+public class DefinitionPhaseController implements IDefinitionPhaseController
 {
 
     private final ISymbolFactory symbolFactory;
     private final IScopeFactory scopeFactory;
-    //
+
     private final ILowerCaseStringMap<IGlobalNamespaceScope> globalNamespaceScopes = new LowerCaseStringMap<>();
     private final IGlobalNamespaceScope globalDefaultNamespace;
 
-    public Definer(ISymbolFactory aSymbolFactory, IScopeFactory aScopeFactory) {
+    public DefinitionPhaseController(ISymbolFactory aSymbolFactory, IScopeFactory aScopeFactory) {
         symbolFactory = aSymbolFactory;
         scopeFactory = aScopeFactory;
         globalDefaultNamespace = getOrCreateGlobalNamespace("\\");

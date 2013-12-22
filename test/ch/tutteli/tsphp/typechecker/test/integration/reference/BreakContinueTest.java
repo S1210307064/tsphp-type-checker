@@ -29,7 +29,7 @@ public class BreakContinueTest extends AVerifyTimesReferenceTest
 
     @Override
     protected void verifyTimes() {
-        verify(controller).checkBreakContinueLevel(any(ITSPHPAst.class), any(ITSPHPAst.class));
+        verify(referencePhaseController).checkBreakContinueLevel(any(ITSPHPAst.class), any(ITSPHPAst.class));
     }
 
     @Parameterized.Parameters

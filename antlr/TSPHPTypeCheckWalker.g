@@ -11,19 +11,19 @@ package ch.tutteli.tsphp.typechecker.antlr;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.typechecker.ITypeSystem;
-import ch.tutteli.tsphp.typechecker.ITypeCheckerController;
+import ch.tutteli.tsphp.typechecker.ITypeCheckPhaseController;
 import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 }
 
 @members {
-private ITypeCheckerController controller;
+private ITypeCheckPhaseController controller;
 private ITypeSystem typeSystem;
 
-public TSPHPTypeCheckWalker(TreeNodeStream input, ITypeCheckerController theController) {
+public TSPHPTypeCheckWalker(TreeNodeStream input, ITypeCheckPhaseController theController, ITypeSystem theTypeSystem) {
     this(input);
     controller = theController;
-    typeSystem = theController.getTypeSystem();
+    typeSystem = theTypeSystem;
 }
 }
 

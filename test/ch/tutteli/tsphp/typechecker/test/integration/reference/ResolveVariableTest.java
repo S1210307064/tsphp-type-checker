@@ -33,7 +33,7 @@ public class ResolveVariableTest extends AVerifyTimesReferenceTest
 
     @Override
     protected void verifyTimes() {
-        verify(controller, times(howManyTimes)).resolveVariable(any(ITSPHPAst.class));
+        verify(referencePhaseController, times(howManyTimes)).resolveVariable(any(ITSPHPAst.class));
     }
 
     @Parameterized.Parameters

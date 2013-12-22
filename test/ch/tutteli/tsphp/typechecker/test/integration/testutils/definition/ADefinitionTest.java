@@ -5,24 +5,17 @@ import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITSPHPAstAdaptor;
 import ch.tutteli.tsphp.common.ParserUnitDto;
 import ch.tutteli.tsphp.common.TSPHPAstAdaptor;
-import ch.tutteli.tsphp.typechecker.IOverloadResolver;
-import ch.tutteli.tsphp.typechecker.ISymbolResolver;
-import ch.tutteli.tsphp.typechecker.ITypeCheckerController;
 import ch.tutteli.tsphp.typechecker.ITypeSystem;
-import ch.tutteli.tsphp.typechecker.OverloadResolver;
-import ch.tutteli.tsphp.typechecker.SymbolResolver;
-import ch.tutteli.tsphp.typechecker.TypeCheckerController;
 import ch.tutteli.tsphp.typechecker.TypeSystem;
 import ch.tutteli.tsphp.typechecker.antlrmod.ErrorReportingTSPHPDefinitionWalker;
+import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.IScopeHelper;
 import ch.tutteli.tsphp.typechecker.scopes.ScopeHelper;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.ATest;
-import ch.tutteli.tsphp.typechecker.test.integration.testutils.TestDefiner;
+import ch.tutteli.tsphp.typechecker.test.integration.testutils.TestDefinitionPhaseController;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.TestScopeFactory;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.TestSymbolFactory;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.WriteExceptionToConsole;
-import ch.tutteli.tsphp.typechecker.utils.ITypeCheckerAstHelper;
-import ch.tutteli.tsphp.typechecker.utils.TypeCheckerAstHelper;
 import org.antlr.runtime.tree.CommonTreeNodeStream;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -35,19 +28,16 @@ public abstract class ADefinitionTest extends ATest
 
     protected String testString;
     protected String errorMessagePrefix;
-    protected TestDefiner definer;
-    protected ITypeCheckerController controller;
-    protected ITypeSystem typeSystem;
+    protected TestDefinitionPhaseController definer;
     protected TestScopeFactory scopeFactory;
     protected ITSPHPAst ast;
     protected CommonTreeNodeStream commonTreeNodeStream;
     protected ITSPHPAstAdaptor adaptor;
-    protected ITypeCheckerAstHelper typeCheckerAstHelper;
+
     protected ErrorReportingTSPHPDefinitionWalker definition;
     protected TestSymbolFactory symbolFactory;
-    protected ISymbolResolver symbolResolver;
-    protected IOverloadResolver methodResolver;
     protected IScopeHelper scopeHelper;
+    protected ITypeSystem typeSystem;
 
 
     protected void verifyDefinitions() {
@@ -63,21 +53,14 @@ public abstract class ADefinitionTest extends ATest
     }
 
     private void init() {
-        IScopeHelper scopeHelper = createScopeHelper();
-
         adaptor = createAstAdaptor();
-        typeCheckerAstHelper = createTypeCheckerAstHelper();
+
+        scopeHelper = createScopeHelper();
         scopeFactory = createTestScopeFactory(scopeHelper);
+        symbolFactory = createTestSymbolFactory(scopeHelper);
 
-        symbolFactory = createSymbolFactory(scopeHelper);
         definer = createTestDefiner(symbolFactory, scopeFactory);
-        typeSystem = createTypeSystem(symbolFactory);
-
-        symbolResolver = createSymbolResolver(scopeHelper, symbolFactory);
-
-        methodResolver = createOverloadResolver(typeSystem);
-
-        controller = createTypeCheckerController(symbolFactory, typeSystem, definer, symbolResolver, methodResolver);
+        typeSystem = createTypeSystem(symbolFactory, definer.getGlobalDefaultNamespace());
     }
 
     protected void verifyParser() {
@@ -91,16 +74,16 @@ public abstract class ADefinitionTest extends ATest
         verifyParser();
 
         commonTreeNodeStream = new CommonTreeNodeStream(adaptor, ast);
-        //commonTreeNodeStream.setTokenStream(parserUnit.tokenStream);
+        commonTreeNodeStream.setTokenStream(parserUnit.tokenStream);
 
-        definition = new ErrorReportingTSPHPDefinitionWalker(commonTreeNodeStream, controller.getDefiner());
+        definition = new ErrorReportingTSPHPDefinitionWalker(commonTreeNodeStream, definer);
         definition.registerErrorLogger(new WriteExceptionToConsole());
         try {
             definition.downup(ast);
         } catch (Exception e) {
             e.printStackTrace();
-            Assert.fail(testString + " failed. Unexpected exception occurred in the definition phase.\n" + e
-                    .getMessage());
+            Assert.fail(testString + " failed. Unexpected exception occurred in the definition phase.\n"
+                    + e.getMessage());
         }
 
         assertFalse(testString.replaceAll("\n", " ") + " failed - definition throw exception",
@@ -117,52 +100,21 @@ public abstract class ADefinitionTest extends ATest
         return new TSPHPAstAdaptor();
     }
 
-
-    protected ITypeCheckerAstHelper createTypeCheckerAstHelper() {
-        return new TypeCheckerAstHelper();
-    }
-
-
     protected TestScopeFactory createTestScopeFactory(IScopeHelper theScopeHelper) {
         return new TestScopeFactory(theScopeHelper);
     }
 
-    protected TestSymbolFactory createSymbolFactory(IScopeHelper theScopeHelper) {
+    protected TestSymbolFactory createTestSymbolFactory(IScopeHelper theScopeHelper) {
         return new TestSymbolFactory(theScopeHelper);
     }
 
-    protected TestDefiner createTestDefiner(TestSymbolFactory theSymbolFactory, TestScopeFactory theScopeFactory) {
-        return new TestDefiner(theSymbolFactory, theScopeFactory);
+    protected ITypeSystem createTypeSystem(
+            TestSymbolFactory symbolFactory, IGlobalNamespaceScope theGlobalNamespaceScope) {
+        return new TypeSystem(symbolFactory, AstHelperRegistry.get(), theGlobalNamespaceScope);
     }
 
-    protected ITypeSystem createTypeSystem(TestSymbolFactory symbolFactory) {
-        return new TypeSystem(symbolFactory, AstHelperRegistry.get(), definer.getGlobalDefaultNamespace());
-    }
-
-    protected ISymbolResolver createSymbolResolver(IScopeHelper theScopeHelper, TestSymbolFactory theSymbolFactory) {
-        return new SymbolResolver(
-                theScopeHelper,
-                theSymbolFactory,
-                definer.getGlobalNamespaceScopes(),
-                definer.getGlobalDefaultNamespace());
-    }
-
-    protected IOverloadResolver createOverloadResolver(ITypeSystem theTypeSystem) {
-        return new OverloadResolver(theTypeSystem);
-    }
-
-    protected ITypeCheckerController createTypeCheckerController(
-            TestSymbolFactory theSymbolFactory,
-            ITypeSystem theTypeSystem,
-            TestDefiner theDefiner,
-            ISymbolResolver theSymbolResolver,
-            IOverloadResolver theMethodResolver) {
-        return new TypeCheckerController(
-                theSymbolFactory,
-                theTypeSystem,
-                theDefiner,
-                theSymbolResolver,
-                theMethodResolver,
-                typeCheckerAstHelper);
+    protected TestDefinitionPhaseController createTestDefiner(TestSymbolFactory theSymbolFactory,
+            TestScopeFactory theScopeFactory) {
+        return new TestDefinitionPhaseController(theSymbolFactory, theScopeFactory);
     }
 }

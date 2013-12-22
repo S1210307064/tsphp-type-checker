@@ -10,18 +10,18 @@ package ch.tutteli.tsphp.typechecker.antlr;
 
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.typechecker.IDefiner;
+import ch.tutteli.tsphp.typechecker.IDefinitionPhaseController;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
 
 }
 
 @members {
 
-private IDefiner definer;
+private IDefinitionPhaseController definer;
 private IScope currentScope;
 
 
-public TSPHPDefinitionWalker(TreeNodeStream input, IDefiner theDefiner) {
+public TSPHPDefinitionWalker(TreeNodeStream input, IDefinitionPhaseController theDefiner) {
     this(input);
     definer = theDefiner;    
 }

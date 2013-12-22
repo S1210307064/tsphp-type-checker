@@ -1,12 +1,10 @@
 package ch.tutteli.tsphp.typechecker.test.integration.testutils.reference;
 
-import ch.tutteli.tsphp.typechecker.IOverloadResolver;
+import ch.tutteli.tsphp.typechecker.IReferencePhaseController;
 import ch.tutteli.tsphp.typechecker.ISymbolResolver;
-import ch.tutteli.tsphp.typechecker.ITypeCheckerController;
-import ch.tutteli.tsphp.typechecker.ITypeSystem;
-import ch.tutteli.tsphp.typechecker.TypeCheckerController;
-import ch.tutteli.tsphp.typechecker.test.integration.testutils.TestDefiner;
-import ch.tutteli.tsphp.typechecker.test.integration.testutils.TestSymbolFactory;
+import ch.tutteli.tsphp.typechecker.IVisibilityChecker;
+import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
+import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
 import org.junit.Ignore;
 import org.mockito.exceptions.base.MockitoAssertionError;
 
@@ -35,18 +33,12 @@ public abstract class AVerifyTimesReferenceTest extends AReferenceTest
     }
 
     @Override
-    protected ITypeCheckerController createTypeCheckerController(
-            TestSymbolFactory theSymbolFactory,
-            ITypeSystem theTypeSystem,
-            TestDefiner theDefiner,
+    protected IReferencePhaseController createReferencePhaseController(
+            ISymbolFactory theSymbolFactory,
             ISymbolResolver theSymbolResolver,
-            IOverloadResolver theMethodResolver) {
-        return spy(new TypeCheckerController(
-                theSymbolFactory,
-                theTypeSystem,
-                theDefiner,
-                theSymbolResolver,
-                theMethodResolver,
-                typeCheckerAstHelper));
+            IVisibilityChecker theVisibilityChecker,
+            IGlobalNamespaceScope theGlobalDefaultNamespace) {
+        return spy(super.createReferencePhaseController(
+                theSymbolFactory, theSymbolResolver, theVisibilityChecker, theGlobalDefaultNamespace));
     }
 }

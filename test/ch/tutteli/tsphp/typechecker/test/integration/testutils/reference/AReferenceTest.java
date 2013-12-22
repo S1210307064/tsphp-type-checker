@@ -1,9 +1,19 @@
 package ch.tutteli.tsphp.typechecker.test.integration.testutils.reference;
 
 import ch.tutteli.tsphp.common.IErrorReporter;
-import ch.tutteli.tsphp.typechecker.ITypeCheckerController;
+import ch.tutteli.tsphp.common.ILowerCaseStringMap;
+import ch.tutteli.tsphp.typechecker.IReferencePhaseController;
+import ch.tutteli.tsphp.typechecker.ISymbolResolver;
+import ch.tutteli.tsphp.typechecker.IVisibilityChecker;
+import ch.tutteli.tsphp.typechecker.ReferencePhaseController;
+import ch.tutteli.tsphp.typechecker.SymbolResolver;
+import ch.tutteli.tsphp.typechecker.VisibilityChecker;
 import ch.tutteli.tsphp.typechecker.antlrmod.ErrorReportingTSPHPReferenceWalker;
 import ch.tutteli.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
+import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
+import ch.tutteli.tsphp.typechecker.scopes.IScopeHelper;
+import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
+import ch.tutteli.tsphp.typechecker.test.integration.testutils.TestSymbolFactory;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.WriteExceptionToConsole;
 import ch.tutteli.tsphp.typechecker.test.integration.testutils.definition.ADefinitionTest;
 import org.antlr.runtime.RecognitionException;
@@ -18,9 +28,22 @@ public abstract class AReferenceTest extends ADefinitionTest
 {
 
     protected ErrorReportingTSPHPReferenceWalker reference;
+    protected IReferencePhaseController referencePhaseController;
+    protected ISymbolResolver symbolResolver;
+    protected IVisibilityChecker visibilityChecker;
 
     public AReferenceTest(String testString) {
         super(testString);
+
+        init();
+    }
+
+    private void init() {
+        symbolResolver = createSymbolResolver(
+                scopeHelper, symbolFactory, definer.getGlobalNamespaceScopes(), definer.getGlobalDefaultNamespace());
+        visibilityChecker = createVisibilityChecker();
+        referencePhaseController = createReferencePhaseController(
+                symbolFactory, symbolResolver, visibilityChecker, definer.getGlobalDefaultNamespace());
     }
 
     protected abstract void verifyReferences();
@@ -40,8 +63,10 @@ public abstract class AReferenceTest extends ADefinitionTest
     }
 
     protected void afterVerifyDefinitions() {
+
+
         commonTreeNodeStream.reset();
-        reference = createReferenceWalker(commonTreeNodeStream, controller);
+        reference = createReferenceWalker(commonTreeNodeStream, referencePhaseController);
         reference.registerErrorLogger(new WriteExceptionToConsole());
         try {
             reference.compilationUnit();
@@ -52,8 +77,8 @@ public abstract class AReferenceTest extends ADefinitionTest
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
-            Assert.fail(testString + " failed. Unexpected exception occurred in the reference phase.\n" + e
-                    .getMessage());
+            Assert.fail(testString + " failed. Unexpected exception occurred in the reference phase.\n"
+                    + e.getMessage());
         }
         checkReferences();
     }
@@ -70,8 +95,30 @@ public abstract class AReferenceTest extends ADefinitionTest
         return fullType;
     }
 
-    protected ErrorReportingTSPHPReferenceWalker createReferenceWalker(CommonTreeNodeStream theCommonTreeNodeStream,
-            ITypeCheckerController theController) {
+    protected ISymbolResolver createSymbolResolver(
+            IScopeHelper theScopeHelper,
+            TestSymbolFactory theSymbolFactory,
+            ILowerCaseStringMap<IGlobalNamespaceScope> namespaceScopes,
+            IGlobalNamespaceScope theGlobalDefaultNamespace) {
+        return new SymbolResolver(theScopeHelper, theSymbolFactory, namespaceScopes, theGlobalDefaultNamespace);
+    }
+
+    protected IVisibilityChecker createVisibilityChecker() {
+        return new VisibilityChecker();
+    }
+
+    protected IReferencePhaseController createReferencePhaseController(
+            ISymbolFactory theSymbolFactory,
+            ISymbolResolver theSymbolResolver,
+            IVisibilityChecker theVisibilityChecker,
+            IGlobalNamespaceScope globalDefaultNamespace) {
+
+        return new ReferencePhaseController(
+                theSymbolFactory, theSymbolResolver, theVisibilityChecker, globalDefaultNamespace);
+    }
+
+    protected ErrorReportingTSPHPReferenceWalker createReferenceWalker(
+            CommonTreeNodeStream theCommonTreeNodeStream, IReferencePhaseController theController) {
         return new ErrorReportingTSPHPReferenceWalker(theCommonTreeNodeStream, theController);
     }
 }

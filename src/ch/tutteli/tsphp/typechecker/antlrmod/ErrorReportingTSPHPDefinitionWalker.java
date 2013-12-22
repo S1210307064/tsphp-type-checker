@@ -3,7 +3,7 @@ package ch.tutteli.tsphp.typechecker.antlrmod;
 import ch.tutteli.tsphp.common.ErrorReporterHelper;
 import ch.tutteli.tsphp.common.IErrorLogger;
 import ch.tutteli.tsphp.common.IErrorReporter;
-import ch.tutteli.tsphp.typechecker.IDefiner;
+import ch.tutteli.tsphp.typechecker.IDefinitionPhaseController;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.TreeNodeStream;
@@ -17,7 +17,7 @@ public class ErrorReportingTSPHPDefinitionWalker extends TSPHPDefinitionWalker i
     private final Collection<IErrorLogger> errorLoggers = new ArrayDeque<>();
     private boolean hasFoundError;
 
-    public ErrorReportingTSPHPDefinitionWalker(TreeNodeStream input, IDefiner theDefiner) {
+    public ErrorReportingTSPHPDefinitionWalker(TreeNodeStream input, IDefinitionPhaseController theDefiner) {
         super(input, theDefiner);
     }
 

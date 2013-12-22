@@ -11,11 +11,13 @@ import ch.tutteli.tsphp.typechecker.antlrmod.ErrorReportingTSPHPTypeCheckWalker;
 import ch.tutteli.tsphp.typechecker.error.ErrorMessageProvider;
 import ch.tutteli.tsphp.typechecker.error.TypeCheckErrorReporter;
 import ch.tutteli.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
+import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.IScopeHelper;
 import ch.tutteli.tsphp.typechecker.scopes.ScopeFactory;
 import ch.tutteli.tsphp.typechecker.scopes.ScopeHelper;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolFactory;
 import ch.tutteli.tsphp.typechecker.symbols.SymbolFactory;
+import ch.tutteli.tsphp.typechecker.utils.ITypeCheckerAstHelper;
 import ch.tutteli.tsphp.typechecker.utils.TypeCheckerAstHelper;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.TreeNodeStream;
@@ -26,47 +28,113 @@ import java.util.Collection;
 public class TypeChecker implements ITypeChecker, IErrorLogger
 {
 
-    private ITypeCheckerController controller;
+    private IDefinitionPhaseController definitionPhaseController;
+    private IReferencePhaseController referencePhaseController;
+    private ITypeCheckPhaseController typeCheckPhaseController;
+    private ITypeSystem typeSystem;
+
     private final Collection<IErrorLogger> errorLoggers = new ArrayDeque<>();
     private boolean hasFoundError = false;
 
     public TypeChecker() {
         TypeCheckErrorReporterRegistry.set(new TypeCheckErrorReporter(new ErrorMessageProvider()));
-
-        init();
     }
 
     private void init() {
-        IScopeHelper scopeHelper = new ScopeHelper();
-        ISymbolFactory symbolFactory = new SymbolFactory(scopeHelper);
-        IDefiner definer = new Definer(symbolFactory, new ScopeFactory(scopeHelper));
+        IScopeHelper scopeHelper = createScopeHelper();
+        ISymbolFactory symbolFactory = createSymbolFactory(scopeHelper);
+        definitionPhaseController = createDefinitionPhaseController(scopeHelper, symbolFactory);
+        IGlobalNamespaceScope globalDefaultNamespace = definitionPhaseController.getGlobalDefaultNamespace();
 
-        ITypeSystem typeSystem = new TypeSystem(
+        typeSystem = createTypeSystem(symbolFactory, globalDefaultNamespace);
+
+        ISymbolResolver symbolResolver = createSymbolResolver(scopeHelper, symbolFactory, globalDefaultNamespace);
+        IVisibilityChecker visibilityChecker = createVisibilityChecker();
+
+        referencePhaseController = createReferencePhaseController(
+                symbolFactory, symbolResolver, visibilityChecker, globalDefaultNamespace);
+
+        IOverloadResolver overloadResolver = createOverloadResolver(typeSystem);
+        ITypeCheckerAstHelper typeCheckerAstHelper = createTypeCheckerAstHelper();
+
+        typeCheckPhaseController = createTypeCheckPhaseController(
+                symbolFactory, typeSystem, symbolResolver, overloadResolver, visibilityChecker, typeCheckerAstHelper);
+    }
+
+    protected IScopeHelper createScopeHelper() {
+        return new ScopeHelper();
+    }
+
+    protected SymbolFactory createSymbolFactory(IScopeHelper scopeHelper) {
+        return new SymbolFactory(scopeHelper);
+    }
+
+    protected TypeSystem createTypeSystem(ISymbolFactory symbolFactory, IGlobalNamespaceScope globalDefaultNamespace) {
+        return new TypeSystem(
                 symbolFactory,
                 AstHelperRegistry.get(),
-                definer.getGlobalDefaultNamespace());
+                globalDefaultNamespace);
+    }
 
-        ISymbolResolver symbolResolver = new SymbolResolver(
+    protected SymbolResolver createSymbolResolver(IScopeHelper scopeHelper, ISymbolFactory symbolFactory,
+            IGlobalNamespaceScope globalDefaultNamespace) {
+        return new SymbolResolver(
                 scopeHelper,
                 symbolFactory,
-                definer.getGlobalNamespaceScopes(),
-                definer.getGlobalDefaultNamespace());
+                definitionPhaseController.getGlobalNamespaceScopes(),
+                globalDefaultNamespace
+        );
+    }
 
-        IOverloadResolver overloadResolver = new OverloadResolver(typeSystem);
+    protected IVisibilityChecker createVisibilityChecker() {
+        return new VisibilityChecker();
+    }
 
-        controller = new TypeCheckerController(
+    protected ReferencePhaseController createReferencePhaseController(
+            ISymbolFactory symbolFactory,
+            ISymbolResolver symbolResolver,
+            IVisibilityChecker visibilityChecker,
+            IGlobalNamespaceScope globalDefaultNamespace) {
+        return new ReferencePhaseController(
                 symbolFactory,
-                typeSystem,
-                definer,
                 symbolResolver,
+                visibilityChecker,
+                globalDefaultNamespace);
+    }
+
+    protected OverloadResolver createOverloadResolver(ITypeSystem typeSystem) {
+        return new OverloadResolver(typeSystem);
+    }
+
+    protected ITypeCheckerAstHelper createTypeCheckerAstHelper() {
+        return new TypeCheckerAstHelper();
+    }
+
+
+    protected TypeCheckPhaseController createTypeCheckPhaseController(
+            ISymbolFactory symbolFactory,
+            ITypeSystem typeSystem,
+            ISymbolResolver symbolResolver,
+            IOverloadResolver overloadResolver,
+            IVisibilityChecker visibilityChecker,
+            ITypeCheckerAstHelper astHelper) {
+        return new TypeCheckPhaseController(
+                symbolFactory,
+                symbolResolver, typeSystem,
                 overloadResolver,
-                new TypeCheckerAstHelper());
+                visibilityChecker,
+                astHelper);
+    }
+
+    protected DefinitionPhaseController createDefinitionPhaseController(IScopeHelper scopeHelper, ISymbolFactory
+            symbolFactory) {
+        return new DefinitionPhaseController(symbolFactory, new ScopeFactory(scopeHelper));
     }
 
     @Override
     public void enrichWithDefinitions(ITSPHPAst ast, TreeNodeStream treeNodeStream) {
         ErrorReportingTSPHPDefinitionWalker definition =
-                new ErrorReportingTSPHPDefinitionWalker(treeNodeStream, controller.getDefiner());
+                new ErrorReportingTSPHPDefinitionWalker(treeNodeStream, definitionPhaseController);
         for (IErrorLogger logger : errorLoggers) {
             definition.registerErrorLogger(logger);
         }
@@ -78,7 +146,7 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
     public void enrichWithReferences(ITSPHPAst ast, TreeNodeStream treeNodeStream) {
         treeNodeStream.reset();
         ErrorReportingTSPHPReferenceWalker reference =
-                new ErrorReportingTSPHPReferenceWalker(treeNodeStream, controller);
+                new ErrorReportingTSPHPReferenceWalker(treeNodeStream, referencePhaseController);
         for (IErrorLogger logger : errorLoggers) {
             reference.registerErrorLogger(logger);
         }
@@ -95,6 +163,19 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
         }
     }
 
+
+    @Override
+    public void doTypeChecking(ITSPHPAst ast, TreeNodeStream treeNodeStream) {
+        treeNodeStream.reset();
+        ErrorReportingTSPHPTypeCheckWalker typeCheckWalker =
+                new ErrorReportingTSPHPTypeCheckWalker(treeNodeStream, typeCheckPhaseController, typeSystem);
+        for (IErrorLogger logger : errorLoggers) {
+            typeCheckWalker.registerErrorLogger(logger);
+        }
+        typeCheckWalker.registerErrorLogger(this);
+        typeCheckWalker.downup(ast);
+    }
+
     @Override
     public boolean hasFoundError() {
         return hasFoundError || TypeCheckErrorReporterRegistry.get().hasFoundError();
@@ -104,18 +185,6 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
     public void registerErrorLogger(IErrorLogger errorLogger) {
         errorLoggers.add(errorLogger);
         TypeCheckErrorReporterRegistry.get().registerErrorLogger(errorLogger);
-    }
-
-    @Override
-    public void doTypeChecking(ITSPHPAst ast, TreeNodeStream treeNodeStream) {
-        treeNodeStream.reset();
-        ErrorReportingTSPHPTypeCheckWalker typeCheckWalker =
-                new ErrorReportingTSPHPTypeCheckWalker(treeNodeStream, controller);
-        for (IErrorLogger logger : errorLoggers) {
-            typeCheckWalker.registerErrorLogger(logger);
-        }
-        typeCheckWalker.registerErrorLogger(this);
-        typeCheckWalker.downup(ast);
     }
 
     @Override

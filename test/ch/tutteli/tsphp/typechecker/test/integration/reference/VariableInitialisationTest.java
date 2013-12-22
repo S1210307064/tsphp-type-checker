@@ -33,7 +33,7 @@ public class VariableInitialisationTest extends AVerifyTimesReferenceTest
 
     @Override
     protected void verifyTimes() {
-        verify(controller, times(howManyTimes)).checkVariableIsInitialised(any(ITSPHPAst.class));
+        verify(referencePhaseController, times(howManyTimes)).checkVariableIsInitialised(any(ITSPHPAst.class));
     }
 
 
