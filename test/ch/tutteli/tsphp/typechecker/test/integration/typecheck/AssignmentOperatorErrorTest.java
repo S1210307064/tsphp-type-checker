@@ -29,8 +29,9 @@ public class AssignmentOperatorErrorTest extends ATypeCheckErrorTest
     public static Collection<Object[]> testStrings() {
         Collection<Object[]> collection = AssignHelper.getAssignmentErrorTestStrings(false);
 
-        //see TSPHP-490 - erroneous symbols should not been investigated further
+
         collection.addAll(Arrays.asList(new Object[][]{
+                //see TSPHP-490 - erroneous symbols should not been investigated further
                 {"int $a =\n nonExistingFunction();", refErrorDto("nonExistingFunction()", 2, 1)},
                 {
                         "int $notAClassSymbol=1; int $a =\n $notAClassSymbol->foo();",
@@ -41,6 +42,8 @@ public class AssignmentOperatorErrorTest extends ATypeCheckErrorTest
                         "int $notAClassSymbol=1; int $a; $a =\n $notAClassSymbol->foo();",
                         refErrorDto("$notAClassSymbol", 2, 1)
                 },
+                //see TSPHP-698 - const assignment is only allowed in the declaration
+                {"const int a = 1;\n a = 2;", refErrorDto("a#", 2, 1)}
         }));
         return collection;
     }

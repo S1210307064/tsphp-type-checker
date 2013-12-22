@@ -65,18 +65,18 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
         return new ScopeHelper();
     }
 
-    protected SymbolFactory createSymbolFactory(IScopeHelper scopeHelper) {
+    protected ISymbolFactory createSymbolFactory(IScopeHelper scopeHelper) {
         return new SymbolFactory(scopeHelper);
     }
 
-    protected TypeSystem createTypeSystem(ISymbolFactory symbolFactory, IGlobalNamespaceScope globalDefaultNamespace) {
+    protected ITypeSystem createTypeSystem(ISymbolFactory symbolFactory, IGlobalNamespaceScope globalDefaultNamespace) {
         return new TypeSystem(
                 symbolFactory,
                 AstHelperRegistry.get(),
                 globalDefaultNamespace);
     }
 
-    protected SymbolResolver createSymbolResolver(IScopeHelper scopeHelper, ISymbolFactory symbolFactory,
+    protected ISymbolResolver createSymbolResolver(IScopeHelper scopeHelper, ISymbolFactory symbolFactory,
             IGlobalNamespaceScope globalDefaultNamespace) {
         return new SymbolResolver(
                 scopeHelper,
@@ -90,7 +90,7 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
         return new VisibilityChecker();
     }
 
-    protected ReferencePhaseController createReferencePhaseController(
+    protected IReferencePhaseController createReferencePhaseController(
             ISymbolFactory symbolFactory,
             ISymbolResolver symbolResolver,
             IVisibilityChecker visibilityChecker,
@@ -102,7 +102,7 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
                 globalDefaultNamespace);
     }
 
-    protected OverloadResolver createOverloadResolver(ITypeSystem typeSystem) {
+    protected IOverloadResolver createOverloadResolver(ITypeSystem typeSystem) {
         return new OverloadResolver(typeSystem);
     }
 
@@ -111,7 +111,7 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
     }
 
 
-    protected TypeCheckPhaseController createTypeCheckPhaseController(
+    protected ITypeCheckPhaseController createTypeCheckPhaseController(
             ISymbolFactory symbolFactory,
             ITypeSystem typeSystem,
             ISymbolResolver symbolResolver,
@@ -126,7 +126,7 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
                 astHelper);
     }
 
-    protected DefinitionPhaseController createDefinitionPhaseController(IScopeHelper scopeHelper, ISymbolFactory
+    protected IDefinitionPhaseController createDefinitionPhaseController(IScopeHelper scopeHelper, ISymbolFactory
             symbolFactory) {
         return new DefinitionPhaseController(symbolFactory, new ScopeFactory(scopeHelper));
     }
