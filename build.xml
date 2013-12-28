@@ -1,4 +1,4 @@
-<project name="typechecker" default="build" basedir=".">
+<project name="typechecker" default="common.build" basedir=".">
 
     <property environment="env"/>
     <import file="${basedir}/ant/build-common.xml" as="common"/>

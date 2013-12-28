@@ -109,7 +109,6 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
         return new TypeCheckerAstHelper();
     }
 
-
     protected ITypeCheckPhaseController createTypeCheckPhaseController(
             ISymbolFactory symbolFactory,
             ITypeSystem typeSystem,
@@ -162,13 +161,12 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
         }
     }
 
-
     @Override
     public void doTypeChecking(ITSPHPAst ast, TreeNodeStream treeNodeStream) {
         treeNodeStream.reset();
 
         ErrorReportingTSPHPTypeCheckWalker typeCheckWalker = new ErrorReportingTSPHPTypeCheckWalker(
-                        treeNodeStream, typeCheckPhaseController, accessResolver, typeSystem);
+                treeNodeStream, typeCheckPhaseController, accessResolver, typeSystem);
 
         for (IErrorLogger logger : errorLoggers) {
             typeCheckWalker.registerErrorLogger(logger);

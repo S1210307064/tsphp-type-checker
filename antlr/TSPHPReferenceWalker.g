@@ -49,12 +49,12 @@ namespaceBody
 	;
 
 statement
-	:	useDeclarationList
+	:	useDefinitionList
 	|	definition
 	|	instruction[false]
 	;
 	
-useDeclarationList
+useDefinitionList
 	:	^(Use	useDeclaration+)
 	;
 	
@@ -71,13 +71,13 @@ useDeclaration
 	;
 
 definition
-	:	classDeclaration
-	|	interfaceDeclaration
-	|	functionDeclaration
-	|	constDeclarationList
+	:	classDefinition
+	|	interfaceDefinition
+	|	functionDefinition
+	|	constDefinitionList
 	;
 	
-classDeclaration
+classDefinition
 	:	^(Class 
 			cMod=. 
 			identifier=Identifier 
@@ -121,13 +121,13 @@ classBody
 	;
 	
 classBodyDefinition
-	:	constDeclarationList
-	|	classMemberDeclaration
-	|	constructDeclaration
-	|	methodDeclaration
+	:	constDefinitionList
+	|	classMemberDefinition
+	|	constructDefinition
+	|	methodDefinition
 	;
 
-constDeclarationList
+constDefinitionList
 	:	^(CONSTANT_DECLARATION_LIST ^(TYPE tMod=. scalarTypes[false]) constDeclaration[$scalarTypes.type]+)
 	;
 
@@ -188,7 +188,7 @@ staticAccessor
 		}	
 	;
 	
-classMemberDeclaration
+classMemberDefinition
 	:	^(CLASS_MEMBER variableDeclarationList[true])
 	;
 	
@@ -235,7 +235,7 @@ accessModifier
 	|	Public
 	;
 
-constructDeclaration
+constructDefinition
 	:	^(identifier='__construct' 
 			.
 			^(TYPE rtMod=. voidType) 
@@ -249,7 +249,7 @@ constructDeclaration
 		}
 	;
 		
-methodDeclaration
+methodDefinition
 //Warning! start duplicated code as in functionDeclaration
 	@init{
 	    hasAtLeastOneReturnOrThrow = false;
@@ -307,7 +307,7 @@ returnTypeModifier returns[boolean isNullable]
 		{$isNullable = $nullable!=null;}
 	;
 	
-functionDeclaration
+functionDefinition
 //Warning! start duplicated code as in functionDeclaration
 	@init{
 	    hasAtLeastOneReturnOrThrow = false;
@@ -368,7 +368,7 @@ block[boolean shallCheckIfReturns] returns[boolean isReturning]
 	|	BLOCK {$isReturning = false;}
 	;
 
-interfaceDeclaration
+interfaceDefinition
 	:	^('interface' iMod=. identifier=Identifier extIds=interfaceExtendsDeclaration[$identifier] interfaceBody)
 		{
 			INamespaceScope namespaceScope = (INamespaceScope) $identifier.getScope();
@@ -393,9 +393,9 @@ interfaceBody
 	;
 	
 interfaceBodyDefinition
-	:	constDeclarationList
-	|	methodDeclaration
-	|	constructDeclaration
+	:	constDefinitionList
+	|	methodDefinition
+	|	constructDefinition
 	;	
 
 instructions[boolean shallCheckIfReturns] returns[boolean isReturning]

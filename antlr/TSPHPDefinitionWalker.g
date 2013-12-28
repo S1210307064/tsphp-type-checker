@@ -30,17 +30,17 @@ public TSPHPDefinitionWalker(TreeNodeStream input, IDefinitionPhaseController th
 
 topdown
 		//scoped symbols
-    	:	namespaceDeclaration
-    	|	useDeclarationList
-    	|	interfaceDeclaration
-    	|	classDeclaration
-    	|	constructDeclaration
-    	|	methodFunctionDeclaration
+    	:	namespaceDefinition
+    	|	useDefinitionList
+    	|	interfaceDefinition
+    	|	classDefinition
+    	|	constructDefinition
+    	|	methodFunctionDefinition
     	|	blockConditional
     	|	foreachLoop
     
     		//symbols
-	|	constantDeclarationList
+	|	constantDefinitionList
 	|	parameterDeclarationList
 	|	variableDeclarationList
 	|	methodFunctionCall
@@ -71,12 +71,12 @@ exitScope
 		{currentScope = currentScope.getEnclosingScope();}
 	;   
     
-namespaceDeclaration
+namespaceDefinition
 	:	^(Namespace t=(TYPE_NAME|DEFAULT_NAMESPACE) .) 
 		{currentScope = definer.defineNamespace($t.text); }
 	;
 
-useDeclarationList
+useDefinitionList
 	:	^('use'	useDeclaration+)
 	;
 	
@@ -85,22 +85,22 @@ useDeclaration
 		{definer.defineUse((INamespaceScope) currentScope, $type, $alias);}
 	;
 	
-interfaceDeclaration
+interfaceDefinition
 	:	^('interface' iMod=. identifier=Identifier extIds=. .)
 		{currentScope = definer.defineInterface(currentScope, $iMod, $identifier, $extIds); }
 	;
 	
-classDeclaration
+classDefinition
 	:	^('class' cMod=. identifier=Identifier extId=. implIds=. .) 
 		{currentScope = definer.defineClass(currentScope, $cMod, $identifier, $extId, $implIds); }	
 	;
 	
-constructDeclaration
+constructDefinition
 	:	^(identifier='__construct' mMod=.  ^(TYPE rtMod=. returnType=.) . .)
 		{currentScope = definer.defineConstruct(currentScope, $mMod, $rtMod, $returnType, $identifier);}
 	;
 
-methodFunctionDeclaration
+methodFunctionDefinition
 	:	^( 	(	METHOD_DECLARATION
 			|	Function
 			) 
@@ -125,7 +125,7 @@ foreachLoop
 		}	
 	;
 	
-constantDeclarationList
+constantDefinitionList
 	:	^(CONSTANT_DECLARATION_LIST ^(TYPE tMod=. type=.) constantDeclaration[$tMod, $type]+)
 	;
 
@@ -208,6 +208,3 @@ returnBreakContinue
 			$start.setScope(currentScope);
 		}
 	;
-
-
-
