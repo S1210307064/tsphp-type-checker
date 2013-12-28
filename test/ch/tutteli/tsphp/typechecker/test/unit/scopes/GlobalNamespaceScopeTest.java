@@ -56,7 +56,7 @@ public class GlobalNamespaceScopeTest
         globalNamespaceScope.doubleDefinitionCheckCaseInsensitive(symbol);
 
         ArgumentCaptor<ISymbol> argument = ArgumentCaptor.forClass(ISymbol.class);
-        verify(scopeHelper).doubleDefinitionCheck(anyMap(), argument.capture());
+        verify(scopeHelper).checkIsNotDoubleDefinition(anyMap(), argument.capture());
         assertThat(argument.getValue(), is(symbol));
     }
 
@@ -69,7 +69,7 @@ public class GlobalNamespaceScopeTest
         globalNamespaceScope.doubleDefinitionCheck(symbol);
 
         ArgumentCaptor<ISymbol> argument = ArgumentCaptor.forClass(ISymbol.class);
-        verify(scopeHelper).doubleDefinitionCheck(anyMap(), argument.capture());
+        verify(scopeHelper).checkIsNotDoubleDefinition(anyMap(), argument.capture());
         assertThat(argument.getValue(), is(symbol));
     }
 

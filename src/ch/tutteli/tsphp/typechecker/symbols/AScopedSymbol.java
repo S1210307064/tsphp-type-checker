@@ -47,7 +47,7 @@ public abstract class AScopedSymbol extends ASymbolWithModifier implements IScop
 
     @Override
     public boolean doubleDefinitionCheck(ISymbol symbol) {
-        return scopeHelper.doubleDefinitionCheck(symbols, symbol);
+        return scopeHelper.checkIsNotDoubleDefinition(symbols, symbol);
     }
 
     //Warning! start code duplication - same as in AScope

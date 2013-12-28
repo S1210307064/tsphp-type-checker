@@ -39,11 +39,11 @@ public interface IReferencePhaseController
 
     boolean checkIsClass(ITSPHPAst typeAst, ITypeSymbol symbol);
 
-    boolean checkVariable(ITSPHPAst variableId);
+    boolean checkVariableIsOkToUse(ITSPHPAst variableId);
 
-    boolean checkIsForwardReference(ITSPHPAst ast);
+    boolean checkIsNotForwardReference(ITSPHPAst ast);
 
-    boolean checkIsOutOfConditionalScope(ITSPHPAst ast);
+    boolean checkIsNotOutOfConditionalScope(ITSPHPAst ast);
 
     boolean checkVariableIsInitialised(ITSPHPAst variableId);
 

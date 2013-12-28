@@ -129,7 +129,8 @@ public class ConditionalScopeTest
         ITypeCheckErrorReporter errorReporter = mock(ITypeCheckErrorReporter.class);
         TypeCheckErrorReporterRegistry.set(errorReporter);
         final ISymbol earlierDefinedSymbol = mock(ISymbol.class);
-        when(scopeHelper.doubleDefinitionCheck(anyMap(), any(ISymbol.class), any(IAlreadyDefinedMethodCaller.class)))
+        when(scopeHelper.checkIsNotDoubleDefinition(anyMap(), any(ISymbol.class), any(IAlreadyDefinedMethodCaller
+                .class)))
                 .thenAnswer(new Answer()
                 {
                     public Object answer(InvocationOnMock invocation) {
@@ -188,7 +189,7 @@ public class ConditionalScopeTest
         verify(scope).getSymbols();
         ArgumentCaptor<ILowerCaseStringMap> symbolsArg = ArgumentCaptor.forClass(ILowerCaseStringMap.class);
         ArgumentCaptor<ISymbol> symbolArg = ArgumentCaptor.forClass(ISymbol.class);
-        verify(scopeHelper).doubleDefinitionCheck(symbolsArg.capture(), symbolArg.capture(),
+        verify(scopeHelper).checkIsNotDoubleDefinition(symbolsArg.capture(), symbolArg.capture(),
                 any(IAlreadyDefinedMethodCaller.class));
         assertThat(symbolsArg.getValue(), is(symbols));
         assertThat(symbolArg.getValue(), is(symbol));

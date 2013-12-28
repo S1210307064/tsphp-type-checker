@@ -339,7 +339,7 @@ public class NamespaceScopeTest
         ITSPHPAst useDefinitionAst = mock(ITSPHPAst.class);
         IAliasSymbol symbol = createAliasSymbol("aliasName", useDefinitionAst);
         //not double defined
-        when(scopeHelper.doubleDefinitionCheck(symbol, symbol)).thenReturn(true);
+        when(scopeHelper.checkIsNotDoubleDefinition(symbol, symbol)).thenReturn(true);
 
         IGlobalNamespaceScope globalNamespaceScope = mock(IGlobalNamespaceScope.class);
         //there is not type with the name "aliasName" thus it returns null
@@ -351,7 +351,7 @@ public class NamespaceScopeTest
         boolean result = namespaceScope.useDefinitionCheck(symbol);
 
         assertTrue(result);
-        verify(scopeHelper).doubleDefinitionCheck(symbol, symbol);
+        verify(scopeHelper).checkIsNotDoubleDefinition(symbol, symbol);
         verify(globalNamespaceScope).getTypeSymbolWhichClashesWithUse(useDefinitionAst);
     }
 
@@ -365,7 +365,7 @@ public class NamespaceScopeTest
         ITSPHPAst useDefinitionAst = mock(ITSPHPAst.class);
         IAliasSymbol symbol = createAliasSymbol("aliasName", useDefinitionAst);
         //not double defined
-        when(scopeHelper.doubleDefinitionCheck(symbol, symbol)).thenReturn(true);
+        when(scopeHelper.checkIsNotDoubleDefinition(symbol, symbol)).thenReturn(true);
 
         ITSPHPAst classDefinitionAst = mock(ITSPHPAst.class);
         IScope anotherScope = mock(IScope.class);
@@ -381,7 +381,7 @@ public class NamespaceScopeTest
         boolean result = namespaceScope.useDefinitionCheck(symbol);
 
         assertTrue(result);
-        verify(scopeHelper).doubleDefinitionCheck(symbol, symbol);
+        verify(scopeHelper).checkIsNotDoubleDefinition(symbol, symbol);
         verify(globalNamespaceScope).getTypeSymbolWhichClashesWithUse(useDefinitionAst);
         verify(useDefinitionAst).isDefinedEarlierThan(classDefinitionAst);
         verify(typeSymbol).getDefinitionScope();
@@ -392,7 +392,7 @@ public class NamespaceScopeTest
         IAliasSymbol firstSymbol = createAliasSymbol("aliasName");
         ITSPHPAst useDefinitionAst = mock(ITSPHPAst.class);
         IAliasSymbol symbol = createAliasSymbol("aliasName", useDefinitionAst);
-        when(scopeHelper.doubleDefinitionCheck(firstSymbol, symbol)).thenReturn(false);
+        when(scopeHelper.checkIsNotDoubleDefinition(firstSymbol, symbol)).thenReturn(false);
 
         //act
         INamespaceScope namespaceScope = createNamespaceScope();
@@ -401,7 +401,7 @@ public class NamespaceScopeTest
         boolean result = namespaceScope.useDefinitionCheck(symbol);
 
         assertFalse(result);
-        verify(scopeHelper).doubleDefinitionCheck(firstSymbol, symbol);
+        verify(scopeHelper).checkIsNotDoubleDefinition(firstSymbol, symbol);
     }
 
     @Test
@@ -412,7 +412,7 @@ public class NamespaceScopeTest
         ITSPHPAst useDefinitionAst = mock(ITSPHPAst.class);
         IAliasSymbol symbol = createAliasSymbol("aliasName", useDefinitionAst);
         //not double defined
-        when(scopeHelper.doubleDefinitionCheck(symbol, symbol)).thenReturn(true);
+        when(scopeHelper.checkIsNotDoubleDefinition(symbol, symbol)).thenReturn(true);
 
         IGlobalNamespaceScope globalNamespaceScope = mock(IGlobalNamespaceScope.class);
         INamespaceScope namespaceScope = createNamespaceScope(globalNamespaceScope);
@@ -427,7 +427,7 @@ public class NamespaceScopeTest
         boolean result = namespaceScope.useDefinitionCheck(symbol);
 
         assertFalse(result);
-        verify(scopeHelper).doubleDefinitionCheck(symbol, symbol);
+        verify(scopeHelper).checkIsNotDoubleDefinition(symbol, symbol);
         verify(globalNamespaceScope).getTypeSymbolWhichClashesWithUse(useDefinitionAst);
         verify(useDefinitionAst).isDefinedEarlierThan(classDefinitionAst);
         verify(errorReporter).determineAlreadyDefined(symbol, typeSymbol);
@@ -441,7 +441,7 @@ public class NamespaceScopeTest
         ITSPHPAst useDefinitionAst = mock(ITSPHPAst.class);
         IAliasSymbol symbol = createAliasSymbol("aliasName", useDefinitionAst);
         //not double defined
-        when(scopeHelper.doubleDefinitionCheck(symbol, symbol)).thenReturn(true);
+        when(scopeHelper.checkIsNotDoubleDefinition(symbol, symbol)).thenReturn(true);
 
         ITSPHPAst classDefinitionAst = mock(ITSPHPAst.class);
         IScope anotherScope = mock(IScope.class);
@@ -457,7 +457,7 @@ public class NamespaceScopeTest
         boolean result = namespaceScope.useDefinitionCheck(symbol);
 
         assertFalse(result);
-        verify(scopeHelper).doubleDefinitionCheck(symbol, symbol);
+        verify(scopeHelper).checkIsNotDoubleDefinition(symbol, symbol);
         verify(globalNamespaceScope).getTypeSymbolWhichClashesWithUse(useDefinitionAst);
         verify(useDefinitionAst).isDefinedEarlierThan(classDefinitionAst);
         verify(errorReporter).determineAlreadyDefined(symbol, typeSymbol);
@@ -471,7 +471,7 @@ public class NamespaceScopeTest
         ITSPHPAst useDefinitionAst = mock(ITSPHPAst.class);
         IAliasSymbol symbol = createAliasSymbol("aliasName", useDefinitionAst);
         //not double defined
-        when(scopeHelper.doubleDefinitionCheck(symbol, symbol)).thenReturn(true);
+        when(scopeHelper.checkIsNotDoubleDefinition(symbol, symbol)).thenReturn(true);
 
         IGlobalNamespaceScope globalNamespaceScope = mock(IGlobalNamespaceScope.class);
         INamespaceScope namespaceScope = createNamespaceScope(globalNamespaceScope);
@@ -486,7 +486,7 @@ public class NamespaceScopeTest
         boolean result = namespaceScope.useDefinitionCheck(symbol);
 
         assertFalse(result);
-        verify(scopeHelper).doubleDefinitionCheck(symbol, symbol);
+        verify(scopeHelper).checkIsNotDoubleDefinition(symbol, symbol);
         verify(globalNamespaceScope).getTypeSymbolWhichClashesWithUse(useDefinitionAst);
         verify(useDefinitionAst).isDefinedEarlierThan(classDefinitionAst);
         verify(typeSymbol).getDefinitionScope();

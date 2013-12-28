@@ -26,13 +26,13 @@ public class GlobalNamespaceScope extends AScope implements IGlobalNamespaceScop
 
     @Override
     public boolean doubleDefinitionCheck(ISymbol symbol) {
-        return scopeHelper.doubleDefinitionCheck(symbols, symbol);
+        return scopeHelper.checkIsNotDoubleDefinition(symbols, symbol);
     }
 
 
     @Override
     public boolean doubleDefinitionCheckCaseInsensitive(ISymbol symbol) {
-        return scopeHelper.doubleDefinitionCheck(symbolsCaseInsensitive, symbol);
+        return scopeHelper.checkIsNotDoubleDefinition(symbolsCaseInsensitive, symbol);
     }
 
     @Override

@@ -193,16 +193,16 @@ public class ReferencePhaseController implements IReferencePhaseController
     }
 
     @Override
-    public boolean checkVariable(ITSPHPAst variableId) {
-        boolean isNotForwardReference = checkIsForwardReference(variableId);
-        boolean isNotOutOfScope = checkIsOutOfConditionalScope(variableId);
+    public boolean checkVariableIsOkToUse(ITSPHPAst variableId) {
+        boolean isNotForwardReference = checkIsNotForwardReference(variableId);
+        boolean isNotOutOfScope = checkIsNotOutOfConditionalScope(variableId);
         return isNotForwardReference
                 && isNotOutOfScope
                 && checkVariableIsInitialised(variableId);
     }
 
     @Override
-    public boolean checkIsForwardReference(ITSPHPAst ast) {
+    public boolean checkIsNotForwardReference(ITSPHPAst ast) {
         ISymbol symbol = ast.getSymbol();
         boolean isNotUsedBefore = true;
         //only check if not already an error occurred in conjunction with this ast (for instance missing declaration)
@@ -221,7 +221,7 @@ public class ReferencePhaseController implements IReferencePhaseController
 
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     @Override
-    public boolean checkIsOutOfConditionalScope(ITSPHPAst ast) {
+    public boolean checkIsNotOutOfConditionalScope(ITSPHPAst ast) {
         boolean ok = true;
         ISymbol symbol = ast.getSymbol();
         if (symbol.getDefinitionScope() instanceof IConditionalScope) {

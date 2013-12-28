@@ -20,23 +20,23 @@ public class ScopeHelper implements IScopeHelper
     }
 
     @Override
-    public boolean doubleDefinitionCheck(Map<String, List<ISymbol>> symbols, ISymbol symbol) {
-        return doubleDefinitionCheck(symbols.get(symbol.getName()).get(0), symbol);
+    public boolean checkIsNotDoubleDefinition(Map<String, List<ISymbol>> symbols, ISymbol symbol) {
+        return checkIsNotDoubleDefinition(symbols.get(symbol.getName()).get(0), symbol);
     }
 
     @Override
-    public boolean doubleDefinitionCheck(Map<String, List<ISymbol>> symbols, ISymbol symbol,
+    public boolean checkIsNotDoubleDefinition(Map<String, List<ISymbol>> symbols, ISymbol symbol,
             IAlreadyDefinedMethodCaller errorMethodCaller) {
-        return doubleDefinitionCheck(symbols.get(symbol.getName()).get(0), symbol, errorMethodCaller);
+        return checkIsNotDoubleDefinition(symbols.get(symbol.getName()).get(0), symbol, errorMethodCaller);
     }
 
     @Override
-    public boolean doubleDefinitionCheck(ISymbol firstDefinition, ISymbol symbolToCheck) {
-        return doubleDefinitionCheck(firstDefinition, symbolToCheck, new StandardAlreadyDefinedMethodCaller());
+    public boolean checkIsNotDoubleDefinition(ISymbol firstDefinition, ISymbol symbolToCheck) {
+        return checkIsNotDoubleDefinition(firstDefinition, symbolToCheck, new StandardAlreadyDefinedMethodCaller());
     }
 
     @Override
-    public boolean doubleDefinitionCheck(ISymbol firstDefinition, ISymbol symbolToCheck,
+    public boolean checkIsNotDoubleDefinition(ISymbol firstDefinition, ISymbol symbolToCheck,
             IAlreadyDefinedMethodCaller errorMethodCaller) {
         boolean isFirst = firstDefinition.equals(symbolToCheck);
         if (!isFirst) {

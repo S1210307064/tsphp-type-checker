@@ -84,7 +84,7 @@ public class ReferencePhaseControllerErroneousSymbolTest
         when(ast.getSymbol()).thenReturn(symbol);
 
         IReferencePhaseController controller = createReferencePhaseController();
-        boolean result = controller.checkIsForwardReference(ast);
+        boolean result = controller.checkIsNotForwardReference(ast);
 
         assertTrue(result);
         verifyNoMoreInteractions(symbol);

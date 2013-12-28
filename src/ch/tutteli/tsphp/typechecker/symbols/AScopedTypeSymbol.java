@@ -43,7 +43,7 @@ public abstract class AScopedTypeSymbol extends AScopedSymbol implements ICaseIn
 
     @Override
     public boolean doubleDefinitionCheckCaseInsensitive(ISymbol symbol) {
-        return scopeHelper.doubleDefinitionCheck(symbolsCaseInsensitive, symbol);
+        return scopeHelper.checkIsNotDoubleDefinition(symbolsCaseInsensitive, symbol);
     }
 
     @Override

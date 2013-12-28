@@ -24,7 +24,7 @@ public class ConditionalScope extends AScope implements IConditionalScope
         if (scope instanceof INamespaceScope) {
             scope = scope.getEnclosingScope();
         }
-        return scopeHelper.doubleDefinitionCheck(scope.getSymbols(), symbol,
+        return scopeHelper.checkIsNotDoubleDefinition(scope.getSymbols(), symbol,
                 new IAlreadyDefinedMethodCaller()
                 {
                     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")

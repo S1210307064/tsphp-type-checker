@@ -159,7 +159,7 @@ primitiveAtomWithConstant
 		{
 			IVariableSymbol variableSymbol = controller.resolveConstant($cnst);
 			$cnst.setSymbol(variableSymbol);
-			controller.checkIsForwardReference($cnst);
+			controller.checkIsNotForwardReference($cnst);
 		}
 	|	^(CLASS_STATIC_ACCESS accessor=staticAccessor identifier=CONSTANT)
 		{$identifier.setSymbol(accessResolver.resolveClassConstantAccess($accessor.start, $identifier));}
@@ -584,7 +584,7 @@ variable
 	: 	varId=VariableId
 		{
       			$varId.setSymbol(controller.resolveVariable($varId));
-      			controller.checkVariable($varId);
+      			controller.checkVariableIsOkToUse($varId);
       		}
 	;
 	

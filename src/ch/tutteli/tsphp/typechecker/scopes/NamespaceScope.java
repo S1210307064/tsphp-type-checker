@@ -73,7 +73,7 @@ public class NamespaceScope implements INamespaceScope
 
     @Override
     public boolean useDefinitionCheck(IAliasSymbol symbol) {
-        boolean isNotDoubleDefined = scopeHelper.doubleDefinitionCheck(
+        boolean isNotDoubleDefined = scopeHelper.checkIsNotDoubleDefinition(
                 usesCaseInsensitive.get(symbol.getName()).get(0), symbol);
         return isNotDoubleDefined && isNotAlreadyDefinedAsType(symbol);
 

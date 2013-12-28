@@ -5,8 +5,8 @@ import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.LowerCaseStringMap;
-import ch.tutteli.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.error.ITypeCheckErrorReporter;
+import ch.tutteli.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
 import ch.tutteli.tsphp.typechecker.scopes.IAlreadyDefinedMethodCaller;
 import ch.tutteli.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
@@ -25,8 +25,14 @@ import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.collection.IsMapContaining.hasKey;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 public class ScopeHelperTest
 {
@@ -99,7 +105,7 @@ public class ScopeHelperTest
         Map<String, List<ISymbol>> symbols = new HashMap<>();
 
         IScopeHelper scopeHelper = new ScopeHelper();
-        scopeHelper.doubleDefinitionCheck(symbols, symbol);
+        scopeHelper.checkIsNotDoubleDefinition(symbols, symbol);
     }
 
     @Test(expected = NullPointerException.class)
@@ -109,7 +115,7 @@ public class ScopeHelperTest
         IAlreadyDefinedMethodCaller reporter = mock(IAlreadyDefinedMethodCaller.class);
 
         IScopeHelper scopeHelper = new ScopeHelper();
-        scopeHelper.doubleDefinitionCheck(symbols, symbol, reporter);
+        scopeHelper.checkIsNotDoubleDefinition(symbols, symbol, reporter);
     }
 
     @Test(expected = NullPointerException.class)
@@ -120,7 +126,7 @@ public class ScopeHelperTest
         ISymbol wrongSymbol = createSymbol("wrongSymbol");
 
         IScopeHelper scopeHelper = new ScopeHelper();
-        scopeHelper.doubleDefinitionCheck(symbols, wrongSymbol);
+        scopeHelper.checkIsNotDoubleDefinition(symbols, wrongSymbol);
     }
 
     @Test(expected = NullPointerException.class)
@@ -132,7 +138,7 @@ public class ScopeHelperTest
         ISymbol wrongSymbol = createSymbol("wrongSymbol");
 
         IScopeHelper scopeHelper = new ScopeHelper();
-        scopeHelper.doubleDefinitionCheck(symbols, wrongSymbol, reporter);
+        scopeHelper.checkIsNotDoubleDefinition(symbols, wrongSymbol, reporter);
     }
 
     @Test
@@ -141,7 +147,7 @@ public class ScopeHelperTest
         Map<String, List<ISymbol>> symbols = CreateSymbolsForStandardName(symbol);
 
         IScopeHelper scopeHelper = new ScopeHelper();
-        boolean result = scopeHelper.doubleDefinitionCheck(symbols, symbol);
+        boolean result = scopeHelper.checkIsNotDoubleDefinition(symbols, symbol);
 
         assertTrue(result);
     }
@@ -153,7 +159,7 @@ public class ScopeHelperTest
         IAlreadyDefinedMethodCaller reporter = mock(IAlreadyDefinedMethodCaller.class);
 
         IScopeHelper scopeHelper = new ScopeHelper();
-        boolean result = scopeHelper.doubleDefinitionCheck(symbols, symbol, reporter);
+        boolean result = scopeHelper.checkIsNotDoubleDefinition(symbols, symbol, reporter);
 
         assertTrue(result);
         verifyNoMoreInteractions(reporter);
@@ -166,7 +172,7 @@ public class ScopeHelperTest
         Map<String, List<ISymbol>> symbols = CreateSymbolsForStandardName(symbol1, symbol2);
 
         IScopeHelper scopeHelper = new ScopeHelper();
-        boolean result = scopeHelper.doubleDefinitionCheck(symbols, symbol1);
+        boolean result = scopeHelper.checkIsNotDoubleDefinition(symbols, symbol1);
 
         assertTrue(result);
     }
@@ -179,7 +185,7 @@ public class ScopeHelperTest
         IAlreadyDefinedMethodCaller reporter = mock(IAlreadyDefinedMethodCaller.class);
 
         IScopeHelper scopeHelper = new ScopeHelper();
-        boolean result = scopeHelper.doubleDefinitionCheck(symbols, symbol1, reporter);
+        boolean result = scopeHelper.checkIsNotDoubleDefinition(symbols, symbol1, reporter);
 
         assertTrue(result);
         verifyNoMoreInteractions(reporter);
@@ -195,7 +201,7 @@ public class ScopeHelperTest
         Map<String, List<ISymbol>> symbols = CreateSymbolsForStandardName(symbol1, symbol2);
 
         IScopeHelper scopeHelper = new ScopeHelper();
-        boolean result = scopeHelper.doubleDefinitionCheck(symbols, symbol2);
+        boolean result = scopeHelper.checkIsNotDoubleDefinition(symbols, symbol2);
 
         assertFalse(result);
         verify(errorReporter).alreadyDefined(symbol1, symbol2);
@@ -209,7 +215,7 @@ public class ScopeHelperTest
         IAlreadyDefinedMethodCaller reporter = mock(IAlreadyDefinedMethodCaller.class);
 
         IScopeHelper scopeHelper = new ScopeHelper();
-        boolean result = scopeHelper.doubleDefinitionCheck(symbols, symbol2, reporter);
+        boolean result = scopeHelper.checkIsNotDoubleDefinition(symbols, symbol2, reporter);
 
         assertFalse(result);
         verify(reporter).callAccordingAlreadyDefinedMethod(symbol1, symbol2);

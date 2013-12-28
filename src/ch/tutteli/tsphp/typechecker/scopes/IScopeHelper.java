@@ -4,6 +4,7 @@ import ch.tutteli.tsphp.common.ILowerCaseStringMap;
 import ch.tutteli.tsphp.common.IScope;
 import ch.tutteli.tsphp.common.ISymbol;
 import ch.tutteli.tsphp.common.ITSPHPAst;
+
 import java.util.List;
 import java.util.Map;
 
@@ -12,21 +13,21 @@ public interface IScopeHelper
 
     void define(IScope definitionScope, ISymbol symbol);
 
-    boolean doubleDefinitionCheck(Map<String, List<ISymbol>> symbols, ISymbol symbol);
+    boolean checkIsNotDoubleDefinition(Map<String, List<ISymbol>> symbols, ISymbol symbol);
 
-    boolean doubleDefinitionCheck(Map<String, List<ISymbol>> symbols, ISymbol symbol,
+    boolean checkIsNotDoubleDefinition(Map<String, List<ISymbol>> symbols, ISymbol symbol,
             IAlreadyDefinedMethodCaller errorMethodCaller);
 
-    boolean doubleDefinitionCheck(ISymbol firstDefinition, ISymbol symbolToCheck);
+    boolean checkIsNotDoubleDefinition(ISymbol firstDefinition, ISymbol symbolToCheck);
 
-    boolean doubleDefinitionCheck(ISymbol firstDefinition, ISymbol symbolToCheck,
+    boolean checkIsNotDoubleDefinition(ISymbol firstDefinition, ISymbol symbolToCheck,
             IAlreadyDefinedMethodCaller errorMethodCaller);
 
     /**
      * Return the corresponding global namespace from the given globalNamespaceScopes for the given typeName.
-     *
+     * <p/>
      * As a quick reminder, namespace identifier always end with an \ (backslash) for instance:
-     *
+     * <p/>
      * - \
      * - \ch\
      * - \ch\tutteli\
@@ -38,9 +39,9 @@ public interface IScopeHelper
 
     /**
      * Return the enclosing namespace for the given typeName.
-     *
+     * <p/>
      * As a quick reminder, namespace identifier always end with an \ (backslash) for instance:
-     *
+     * <p/>
      * - \
      * - \ch\
      * - \ch\tutteli\
