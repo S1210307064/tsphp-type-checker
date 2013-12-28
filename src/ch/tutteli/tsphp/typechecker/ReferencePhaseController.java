@@ -397,16 +397,19 @@ public class ReferencePhaseController implements IReferencePhaseController
         int levels = level == null ? 1 : Integer.parseInt(level.getText());
         int count = 0;
 
-        @SuppressWarnings("unchecked") //has to be ITSPHPAst
-                List<ITSPHPAst> ancestors = (List<ITSPHPAst>) root.getAncestors();
-        for (ITSPHPAst ancestor : ancestors) {
-            int type = ancestor.getType();
-            if (isLoop(type)) {
-                ++count;
+        if (levels > 0) {
+            ITSPHPAst parent = (ITSPHPAst) root.getParent();
+            while (parent != null) {
+                if (isLoop(parent.getType())) {
+                    ++count;
+                }
+                parent = (ITSPHPAst) parent.getParent();
             }
-        }
-        if (count < levels) {
-            TypeCheckErrorReporterRegistry.get().toManyBreakContinueLevels(root);
+            if (count < levels) {
+                TypeCheckErrorReporterRegistry.get().toManyBreakContinueLevels(root);
+            }
+        } else {
+            TypeCheckErrorReporterRegistry.get().breakContinueLevelZeroNotAllowed(root);
         }
     }
 

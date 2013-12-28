@@ -1,7 +1,6 @@
 package ch.tutteli.tsphp.typechecker.test.unit;
 
 import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.typechecker.IAccessResolver;
 import ch.tutteli.tsphp.typechecker.IReferencePhaseController;
 import ch.tutteli.tsphp.typechecker.ISymbolResolver;
 import ch.tutteli.tsphp.typechecker.ReferencePhaseController;
@@ -25,14 +24,12 @@ public class ReferencePhaseControllerErroneousSymbolTest
 {
     private ISymbolFactory symbolFactory;
     private ISymbolResolver symbolResolver;
-    private IAccessResolver visibilityChecker;
     private ITypeCheckErrorReporter errorReporter;
 
     @Before
     public void setUp() {
         symbolFactory = mock(ISymbolFactory.class);
         symbolResolver = mock(ISymbolResolver.class);
-        visibilityChecker = mock(IAccessResolver.class);
         errorReporter = mock(ITypeCheckErrorReporter.class);
         TypeCheckErrorReporterRegistry.set(errorReporter);
     }

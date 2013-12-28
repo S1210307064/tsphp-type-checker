@@ -57,10 +57,12 @@ public class BreakContinueErrorTest extends AReferenceErrorTest
                 {"do{", "}while(true);"}
         };
 
+        collection.add(new Object[]{"\n break;", errorBreakDto});
         collection.add(new Object[]{"if(true){\n break;}", errorBreakDto});
         collection.add(new Object[]{"if(true){\n break 1;}", errorBreakDto});
         collection.add(new Object[]{"if(true){\n break 2;}", errorBreakDto});
         collection.add(new Object[]{"if(true){\n break 3;}", errorBreakDto});
+        collection.add(new Object[]{"\n continue;", errorContinueDto});
         collection.add(new Object[]{"if(true){\n continue;}", errorContinueDto});
         collection.add(new Object[]{"if(true){\n continue 1;}", errorContinueDto});
         collection.add(new Object[]{"if(true){\n continue 2;}", errorContinueDto});

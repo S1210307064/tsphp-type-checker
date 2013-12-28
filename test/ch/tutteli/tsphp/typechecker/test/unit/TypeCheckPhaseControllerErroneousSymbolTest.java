@@ -3,11 +3,11 @@ package ch.tutteli.tsphp.typechecker.test.unit;
 import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.exceptions.TypeCheckerException;
+import ch.tutteli.tsphp.typechecker.IAccessResolver;
 import ch.tutteli.tsphp.typechecker.IOverloadResolver;
 import ch.tutteli.tsphp.typechecker.ISymbolResolver;
 import ch.tutteli.tsphp.typechecker.ITypeCheckPhaseController;
 import ch.tutteli.tsphp.typechecker.ITypeSystem;
-import ch.tutteli.tsphp.typechecker.IVisibilityChecker;
 import ch.tutteli.tsphp.typechecker.TypeCheckPhaseController;
 import ch.tutteli.tsphp.typechecker.error.ITypeCheckErrorReporter;
 import ch.tutteli.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
@@ -32,7 +32,7 @@ public class TypeCheckPhaseControllerErroneousSymbolTest
     private ISymbolResolver symbolResolver;
     private ITypeSystem typeSystem;
     private IOverloadResolver overloadResolver;
-    private IVisibilityChecker visibilityChecker;
+    private IAccessResolver accessResolver;
     private ITypeCheckerAstHelper astHelper;
     private ITypeCheckErrorReporter errorReporter;
 
@@ -42,7 +42,7 @@ public class TypeCheckPhaseControllerErroneousSymbolTest
         symbolResolver = mock(ISymbolResolver.class);
         typeSystem = mock(ITypeSystem.class);
         overloadResolver = mock(IOverloadResolver.class);
-        visibilityChecker = mock(IVisibilityChecker.class);
+        accessResolver = mock(IAccessResolver.class);
         astHelper = mock(ITypeCheckerAstHelper.class);
         errorReporter = mock(ITypeCheckErrorReporter.class);
         TypeCheckErrorReporterRegistry.set(errorReporter);
@@ -206,9 +206,9 @@ public class TypeCheckPhaseControllerErroneousSymbolTest
                 });
     }
 
-    private ITypeCheckPhaseController createTypeCheckController() {
+    protected ITypeCheckPhaseController createTypeCheckController() {
         return new TypeCheckPhaseController(
-                symbolFactory, symbolResolver, typeSystem, overloadResolver, visibilityChecker, astHelper);
+                symbolFactory, symbolResolver, typeSystem, overloadResolver, accessResolver, astHelper);
     }
 
 

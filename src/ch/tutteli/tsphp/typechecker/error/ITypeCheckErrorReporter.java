@@ -69,6 +69,8 @@ public interface ITypeCheckErrorReporter extends ch.tutteli.tsphp.common.IErrorR
 
     ReferenceException toManyBreakContinueLevels(ITSPHPAst root);
 
+    ReferenceException breakContinueLevelZeroNotAllowed(ITSPHPAst root);
+
     UnsupportedOperationException unsupportedOperator(ITSPHPAst operator);
 
     ReferenceException ambiguousUnaryOperatorUsage(ITSPHPAst operator, ITSPHPAst expression,
@@ -176,4 +178,6 @@ public interface ITypeCheckErrorReporter extends ch.tutteli.tsphp.common.IErrorR
     ReferenceException partialReturnFromMethod(ITSPHPAst identifier);
 
     ReferenceException noReturnFromMethod(ITSPHPAst identifier);
+
+
 }

@@ -195,6 +195,11 @@ public class TypeCheckErrorReporter implements ITypeCheckErrorReporter
     }
 
     @Override
+    public ReferenceException breakContinueLevelZeroNotAllowed(ITSPHPAst root) {
+        return addAndGetReferenceException("breakContinueLevelZeroNotAllowed", root);
+    }
+
+    @Override
     public ReferenceException partialReturnFromFunction(ITSPHPAst identifier) {
         return addAndGetReferenceException("partialReturnFromFunction", identifier);
     }

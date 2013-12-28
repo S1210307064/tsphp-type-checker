@@ -57,6 +57,8 @@ public class ErrorMessageProvider extends AErrorMessageProvider
         referenceErrors.put("notDefined", "Line %line%|%pos% - %id% was never defined.");
         referenceErrors.put("notStatic", "Line %line%|%pos% - %id% is not static.");
         referenceErrors.put("toManyBreakContinueLevels", "Line %line%|%pos% - cannot %id% so many levels.");
+        referenceErrors.put("breakContinueLevelZeroNotAllowed", "Line %line%|%pos% - 0 is not valid for %id%.\n"
+                + "Use 1 instead or leave the level out.");
         referenceErrors.put("partialReturnFromFunction", "Line %line%|%pos% - function %id% does not return/throw "
                 + "in all branches.");
         referenceErrors.put("noReturnFromFunction", "Line %line%|%pos% - function %id% does not contain "
