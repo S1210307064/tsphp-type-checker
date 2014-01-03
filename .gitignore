@@ -11,3 +11,6 @@ TSPHPReferenceWalker.java
 TSPHPReferenceWalker.tokens
 TSPHPTypeCheckWalker.java
 TSPHPTypeCheckWalker.tokens
+/lib/dev/pmd/cfg/pmd_tsphp.xml
+/lib/dev/checkstyle/cfg/checkstyle.properties
+/lib/dev/QA.html
