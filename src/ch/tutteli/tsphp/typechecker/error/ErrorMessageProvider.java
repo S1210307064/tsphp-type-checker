@@ -32,7 +32,8 @@ public class ErrorMessageProvider extends AErrorMessageProvider
                 + "a nested conditional scope and can therefore not be used in the current (outer) scope.\n"
                 + "The definition was on line %line%|%pos% ");
         definitionErrors.put("variablePartiallyInitialised", "Line %lineN%|%posN% - variable %idN% was not initialised "
-                + "during declaration in line %line%|%pos% and not in all branches up to this point and thus cannot "
+                + "during declaration in line %line%|%pos% and neither in all branches up to this point and thus " +
+                "cannot "
                 + "be used.\n"
                 + "Local variables have to be initialised before their first usage.");
         definitionErrors.put("variableNotInitialised", "Line %lineN%|%posN% - variable %idN% was never initialised "
@@ -215,6 +216,13 @@ public class ErrorMessageProvider extends AErrorMessageProvider
     }
 
     @Override
+    protected void loadMissingImplementationErrorMessages() {
+        missingImplementationErrors = new HashMap<>();
+        missingImplementationErrors.put("missingAbstractMethods", "Line %line%|%pos% - the class %id% is not abstract "
+                + "and does not implement the following abstract methods: %missingImplementations%");
+    }
+
+    @Override
     protected String getStandardDefinitionErrorMessage(String key, DefinitionErrorDto dto) {
         return "DefinitionException occurred, corresponding error message for \"" + key + "\" not defined. "
                 + "Please report bug to http://tsphp.tutteli.ch\n"
@@ -272,5 +280,15 @@ public class ErrorMessageProvider extends AErrorMessageProvider
                 + "Line " + dto.line + "|" + dto.position + " - cannot access " + dto.identifier + ".\n"
                 + dto.identifier + "'s visibility is " + dto.visibility + " and it would need at least "
                 + dto.accessedFrom + " access in order that you can access it from this location.";
+    }
+
+    @Override
+    protected String getStandardMissingImplementationErrorMessage(String key, MissingImplementationErrorDto dto) {
+
+        return "MissingImplementationException occurred, corresponding error message for \"" + key + "\" is not "
+                + "defined. Please report bug to http://tsphp.tutteli.ch/jira\n"
+                + "However, the following information was gathered.\n"
+                + "Line " + dto.line + "|" + dto.position + " - missing implementation " + dto.identifier + ".\n"
+                + getMissingSignatures(dto.signatureDtos);
     }
 }

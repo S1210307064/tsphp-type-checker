@@ -8,7 +8,6 @@ import ch.tutteli.tsphp.common.ITSPHPAst;
 import ch.tutteli.tsphp.common.ITypeSymbol;
 import ch.tutteli.tsphp.common.LowerCaseStringMap;
 import ch.tutteli.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
-import ch.tutteli.tsphp.typechecker.scopes.ICaseInsensitiveScope;
 import ch.tutteli.tsphp.typechecker.scopes.IScopeHelper;
 import ch.tutteli.tsphp.typechecker.utils.MapHelper;
 
@@ -16,14 +15,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public abstract class AScopedTypeSymbol extends AScopedSymbol implements ICaseInsensitiveScope, IPolymorphicTypeSymbol
+public abstract class APolymorphicTypeSymbol extends AScopedSymbol implements IPolymorphicTypeSymbol
 {
 
     protected Set<ITypeSymbol> parentTypeSymbols = new HashSet<>();
     protected final ILowerCaseStringMap<List<ISymbol>> symbolsCaseInsensitive = new LowerCaseStringMap<>();
     private boolean isObjectTheParentTypeSymbol = false;
+    private Set<ISymbol> abstractSymbols;
 
-    public AScopedTypeSymbol(
+    public APolymorphicTypeSymbol(
             IScopeHelper scopeHelper,
             ITSPHPAst definitionAst,
             Set<Integer> modifiers,
@@ -77,6 +77,47 @@ public abstract class AScopedTypeSymbol extends AScopedSymbol implements ICaseIn
     }
 
     @Override
+    public boolean isAbstract() {
+        return modifiers.contains(TSPHPDefinitionWalker.Abstract);
+    }
+
+    @Override
+    public Set<ISymbol> getAbstractSymbols() {
+        if (abstractSymbols == null) {
+            loadOwnAbstractSymbols();
+            loadParentsAbstractSymbols();
+        }
+        return abstractSymbols;
+    }
+
+    private void loadOwnAbstractSymbols() {
+        abstractSymbols = new HashSet<>();
+        for (List<ISymbol> symbolList : symbols.values()) {
+            ISymbol symbol = symbolList.get(0);
+            if (symbol instanceof ICanBeAbstract) {
+                if (((ICanBeAbstract) symbol).isAbstract()) {
+                    abstractSymbols.add(symbol);
+                }
+            }
+        }
+    }
+
+    private void loadParentsAbstractSymbols() {
+        for (ITypeSymbol typeSymbol : parentTypeSymbols) {
+            if (typeSymbol instanceof IPolymorphicTypeSymbol) {
+                IPolymorphicTypeSymbol polymorphicTypeSymbol = (IPolymorphicTypeSymbol) typeSymbol;
+                if (polymorphicTypeSymbol.isAbstract()) {
+                    for (ISymbol symbol : polymorphicTypeSymbol.getAbstractSymbols()) {
+                        if (!symbols.containsKey(symbol.getName())) {
+                            abstractSymbols.add(symbol);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
     public boolean isNullable() {
         return true;
     }
@@ -88,13 +129,13 @@ public abstract class AScopedTypeSymbol extends AScopedSymbol implements ICaseIn
 
     @Override
     public boolean isFullyInitialised(ISymbol symbol) {
-        //all symbols in a scoped type symbol are implicitly initialised
+        //all symbols in a polymorphic type symbol are implicitly initialised
         return true;
     }
 
     @Override
     public boolean isPartiallyInitialised(ISymbol symbol) {
-        //all symbols in a scoped type symbol are implicitly initialised
+        //all symbols in a polymorphic type symbol are implicitly initialised
         return false;
     }
 }

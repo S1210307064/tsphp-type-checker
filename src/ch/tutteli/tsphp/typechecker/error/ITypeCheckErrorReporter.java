@@ -13,6 +13,7 @@ import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tutteli.tsphp.typechecker.symbols.ISymbolWithAccessModifier;
 
 import java.util.List;
+import java.util.Set;
 
 public interface ITypeCheckErrorReporter extends ch.tutteli.tsphp.common.IErrorReporter
 {
@@ -70,6 +71,14 @@ public interface ITypeCheckErrorReporter extends ch.tutteli.tsphp.common.IErrorR
     ReferenceException toManyBreakContinueLevels(ITSPHPAst root);
 
     ReferenceException breakContinueLevelZeroNotAllowed(ITSPHPAst root);
+
+    ReferenceException partialReturnFromFunction(ITSPHPAst identifier);
+
+    ReferenceException noReturnFromFunction(ITSPHPAst identifier);
+
+    ReferenceException partialReturnFromMethod(ITSPHPAst identifier);
+
+    ReferenceException noReturnFromMethod(ITSPHPAst identifier);
 
     UnsupportedOperationException unsupportedOperator(ITSPHPAst operator);
 
@@ -171,13 +180,5 @@ public interface ITypeCheckErrorReporter extends ch.tutteli.tsphp.common.IErrorR
     ReferenceException visibilityViolationMethodCall(ITSPHPAst identifier,
             ISymbolWithAccessModifier symbol, int accessedFrom);
 
-    ReferenceException partialReturnFromFunction(ITSPHPAst identifier);
-
-    ReferenceException noReturnFromFunction(ITSPHPAst identifier);
-
-    ReferenceException partialReturnFromMethod(ITSPHPAst identifier);
-
-    ReferenceException noReturnFromMethod(ITSPHPAst identifier);
-
-
+    ReferenceException missingAbstractImplementations(ITSPHPAst identifier, Set<ISymbol> symbols);
 }

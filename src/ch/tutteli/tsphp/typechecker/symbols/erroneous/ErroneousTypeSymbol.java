@@ -61,6 +61,11 @@ public class ErroneousTypeSymbol extends AErroneousScopedSymbol implements IErro
     }
 
     @Override
+    public Set<ISymbol> getAbstractSymbols() {
+        throw new UnsupportedOperationException(ERROR_MESSAGE);
+    }
+
+    @Override
     public Set<ITypeSymbol> getParentTypeSymbols() {
         throw new UnsupportedOperationException(ERROR_MESSAGE);
     }

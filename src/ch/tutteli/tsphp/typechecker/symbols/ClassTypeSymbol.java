@@ -8,7 +8,7 @@ import ch.tutteli.tsphp.typechecker.scopes.IScopeHelper;
 
 import java.util.Set;
 
-public class ClassTypeSymbol extends AScopedTypeSymbol implements IClassTypeSymbol
+public class ClassTypeSymbol extends APolymorphicTypeSymbol implements IClassTypeSymbol
 {
 
     private IMethodSymbol construct;

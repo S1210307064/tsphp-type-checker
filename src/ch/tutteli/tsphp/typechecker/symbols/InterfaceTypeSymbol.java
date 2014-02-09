@@ -7,7 +7,7 @@ import ch.tutteli.tsphp.typechecker.scopes.IScopeHelper;
 
 import java.util.Set;
 
-public class InterfaceTypeSymbol extends AScopedTypeSymbol implements IInterfaceTypeSymbol
+public class InterfaceTypeSymbol extends APolymorphicTypeSymbol implements IInterfaceTypeSymbol
 {
 
     public InterfaceTypeSymbol(

@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class TypeCheckPhaseController implements ITypeCheckPhaseController
 {
@@ -873,6 +874,24 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
     public void checkNew(ITSPHPAst identifier, ITSPHPAst arguments) {
         //TODO rstoll TSPHP-422 type check new operator
     }
+
+    @Override
+    public void checkPolymorphism(ITSPHPAst identifier) {
+        checkAbstractImplemented(identifier);
+        //TODO rstoll check that overrides are ok
+    }
+
+    @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
+    private void checkAbstractImplemented(ITSPHPAst identifier) {
+        IPolymorphicTypeSymbol typeSymbol = (IPolymorphicTypeSymbol) identifier.getSymbol();
+        if (!typeSymbol.isAbstract()) {
+            Set<ISymbol> symbols = typeSymbol.getAbstractSymbols();
+            if (!symbols.isEmpty()) {
+                TypeCheckErrorReporterRegistry.get().missingAbstractImplementations(identifier, symbols);
+            }
+        }
+    }
+
 
     @Override
     public void addDefaultValue(ITSPHPAst variableId) {

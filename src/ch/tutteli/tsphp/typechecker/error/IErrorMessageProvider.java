@@ -14,4 +14,7 @@ public interface IErrorMessageProvider
     String getOperatorAmbiguousCastingErrorMessage(String key, AmbiguousCastsErrorDto ambiguousCastingErrorDto);
 
     String getVisibilityErrorMessage(String key, VisibilityErrorDto visibilityErrorDto);
+
+    String getMissingImplementationErrorMessage(String key, MissingImplementationErrorDto
+            missingImplementationErrorDto);
 }

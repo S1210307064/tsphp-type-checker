@@ -22,7 +22,9 @@ import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class TypeCheckErrorReporter implements ITypeCheckErrorReporter
 {
@@ -223,9 +225,7 @@ public class TypeCheckErrorReporter implements ITypeCheckErrorReporter
             ITSPHPAst typeAst) {
         String errorMessage = errorMessageProvider.getReferenceErrorMessage(key,
                 new ReferenceErrorDto(typeAst.getText(), typeAst.getLine(), typeAst.getCharPositionInLine()));
-        ReferenceException exception = new ReferenceException(errorMessage, typeAst);
-        reportError(exception);
-        return exception;
+        return createAndReportReferenceException(errorMessage, typeAst);
     }
 
     @Override
@@ -249,7 +249,7 @@ public class TypeCheckErrorReporter implements ITypeCheckErrorReporter
 
     private boolean noAmbiguousCasts(List<CastingDto> leftAmbiguities, List<CastingDto> rightAmbiguities) {
         return leftAmbiguities == null || leftAmbiguities.isEmpty()
-                && rightAmbiguities == null || rightAmbiguities.isEmpty();
+                && (rightAmbiguities == null || rightAmbiguities.isEmpty());
     }
 
     @Override
@@ -294,9 +294,7 @@ public class TypeCheckErrorReporter implements ITypeCheckErrorReporter
         String errorMessage = errorMessageProvider.getOperatorAmbiguousCastingErrorMessage(key,
                 new AmbiguousCastsErrorDto(operator.getText(), operator.getLine(), operator.getCharPositionInLine(),
                         leftToRightReturnTypes, rightToLeftReturnTypes, leftReturnTypes, rightReturnTypes));
-        ReferenceException exception = new ReferenceException(errorMessage, operator);
-        reportError(exception);
-        return exception;
+        return createAndReportReferenceException(errorMessage, operator);
     }
 
     private void addReturnTypes(List<List<String>> returnTypes, List<CastingDto> castingDtos,
@@ -414,12 +412,13 @@ public class TypeCheckErrorReporter implements ITypeCheckErrorReporter
         for (IMethodSymbol method : existingMethodOverloads) {
             existingOverloads.add(getFormalParameters(method.getParameters()));
         }
-        String errorMessage = errorMessageProvider.getWrongArgumentTypeErrorMessage(key,
-                new WrongArgumentTypeErrorDto(call.getText(), call.getLine(), call.getCharPositionInLine(),
-                        actualParameterTypes, existingOverloads));
-        ReferenceException exception = new ReferenceException(errorMessage, call);
-        reportError(exception);
-        return exception;
+
+        WrongArgumentTypeErrorDto errorDto = new WrongArgumentTypeErrorDto(
+                call.getText(), call.getLine(), call.getCharPositionInLine(),
+                actualParameterTypes, existingOverloads);
+
+        String errorMessage = errorMessageProvider.getWrongArgumentTypeErrorMessage(key, errorDto);
+        return createAndReportReferenceException(errorMessage, call);
     }
 
     private String getAbsoluteTypeName(ITypeSymbol typeSymbol) {
@@ -467,12 +466,13 @@ public class TypeCheckErrorReporter implements ITypeCheckErrorReporter
 
     private ReferenceException addAndGetTypeCheckErrorMessage(String key, ITSPHPAst statement, ITSPHPAst left,
             ITSPHPAst right) {
-        String errorMessage = errorMessageProvider.getTypeCheckErrorMessage(key,
-                new TypeCheckErrorDto(statement.getText(), statement.getLine(), statement.getCharPositionInLine(),
-                        getAbsoluteTypeName(left.getEvalType()), getAbsoluteTypeName(right.getEvalType())));
-        ReferenceException exception = new ReferenceException(errorMessage, statement);
-        reportError(exception);
-        return exception;
+
+        TypeCheckErrorDto errorDto = new TypeCheckErrorDto(
+                statement.getText(), statement.getLine(), statement.getCharPositionInLine(),
+                getAbsoluteTypeName(left.getEvalType()), getAbsoluteTypeName(right.getEvalType()));
+
+        String errorMessage = errorMessageProvider.getTypeCheckErrorMessage(key, errorDto);
+        return createAndReportReferenceException(errorMessage, statement);
     }
 
     @Override
@@ -561,7 +561,6 @@ public class TypeCheckErrorReporter implements ITypeCheckErrorReporter
     public ReferenceException wrongTypeTernaryCondition(ITSPHPAst operator, ITSPHPAst condition,
             ITypeSymbol typeExpected) {
         return addAndGetStatementTypeCheckError("wrongTypeTernaryCondition", operator, condition, typeExpected);
-
     }
 
     @Override
@@ -588,12 +587,12 @@ public class TypeCheckErrorReporter implements ITypeCheckErrorReporter
     private ReferenceException addAndGetStatementTypeCheckError(String key, ITSPHPAst statement,
             ITSPHPAst expression, ITypeSymbol typeSymbol) {
 
-        String errorMessage = errorMessageProvider.getTypeCheckErrorMessage(key,
-                new TypeCheckErrorDto(statement.getText(), statement.getLine(), statement.getCharPositionInLine(),
-                        getAbsoluteTypeName(typeSymbol), getAbsoluteTypeName(expression.getEvalType())));
-        ReferenceException exception = new ReferenceException(errorMessage, statement);
-        reportError(exception);
-        return exception;
+        TypeCheckErrorDto errorDto = new TypeCheckErrorDto(
+                statement.getText(), statement.getLine(), statement.getCharPositionInLine(),
+                getAbsoluteTypeName(typeSymbol), getAbsoluteTypeName(expression.getEvalType()));
+
+        String errorMessage = errorMessageProvider.getTypeCheckErrorMessage(key, errorDto);
+        return createAndReportReferenceException(errorMessage, statement);
     }
 
     @Override
@@ -618,12 +617,12 @@ public class TypeCheckErrorReporter implements ITypeCheckErrorReporter
 
     private ReferenceException addAndGetClassInterfaceExpectedError(String key, ITSPHPAst operator,
             ITypeSymbol typeSymbol) {
-        String errorMessage = errorMessageProvider.getTypeCheckErrorMessage(key,
-                new TypeCheckErrorDto(operator.getText(), operator.getLine(), operator.getCharPositionInLine(),
-                        "class-/interface-type", getAbsoluteTypeName(typeSymbol)));
-        ReferenceException exception = new ReferenceException(errorMessage, operator);
-        reportError(exception);
-        return exception;
+        TypeCheckErrorDto errorDto = new TypeCheckErrorDto(
+                operator.getText(), operator.getLine(), operator.getCharPositionInLine(),
+                "class-/interface-type", getAbsoluteTypeName(typeSymbol));
+
+        String errorMessage = errorMessageProvider.getTypeCheckErrorMessage(key, errorDto);
+        return createAndReportReferenceException(errorMessage, operator);
     }
 
     @Override
@@ -669,10 +668,52 @@ public class TypeCheckErrorReporter implements ITypeCheckErrorReporter
                 wasAccessedFrom = "private";
         }
 
-        String errorMessage = errorMessageProvider.getVisibilityErrorMessage(key,
-                new VisibilityErrorDto(symbol.getName(), identifier.getLine(),
-                        identifier.getCharPositionInLine(), visibility, wasAccessedFrom));
-        ReferenceException exception = new ReferenceException(errorMessage, identifier);
+        VisibilityErrorDto errorDto = new VisibilityErrorDto(
+                symbol.getName(), identifier.getLine(), identifier.getCharPositionInLine(),
+                visibility, wasAccessedFrom);
+
+        String errorMessage = errorMessageProvider.getVisibilityErrorMessage(key, errorDto);
+        return createAndReportReferenceException(errorMessage, identifier);
+    }
+
+    @Override
+    public ReferenceException missingAbstractImplementations(ITSPHPAst identifier, Set<ISymbol> symbols) {
+        Set<IMethodSymbol> methodSymbols = new HashSet<>();
+        for (ISymbol symbol : symbols) {
+            if (symbol instanceof IMethodSymbol) {
+                methodSymbols.add((IMethodSymbol) symbol);
+            } else {
+                throw new UnknownError("Only methods can be abstract so far but it was a "
+                        + symbol.getClass().getName());
+            }
+        }
+        StringBuilder errorMessageBuilder = new StringBuilder();
+        if (methodSymbols.size() > 0) {
+            errorMessageBuilder.append(getMissingAbstractMethodsErrorMessage(identifier, methodSymbols));
+        }
+
+        return createAndReportReferenceException(errorMessageBuilder.toString(), identifier);
+    }
+
+    private String getMissingAbstractMethodsErrorMessage(ITSPHPAst identifier, Set<IMethodSymbol> methodSymbols) {
+        List<SignatureDto> dtos = new ArrayList<>();
+
+        for (IMethodSymbol symbol : methodSymbols) {
+            List<String> argumentTypes = new ArrayList<>();
+            for (IVariableSymbol variableSymbol : symbol.getParameters()) {
+                argumentTypes.add(variableSymbol.getType().getName());
+            }
+            dtos.add(new SignatureDto(symbol.getType().getName(), symbol.getName(), argumentTypes));
+        }
+
+        return errorMessageProvider.getMissingImplementationErrorMessage("missingAbstractMethods",
+                new MissingImplementationErrorDto(
+                        identifier.getText(), identifier.getLine(), identifier.getCharPositionInLine(), dtos));
+
+    }
+
+    private ReferenceException createAndReportReferenceException(String errorMessage, ITSPHPAst definition) {
+        ReferenceException exception = new ReferenceException(errorMessage, definition);
         reportError(exception);
         return exception;
     }

@@ -31,11 +31,19 @@ public TSPHPTypeCheckWalker(TreeNodeStream input, ITypeCheckPhaseController theC
 }
 
 bottomup 
-	:	expressionLists
+	:	classInterfaceDefinition
+	|	expressionLists
 	|	expressionRoot 
 	|	variableInit
 	|	constantInit
 	|	parameterDefaultValue
+	;
+	
+classInterfaceDefinition
+	:	( 	^('class' . identifier=. . . .)
+	       	|	^('interface' . identifier=. . .)
+	       	)
+		{controller.checkPolymorphism(identifier);}
 	;
     
 expressionLists

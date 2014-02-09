@@ -13,6 +13,7 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
     protected Map<String, String> typeCheckErrors;
     protected Map<String, String> ambiguousCastsErrors;
     protected Map<String, String> visibilityViolationErrors;
+    protected Map<String, String> missingImplementationErrors;
 
     protected abstract void loadDefinitionErrorMessages();
 
@@ -26,6 +27,8 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
 
     protected abstract void loadVisibilityViolationErrorMessages();
 
+    protected abstract void loadMissingImplementationErrorMessages();
+
     protected abstract String getStandardDefinitionErrorMessage(String key, DefinitionErrorDto dto);
 
     protected abstract String getStandardReferenceErrorMessage(String key, ReferenceErrorDto dto);
@@ -37,6 +40,9 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
     protected abstract String getStandardAmbiguousCastsErrorMessage(String key, AmbiguousCastsErrorDto dto);
 
     protected abstract String getStandardVisibilityViolationErrorMessage(String key, VisibilityErrorDto dto);
+
+    protected abstract String getStandardMissingImplementationErrorMessage(String key, MissingImplementationErrorDto
+            dto);
 
     @Override
     public String getDefinitionErrorMessage(String key, DefinitionErrorDto dto) {
@@ -156,6 +162,22 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
         return message;
     }
 
+    @Override
+    public String getMissingImplementationErrorMessage(String key, MissingImplementationErrorDto dto) {
+        String message;
+        if (missingImplementationErrors == null) {
+            loadMissingImplementationErrorMessages();
+        }
+        if (missingImplementationErrors.containsKey(key)) {
+            message = missingImplementationErrors.get(key);
+            message = replaceStandardPlaceholders(dto, message);
+            message = message.replace("%missingImplementations%", getMissingSignatures(dto.signatureDtos));
+        } else {
+            message = getStandardMissingImplementationErrorMessage(key, dto);
+        }
+        return message;
+    }
+
     private String replaceStandardPlaceholders(ReferenceErrorDto dto, String message) {
         String msg = message.replace("%id%", dto.identifier);
         msg = msg.replace("%line%", Integer.toString(dto.line));
@@ -202,6 +224,24 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
             }
             isNotFirst = true;
             stringBuilder.append(type);
+        }
+        return stringBuilder.toString();
+    }
+
+
+    protected String getMissingSignatures(List<SignatureDto> signatureDtos) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (SignatureDto signatureDto : signatureDtos) {
+            stringBuilder.append(signatureDto.returnType).append(" ").append(signatureDto.identifier).append("(");
+            boolean notFirst = false;
+            for (String argumentType : signatureDto.argumentTypes) {
+                if (notFirst) {
+                    stringBuilder.append(", ");
+                }
+                stringBuilder.append(argumentType);
+                notFirst = true;
+            }
+            stringBuilder.append(")");
         }
         return stringBuilder.toString();
     }

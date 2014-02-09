@@ -1,8 +1,6 @@
 package ch.tutteli.tsphp.typechecker.symbols;
 
-import ch.tutteli.tsphp.typechecker.scopes.ICaseInsensitiveScope;
-
-public interface IClassTypeSymbol extends IPolymorphicTypeSymbol, ICaseInsensitiveScope, ICanBeFinal, ICanBeAbstract
+public interface IClassTypeSymbol extends IPolymorphicTypeSymbol, ICanBeFinal
 {
 
     IMethodSymbol getConstruct();

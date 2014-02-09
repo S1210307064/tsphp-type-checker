@@ -65,5 +65,7 @@ public interface ITypeCheckPhaseController
 
     void checkNew(ITSPHPAst identifier, ITSPHPAst arguments);
 
+    void checkPolymorphism(ITSPHPAst identifier);
+
     void addDefaultValue(ITSPHPAst variableId);
 }
