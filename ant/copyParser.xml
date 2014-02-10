@@ -16,10 +16,10 @@
             <fileset dir="${parser.tokens}" includes="*.tokens"/>
         </copy>
         <delete>
-            <fileset dir="${libdev}" includes="tsphp-parser-*.jar"/>
+            <fileset dir="${libdev}" includes="TSPHP-parser-*.jar"/>
         </delete>
         <copy todir="${libdev}">
-            <fileset dir="${parser.jar}" includes="tsphp-parser-*.jar"/>
+            <fileset dir="${parser.jar}" includes="TSPHP-parser-*.jar"/>
         </copy>
     </target>
 
