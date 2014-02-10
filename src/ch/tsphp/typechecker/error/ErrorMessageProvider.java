@@ -218,7 +218,7 @@ public class ErrorMessageProvider extends AErrorMessageProvider
     @Override
     protected void loadMissingImplementationErrorMessages() {
         missingImplementationErrors = new HashMap<>();
-        missingImplementationErrors.put("missingAbstractMethods", "Line %line%|%pos% - the class %id% is not abstract "
+        missingImplementationErrors.put("missingAbstractMethods", "Line %line%|%pos% - class %id% is not abstract "
                 + "and does not implement the following abstract methods: %missingImplementations%");
     }
 

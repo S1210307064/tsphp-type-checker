@@ -706,10 +706,17 @@ public class TypeCheckErrorReporter implements ITypeCheckErrorReporter
             dtos.add(new SignatureDto(symbol.getType().getName(), symbol.getName(), argumentTypes));
         }
 
+        String methodIdentifier = getMethodIdentifier(identifier);
+
         return errorMessageProvider.getMissingImplementationErrorMessage("missingAbstractMethods",
                 new MissingImplementationErrorDto(
-                        identifier.getText(), identifier.getLine(), identifier.getCharPositionInLine(), dtos));
+                        methodIdentifier, identifier.getLine(), identifier.getCharPositionInLine(), dtos));
 
+    }
+
+    private String getMethodIdentifier(ITSPHPAst identifier) {
+        String methodIdentifier = identifier.getText();
+        return methodIdentifier.substring(0, methodIdentifier.length() - 2);
     }
 
     private ReferenceException createAndReportReferenceException(String errorMessage, ITSPHPAst definition) {
