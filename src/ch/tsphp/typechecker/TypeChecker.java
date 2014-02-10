@@ -39,6 +39,7 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
 
     public TypeChecker() {
         TypeCheckErrorReporterRegistry.set(new TypeCheckErrorReporter(new ErrorMessageProvider()));
+        init();
     }
 
     private void init() {
@@ -124,8 +125,8 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
                 astHelper);
     }
 
-    protected IDefinitionPhaseController createDefinitionPhaseController(IScopeHelper scopeHelper, ISymbolFactory
-            symbolFactory) {
+    protected IDefinitionPhaseController createDefinitionPhaseController(
+            IScopeHelper scopeHelper, ISymbolFactory symbolFactory) {
         return new DefinitionPhaseController(symbolFactory, new ScopeFactory(scopeHelper));
     }
 
@@ -171,6 +172,7 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
         for (IErrorLogger logger : errorLoggers) {
             typeCheckWalker.registerErrorLogger(logger);
         }
+
         typeCheckWalker.registerErrorLogger(this);
         typeCheckWalker.downup(ast);
     }
