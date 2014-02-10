@@ -5,21 +5,21 @@ options {
 }
 
 @header{
-package ch.tutteli.tsphp.typechecker.antlr;
+package ch.tsphp.typechecker.antlr;
 
-import ch.tutteli.tsphp.common.ITypeSymbol;
-import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.common.ITSPHPErrorAst;
-import ch.tutteli.tsphp.typechecker.IAccessResolver;
-import ch.tutteli.tsphp.typechecker.IReferencePhaseController;
-import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
-import ch.tutteli.tsphp.typechecker.scopes.ICaseInsensitiveScope;
-import ch.tutteli.tsphp.typechecker.symbols.IAliasSymbol;
-import ch.tutteli.tsphp.typechecker.symbols.IClassTypeSymbol;
-import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
-import ch.tutteli.tsphp.typechecker.symbols.IInterfaceTypeSymbol;
-import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
-import ch.tutteli.tsphp.typechecker.symbols.IVoidTypeSymbol;
+import ch.tsphp.common.ITypeSymbol;
+import ch.tsphp.common.ITSPHPAst;
+import ch.tsphp.common.ITSPHPErrorAst;
+import ch.tsphp.typechecker.IAccessResolver;
+import ch.tsphp.typechecker.IReferencePhaseController;
+import ch.tsphp.typechecker.scopes.INamespaceScope;
+import ch.tsphp.typechecker.scopes.ICaseInsensitiveScope;
+import ch.tsphp.typechecker.symbols.IAliasSymbol;
+import ch.tsphp.typechecker.symbols.IClassTypeSymbol;
+import ch.tsphp.typechecker.symbols.IMethodSymbol;
+import ch.tsphp.typechecker.symbols.IInterfaceTypeSymbol;
+import ch.tsphp.typechecker.symbols.IVariableSymbol;
+import ch.tsphp.typechecker.symbols.IVoidTypeSymbol;
 
 }
 

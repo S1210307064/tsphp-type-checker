@@ -6,12 +6,12 @@ options {
 }
 
 @header{
-package ch.tutteli.tsphp.typechecker.antlr;
+package ch.tsphp.typechecker.antlr;
 
-import ch.tutteli.tsphp.common.IScope;
-import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.typechecker.IDefinitionPhaseController;
-import ch.tutteli.tsphp.typechecker.scopes.INamespaceScope;
+import ch.tsphp.common.IScope;
+import ch.tsphp.common.ITSPHPAst;
+import ch.tsphp.typechecker.IDefinitionPhaseController;
+import ch.tsphp.typechecker.scopes.INamespaceScope;
 
 }
 

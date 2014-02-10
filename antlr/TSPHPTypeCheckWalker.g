@@ -6,15 +6,15 @@ options {
 }
 
 @header{
-package ch.tutteli.tsphp.typechecker.antlr;
+package ch.tsphp.typechecker.antlr;
 
-import ch.tutteli.tsphp.common.ITypeSymbol;
-import ch.tutteli.tsphp.common.ITSPHPAst;
-import ch.tutteli.tsphp.typechecker.IAccessResolver;
-import ch.tutteli.tsphp.typechecker.ITypeCheckPhaseController;
-import ch.tutteli.tsphp.typechecker.ITypeSystem;
-import ch.tutteli.tsphp.typechecker.symbols.IMethodSymbol;
-import ch.tutteli.tsphp.typechecker.symbols.IVariableSymbol;
+import ch.tsphp.common.ITypeSymbol;
+import ch.tsphp.common.ITSPHPAst;
+import ch.tsphp.typechecker.IAccessResolver;
+import ch.tsphp.typechecker.ITypeCheckPhaseController;
+import ch.tsphp.typechecker.ITypeSystem;
+import ch.tsphp.typechecker.symbols.IMethodSymbol;
+import ch.tsphp.typechecker.symbols.IVariableSymbol;
 }
 
 @members {

@@ -4,8 +4,8 @@
 
     <import file="${basedir}/ant/build-common.xml" as="common"/>
 
-    <property name="parser" location="${basedir}/../TSPHP-parser"/>
-    <property name="parser.tokens" location="${parser}/antlr/output"/>
+    <property name="parser" location="${basedir}/../tsphp-parser"/>
+    <property name="parser.tokens" location="${parser}/src/ch/tsphp/parser/antlr"/>
     <property name="parser.jar" location="${parser}/build/lib"/>
 
     <target name="parser" depends="" description="copy parser jar and token file to /lib/dev/, /antlr respectively">
@@ -16,10 +16,10 @@
             <fileset dir="${parser.tokens}" includes="*.tokens"/>
         </copy>
         <delete>
-            <fileset dir="${libdev}" includes="TSPHP-parser-*.jar"/>
+            <fileset dir="${libdev}" includes="tsphp-parser-*.jar"/>
         </delete>
         <copy todir="${libdev}">
-            <fileset dir="${parser.jar}" includes="TSPHP-parser-*.jar"/>
+            <fileset dir="${parser.jar}" includes="tsphp-parser-*.jar"/>
         </copy>
     </target>
 

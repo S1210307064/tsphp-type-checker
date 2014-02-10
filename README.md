@@ -3,8 +3,8 @@
 This repository contains the type checker component of the [Type-Safe PHP compiler](https://github.com/tsphp/tsphp "TSPHP compiler").  
 It augments the AST with type information and ensures that your TSPHP code has a valid semantic and is type-safe.
 
-Please visit the [project's website](http://tsphp.tutteli.ch/) for more information on the project.  
-Use the project's [issue tracking system](http://tsphp.tutteli.ch/jira) (JIRA) to report bugs or submit feature requests.
+Please visit the [project's website](http://tsphp.ch/) for more information on the project.
+Use the project's [issue tracking system](http://tsphp.ch/jira) (JIRA) to report bugs or submit feature requests.
 
 <br/>
 
