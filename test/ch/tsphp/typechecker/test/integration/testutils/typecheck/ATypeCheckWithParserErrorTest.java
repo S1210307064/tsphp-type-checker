@@ -1,7 +1,6 @@
 package ch.tsphp.typechecker.test.integration.testutils.typecheck;
 
 import ch.tsphp.common.IErrorReporter;
-import ch.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
 import org.junit.Ignore;
 
 import static org.junit.Assert.assertFalse;
@@ -29,8 +28,7 @@ public abstract class ATypeCheckWithParserErrorTest extends ATypeCheckTest
 
     @Override
     protected void checkReferences() {
-        IErrorReporter errorHelper = TypeCheckErrorReporterRegistry.get();
-        assertFalse(testString + " failed. Exceptions occurred." + exceptions, errorHelper.hasFoundError());
+        assertFalse(testString + " failed. Exceptions occurred." + exceptions, typeCheckErrorReporter.hasFoundError());
         assertTrue(testString + " failed. reference walker exceptions expected but nothing was thrown.",
                 reference.hasFoundError());
     }

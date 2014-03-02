@@ -65,7 +65,7 @@ public class GlobalNamespaceTest extends ATest
     }
 
     private GlobalNamespaceScope createGlobalNamespaceScope(String scopeName) {
-        return new GlobalNamespaceScope(new ScopeHelper(), scopeName);
+        return new GlobalNamespaceScope(new ScopeHelper(typeCheckErrorReporter), scopeName);
     }
 
 }

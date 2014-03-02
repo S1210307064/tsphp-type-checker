@@ -6,6 +6,7 @@ import ch.tsphp.common.ITSPHPAst;
 import ch.tsphp.common.LowerCaseStringMap;
 import ch.tsphp.typechecker.ISymbolResolver;
 import ch.tsphp.typechecker.SymbolResolver;
+import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
 import ch.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tsphp.typechecker.scopes.IScopeHelper;
@@ -138,7 +139,11 @@ public class SymbolResolverTest
     }
 
     private ISymbolResolver createSymbolResolver() {
-        return new SymbolResolver(scopeHelper, symbolFactory, globalNamespaceScopes, globalDefaultNamespace);
+        return new SymbolResolver(
+                scopeHelper,
+                symbolFactory, mock(ITypeCheckerErrorReporter.class),
+                globalNamespaceScopes,
+                globalDefaultNamespace);
     }
 
     private ITSPHPAst createAst(String name) {

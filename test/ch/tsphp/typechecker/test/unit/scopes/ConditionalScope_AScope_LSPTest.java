@@ -1,6 +1,7 @@
 package ch.tsphp.typechecker.test.unit.scopes;
 
 import ch.tsphp.common.IScope;
+import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
 import ch.tsphp.typechecker.scopes.AScope;
 import ch.tsphp.typechecker.scopes.ConditionalScope;
 import org.junit.Test;
@@ -12,7 +13,7 @@ import static org.mockito.Mockito.mock;
 public class ConditionalScope_AScope_LSPTest extends AScopeTest
 {
     protected AScope createScope(String name, IScope enclosingScope) {
-        return new ConditionalScope(scopeHelper, enclosingScope);
+        return new ConditionalScope(scopeHelper, enclosingScope, mock(ITypeCheckerErrorReporter.class));
     }
 
     @Override

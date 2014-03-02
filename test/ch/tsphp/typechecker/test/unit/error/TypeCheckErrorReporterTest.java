@@ -6,8 +6,8 @@ import ch.tsphp.common.ITSPHPAst;
 import ch.tsphp.common.exceptions.DefinitionException;
 import ch.tsphp.common.exceptions.TSPHPException;
 import ch.tsphp.typechecker.error.IErrorMessageProvider;
-import ch.tsphp.typechecker.error.ITypeCheckErrorReporter;
-import ch.tsphp.typechecker.error.TypeCheckErrorReporter;
+import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
+import ch.tsphp.typechecker.error.TypeCheckerErrorReporter;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
@@ -27,11 +27,11 @@ import static org.mockito.Mockito.when;
 public class TypeCheckErrorReporterTest
 {
     private final List<Exception> exceptions = new ArrayList<>();
-    private ITypeCheckErrorReporter errorReporter;
+    private ITypeCheckerErrorReporter errorReporter;
 
     @Before
     public void setUp() {
-        errorReporter = new TypeCheckErrorReporter(mock(IErrorMessageProvider.class));
+        errorReporter = new TypeCheckerErrorReporter(mock(IErrorMessageProvider.class));
         errorReporter.registerErrorLogger(new IErrorLogger()
         {
             @Override

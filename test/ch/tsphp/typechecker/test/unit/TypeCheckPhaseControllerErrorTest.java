@@ -8,8 +8,7 @@ import ch.tsphp.typechecker.ISymbolResolver;
 import ch.tsphp.typechecker.ITypeCheckPhaseController;
 import ch.tsphp.typechecker.ITypeSystem;
 import ch.tsphp.typechecker.TypeCheckPhaseController;
-import ch.tsphp.typechecker.error.ITypeCheckErrorReporter;
-import ch.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
+import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
 import ch.tsphp.typechecker.symbols.ISymbolFactory;
 import ch.tsphp.typechecker.symbols.IVariableSymbol;
 import ch.tsphp.typechecker.utils.ITypeCheckerAstHelper;
@@ -28,7 +27,7 @@ public class TypeCheckPhaseControllerErrorTest
     private IOverloadResolver overloadResolver;
     private IAccessResolver visibilityChecker;
     private ITypeCheckerAstHelper astHelper;
-    private ITypeCheckErrorReporter errorReporter;
+    private ITypeCheckerErrorReporter typeCheckerErrorReporter;
 
     @Before
     public void setUp() {
@@ -38,8 +37,7 @@ public class TypeCheckPhaseControllerErrorTest
         overloadResolver = mock(IOverloadResolver.class);
         visibilityChecker = mock(IAccessResolver.class);
         astHelper = mock(ITypeCheckerAstHelper.class);
-        errorReporter = mock(ITypeCheckErrorReporter.class);
-        TypeCheckErrorReporterRegistry.set(errorReporter);
+        typeCheckerErrorReporter = mock(ITypeCheckerErrorReporter.class);
     }
 
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
@@ -57,7 +55,7 @@ public class TypeCheckPhaseControllerErrorTest
         ITypeCheckPhaseController typeCheckerController = createTypeCheckController();
         typeCheckerController.checkClassMemberInitialValue(variableId, expression);
 
-        verify(errorReporter).wrongClassMemberInitialValue(variableId, expression, typeSymbol);
+        verify(typeCheckerErrorReporter).wrongClassMemberInitialValue(variableId, expression, typeSymbol);
     }
 
     private ITSPHPAst createAst(ITypeSymbol typeSymbol) {
@@ -68,6 +66,12 @@ public class TypeCheckPhaseControllerErrorTest
 
     protected ITypeCheckPhaseController createTypeCheckController() {
         return new TypeCheckPhaseController(
-                symbolFactory, symbolResolver, typeSystem, overloadResolver, visibilityChecker, astHelper);
+                symbolFactory,
+                symbolResolver,
+                typeCheckerErrorReporter,
+                typeSystem,
+                overloadResolver,
+                visibilityChecker,
+                astHelper);
     }
 }

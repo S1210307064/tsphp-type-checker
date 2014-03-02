@@ -241,7 +241,7 @@ public abstract class AErrorMessageProvider implements IErrorMessageProvider
                 stringBuilder.append(argumentType);
                 notFirst = true;
             }
-            stringBuilder.append(")");
+            stringBuilder.append(")\n");
         }
         return stringBuilder.toString();
     }

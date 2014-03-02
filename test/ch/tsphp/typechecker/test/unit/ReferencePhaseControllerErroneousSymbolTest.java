@@ -4,8 +4,7 @@ import ch.tsphp.common.ITSPHPAst;
 import ch.tsphp.typechecker.IReferencePhaseController;
 import ch.tsphp.typechecker.ISymbolResolver;
 import ch.tsphp.typechecker.ReferencePhaseController;
-import ch.tsphp.typechecker.error.ITypeCheckErrorReporter;
-import ch.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
+import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
 import ch.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tsphp.typechecker.symbols.ISymbolFactory;
 import ch.tsphp.typechecker.symbols.erroneous.IErroneousMethodSymbol;
@@ -24,14 +23,13 @@ public class ReferencePhaseControllerErroneousSymbolTest
 {
     private ISymbolFactory symbolFactory;
     private ISymbolResolver symbolResolver;
-    private ITypeCheckErrorReporter errorReporter;
+    private ITypeCheckerErrorReporter typeCheckerErrorReporter;
 
     @Before
     public void setUp() {
         symbolFactory = mock(ISymbolFactory.class);
         symbolResolver = mock(ISymbolResolver.class);
-        errorReporter = mock(ITypeCheckErrorReporter.class);
-        TypeCheckErrorReporterRegistry.set(errorReporter);
+        typeCheckerErrorReporter = mock(ITypeCheckerErrorReporter.class);
     }
 
     @Test
@@ -42,7 +40,7 @@ public class ReferencePhaseControllerErroneousSymbolTest
         boolean result = controller.checkIsInterface(mock(ITSPHPAst.class), erroneousTypeSymbol);
 
         assertTrue(result);
-        verifyNoMoreInteractions(errorReporter);
+        verifyNoMoreInteractions(typeCheckerErrorReporter);
     }
 
 
@@ -54,7 +52,7 @@ public class ReferencePhaseControllerErroneousSymbolTest
         boolean result = typeCheckerController.checkIsClass(mock(ITSPHPAst.class), erroneousTypeSymbol);
 
         assertTrue(result);
-        verifyNoMoreInteractions(errorReporter);
+        verifyNoMoreInteractions(typeCheckerErrorReporter);
     }
 
     @Test
@@ -88,12 +86,12 @@ public class ReferencePhaseControllerErroneousSymbolTest
 
         assertTrue(result);
         verifyNoMoreInteractions(symbol);
-        verifyNoMoreInteractions(errorReporter);
+        verifyNoMoreInteractions(typeCheckerErrorReporter);
     }
 
 
     protected IReferencePhaseController createReferencePhaseController() {
         return new ReferencePhaseController(
-                symbolFactory, symbolResolver, mock(IGlobalNamespaceScope.class));
+                symbolFactory, symbolResolver, typeCheckerErrorReporter, mock(IGlobalNamespaceScope.class));
     }
 }

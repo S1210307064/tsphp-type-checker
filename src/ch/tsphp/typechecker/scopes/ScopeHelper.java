@@ -4,7 +4,7 @@ import ch.tsphp.common.ILowerCaseStringMap;
 import ch.tsphp.common.IScope;
 import ch.tsphp.common.ISymbol;
 import ch.tsphp.common.ITSPHPAst;
-import ch.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
+import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
 import ch.tsphp.typechecker.utils.MapHelper;
 
 import java.util.List;
@@ -12,6 +12,11 @@ import java.util.Map;
 
 public class ScopeHelper implements IScopeHelper
 {
+    private final ITypeCheckerErrorReporter typeCheckerErrorReporter;
+
+    public ScopeHelper(ITypeCheckerErrorReporter theTypeCheckerErrorReporter){
+        typeCheckerErrorReporter = theTypeCheckerErrorReporter;
+    }
 
     @Override
     public void define(IScope definitionScope, ISymbol symbol) {
@@ -78,7 +83,7 @@ public class ScopeHelper implements IScopeHelper
     }
 
     /**
-     * Represents a delegate which calls the appropriate method on TypeCheckErrorReporter.
+     * Represents a delegate which calls the appropriate method on TypeCheckerErrorReporter.
      */
     private class StandardAlreadyDefinedMethodCaller implements IAlreadyDefinedMethodCaller
     {
@@ -86,7 +91,7 @@ public class ScopeHelper implements IScopeHelper
         @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
         @Override
         public void callAccordingAlreadyDefinedMethod(ISymbol firstDefinition, ISymbol symbolToCheck) {
-            TypeCheckErrorReporterRegistry.get().alreadyDefined(firstDefinition, symbolToCheck);
+            typeCheckerErrorReporter.alreadyDefined(firstDefinition, symbolToCheck);
         }
     }
 }

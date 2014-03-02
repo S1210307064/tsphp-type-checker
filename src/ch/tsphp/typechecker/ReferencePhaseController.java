@@ -9,8 +9,7 @@ import ch.tsphp.common.exceptions.DefinitionException;
 import ch.tsphp.common.exceptions.ReferenceException;
 import ch.tsphp.common.exceptions.TypeCheckerException;
 import ch.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
-import ch.tsphp.typechecker.error.ITypeCheckErrorReporter;
-import ch.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
+import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
 import ch.tsphp.typechecker.scopes.IConditionalScope;
 import ch.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tsphp.typechecker.symbols.IAliasTypeSymbol;
@@ -33,15 +32,20 @@ public class ReferencePhaseController implements IReferencePhaseController
 {
     private final ISymbolFactory symbolFactory;
     private final ISymbolResolver symbolResolver;
+    private final ITypeCheckerErrorReporter typeCheckErrorReporter;
+
     private final IGlobalNamespaceScope globalDefaultNamespace;
 
     public ReferencePhaseController(
             ISymbolFactory theSymbolFactory,
             ISymbolResolver theSymbolResolver,
+            ITypeCheckerErrorReporter theTypeCheckerErrorReporter,
             IGlobalNamespaceScope theGlobalDefaultNamespace) {
         symbolFactory = theSymbolFactory;
         symbolResolver = theSymbolResolver;
+        typeCheckErrorReporter = theTypeCheckerErrorReporter;
         globalDefaultNamespace = theGlobalDefaultNamespace;
+
     }
 
     @Override
@@ -49,7 +53,7 @@ public class ReferencePhaseController implements IReferencePhaseController
         IVariableSymbol symbol = symbolResolver.resolveConstant(ast);
 
         if (symbol == null) {
-            ReferenceException exception = TypeCheckErrorReporterRegistry.get().notDefined(ast);
+            ReferenceException exception = typeCheckErrorReporter.notDefined(ast);
             symbol = symbolFactory.createErroneousVariableSymbol(ast, exception);
         }
         return symbol;
@@ -63,7 +67,7 @@ public class ReferencePhaseController implements IReferencePhaseController
     private IClassTypeSymbol getEnclosingClass(ITSPHPAst ast) {
         IClassTypeSymbol classTypeSymbol = symbolResolver.getEnclosingClass(ast);
         if (classTypeSymbol == null) {
-            ReferenceException ex = TypeCheckErrorReporterRegistry.get().notInClass(ast);
+            ReferenceException ex = typeCheckErrorReporter.notInClass(ast);
             classTypeSymbol = symbolFactory.createErroneousTypeSymbol(ast, ex);
         }
         return classTypeSymbol;
@@ -78,7 +82,7 @@ public class ReferencePhaseController implements IReferencePhaseController
                 classTypeSymbol.setThis(variableSymbol);
             }
         } else {
-            ReferenceException exception = TypeCheckErrorReporterRegistry.get().notInClass($this);
+            ReferenceException exception = typeCheckErrorReporter.notInClass($this);
             variableSymbol = symbolFactory.createErroneousVariableSymbol($this, exception);
         }
         return variableSymbol;
@@ -93,7 +97,7 @@ public class ReferencePhaseController implements IReferencePhaseController
         IClassTypeSymbol classTypeSymbol = getEnclosingClass(ast);
         IClassTypeSymbol parent = classTypeSymbol.getParent();
         if (parent == null) {
-            TypeCheckerException ex = TypeCheckErrorReporterRegistry.get().noParentClass(ast);
+            TypeCheckerException ex = typeCheckErrorReporter.noParentClass(ast);
             parent = symbolFactory.createErroneousTypeSymbol(ast, ex);
         }
         return parent;
@@ -103,7 +107,7 @@ public class ReferencePhaseController implements IReferencePhaseController
     public IVariableSymbol resolveVariable(ITSPHPAst ast) {
         ISymbol symbol = ast.getScope().resolve(ast);
         if (symbol == null) {
-            ReferenceException exception = TypeCheckErrorReporterRegistry.get().notDefined(ast);
+            ReferenceException exception = typeCheckErrorReporter.notDefined(ast);
             symbol = symbolFactory.createErroneousVariableSymbol(ast, exception);
         }
         return (IVariableSymbol) symbol;
@@ -127,7 +131,7 @@ public class ReferencePhaseController implements IReferencePhaseController
         ITypeSymbol typeSymbol = (ITypeSymbol) globalDefaultNamespace.resolve(typeAst);
         if (typeSymbol == null) {
             rewriteNameToAbsoluteType(typeAst);
-            ReferenceException ex = TypeCheckErrorReporterRegistry.get().unknownType(typeAst);
+            ReferenceException ex = typeCheckErrorReporter.unknownType(typeAst);
             typeSymbol = symbolFactory.createErroneousTypeSymbol(typeAst, ex);
 
         }
@@ -151,13 +155,13 @@ public class ReferencePhaseController implements IReferencePhaseController
 
         if (symbol == null) {
             rewriteNameToAbsoluteType(typeAst);
-            ReferenceException ex = TypeCheckErrorReporterRegistry.get().unknownType(typeAst);
+            ReferenceException ex = typeCheckErrorReporter.unknownType(typeAst);
             symbol = symbolFactory.createErroneousTypeSymbol(typeAst, ex);
 
         } else if (symbol instanceof IAliasTypeSymbol) {
 
             typeAst.setText(symbol.getName());
-            ReferenceException ex = TypeCheckErrorReporterRegistry.get().unknownType(typeAst);
+            ReferenceException ex = typeCheckErrorReporter.unknownType(typeAst);
             symbol = symbolFactory.createErroneousTypeSymbol(symbol.getDefinitionAst(), ex);
         }
         return symbol;
@@ -177,7 +181,7 @@ public class ReferencePhaseController implements IReferencePhaseController
     public boolean checkIsInterface(ITSPHPAst typeAst, ITypeSymbol symbol) {
         boolean isInterface = symbol instanceof IInterfaceTypeSymbol;
         if (!isInterface) {
-            TypeCheckErrorReporterRegistry.get().interfaceExpected(typeAst);
+            typeCheckErrorReporter.interfaceExpected(typeAst);
         }
         return isInterface;
     }
@@ -187,7 +191,7 @@ public class ReferencePhaseController implements IReferencePhaseController
     public boolean checkIsClass(ITSPHPAst typeAst, ITypeSymbol symbol) {
         boolean isClass = symbol instanceof IClassTypeSymbol;
         if (!isClass) {
-            TypeCheckErrorReporterRegistry.get().classExpected(typeAst);
+            typeCheckErrorReporter.classExpected(typeAst);
         }
         return isClass;
     }
@@ -210,7 +214,7 @@ public class ReferencePhaseController implements IReferencePhaseController
             ITSPHPAst definitionAst = symbol.getDefinitionAst();
             isNotUsedBefore = definitionAst.isDefinedEarlierThan(ast);
             if (!isNotUsedBefore) {
-                DefinitionException exception = TypeCheckErrorReporterRegistry.get().forwardReference(
+                DefinitionException exception = typeCheckErrorReporter.forwardReference(
                         ast, definitionAst);
                 symbol = symbolFactory.createErroneousVariableSymbol(ast, exception);
                 ast.setSymbol(symbol);
@@ -228,11 +232,11 @@ public class ReferencePhaseController implements IReferencePhaseController
             IScope currentScope = ast.getScope();
             if (!(currentScope instanceof IConditionalScope)) {
                 ok = false;
-                TypeCheckErrorReporterRegistry.get().variableDefinedInConditionalScope(
+                typeCheckErrorReporter.variableDefinedInConditionalScope(
                         ast.getSymbol().getDefinitionAst(), ast);
             } else if (isNotDefinedInThisNorOuterScope(symbol, currentScope)) {
                 ok = false;
-                TypeCheckErrorReporterRegistry.get().variableDefinedInOtherConditionalScope(
+                typeCheckErrorReporter.variableDefinedInOtherConditionalScope(
                         symbol.getDefinitionAst(), ast);
             }
         }
@@ -259,7 +263,7 @@ public class ReferencePhaseController implements IReferencePhaseController
         ISymbol symbol = variableId.getSymbol();
         if (!(symbol instanceof IErroneousVariableSymbol)) {
             if (!scope.isFullyInitialised(symbol) && isNotLeftHandSideOfAssignment(variableId)) {
-                ITypeCheckErrorReporter errorReporter = TypeCheckErrorReporterRegistry.get();
+                ITypeCheckerErrorReporter errorReporter = typeCheckErrorReporter;
                 if (scope.isPartiallyInitialised(symbol)) {
                     errorReporter.variablePartiallyInitialised(symbol.getDefinitionAst(), variableId);
                 } else {
@@ -372,9 +376,9 @@ public class ReferencePhaseController implements IReferencePhaseController
             ITSPHPAst identifier) {
         if (!isReturning) {
             if (hasAtLeastOneReturnOrThrow) {
-                TypeCheckErrorReporterRegistry.get().partialReturnFromFunction(identifier);
+                typeCheckErrorReporter.partialReturnFromFunction(identifier);
             } else {
-                TypeCheckErrorReporterRegistry.get().noReturnFromFunction(identifier);
+                typeCheckErrorReporter.noReturnFromFunction(identifier);
             }
         }
     }
@@ -384,9 +388,9 @@ public class ReferencePhaseController implements IReferencePhaseController
     public void checkReturnsFromMethod(boolean isReturning, boolean hasAtLeastOneReturnOrThrow, ITSPHPAst identifier) {
         if (!isReturning) {
             if (hasAtLeastOneReturnOrThrow) {
-                TypeCheckErrorReporterRegistry.get().partialReturnFromMethod(identifier);
+                typeCheckErrorReporter.partialReturnFromMethod(identifier);
             } else {
-                TypeCheckErrorReporterRegistry.get().noReturnFromMethod(identifier);
+                typeCheckErrorReporter.noReturnFromMethod(identifier);
             }
         }
     }
@@ -406,10 +410,10 @@ public class ReferencePhaseController implements IReferencePhaseController
                 parent = (ITSPHPAst) parent.getParent();
             }
             if (count < levels) {
-                TypeCheckErrorReporterRegistry.get().toManyBreakContinueLevels(root);
+                typeCheckErrorReporter.toManyBreakContinueLevels(root);
             }
         } else {
-            TypeCheckErrorReporterRegistry.get().breakContinueLevelZeroNotAllowed(root);
+            typeCheckErrorReporter.breakContinueLevelZeroNotAllowed(root);
         }
     }
 

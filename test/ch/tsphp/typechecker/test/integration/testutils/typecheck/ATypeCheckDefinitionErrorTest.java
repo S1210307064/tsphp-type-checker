@@ -25,6 +25,7 @@ public abstract class ATypeCheckDefinitionErrorTest extends ATypeCheckTest
 
     @Override
     protected void verifyTypeCheck() {
-        AReferenceDefinitionErrorTest.verifyReferences(errorMessagePrefix, exceptions, errorDtos);
+        AReferenceDefinitionErrorTest.verifyReferences(
+                errorMessagePrefix, exceptions, errorDtos, typeCheckErrorReporter);
     }
 }

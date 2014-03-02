@@ -15,7 +15,7 @@ import ch.tsphp.typechecker.symbols.ISymbolWithAccessModifier;
 import java.util.List;
 import java.util.Set;
 
-public interface ITypeCheckErrorReporter extends ch.tsphp.common.IErrorReporter
+public interface ITypeCheckerErrorReporter extends ch.tsphp.common.IErrorReporter
 {
 
     /**

@@ -8,6 +8,7 @@ import ch.tsphp.common.TSPHPAstAdaptor;
 import ch.tsphp.typechecker.ITypeSystem;
 import ch.tsphp.typechecker.TypeSystem;
 import ch.tsphp.typechecker.antlrmod.ErrorReportingTSPHPDefinitionWalker;
+import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
 import ch.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tsphp.typechecker.scopes.IScopeHelper;
 import ch.tsphp.typechecker.scopes.ScopeHelper;
@@ -55,8 +56,8 @@ public abstract class ADefinitionTest extends ATest
     private void init() {
         adaptor = createAstAdaptor();
 
-        scopeHelper = createScopeHelper();
-        scopeFactory = createTestScopeFactory(scopeHelper);
+        scopeHelper = createScopeHelper(typeCheckErrorReporter);
+        scopeFactory = createTestScopeFactory(scopeHelper, typeCheckErrorReporter);
         symbolFactory = createTestSymbolFactory(scopeHelper);
 
         definer = createTestDefiner(symbolFactory, scopeFactory);
@@ -92,16 +93,17 @@ public abstract class ADefinitionTest extends ATest
         verifyDefinitions();
     }
 
-    protected IScopeHelper createScopeHelper() {
-        return new ScopeHelper();
+    protected IScopeHelper createScopeHelper(ITypeCheckerErrorReporter theTypeCheckerErrorReporter) {
+        return new ScopeHelper(theTypeCheckerErrorReporter);
     }
 
     protected ITSPHPAstAdaptor createAstAdaptor() {
         return new TSPHPAstAdaptor();
     }
 
-    protected TestScopeFactory createTestScopeFactory(IScopeHelper theScopeHelper) {
-        return new TestScopeFactory(theScopeHelper);
+    protected TestScopeFactory createTestScopeFactory(
+            IScopeHelper theScopeHelper, ITypeCheckerErrorReporter theTypeCheckerErrorReporter) {
+        return new TestScopeFactory(theScopeHelper, theTypeCheckerErrorReporter);
     }
 
     protected TestSymbolFactory createTestSymbolFactory(IScopeHelper theScopeHelper) {

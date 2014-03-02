@@ -1,5 +1,6 @@
 package ch.tsphp.typechecker.test.integration.testutils;
 
+import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
 import ch.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tsphp.typechecker.scopes.IScopeHelper;
@@ -13,8 +14,8 @@ public class TestScopeFactory extends ScopeFactory
 
     public List<INamespaceScope> scopes = new ArrayList<>();
 
-    public TestScopeFactory(IScopeHelper theScopeHelper) {
-        super(theScopeHelper);
+    public TestScopeFactory(IScopeHelper theScopeHelper, ITypeCheckerErrorReporter theTypeCheckerErrorReporter) {
+        super(theScopeHelper, theTypeCheckerErrorReporter);
     }
 
     @Override

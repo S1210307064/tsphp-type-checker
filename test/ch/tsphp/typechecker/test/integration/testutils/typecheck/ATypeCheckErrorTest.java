@@ -22,7 +22,7 @@ public abstract class ATypeCheckErrorTest extends ATypeCheckTest
 
     @Override
     protected void verifyTypeCheck() {
-        AReferenceErrorTest.verifyReferences(errorMessagePrefix, exceptions, errorDtos);
+        AReferenceErrorTest.verifyReferences(errorMessagePrefix, exceptions, errorDtos, typeCheckErrorReporter);
     }
 
     public static ReferenceErrorDto[] refErrorDto(String identifier, int line, int position) {

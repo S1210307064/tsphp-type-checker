@@ -8,7 +8,7 @@ import ch.tsphp.common.ITypeSymbol;
 import ch.tsphp.common.LowerCaseStringMap;
 import ch.tsphp.common.exceptions.DefinitionException;
 import ch.tsphp.common.exceptions.ReferenceException;
-import ch.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
+import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
 import ch.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tsphp.typechecker.scopes.IScopeHelper;
@@ -23,17 +23,21 @@ public class SymbolResolver implements ISymbolResolver
 
     private final IScopeHelper scopeHelper;
     private final ISymbolFactory symbolFactory;
+    private final ITypeCheckerErrorReporter typeCheckErrorReporter;
 
     private ILowerCaseStringMap<IGlobalNamespaceScope> globalNamespaceScopes = new LowerCaseStringMap<>();
     private final IGlobalNamespaceScope globalDefaultNamespace;
 
+
     public SymbolResolver(
             IScopeHelper theScopeHelper,
             ISymbolFactory theSymbolFactory,
+            ITypeCheckerErrorReporter theTypeCheckerErrorReporter,
             ILowerCaseStringMap<IGlobalNamespaceScope> theGlobalNamespaceScopes,
             IGlobalNamespaceScope theGlobalDefaultNamespace) {
         scopeHelper = theScopeHelper;
         symbolFactory = theSymbolFactory;
+        typeCheckErrorReporter = theTypeCheckerErrorReporter;
         globalNamespaceScopes = theGlobalNamespaceScopes;
         globalDefaultNamespace = theGlobalDefaultNamespace;
     }
@@ -122,9 +126,9 @@ public class SymbolResolver implements ISymbolResolver
         if (hasTypeNameClash(useDefinition, typeSymbol)) {
             ITSPHPAst typeDefinition = typeSymbol.getDefinitionAst();
             if (useDefinition.isDefinedEarlierThan(typeDefinition)) {
-                TypeCheckErrorReporterRegistry.get().alreadyDefined(useDefinition, typeDefinition);
+                typeCheckErrorReporter.alreadyDefined(useDefinition, typeDefinition);
             } else {
-                TypeCheckErrorReporterRegistry.get().alreadyDefined(typeDefinition, useDefinition);
+                typeCheckErrorReporter.alreadyDefined(typeDefinition, useDefinition);
                 //we do not use the alias if it was defined later than the typeSymbol
                 useDefinition = null;
             }
@@ -151,12 +155,12 @@ public class SymbolResolver implements ISymbolResolver
                 if (globalNamespaceScope != null) {
                     symbol = globalNamespaceScope.resolve(typeAst);
                 } else {
-                    ReferenceException ex = TypeCheckErrorReporterRegistry.get().notDefined(typeAst);
+                    ReferenceException ex = typeCheckErrorReporter.notDefined(typeAst);
                     symbol = symbolFactory.createErroneousTypeSymbol(typeAst, ex);
                 }
             }
         } else {
-            DefinitionException ex = TypeCheckErrorReporterRegistry.get().aliasForwardReference(typeAst, useDefinition);
+            DefinitionException ex = typeCheckErrorReporter.aliasForwardReference(typeAst, useDefinition);
             symbol = symbolFactory.createErroneousTypeSymbol(typeAst, ex);
         }
         return symbol;

@@ -1,6 +1,5 @@
 package ch.tsphp.typechecker.test.integration.testutils.typecheck;
 
-import ch.tsphp.common.IErrorReporter;
 import ch.tsphp.typechecker.IAccessResolver;
 import ch.tsphp.typechecker.IOverloadResolver;
 import ch.tsphp.typechecker.ISymbolResolver;
@@ -9,7 +8,7 @@ import ch.tsphp.typechecker.ITypeSystem;
 import ch.tsphp.typechecker.OverloadResolver;
 import ch.tsphp.typechecker.TypeCheckPhaseController;
 import ch.tsphp.typechecker.antlrmod.ErrorReportingTSPHPTypeCheckWalker;
-import ch.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
+import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
 import ch.tsphp.typechecker.test.integration.testutils.TestSymbolFactory;
 import ch.tsphp.typechecker.test.integration.testutils.WriteExceptionToConsole;
 import ch.tsphp.typechecker.test.integration.testutils.reference.AReferenceTest;
@@ -43,7 +42,13 @@ public abstract class ATypeCheckTest extends AReferenceTest
         typeCheckerAstHelper = createTypeCheckerAstHelper();
 
         typeCheckPhaseController = createTypeCheckerController(
-                symbolFactory, symbolResolver, typeSystem, overloadResolver, accessResolver, typeCheckerAstHelper);
+                symbolFactory,
+                symbolResolver,
+                typeCheckErrorReporter,
+                typeSystem,
+                overloadResolver,
+                accessResolver,
+                typeCheckerAstHelper);
     }
 
     @Override
@@ -64,9 +69,8 @@ public abstract class ATypeCheckTest extends AReferenceTest
     }
 
     protected void checkErrors() {
-        IErrorReporter errorHelper = TypeCheckErrorReporterRegistry.get();
         Assert.assertFalse(testString + " failed. Exceptions occurred." + exceptions,
-                errorHelper.hasFoundError());
+                typeCheckErrorReporter.hasFoundError());
 
 
         Assert.assertFalse(testString + " failed. type checker walker exceptions occurred.",
@@ -86,14 +90,18 @@ public abstract class ATypeCheckTest extends AReferenceTest
 
     protected ITypeCheckPhaseController createTypeCheckerController(
             TestSymbolFactory theSymbolFactory,
-            ISymbolResolver theSymbolResolver, ITypeSystem theTypeSystem,
+            ISymbolResolver theSymbolResolver,
+            ITypeCheckerErrorReporter theTypeCheckerErrorReporter,
+            ITypeSystem theTypeSystem,
             IOverloadResolver theOverloadResolver,
             IAccessResolver theVisibilityChecker,
             ITypeCheckerAstHelper theAstHelper) {
 
         return new TypeCheckPhaseController(
                 theSymbolFactory,
-                theSymbolResolver, theTypeSystem,
+                theSymbolResolver,
+                theTypeCheckerErrorReporter,
+                theTypeSystem,
                 theOverloadResolver,
                 theVisibilityChecker,
                 theAstHelper);

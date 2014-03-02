@@ -4,8 +4,7 @@ import ch.tsphp.common.IScope;
 import ch.tsphp.common.ISymbol;
 import ch.tsphp.common.ITSPHPAst;
 import ch.tsphp.common.ITypeSymbol;
-import ch.tsphp.typechecker.error.ITypeCheckErrorReporter;
-import ch.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
+import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
 import ch.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tsphp.typechecker.scopes.IScopeHelper;
@@ -406,8 +405,7 @@ public class NamespaceScopeTest
 
     @Test
     public void useDefinitionCheck_IsNotDoubleDefinedAndTypeDefinedEarlierInSameNamespace_ReturnFalse() {
-        ITypeCheckErrorReporter errorReporter = mock(ITypeCheckErrorReporter.class);
-        TypeCheckErrorReporterRegistry.set(errorReporter);
+        ITypeCheckerErrorReporter errorReporter = mock(ITypeCheckerErrorReporter.class);
 
         ITSPHPAst useDefinitionAst = mock(ITSPHPAst.class);
         IAliasSymbol symbol = createAliasSymbol("aliasName", useDefinitionAst);
@@ -415,7 +413,7 @@ public class NamespaceScopeTest
         when(scopeHelper.checkIsNotDoubleDefinition(symbol, symbol)).thenReturn(true);
 
         IGlobalNamespaceScope globalNamespaceScope = mock(IGlobalNamespaceScope.class);
-        INamespaceScope namespaceScope = createNamespaceScope(globalNamespaceScope);
+        INamespaceScope namespaceScope = createNamespaceScope(globalNamespaceScope, errorReporter);
         ITSPHPAst classDefinitionAst = mock(ITSPHPAst.class);
         ITypeSymbol typeSymbol = createTypeSymbol(classDefinitionAst, namespaceScope);
         when(globalNamespaceScope.getTypeSymbolWhichClashesWithUse(useDefinitionAst)).thenReturn(typeSymbol);
@@ -435,8 +433,8 @@ public class NamespaceScopeTest
 
     @Test
     public void useDefinitionCheck_IsNotDoubleDefinedAndTypeDefinedEarlierInOtherNamespace_ReturnFalse() {
-        ITypeCheckErrorReporter errorReporter = mock(ITypeCheckErrorReporter.class);
-        TypeCheckErrorReporterRegistry.set(errorReporter);
+        ITypeCheckerErrorReporter errorReporter = mock(ITypeCheckerErrorReporter.class);
+
 
         ITSPHPAst useDefinitionAst = mock(ITSPHPAst.class);
         IAliasSymbol symbol = createAliasSymbol("aliasName", useDefinitionAst);
@@ -452,7 +450,7 @@ public class NamespaceScopeTest
         when(useDefinitionAst.isDefinedEarlierThan(classDefinitionAst)).thenReturn(false);
 
         //act
-        INamespaceScope namespaceScope = createNamespaceScope(globalNamespaceScope);
+        INamespaceScope namespaceScope = createNamespaceScope(globalNamespaceScope, errorReporter);
         namespaceScope.defineUse(symbol);
         boolean result = namespaceScope.useDefinitionCheck(symbol);
 
@@ -465,8 +463,8 @@ public class NamespaceScopeTest
 
     @Test
     public void useDefinitionCheck_IsNotDoubleDefinedAndTypeDefinedLaterInSameNamespace_ReturnFalse() {
-        ITypeCheckErrorReporter errorReporter = mock(ITypeCheckErrorReporter.class);
-        TypeCheckErrorReporterRegistry.set(errorReporter);
+        ITypeCheckerErrorReporter errorReporter = mock(ITypeCheckerErrorReporter.class);
+
 
         ITSPHPAst useDefinitionAst = mock(ITSPHPAst.class);
         IAliasSymbol symbol = createAliasSymbol("aliasName", useDefinitionAst);
@@ -474,7 +472,7 @@ public class NamespaceScopeTest
         when(scopeHelper.checkIsNotDoubleDefinition(symbol, symbol)).thenReturn(true);
 
         IGlobalNamespaceScope globalNamespaceScope = mock(IGlobalNamespaceScope.class);
-        INamespaceScope namespaceScope = createNamespaceScope(globalNamespaceScope);
+        INamespaceScope namespaceScope = createNamespaceScope(globalNamespaceScope, errorReporter);
         ITSPHPAst classDefinitionAst = mock(ITSPHPAst.class);
         ITypeSymbol typeSymbol = createTypeSymbol(classDefinitionAst, namespaceScope);
         when(globalNamespaceScope.getTypeSymbolWhichClashesWithUse(useDefinitionAst)).thenReturn(typeSymbol);
@@ -555,8 +553,14 @@ public class NamespaceScopeTest
     }
 
     protected INamespaceScope createNamespaceScope(IGlobalNamespaceScope globalNamespaceScope) {
-        return new NamespaceScope(scopeHelper, "test", globalNamespaceScope);
+        return createNamespaceScope(globalNamespaceScope, mock(ITypeCheckerErrorReporter.class));
     }
+
+    protected INamespaceScope createNamespaceScope(IGlobalNamespaceScope globalNamespaceScope,
+            ITypeCheckerErrorReporter typeCheckerErrorReporter) {
+        return new NamespaceScope(scopeHelper, "test", globalNamespaceScope, typeCheckerErrorReporter);
+    }
+
 
     private ISymbol createSymbol(String name) {
         ISymbol symbol = mock(ISymbol.class);

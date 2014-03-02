@@ -2,6 +2,7 @@ package ch.tsphp.typechecker.test.integration.testutils.reference;
 
 import ch.tsphp.typechecker.IReferencePhaseController;
 import ch.tsphp.typechecker.ISymbolResolver;
+import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
 import ch.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tsphp.typechecker.symbols.ISymbolFactory;
 import org.junit.Ignore;
@@ -35,8 +36,9 @@ public abstract class AVerifyTimesReferenceTest extends AReferenceTest
     protected IReferencePhaseController createReferencePhaseController(
             ISymbolFactory theSymbolFactory,
             ISymbolResolver theSymbolResolver,
+            ITypeCheckerErrorReporter theTypeCheckerErrorReporter,
             IGlobalNamespaceScope theGlobalDefaultNamespace) {
         return spy(super.createReferencePhaseController(
-                theSymbolFactory, theSymbolResolver, theGlobalDefaultNamespace));
+                theSymbolFactory, theSymbolResolver,theTypeCheckerErrorReporter, theGlobalDefaultNamespace));
     }
 }

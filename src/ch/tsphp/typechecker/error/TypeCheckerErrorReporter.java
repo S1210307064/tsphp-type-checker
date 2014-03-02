@@ -26,14 +26,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class TypeCheckErrorReporter implements ITypeCheckErrorReporter
+public class TypeCheckerErrorReporter implements ITypeCheckerErrorReporter
 {
 
     private final IErrorMessageProvider errorMessageProvider;
     private final Collection<IErrorLogger> errorLoggers = new ArrayDeque<>();
     private boolean hasFoundError;
 
-    public TypeCheckErrorReporter(IErrorMessageProvider anErrorMessageProvider) {
+    public TypeCheckerErrorReporter(IErrorMessageProvider anErrorMessageProvider) {
         errorMessageProvider = anErrorMessageProvider;
     }
 

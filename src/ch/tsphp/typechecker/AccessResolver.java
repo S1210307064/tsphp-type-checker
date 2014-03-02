@@ -5,7 +5,7 @@ import ch.tsphp.common.ITypeSymbol;
 import ch.tsphp.common.exceptions.DefinitionException;
 import ch.tsphp.common.exceptions.ReferenceException;
 import ch.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
-import ch.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
+import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
 import ch.tsphp.typechecker.symbols.IPolymorphicTypeSymbol;
 import ch.tsphp.typechecker.symbols.ISymbolFactory;
 import ch.tsphp.typechecker.symbols.ISymbolWithAccessModifier;
@@ -16,9 +16,11 @@ public class AccessResolver implements IAccessResolver
 {
 
     private final ISymbolFactory symbolFactory;
+    private final ITypeCheckerErrorReporter typeCheckErrorReporter;
 
-    public AccessResolver(ISymbolFactory theSymbolFactory) {
+    public AccessResolver(ISymbolFactory theSymbolFactory, ITypeCheckerErrorReporter theTypeCheckerErrorReporter) {
         symbolFactory = theSymbolFactory;
+        typeCheckErrorReporter = theTypeCheckerErrorReporter;
     }
 
     @Override
@@ -28,7 +30,7 @@ public class AccessResolver implements IAccessResolver
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
             @Override
             public void callAppropriateMethod(ITSPHPAst identifier, ISymbolWithAccessModifier symbol, int accessFrom) {
-                TypeCheckErrorReporterRegistry.get().visibilityViolationClassConstantAccess(
+                typeCheckErrorReporter.visibilityViolationClassConstantAccess(
                         identifier, symbol, accessFrom);
             }
         });
@@ -41,7 +43,7 @@ public class AccessResolver implements IAccessResolver
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
             @Override
             public void callAppropriateMethod(ITSPHPAst identifier, ISymbolWithAccessModifier symbol, int accessFrom) {
-                TypeCheckErrorReporterRegistry.get().visibilityViolationStaticClassMemberAccess(
+                typeCheckErrorReporter.visibilityViolationStaticClassMemberAccess(
                         identifier, symbol, accessFrom);
             }
         });
@@ -53,7 +55,7 @@ public class AccessResolver implements IAccessResolver
             IViolationCaller caller) {
         IVariableSymbol variableSymbol = checkAccessorAndResolveAccess(accessor, id, caller);
         if (!variableSymbol.isStatic()) {
-            TypeCheckErrorReporterRegistry.get().notStatic(accessor);
+            typeCheckErrorReporter.notStatic(accessor);
         }
         return variableSymbol;
     }
@@ -67,7 +69,7 @@ public class AccessResolver implements IAccessResolver
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
             @Override
             public void callAppropriateMethod(ITSPHPAst identifier, ISymbolWithAccessModifier symbol, int accessFrom) {
-                TypeCheckErrorReporterRegistry.get().visibilityViolationClassMemberAccess(
+                typeCheckErrorReporter.visibilityViolationClassMemberAccess(
                         identifier, symbol, accessFrom);
             }
         };
@@ -88,7 +90,7 @@ public class AccessResolver implements IAccessResolver
                 variableSymbol = resolveAccess(
                         (IPolymorphicTypeSymbol) evalType, accessor, identifier, visibilityViolationCaller);
             } else {
-                ReferenceException exception = TypeCheckErrorReporterRegistry.get().wrongTypeClassMemberAccess
+                ReferenceException exception = typeCheckErrorReporter.wrongTypeClassMemberAccess
                         (identifier);
                 variableSymbol = symbolFactory.createErroneousVariableSymbol(identifier, exception);
                 variableSymbol.setType(symbolFactory.createErroneousTypeSymbol(identifier, exception));
@@ -109,7 +111,7 @@ public class AccessResolver implements IAccessResolver
         if (symbol != null) {
             checkVisibility(symbol, polymorphicTypeSymbol, visibilityViolationCaller, accessor, identifier);
         } else {
-            DefinitionException exception = TypeCheckErrorReporterRegistry.get().memberNotDefined(accessor, identifier);
+            DefinitionException exception = typeCheckErrorReporter.memberNotDefined(accessor, identifier);
             symbol = symbolFactory.createErroneousVariableSymbol(identifier, exception);
         }
         return symbol;

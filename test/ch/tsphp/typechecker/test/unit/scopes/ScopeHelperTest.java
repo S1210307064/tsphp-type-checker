@@ -5,8 +5,7 @@ import ch.tsphp.common.IScope;
 import ch.tsphp.common.ISymbol;
 import ch.tsphp.common.ITSPHPAst;
 import ch.tsphp.common.LowerCaseStringMap;
-import ch.tsphp.typechecker.error.ITypeCheckErrorReporter;
-import ch.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
+import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
 import ch.tsphp.typechecker.scopes.IAlreadyDefinedMethodCaller;
 import ch.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tsphp.typechecker.scopes.INamespaceScope;
@@ -45,7 +44,7 @@ public class ScopeHelperTest
         IScope scope = createScope(symbols);
         ISymbol symbol = createSymbol(SYMBOL_NAME);
 
-        IScopeHelper scopeHelper = new ScopeHelper();
+        IScopeHelper scopeHelper = createScopeHelper();
         scopeHelper.define(scope, symbol);
 
         assertThat(symbols, hasKey(SYMBOL_NAME));
@@ -63,7 +62,7 @@ public class ScopeHelperTest
         ISymbol symbol1 = createSymbol(SYMBOL_NAME);
         ISymbol symbol2 = createSymbol(SYMBOL_NAME);
 
-        IScopeHelper scopeHelper = new ScopeHelper();
+        IScopeHelper scopeHelper = createScopeHelper();
         scopeHelper.define(scope, symbol1);
         scopeHelper.define(scope, symbol2);
 
@@ -83,7 +82,7 @@ public class ScopeHelperTest
         ISymbol symbol1 = createSymbol("symbolName1");
         ISymbol symbol2 = createSymbol("symbolName2");
 
-        IScopeHelper scopeHelper = new ScopeHelper();
+        IScopeHelper scopeHelper = createScopeHelper();
         scopeHelper.define(scope, symbol1);
         scopeHelper.define(scope, symbol2);
 
@@ -104,7 +103,7 @@ public class ScopeHelperTest
         ISymbol symbol = createSymbol(SYMBOL_NAME);
         Map<String, List<ISymbol>> symbols = new HashMap<>();
 
-        IScopeHelper scopeHelper = new ScopeHelper();
+        IScopeHelper scopeHelper = createScopeHelper();
         scopeHelper.checkIsNotDoubleDefinition(symbols, symbol);
     }
 
@@ -114,39 +113,39 @@ public class ScopeHelperTest
         Map<String, List<ISymbol>> symbols = new HashMap<>();
         IAlreadyDefinedMethodCaller reporter = mock(IAlreadyDefinedMethodCaller.class);
 
-        IScopeHelper scopeHelper = new ScopeHelper();
+        IScopeHelper scopeHelper = createScopeHelper();
         scopeHelper.checkIsNotDoubleDefinition(symbols, symbol, reporter);
     }
 
     @Test(expected = NullPointerException.class)
     public void doubleDefinitionCheck_SymbolNotInSymbols_ThrowNullPointer() {
         ISymbol symbol = createSymbol(SYMBOL_NAME);
-        Map<String, List<ISymbol>> symbols = CreateSymbolsForStandardName(symbol);
+        Map<String, List<ISymbol>> symbols = createSymbolsForStandardName(symbol);
 
         ISymbol wrongSymbol = createSymbol("wrongSymbol");
 
-        IScopeHelper scopeHelper = new ScopeHelper();
+        IScopeHelper scopeHelper = createScopeHelper();
         scopeHelper.checkIsNotDoubleDefinition(symbols, wrongSymbol);
     }
 
     @Test(expected = NullPointerException.class)
     public void doubleDefinitionCheckWithReporter_SymbolNotInSymbols_ThrowNullPointer() {
         ISymbol symbol = createSymbol(SYMBOL_NAME);
-        Map<String, List<ISymbol>> symbols = CreateSymbolsForStandardName(symbol);
+        Map<String, List<ISymbol>> symbols = createSymbolsForStandardName(symbol);
         IAlreadyDefinedMethodCaller reporter = mock(IAlreadyDefinedMethodCaller.class);
 
         ISymbol wrongSymbol = createSymbol("wrongSymbol");
 
-        IScopeHelper scopeHelper = new ScopeHelper();
+        IScopeHelper scopeHelper = createScopeHelper();
         scopeHelper.checkIsNotDoubleDefinition(symbols, wrongSymbol, reporter);
     }
 
     @Test
     public void doubleDefinitionCheck_DefinedOnce_ReturnTrue() {
         ISymbol symbol = createSymbol(SYMBOL_NAME);
-        Map<String, List<ISymbol>> symbols = CreateSymbolsForStandardName(symbol);
+        Map<String, List<ISymbol>> symbols = createSymbolsForStandardName(symbol);
 
-        IScopeHelper scopeHelper = new ScopeHelper();
+        IScopeHelper scopeHelper = createScopeHelper();
         boolean result = scopeHelper.checkIsNotDoubleDefinition(symbols, symbol);
 
         assertTrue(result);
@@ -155,10 +154,10 @@ public class ScopeHelperTest
     @Test
     public void doubleDefinitionCheckWithReporter_DefinedOnce_ReturnTrue() {
         ISymbol symbol = createSymbol(SYMBOL_NAME);
-        Map<String, List<ISymbol>> symbols = CreateSymbolsForStandardName(symbol);
+        Map<String, List<ISymbol>> symbols = createSymbolsForStandardName(symbol);
         IAlreadyDefinedMethodCaller reporter = mock(IAlreadyDefinedMethodCaller.class);
 
-        IScopeHelper scopeHelper = new ScopeHelper();
+        IScopeHelper scopeHelper = createScopeHelper();
         boolean result = scopeHelper.checkIsNotDoubleDefinition(symbols, symbol, reporter);
 
         assertTrue(result);
@@ -169,9 +168,9 @@ public class ScopeHelperTest
     public void doubleDefinitionCheck_DefinedTwiceCheckingFirst_ReturnTrue() {
         ISymbol symbol1 = createSymbol(SYMBOL_NAME);
         ISymbol symbol2 = createSymbol(SYMBOL_NAME);
-        Map<String, List<ISymbol>> symbols = CreateSymbolsForStandardName(symbol1, symbol2);
+        Map<String, List<ISymbol>> symbols = createSymbolsForStandardName(symbol1, symbol2);
 
-        IScopeHelper scopeHelper = new ScopeHelper();
+        IScopeHelper scopeHelper = createScopeHelper();
         boolean result = scopeHelper.checkIsNotDoubleDefinition(symbols, symbol1);
 
         assertTrue(result);
@@ -181,10 +180,10 @@ public class ScopeHelperTest
     public void doubleDefinitionCheckWithReporter_DefinedTwiceCheckingFirst_ReturnTrue() {
         ISymbol symbol1 = createSymbol(SYMBOL_NAME);
         ISymbol symbol2 = createSymbol(SYMBOL_NAME);
-        Map<String, List<ISymbol>> symbols = CreateSymbolsForStandardName(symbol1, symbol2);
+        Map<String, List<ISymbol>> symbols = createSymbolsForStandardName(symbol1, symbol2);
         IAlreadyDefinedMethodCaller reporter = mock(IAlreadyDefinedMethodCaller.class);
 
-        IScopeHelper scopeHelper = new ScopeHelper();
+        IScopeHelper scopeHelper = createScopeHelper();
         boolean result = scopeHelper.checkIsNotDoubleDefinition(symbols, symbol1, reporter);
 
         assertTrue(result);
@@ -194,13 +193,12 @@ public class ScopeHelperTest
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     @Test
     public void doubleDefinitionCheck_DefinedTwiceCheckingSecond_ReturnFalse() {
-        ITypeCheckErrorReporter errorReporter = mock(ITypeCheckErrorReporter.class);
-        TypeCheckErrorReporterRegistry.set(errorReporter);
+        ITypeCheckerErrorReporter errorReporter = mock(ITypeCheckerErrorReporter.class);
         ISymbol symbol1 = createSymbol(SYMBOL_NAME);
         ISymbol symbol2 = createSymbol(SYMBOL_NAME);
-        Map<String, List<ISymbol>> symbols = CreateSymbolsForStandardName(symbol1, symbol2);
+        Map<String, List<ISymbol>> symbols = createSymbolsForStandardName(symbol1, symbol2);
 
-        IScopeHelper scopeHelper = new ScopeHelper();
+        IScopeHelper scopeHelper = createScopeHelper(errorReporter);
         boolean result = scopeHelper.checkIsNotDoubleDefinition(symbols, symbol2);
 
         assertFalse(result);
@@ -211,10 +209,10 @@ public class ScopeHelperTest
     public void doubleDefinitionCheckWithReport_DefinedTwiceCheckingSecond_ReturnFalse() {
         ISymbol symbol1 = createSymbol(SYMBOL_NAME);
         ISymbol symbol2 = createSymbol(SYMBOL_NAME);
-        Map<String, List<ISymbol>> symbols = CreateSymbolsForStandardName(symbol1, symbol2);
+        Map<String, List<ISymbol>> symbols = createSymbolsForStandardName(symbol1, symbol2);
         IAlreadyDefinedMethodCaller reporter = mock(IAlreadyDefinedMethodCaller.class);
 
-        IScopeHelper scopeHelper = new ScopeHelper();
+        IScopeHelper scopeHelper = createScopeHelper();
         boolean result = scopeHelper.checkIsNotDoubleDefinition(symbols, symbol2, reporter);
 
         assertFalse(result);
@@ -225,7 +223,7 @@ public class ScopeHelperTest
     public void getCorrespondingGlobalNamespace_GlobalNamespaceNotInMap_ReturnNull() {
         ILowerCaseStringMap<IGlobalNamespaceScope> scopes = new LowerCaseStringMap<>();
 
-        IScopeHelper scopeHelper = new ScopeHelper();
+        IScopeHelper scopeHelper = createScopeHelper();
         IGlobalNamespaceScope result = scopeHelper.getCorrespondingGlobalNamespace(scopes, "\\notExistingGlobalScope");
 
         assertNull(result);
@@ -237,7 +235,7 @@ public class ScopeHelperTest
         IGlobalNamespaceScope globalNamespaceScope = mock(IGlobalNamespaceScope.class);
         scopes.put("\\a\\", globalNamespaceScope);
 
-        IScopeHelper scopeHelper = new ScopeHelper();
+        IScopeHelper scopeHelper = createScopeHelper();
         IGlobalNamespaceScope result = scopeHelper.getCorrespondingGlobalNamespace(scopes, "\\a\\b\\");
 
         assertNull(result);
@@ -250,7 +248,7 @@ public class ScopeHelperTest
         IGlobalNamespaceScope globalNamespaceScope = mock(IGlobalNamespaceScope.class);
         scopes.put("\\a\\", globalNamespaceScope);
 
-        IScopeHelper scopeHelper = new ScopeHelper();
+        IScopeHelper scopeHelper = createScopeHelper();
         IGlobalNamespaceScope result = scopeHelper.getCorrespondingGlobalNamespace(scopes, "\\a\\");
 
         assertThat(result, is(globalNamespaceScope));
@@ -262,7 +260,7 @@ public class ScopeHelperTest
         IGlobalNamespaceScope globalNamespaceScope = mock(IGlobalNamespaceScope.class);
         scopes.put("\\a\\b\\", globalNamespaceScope);
 
-        IScopeHelper scopeHelper = new ScopeHelper();
+        IScopeHelper scopeHelper = createScopeHelper();
         IGlobalNamespaceScope result = scopeHelper.getCorrespondingGlobalNamespace(scopes, "\\a\\b\\");
 
         assertThat(result, is(globalNamespaceScope));
@@ -273,7 +271,7 @@ public class ScopeHelperTest
         IScope scope = createScope(new HashMap<String, List<ISymbol>>());
         ITSPHPAst ast = createAst("astText");
 
-        IScopeHelper scopeHelper = new ScopeHelper();
+        IScopeHelper scopeHelper = createScopeHelper();
         ISymbol result = scopeHelper.resolve(scope, ast);
 
         assertNull(result);
@@ -281,11 +279,11 @@ public class ScopeHelperTest
 
     @Test
     public void resolve_WrongCaseUseCaseSensitiveMap_ReturnNull() {
-        Map<String, List<ISymbol>> symbols = CreateSymbolsForStandardName(createSymbol("AstText"));
+        Map<String, List<ISymbol>> symbols = createSymbolsForStandardName(createSymbol("AstText"));
         IScope scope = createScope(symbols);
         ITSPHPAst ast = createAst("astText");
 
-        IScopeHelper scopeHelper = new ScopeHelper();
+        IScopeHelper scopeHelper = createScopeHelper();
         ISymbol result = scopeHelper.resolve(scope, ast);
 
         assertNull(result);
@@ -294,11 +292,11 @@ public class ScopeHelperTest
     @Test
     public void resolve_DefinedInScope_ReturnCorrespondingSymbol() {
         ISymbol symbol = createSymbol(SYMBOL_NAME);
-        Map<String, List<ISymbol>> symbols = CreateSymbolsForStandardName(symbol);
+        Map<String, List<ISymbol>> symbols = createSymbolsForStandardName(symbol);
         IScope scope = createScope(symbols);
         ITSPHPAst ast = createAst(SYMBOL_NAME);
 
-        IScopeHelper scopeHelper = new ScopeHelper();
+        IScopeHelper scopeHelper = createScopeHelper();
         ISymbol result = scopeHelper.resolve(scope, ast);
 
         assertThat(result, is(symbol));
@@ -310,7 +308,7 @@ public class ScopeHelperTest
         ITSPHPAst ast = createAst(SYMBOL_NAME);
         when(ast.getScope()).thenReturn(namespaceScope);
 
-        IScopeHelper scopeHelper = new ScopeHelper();
+        IScopeHelper scopeHelper = createScopeHelper();
         IScope result = scopeHelper.getEnclosingNamespaceScope(ast);
 
         assertThat(result, is((IScope) namespaceScope));
@@ -324,7 +322,7 @@ public class ScopeHelperTest
         when(methodSymbol.getEnclosingScope()).thenReturn(namespaceScope);
         when(ast.getScope()).thenReturn(methodSymbol);
 
-        IScopeHelper scopeHelper = new ScopeHelper();
+        IScopeHelper scopeHelper = createScopeHelper();
         IScope result = scopeHelper.getEnclosingNamespaceScope(ast);
 
         assertThat(result, is((IScope) namespaceScope));
@@ -334,7 +332,7 @@ public class ScopeHelperTest
     public void getEnclosingNamespaceScope_AstHasNoScope_ReturnNull() {
         ITSPHPAst ast = createAst(SYMBOL_NAME);
 
-        IScopeHelper scopeHelper = new ScopeHelper();
+        IScopeHelper scopeHelper = createScopeHelper();
         IScope result = scopeHelper.getEnclosingNamespaceScope(ast);
 
         assertNull(result);
@@ -347,13 +345,22 @@ public class ScopeHelperTest
         when(methodSymbol.getEnclosingScope()).thenReturn(null);
         when(ast.getScope()).thenReturn(methodSymbol);
 
-        IScopeHelper scopeHelper = new ScopeHelper();
+        IScopeHelper scopeHelper = createScopeHelper();
         IScope result = scopeHelper.getEnclosingNamespaceScope(ast);
 
         assertNull(result);
     }
 
-    private Map<String, List<ISymbol>> CreateSymbolsForStandardName(ISymbol... symbols) {
+    protected ScopeHelper createScopeHelper() {
+        return createScopeHelper(mock(ITypeCheckerErrorReporter.class));
+    }
+
+    protected ScopeHelper createScopeHelper(ITypeCheckerErrorReporter typeCheckerErrorReporter) {
+        return new ScopeHelper(typeCheckerErrorReporter);
+    }
+
+
+    private Map<String, List<ISymbol>> createSymbolsForStandardName(ISymbol... symbols) {
         Map<String, List<ISymbol>> map = new HashMap<>();
         List<ISymbol> definedSymbols = new ArrayList<>();
         definedSymbols.addAll(Arrays.asList(symbols));

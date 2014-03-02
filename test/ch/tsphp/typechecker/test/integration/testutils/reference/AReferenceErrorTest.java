@@ -2,8 +2,8 @@ package ch.tsphp.typechecker.test.integration.testutils.reference;
 
 import ch.tsphp.common.IErrorReporter;
 import ch.tsphp.common.exceptions.ReferenceException;
+import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
 import ch.tsphp.typechecker.error.ReferenceErrorDto;
-import ch.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
 import org.junit.Assert;
 import org.junit.Ignore;
 
@@ -27,14 +27,13 @@ public abstract class AReferenceErrorTest extends AReferenceTest
 
     @Override
     public void verifyReferences() {
-        verifyReferences(errorMessagePrefix, exceptions, errorDtos);
+        verifyReferences(errorMessagePrefix, exceptions, errorDtos, typeCheckErrorReporter);
     }
 
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     public static void verifyReferences(String errorMessagePrefix, List<Exception> exceptions,
-            ReferenceErrorDto[] errorDtos) {
-        IErrorReporter errorReporter = TypeCheckErrorReporterRegistry.get();
-        Assert.assertTrue(errorMessagePrefix + " failed. No exception occurred.", errorReporter.hasFoundError());
+            ReferenceErrorDto[] errorDtos, ITypeCheckerErrorReporter typeCheckerErrorReporter) {
+        Assert.assertTrue(errorMessagePrefix + " failed. No exception occurred.", typeCheckerErrorReporter.hasFoundError());
 
         Assert.assertEquals(errorMessagePrefix + " failed. More or less exceptions occurred." + exceptions.toString(),
                 errorDtos.length, exceptions.size());

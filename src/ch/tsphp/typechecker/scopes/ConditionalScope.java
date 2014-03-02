@@ -3,13 +3,15 @@ package ch.tsphp.typechecker.scopes;
 import ch.tsphp.common.IScope;
 import ch.tsphp.common.ISymbol;
 import ch.tsphp.common.ITSPHPAst;
-import ch.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
+import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
 
 public class ConditionalScope extends AScope implements IConditionalScope
 {
+    private final ITypeCheckerErrorReporter typeCheckerErrorReporter;
 
-    public ConditionalScope(IScopeHelper scopeHelper, IScope enclosingScope) {
+    public ConditionalScope(IScopeHelper scopeHelper, IScope enclosingScope, ITypeCheckerErrorReporter theTypeCheckerErrorReporter) {
         super(scopeHelper, "cScope", enclosingScope);
+        typeCheckerErrorReporter = theTypeCheckerErrorReporter;
     }
 
     @Override
@@ -30,7 +32,7 @@ public class ConditionalScope extends AScope implements IConditionalScope
                     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
                     @Override
                     public void callAccordingAlreadyDefinedMethod(ISymbol firstDefinition, ISymbol symbolToCheck) {
-                        TypeCheckErrorReporterRegistry.get().definedInOuterScope(firstDefinition, symbolToCheck);
+                        typeCheckerErrorReporter.definedInOuterScope(firstDefinition, symbolToCheck);
                     }
                 });
     }

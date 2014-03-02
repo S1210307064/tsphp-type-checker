@@ -1,6 +1,7 @@
 package ch.tsphp.typechecker.test.unit.scopes;
 
 import ch.tsphp.common.IScope;
+import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
 import ch.tsphp.typechecker.scopes.IConditionalScope;
 import ch.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tsphp.typechecker.scopes.INamespaceScope;
@@ -99,7 +100,7 @@ public class ScopeFactoryTest
     }
 
     private IScopeFactory createScopeFactory() {
-        return new ScopeFactory(scopeHelper);
+        return new ScopeFactory(scopeHelper, mock(ITypeCheckerErrorReporter.class));
     }
 
 }

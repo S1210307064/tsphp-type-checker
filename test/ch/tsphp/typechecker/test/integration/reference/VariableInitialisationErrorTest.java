@@ -2,7 +2,7 @@ package ch.tsphp.typechecker.test.integration.reference;
 
 import ch.tsphp.common.ITSPHPAst;
 import ch.tsphp.typechecker.error.DefinitionErrorDto;
-import ch.tsphp.typechecker.error.ITypeCheckErrorReporter;
+import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
 import ch.tsphp.typechecker.test.integration.testutils.reference.AReferenceDefinitionErrorTest;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
@@ -153,7 +153,7 @@ public class VariableInitialisationErrorTest extends AReferenceDefinitionErrorTe
     }
 
     @Override
-    protected ITypeCheckErrorReporter createTypeCheckErrorReporter() {
+    protected ITypeCheckerErrorReporter createTypeCheckErrorReporter() {
         return spy(super.createTypeCheckErrorReporter());
     }
 
@@ -171,7 +171,7 @@ public class VariableInitialisationErrorTest extends AReferenceDefinitionErrorTe
 
         @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
         @Override
-        public void check(ITypeCheckErrorReporter typeCheckErrorReporter) {
+        public void check(ITypeCheckerErrorReporter typeCheckErrorReporter) {
             verify(typeCheckErrorReporter, times(times)).variablePartiallyInitialised(any(ITSPHPAst.class),
                     any(ITSPHPAst.class));
         }
@@ -191,7 +191,7 @@ public class VariableInitialisationErrorTest extends AReferenceDefinitionErrorTe
 
         @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
         @Override
-        public void check(ITypeCheckErrorReporter typeCheckErrorReporter) {
+        public void check(ITypeCheckerErrorReporter typeCheckErrorReporter) {
             verify(typeCheckErrorReporter, times(times)).variableNotInitialised(any(ITSPHPAst.class), any(ITSPHPAst
                     .class));
         }
@@ -199,6 +199,6 @@ public class VariableInitialisationErrorTest extends AReferenceDefinitionErrorTe
 
     private static interface IInitialisedVerifier
     {
-        void check(ITypeCheckErrorReporter typeCheckErrorReporter);
+        void check(ITypeCheckerErrorReporter typeCheckErrorReporter);
     }
 }

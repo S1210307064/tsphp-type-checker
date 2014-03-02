@@ -6,7 +6,7 @@ import ch.tsphp.common.ISymbol;
 import ch.tsphp.common.ITSPHPAst;
 import ch.tsphp.common.ITypeSymbol;
 import ch.tsphp.common.LowerCaseStringMap;
-import ch.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
+import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
 import ch.tsphp.typechecker.symbols.IAliasSymbol;
 import ch.tsphp.typechecker.utils.MapHelper;
 
@@ -22,15 +22,18 @@ public class NamespaceScope implements INamespaceScope
     private final IScopeHelper scopeHelper;
     private final String scopeName;
     private final IGlobalNamespaceScope globalNamespaceScope;
+    private final ITypeCheckerErrorReporter typeCheckerErrorReporter;
 
     public NamespaceScope(
             IScopeHelper theScopeHelper,
             String theScopeName,
-            IGlobalNamespaceScope theGlobalNamespaceScope) {
+            IGlobalNamespaceScope theGlobalNamespaceScope,
+            ITypeCheckerErrorReporter theTypeCheckerErrorReporter) {
 
         scopeHelper = theScopeHelper;
         scopeName = theScopeName;
         globalNamespaceScope = theGlobalNamespaceScope;
+        typeCheckerErrorReporter = theTypeCheckerErrorReporter;
     }
 
     @Override
@@ -84,7 +87,7 @@ public class NamespaceScope implements INamespaceScope
         ITypeSymbol typeSymbol = globalNamespaceScope.getTypeSymbolWhichClashesWithUse(symbol.getDefinitionAst());
         boolean ok = hasNoTypeNameClash(symbol.getDefinitionAst(), typeSymbol);
         if (!ok) {
-            TypeCheckErrorReporterRegistry.get().determineAlreadyDefined(symbol, typeSymbol);
+            typeCheckerErrorReporter.determineAlreadyDefined(symbol, typeSymbol);
         }
         return ok;
     }

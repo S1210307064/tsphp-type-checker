@@ -9,8 +9,7 @@ import ch.tsphp.typechecker.ISymbolResolver;
 import ch.tsphp.typechecker.ITypeCheckPhaseController;
 import ch.tsphp.typechecker.ITypeSystem;
 import ch.tsphp.typechecker.TypeCheckPhaseController;
-import ch.tsphp.typechecker.error.ITypeCheckErrorReporter;
-import ch.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
+import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
 import ch.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tsphp.typechecker.symbols.ISymbolFactory;
 import ch.tsphp.typechecker.symbols.erroneous.IErroneousMethodSymbol;
@@ -34,7 +33,7 @@ public class TypeCheckPhaseControllerErroneousSymbolTest
     private IOverloadResolver overloadResolver;
     private IAccessResolver accessResolver;
     private ITypeCheckerAstHelper astHelper;
-    private ITypeCheckErrorReporter errorReporter;
+    private ITypeCheckerErrorReporter typeCheckerErrorReporter;
 
     @Before
     public void setUp() {
@@ -44,8 +43,7 @@ public class TypeCheckPhaseControllerErroneousSymbolTest
         overloadResolver = mock(IOverloadResolver.class);
         accessResolver = mock(IAccessResolver.class);
         astHelper = mock(ITypeCheckerAstHelper.class);
-        errorReporter = mock(ITypeCheckErrorReporter.class);
-        TypeCheckErrorReporterRegistry.set(errorReporter);
+        typeCheckerErrorReporter = mock(ITypeCheckerErrorReporter.class);
     }
 
     @Test
@@ -65,7 +63,7 @@ public class TypeCheckPhaseControllerErroneousSymbolTest
 
         assertThat(result, is((IMethodSymbol) methodSymbol));
         verify(methodSymbol).setType(typeSymbol);
-        verifyNoMoreInteractions(errorReporter);
+        verifyNoMoreInteractions(typeCheckerErrorReporter);
     }
 
     @Test
@@ -85,7 +83,7 @@ public class TypeCheckPhaseControllerErroneousSymbolTest
 
         assertThat(result, is((IMethodSymbol) methodSymbol));
         verify(methodSymbol).setType(typeSymbol);
-        verifyNoMoreInteractions(errorReporter);
+        verifyNoMoreInteractions(typeCheckerErrorReporter);
     }
 
     @Test
@@ -208,7 +206,7 @@ public class TypeCheckPhaseControllerErroneousSymbolTest
 
     protected ITypeCheckPhaseController createTypeCheckController() {
         return new TypeCheckPhaseController(
-                symbolFactory, symbolResolver, typeSystem, overloadResolver, accessResolver, astHelper);
+                symbolFactory, symbolResolver, typeCheckerErrorReporter, typeSystem, overloadResolver, accessResolver, astHelper);
     }
 
 
@@ -229,7 +227,7 @@ public class TypeCheckPhaseControllerErroneousSymbolTest
                 right,
                 leftTypeSymbol,
                 rightTypeSymbol,
-                errorReporter
+                typeCheckerErrorReporter
         );
     }
 

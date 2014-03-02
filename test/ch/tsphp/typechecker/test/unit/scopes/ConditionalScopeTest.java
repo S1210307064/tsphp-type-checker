@@ -4,8 +4,7 @@ import ch.tsphp.common.ILowerCaseStringMap;
 import ch.tsphp.common.IScope;
 import ch.tsphp.common.ISymbol;
 import ch.tsphp.common.ITSPHPAst;
-import ch.tsphp.typechecker.error.ITypeCheckErrorReporter;
-import ch.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
+import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
 import ch.tsphp.typechecker.scopes.ConditionalScope;
 import ch.tsphp.typechecker.scopes.IAlreadyDefinedMethodCaller;
 import ch.tsphp.typechecker.scopes.IConditionalScope;
@@ -120,31 +119,31 @@ public class ConditionalScopeTest
 
     @SuppressWarnings({"unchecked", "ThrowableResultOfMethodCallIgnored"})
     @Test
-    public void doubleDefinitionCheck_ScopeHelperCallsIAlreadyDefinedMethodCaller_DefinedInOuterScopeIsCalled() {
+    public void doubleDefinitionCheck_ScopeHelperCallsAlreadyDefinedMethodCaller_DefinedInOuterScopeIsCalled() {
         ILowerCaseStringMap symbols = mock(ILowerCaseStringMap.class);
         IMethodSymbol methodSymbol = createMethodSymbol(symbols);
+        ITypeCheckerErrorReporter typeCheckerErrorReporter = mock(ITypeCheckerErrorReporter.class);
+
         IConditionalScope conditionalScopeOuter = createConditionalScope(methodSymbol);
         final ISymbol symbol = createSymbol("a", createAst(conditionalScopeOuter));
 
-        ITypeCheckErrorReporter errorReporter = mock(ITypeCheckErrorReporter.class);
-        TypeCheckErrorReporterRegistry.set(errorReporter);
         final ISymbol earlierDefinedSymbol = mock(ISymbol.class);
-        when(scopeHelper.checkIsNotDoubleDefinition(anyMap(), any(ISymbol.class), any(IAlreadyDefinedMethodCaller
-                .class)))
+        when(scopeHelper.checkIsNotDoubleDefinition(
+                anyMap(), any(ISymbol.class), any(IAlreadyDefinedMethodCaller.class)))
                 .thenAnswer(new Answer()
                 {
                     public Object answer(InvocationOnMock invocation) {
                         Object[] args = invocation.getArguments();
-                        ((IAlreadyDefinedMethodCaller) args[2]).callAccordingAlreadyDefinedMethod
-                                (earlierDefinedSymbol, symbol);
+                        ((IAlreadyDefinedMethodCaller) args[2])
+                                .callAccordingAlreadyDefinedMethod(earlierDefinedSymbol, symbol);
                         return false;
                     }
                 });
 
-        IConditionalScope conditionalScope = createConditionalScope(conditionalScopeOuter);
+        IConditionalScope conditionalScope = createConditionalScope(conditionalScopeOuter, typeCheckerErrorReporter);
         conditionalScope.doubleDefinitionCheck(symbol);
 
-        verify(errorReporter).definedInOuterScope(earlierDefinedSymbol, symbol);
+        verify(typeCheckerErrorReporter).definedInOuterScope(earlierDefinedSymbol, symbol);
     }
 
     @Test
@@ -181,7 +180,12 @@ public class ConditionalScopeTest
     }
 
     protected IConditionalScope createConditionalScope(IScope scope) {
-        return new ConditionalScope(scopeHelper, scope);
+        return createConditionalScope(scope, mock(ITypeCheckerErrorReporter.class));
+    }
+
+    protected IConditionalScope createConditionalScope(IScope scope,
+            ITypeCheckerErrorReporter typeCheckerErrorReporter) {
+        return new ConditionalScope(scopeHelper, scope, typeCheckerErrorReporter);
     }
 
     @SuppressWarnings("unchecked")

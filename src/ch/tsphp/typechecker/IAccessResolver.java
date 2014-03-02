@@ -17,7 +17,7 @@ public interface IAccessResolver
             IViolationCaller visibilityViolationCaller, ITSPHPAst calleeOrAccessor, ITSPHPAst identifier);
 
     /**
-     * A "delegate" which represents a call of a visibility violation method (usually on an ITypeCheckErrorReporter).
+     * A "delegate" which represents a call of a visibility violation method (usually on an ITypeCheckerErrorReporter).
      */
     public interface IViolationCaller
     {

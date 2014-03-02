@@ -1,6 +1,5 @@
 package ch.tsphp.typechecker.test.integration.testutils.reference;
 
-import ch.tsphp.common.IErrorReporter;
 import ch.tsphp.common.ILowerCaseStringMap;
 import ch.tsphp.typechecker.AccessResolver;
 import ch.tsphp.typechecker.IAccessResolver;
@@ -9,7 +8,7 @@ import ch.tsphp.typechecker.ISymbolResolver;
 import ch.tsphp.typechecker.ReferencePhaseController;
 import ch.tsphp.typechecker.SymbolResolver;
 import ch.tsphp.typechecker.antlrmod.ErrorReportingTSPHPReferenceWalker;
-import ch.tsphp.typechecker.error.TypeCheckErrorReporterRegistry;
+import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
 import ch.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tsphp.typechecker.scopes.IScopeHelper;
 import ch.tsphp.typechecker.symbols.ISymbolFactory;
@@ -40,17 +39,21 @@ public abstract class AReferenceTest extends ADefinitionTest
 
     private void init() {
         symbolResolver = createSymbolResolver(
-                scopeHelper, symbolFactory, definer.getGlobalNamespaceScopes(), definer.getGlobalDefaultNamespace());
-        accessResolver = createAccessResolver(symbolFactory);
+                scopeHelper,
+                symbolFactory,
+                typeCheckErrorReporter,
+                definer.getGlobalNamespaceScopes(),
+                definer.getGlobalDefaultNamespace());
+
+        accessResolver = createAccessResolver(symbolFactory, typeCheckErrorReporter);
         referencePhaseController = createReferencePhaseController(
-                symbolFactory, symbolResolver, definer.getGlobalDefaultNamespace());
+                symbolFactory, symbolResolver, typeCheckErrorReporter, definer.getGlobalDefaultNamespace());
     }
 
     protected abstract void verifyReferences();
 
     protected void checkReferences() {
-        IErrorReporter errorHelper = TypeCheckErrorReporterRegistry.get();
-        assertFalse(testString + " failed. Exceptions occurred." + exceptions, errorHelper.hasFoundError());
+        assertFalse(testString + " failed. Exceptions occurred." + exceptions, typeCheckErrorReporter.hasFoundError());
         assertFalse(testString + " failed. reference walker exceptions occurred.", reference.hasFoundError());
 
         verifyReferences();
@@ -98,22 +101,29 @@ public abstract class AReferenceTest extends ADefinitionTest
     protected ISymbolResolver createSymbolResolver(
             IScopeHelper theScopeHelper,
             TestSymbolFactory theSymbolFactory,
+            ITypeCheckerErrorReporter theTypeCheckerErrorReporter,
             ILowerCaseStringMap<IGlobalNamespaceScope> namespaceScopes,
             IGlobalNamespaceScope theGlobalDefaultNamespace) {
-        return new SymbolResolver(theScopeHelper, theSymbolFactory, namespaceScopes, theGlobalDefaultNamespace);
+        return new SymbolResolver(
+                theScopeHelper,
+                theSymbolFactory,
+                theTypeCheckerErrorReporter,
+                namespaceScopes,
+                theGlobalDefaultNamespace);
     }
 
-    protected IAccessResolver createAccessResolver(ISymbolFactory theSymbolFactory) {
-        return new AccessResolver(theSymbolFactory);
+    protected IAccessResolver createAccessResolver(
+            ISymbolFactory theSymbolFactory, ITypeCheckerErrorReporter theTypeCheckerErrorReporter) {
+        return new AccessResolver(theSymbolFactory, theTypeCheckerErrorReporter);
     }
 
     protected IReferencePhaseController createReferencePhaseController(
             ISymbolFactory theSymbolFactory,
             ISymbolResolver theSymbolResolver,
+            ITypeCheckerErrorReporter theTypeCheckerErrorReporter,
             IGlobalNamespaceScope globalDefaultNamespace) {
-
         return new ReferencePhaseController(
-                theSymbolFactory, theSymbolResolver, globalDefaultNamespace);
+                theSymbolFactory, theSymbolResolver, theTypeCheckerErrorReporter, globalDefaultNamespace);
     }
 
     protected ErrorReportingTSPHPReferenceWalker createReferenceWalker(
