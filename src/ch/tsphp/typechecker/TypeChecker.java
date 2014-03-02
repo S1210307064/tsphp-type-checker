@@ -39,11 +39,11 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
     private boolean hasFoundError = false;
 
     public TypeChecker() {
+        typeCheckErrorReporter = createTypeCheckerErrorReporter();
         init();
     }
 
     private void init() {
-        typeCheckErrorReporter = createTypeCheckerErrorReporter();
         IScopeHelper scopeHelper = createScopeHelper(typeCheckErrorReporter);
         ISymbolFactory symbolFactory = createSymbolFactory(scopeHelper);
         definitionPhaseController = createDefinitionPhaseController(scopeHelper, symbolFactory, typeCheckErrorReporter);
@@ -72,7 +72,7 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
                 typeCheckerAstHelper);
     }
 
-    private TypeCheckerErrorReporter createTypeCheckerErrorReporter() {
+    protected ITypeCheckerErrorReporter createTypeCheckerErrorReporter() {
         return new TypeCheckerErrorReporter(new ErrorMessageProvider());
     }
 
@@ -151,8 +151,8 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
     protected IDefinitionPhaseController createDefinitionPhaseController(
             IScopeHelper scopeHelper,
             ISymbolFactory symbolFactory,
-            ITypeCheckerErrorReporter typeCheckerErrorReporter) {
-        return new DefinitionPhaseController(symbolFactory, new ScopeFactory(scopeHelper, typeCheckErrorReporter));
+            ITypeCheckerErrorReporter theTypeCheckerErrorReporter) {
+        return new DefinitionPhaseController(symbolFactory, new ScopeFactory(scopeHelper, theTypeCheckerErrorReporter));
     }
 
     @Override
