@@ -272,7 +272,6 @@ binaryOperator returns [ITypeSymbol type]
 equalityOperator returns [ITypeSymbol type]
 	:	^(	(	'==' 			
 			|	'!=' 
-			|	'<>' 
 			)
 			left=expression right=expression
 		)
