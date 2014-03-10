@@ -711,14 +711,14 @@ classStaticAccess
 postFixExpression
 // postFixExpression are resolved in the type checking phase
 // due to the fact that method/function calls are resolved during the type check phase
-// This rules are needed to get variables/function calls etc. in expression and actualParameters
+// This rules are needed to resolve variables/function calls etc. in expression and actualParameters
 	:	^(CLASS_MEMBER_ACCESS expression Identifier) 			
 	|	^(ARRAY_ACCESS expression expression)		
 	|	^(METHOD_CALL_POSTFIX expression Identifier actualParameters)
 	;
 
 exit
-	:	^('exit' expression?)
+	:	^('exit' expression)
 	|	'exit'
 	;
  	
