@@ -303,14 +303,15 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
     private IMethodSymbol resolveCallOverload(final ITSPHPAst identifier, ITSPHPAst arguments,
             IMethodSymbol methodSymbol, IWrongCallReporter wrongCallReporter) {
 
+        IMethodSymbol resolveMethodSymbol = methodSymbol;
         List<IMethodSymbol> methods = new ArrayList<>();
         methods.add(methodSymbol);
         OverloadDto overloadDto = resolveCallOverload(identifier, arguments, methods, wrongCallReporter);
         //error reporting if overloadDto == null happens in resolveCallOverload
         if (overloadDto != null) {
-            methodSymbol = overloadDto.methodSymbol;
+            resolveMethodSymbol = overloadDto.methodSymbol;
         }
-        return methodSymbol;
+        return resolveMethodSymbol;
     }
 
     @Override
@@ -350,15 +351,15 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
             } else {
                 DefinitionException exception = typeCheckErrorReporter.methodNotDefined(
                         callee, identifier);
-                typeSymbol = symbolFactory.createErroneousTypeSymbol(identifier, exception);
+                ITypeSymbol erroneousTypeSymbol = symbolFactory.createErroneousTypeSymbol(identifier, exception);
                 methodSymbol = symbolFactory.createErroneousMethodSymbol(identifier, exception);
-                methodSymbol.setType(typeSymbol);
+                methodSymbol.setType(erroneousTypeSymbol);
             }
         } else {
             ReferenceException exception = typeCheckErrorReporter.wrongTypeMethodCall(callee);
-            typeSymbol = symbolFactory.createErroneousTypeSymbol(identifier, exception);
+            ITypeSymbol erroneousTypeSymbol = symbolFactory.createErroneousTypeSymbol(identifier, exception);
             methodSymbol = symbolFactory.createErroneousMethodSymbol(identifier, exception);
-            methodSymbol.setType(typeSymbol);
+            methodSymbol.setType(erroneousTypeSymbol);
         }
         return methodSymbol;
     }
@@ -498,7 +499,7 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
     }
 
     private ISymbol getSymbolFromVariableOrField(ITSPHPAst left) {
-        ISymbol symbol = null;
+        ISymbol symbol;
         switch (left.getType()) {
             case TSPHPDefinitionWalker.VariableId:
                 symbol = left.getSymbol();
@@ -507,6 +508,8 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
             case TSPHPDefinitionWalker.CLASS_STATIC_ACCESS:
                 symbol = left.getChild(1).getSymbol();
                 break;
+            default:
+                symbol = null;
         }
         return symbol;
     }
@@ -971,7 +974,7 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
     //CHECKSTYLE:ON:VisibilityModifier|ParameterNumber
 
     /**
-     * A "delegate" which returns an IErroneousTypeSymbol if it founds one otherwise null
+     * A "delegate" which returns an IErroneousTypeSymbol if it founds one otherwise null.
      */
     private interface IErroneousChecker
     {

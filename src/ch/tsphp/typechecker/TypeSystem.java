@@ -486,7 +486,7 @@ public class TypeSystem implements ITypeSystem
 
     private void defineExplicitCastings() {
         ITypeSymbol[][] castings = new ITypeSymbol[][]{
-                //everything is castable to bool and array
+                //everything can be casted to bool and array
                 {objectTypeSymbol, boolNullableTypeSymbol},
                 {objectTypeSymbol, boolTypeSymbol},
                 {objectTypeSymbol, arrayTypeSymbol},
@@ -503,7 +503,7 @@ public class TypeSystem implements ITypeSystem
                 {floatTypeSymbol, intNullableTypeSymbol},
                 {stringTypeSymbol, boolNullableTypeSymbol},
                 {stringTypeSymbol, intNullableTypeSymbol},
-                {stringTypeSymbol, floatNullableTypeSymbol}, //
+                {stringTypeSymbol, floatNullableTypeSymbol},
         };
 
         for (ITypeSymbol[] fromTo : castings) {

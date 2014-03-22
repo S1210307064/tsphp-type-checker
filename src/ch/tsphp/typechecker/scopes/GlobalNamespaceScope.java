@@ -66,11 +66,12 @@ public class GlobalNamespaceScope extends AScope implements IGlobalNamespaceScop
     //Warning! end code duplication - same as in MethodSymbol
 
     private String getTypeNameWithoutNamespacePrefix(String typeName) {
+        String typeNameWithoutPrefix = typeName;
         int scopeNameLength = scopeName.length();
         if (typeName.length() > scopeNameLength && typeName.substring(0, scopeNameLength).equals(scopeName)) {
-            typeName = typeName.substring(scopeNameLength);
+            typeNameWithoutPrefix = typeName.substring(scopeNameLength);
         }
-        return typeName;
+        return typeNameWithoutPrefix;
     }
 
     @Override

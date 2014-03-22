@@ -15,7 +15,8 @@ public class ConditionalScope extends AScope implements IConditionalScope
 {
     private final ITypeCheckerErrorReporter typeCheckerErrorReporter;
 
-    public ConditionalScope(IScopeHelper scopeHelper, IScope enclosingScope, ITypeCheckerErrorReporter theTypeCheckerErrorReporter) {
+    public ConditionalScope(
+            IScopeHelper scopeHelper, IScope enclosingScope, ITypeCheckerErrorReporter theTypeCheckerErrorReporter) {
         super(scopeHelper, "cScope", enclosingScope);
         typeCheckerErrorReporter = theTypeCheckerErrorReporter;
     }
@@ -40,7 +41,8 @@ public class ConditionalScope extends AScope implements IConditionalScope
                     public void callAccordingAlreadyDefinedMethod(ISymbol firstDefinition, ISymbol symbolToCheck) {
                         typeCheckerErrorReporter.definedInOuterScope(firstDefinition, symbolToCheck);
                     }
-                });
+                }
+        );
     }
 
     private IScope getEnclosingNonConditionalScope(ISymbol symbol) {

@@ -96,8 +96,8 @@ public class AccessResolver implements IAccessResolver
                 variableSymbol = resolveAccess(
                         (IPolymorphicTypeSymbol) evalType, accessor, identifier, visibilityViolationCaller);
             } else {
-                ReferenceException exception = typeCheckErrorReporter.wrongTypeClassMemberAccess
-                        (identifier);
+                ReferenceException exception =
+                        typeCheckErrorReporter.wrongTypeClassMemberAccess(identifier);
                 variableSymbol = symbolFactory.createErroneousVariableSymbol(identifier, exception);
                 variableSymbol.setType(symbolFactory.createErroneousTypeSymbol(identifier, exception));
             }

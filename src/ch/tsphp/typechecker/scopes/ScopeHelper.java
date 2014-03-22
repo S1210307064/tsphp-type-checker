@@ -20,7 +20,7 @@ public class ScopeHelper implements IScopeHelper
 {
     private final ITypeCheckerErrorReporter typeCheckerErrorReporter;
 
-    public ScopeHelper(ITypeCheckerErrorReporter theTypeCheckerErrorReporter){
+    public ScopeHelper(ITypeCheckerErrorReporter theTypeCheckerErrorReporter) {
         typeCheckerErrorReporter = theTypeCheckerErrorReporter;
     }
 

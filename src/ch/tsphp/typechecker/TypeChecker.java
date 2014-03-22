@@ -100,36 +100,36 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
     protected ISymbolResolver createSymbolResolver(
             IScopeHelper scopeHelper,
             ISymbolFactory symbolFactory,
-            ITypeCheckerErrorReporter typeCheckErrorReporter,
+            ITypeCheckerErrorReporter theTypeCheckErrorReporter,
             IGlobalNamespaceScope globalDefaultNamespace) {
         return new SymbolResolver(
                 scopeHelper,
                 symbolFactory,
-                typeCheckErrorReporter,
+                theTypeCheckErrorReporter,
                 definitionPhaseController.getGlobalNamespaceScopes(),
                 globalDefaultNamespace
         );
     }
 
     protected IAccessResolver createAccessResolver(
-            ISymbolFactory symbolFactory, ITypeCheckerErrorReporter typeCheckErrorReporter) {
-        return new AccessResolver(symbolFactory, typeCheckErrorReporter);
+            ISymbolFactory symbolFactory, ITypeCheckerErrorReporter theTypeCheckErrorReporter) {
+        return new AccessResolver(symbolFactory, theTypeCheckErrorReporter);
     }
 
     protected IReferencePhaseController createReferencePhaseController(
             ISymbolFactory symbolFactory,
             ISymbolResolver symbolResolver,
-            ITypeCheckerErrorReporter typeCheckErrorReporter,
+            ITypeCheckerErrorReporter theTypeCheckErrorReporter,
             IGlobalNamespaceScope globalDefaultNamespace) {
         return new ReferencePhaseController(
                 symbolFactory,
                 symbolResolver,
-                typeCheckErrorReporter,
+                theTypeCheckErrorReporter,
                 globalDefaultNamespace);
     }
 
-    protected IOverloadResolver createOverloadResolver(ITypeSystem typeSystem) {
-        return new OverloadResolver(typeSystem);
+    protected IOverloadResolver createOverloadResolver(ITypeSystem theTypeSystem) {
+        return new OverloadResolver(theTypeSystem);
     }
 
     protected ITypeCheckerAstHelper createTypeCheckerAstHelper() {
@@ -139,18 +139,18 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
     protected ITypeCheckPhaseController createTypeCheckPhaseController(
             ISymbolFactory symbolFactory,
             ISymbolResolver symbolResolver,
-            ITypeCheckerErrorReporter typeCheckerErrorReporter,
-            ITypeSystem typeSystem,
+            ITypeCheckerErrorReporter theTypeCheckerErrorReporter,
+            ITypeSystem theTypeSystem,
             IOverloadResolver overloadResolver,
-            IAccessResolver accessResolver,
+            IAccessResolver theAccessResolver,
             ITypeCheckerAstHelper astHelper) {
         return new TypeCheckPhaseController(
                 symbolFactory,
                 symbolResolver,
-                typeCheckerErrorReporter,
-                typeSystem,
+                theTypeCheckerErrorReporter,
+                theTypeSystem,
                 overloadResolver,
-                accessResolver,
+                theAccessResolver,
                 astHelper);
     }
 

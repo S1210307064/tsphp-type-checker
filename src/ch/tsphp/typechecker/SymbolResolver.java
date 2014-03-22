@@ -73,10 +73,11 @@ public class SymbolResolver implements ISymbolResolver
     }
 
     private ISymbol fallbackIfNull(ISymbol symbol, ITSPHPAst ast) {
+        ISymbol resolvedSymbol = symbol;
         if (symbol == null) {
-            symbol = globalDefaultNamespace.resolve(ast);
+            resolvedSymbol = globalDefaultNamespace.resolve(ast);
         }
-        return symbol;
+        return resolvedSymbol;
     }
 
     @Override
@@ -120,15 +121,17 @@ public class SymbolResolver implements ISymbolResolver
     }
 
     private String getPotentialAlias(String typeName) {
+        String alias = typeName;
         int backslashPosition = typeName.indexOf("\\");
         if (backslashPosition != -1) {
-            typeName = typeName.substring(0, backslashPosition);
+            alias = typeName.substring(0, backslashPosition);
         }
-        return typeName;
+        return alias;
     }
 
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     private ITSPHPAst checkTypeNameClashAndRecoverIfNecessary(ITSPHPAst useDefinition, ISymbol typeSymbol) {
+        ITSPHPAst resultingUseDefinition = useDefinition;
         if (hasTypeNameClash(useDefinition, typeSymbol)) {
             ITSPHPAst typeDefinition = typeSymbol.getDefinitionAst();
             if (useDefinition.isDefinedEarlierThan(typeDefinition)) {
@@ -136,10 +139,10 @@ public class SymbolResolver implements ISymbolResolver
             } else {
                 typeCheckErrorReporter.alreadyDefined(typeDefinition, useDefinition);
                 //we do not use the alias if it was defined later than the typeSymbol
-                useDefinition = null;
+                resultingUseDefinition = null;
             }
         }
-        return useDefinition;
+        return resultingUseDefinition;
     }
 
     private boolean hasTypeNameClash(ITSPHPAst useDefinition, ISymbol symbol) {
@@ -183,8 +186,7 @@ public class SymbolResolver implements ISymbolResolver
         if (!fullTypeName.substring(0, 1).equals("\\")) {
             fullTypeName = "\\" + fullTypeName;
         }
-        typeName = fullTypeName + typeName.substring(alias.length() + 1);
-        return typeName;
+        return fullTypeName + typeName.substring(alias.length() + 1);
     }
 
     private boolean isUsedAsNamespace(String alias, String typeName) {
