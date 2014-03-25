@@ -792,9 +792,10 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
         } else if (isNotConstantValue(expression)) {
             typeCheckErrorReporter.onlyConstantValue(variableId, expression);
         } else {
+            int tokenType = variableId.getToken().getType();
             variableId.getToken().setType(TSPHPDefinitionWalker.VariableId);
             checkInitialValue(variableId, expression);
-            variableId.getToken().setType(TSPHPDefinitionWalker.CONSTANT);
+            variableId.getToken().setType(tokenType);
         }
     }
 
