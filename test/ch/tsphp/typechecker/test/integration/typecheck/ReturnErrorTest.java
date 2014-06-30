@@ -54,14 +54,21 @@ public class ReturnErrorTest extends ATypeCheckErrorTest
                 continue;
             }
             collection.add(new Object[]{
-                    "function " + types[i][0] + " foo(){" + types[i + 1][0] + " $b=" + types[i + 1][1] + ";"
-                            + "\n return $b;}",
-                    errorDto
+                    "function " + types[i][0] + " foo(){"
+                            + types[i + 1][0] + " $b=" + types[i + 1][1] + ";\n return $b;}", errorDto
+            });
+            collection.add(new Object[]{
+                    "class A{function " + types[i][0] + " foo(){"
+                            + types[i + 1][0] + " $b=" + types[i + 1][1] + ";\n return $b;}}", errorDto
             });
         }
 
         collection.add(new Object[]{
                 "function \\ErrorException foo(){Exception $b=null;\n " + "return $b;}",
+                errorDto
+        });
+        collection.add(new Object[]{
+                "class A{function \\ErrorException foo(){Exception $b=null;\n " + "return $b;}}",
                 errorDto
         });
         return collection;

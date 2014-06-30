@@ -68,8 +68,8 @@ public abstract class ATypeCheckTest extends AReferenceTest
             typeCheckWalker.downup(ast);
         } catch (Exception e) {
             e.printStackTrace();
-            Assert.fail(testString + " failed. unexpected exception occurred in the type check phase.\n" + e
-                    .getMessage());
+            Assert.fail(testString + " failed. unexpected exception occurred in the type check phase.\n"
+                    + e.getMessage());
         }
         checkErrors();
     }

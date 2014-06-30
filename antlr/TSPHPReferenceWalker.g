@@ -765,6 +765,7 @@ scalarTypes[boolean isNullable] returns [ITypeSymbol type]
 @init{
     if(state.backtracking == 1 && $start instanceof ITSPHPErrorAst){
         $type = controller.createErroneousTypeSymbol((ITSPHPErrorAst)$start);
+        $start.setSymbol($type);        
         input.consume();
         return retval;
     }
@@ -780,11 +781,17 @@ scalarTypes[boolean isNullable] returns [ITypeSymbol type]
 			$start.setSymbol($type);
 		}
 	;
+catch[RecognitionException re]{
+    reportError(re);
+    recover(input,re);
+    $type = controller.createErroneousTypeSymbol($start, re);
+}
 	
 classInterfaceType returns [ITypeSymbol type]
 @init{
     if(state.backtracking == 1 && $start instanceof ITSPHPErrorAst){
         $type = controller.createErroneousTypeSymbol((ITSPHPErrorAst)$start);
+        $start.setSymbol($type);        
         input.consume();
         return retval;
     }
@@ -795,11 +802,17 @@ classInterfaceType returns [ITypeSymbol type]
 			$start.setSymbol($type);
 		}
 	;
+catch[RecognitionException re]{
+    reportError(re);
+    recover(input,re);
+    $type = controller.createErroneousTypeSymbol($start, re);
+}
 	
 arrayOrResourceOrObject returns [ITypeSymbol type]
 @init{
     if(state.backtracking == 1 && $start instanceof ITSPHPErrorAst){
         $type = controller.createErroneousTypeSymbol((ITSPHPErrorAst)$start);
+        $start.setSymbol($type);
         input.consume();
         return retval;
     }
@@ -813,3 +826,8 @@ arrayOrResourceOrObject returns [ITypeSymbol type]
 			$start.setSymbol($type);
 		}
 	;
+catch[RecognitionException re]{
+    reportError(re);
+    recover(input,re);
+    $type = controller.createErroneousTypeSymbol($start, re);
+}

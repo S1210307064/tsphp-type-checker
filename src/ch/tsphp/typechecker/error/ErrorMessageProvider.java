@@ -144,11 +144,11 @@ public class ErrorMessageProvider extends AErrorMessageProvider
         typeCheckErrors.put("arrayExpected", "Line %line%|%pos% - the array access operator [] expects the \n"
                 + "type %tExp% or a sub-type on its LHS but the corresponding expression evaluates to %tFound%.");
 
-        typeCheckErrors.put("noReturnValueExpected", "Line %line%|%pos% - the enclosing method has not specified a "
-                + "return value but a value of type %tFound% was found.");
+        typeCheckErrors.put("noReturnValueExpected", "Line %line%|%pos% - the enclosing function/method has not "
+                + "specified a return value but a value of type %tFound% was found.");
 
-        typeCheckErrors.put("returnValueExpected", "Line %line%|%pos% - the enclosing method has specified a return "
-                + "value but none was given.");
+        typeCheckErrors.put("returnValueExpected", "Line %line%|%pos% - the enclosing function/method has specified "
+                + "a return value but none was given.");
 
         typeCheckErrors.put("wrongTypeReturn", "Line %line%|%pos% - the return statement evaluates to wrong type. "
                 + "Type %tExp% or a sub-type expected but %tFound% found.");

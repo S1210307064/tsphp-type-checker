@@ -26,6 +26,7 @@ import ch.tsphp.typechecker.symbols.IVoidTypeSymbol;
 import ch.tsphp.typechecker.symbols.erroneous.IErroneousMethodSymbol;
 import ch.tsphp.typechecker.symbols.erroneous.IErroneousSymbol;
 import ch.tsphp.typechecker.symbols.erroneous.IErroneousTypeSymbol;
+import ch.tsphp.typechecker.symbols.erroneous.IErroneousVariableSymbol;
 import ch.tsphp.typechecker.utils.ITypeCheckerAstHelper;
 
 import java.util.ArrayList;
@@ -469,9 +470,10 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     @Override
     public void checkAssignment(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right) {
-        if (areNotErroneousTypes(left, right)) {
-            ISymbol leftSymbol = getSymbolFromVariableOrField(left);
-            if (leftSymbol != null && leftSymbol instanceof IVariableSymbol) {
+        ISymbol leftSymbol = getSymbolFromVariableOrField(left);
+        if (leftSymbol != null && leftSymbol instanceof IVariableSymbol) {
+            if (!(leftSymbol instanceof IErroneousVariableSymbol)
+                    && areNotErroneousTypes(leftSymbol.getType(), right.getEvalType())) {
                 CastingDto castingDto = overloadResolver.getCastingDto((IVariableSymbol) leftSymbol, right);
                 if (castingDto != null) {
                     if (castingDto.castingMethods != null) {
@@ -484,14 +486,10 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
                 } else {
                     typeCheckErrorReporter.wrongAssignment(operator, left, right);
                 }
-            } else {
-                typeCheckErrorReporter.variableExpected(left);
             }
+        } else {
+            typeCheckErrorReporter.variableExpected(left);
         }
-    }
-
-    private boolean areNotErroneousTypes(ITSPHPAst left, ITSPHPAst right) {
-        return areNotErroneousTypes(left.getEvalType(), right.getEvalType());
     }
 
     private boolean areNotErroneousTypes(ITypeSymbol leftType, ITypeSymbol rightType) {

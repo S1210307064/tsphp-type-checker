@@ -12,6 +12,7 @@ import ch.tsphp.common.ITypeSymbol;
 import ch.tsphp.typechecker.symbols.IScalarTypeSymbol;
 import ch.tsphp.typechecker.symbols.IVariableSymbol;
 import ch.tsphp.typechecker.symbols.erroneous.IErroneousTypeSymbol;
+import org.antlr.runtime.RecognitionException;
 
 import java.util.List;
 
@@ -68,4 +69,6 @@ public interface IReferencePhaseController
     void checkBreakContinueLevel(ITSPHPAst root, ITSPHPAst level);
 
     IErroneousTypeSymbol createErroneousTypeSymbol(ITSPHPErrorAst typeAst);
+
+    IErroneousTypeSymbol createErroneousTypeSymbol(ITSPHPAst typeAst, RecognitionException ex);
 }

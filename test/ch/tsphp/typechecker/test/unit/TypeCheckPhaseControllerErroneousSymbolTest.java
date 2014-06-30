@@ -15,11 +15,14 @@ import ch.tsphp.typechecker.ISymbolResolver;
 import ch.tsphp.typechecker.ITypeCheckPhaseController;
 import ch.tsphp.typechecker.ITypeSystem;
 import ch.tsphp.typechecker.TypeCheckPhaseController;
+import ch.tsphp.typechecker.antlr.TSPHPTypeCheckWalker;
 import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
 import ch.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tsphp.typechecker.symbols.ISymbolFactory;
+import ch.tsphp.typechecker.symbols.IVariableSymbol;
 import ch.tsphp.typechecker.symbols.erroneous.IErroneousMethodSymbol;
 import ch.tsphp.typechecker.symbols.erroneous.IErroneousTypeSymbol;
+import ch.tsphp.typechecker.symbols.erroneous.IErroneousVariableSymbol;
 import ch.tsphp.typechecker.utils.ITypeCheckerAstHelper;
 import org.junit.Before;
 import org.junit.Test;
@@ -102,7 +105,8 @@ public class TypeCheckPhaseControllerErroneousSymbolTest
                             ITSPHPAst right) {
                         typeCheckerController.checkEquality(mock(ITSPHPAst.class), left, right);
                     }
-                });
+                }
+        );
     }
 
     @Test
@@ -115,7 +119,8 @@ public class TypeCheckPhaseControllerErroneousSymbolTest
                             ITSPHPAst right) {
                         typeCheckerController.checkEquality(mock(ITSPHPAst.class), left, right);
                     }
-                });
+                }
+        );
     }
 
 
@@ -129,46 +134,127 @@ public class TypeCheckPhaseControllerErroneousSymbolTest
                             ITSPHPAst right) {
                         typeCheckerController.checkEquality(mock(ITSPHPAst.class), left, right);
                     }
-                });
+                }
+        );
+    }
+
+    @Test
+    public void checkAssignment_LeftIsErroneousVariableSymbol_DoesNotCheckAnything() {
+        ITSPHPAst left = mock(ITSPHPAst.class);
+        IVariableSymbol variableSymbol = mock(IErroneousVariableSymbol.class);
+        when(left.getType()).thenReturn(TSPHPTypeCheckWalker.VariableId);
+        when(left.getSymbol()).thenReturn(variableSymbol);
+
+        ITSPHPAst right = mock(ITSPHPAst.class);
+        ITypeSymbol rightTypeSymbol = mock(IErroneousTypeSymbol.class);
+        when(right.getEvalType()).thenReturn(rightTypeSymbol);
+
+        //act
+        ITypeCheckPhaseController typeCheckerController = createTypeCheckController();
+        typeCheckerController.checkAssignment(mock(ITSPHPAst.class), left, right);
+
+        verify(left).getType();
+        verify(left).getSymbol();
+        verifyNoMoreInteractions(
+                left,
+                right,
+                rightTypeSymbol,
+                variableSymbol,
+                typeCheckerErrorReporter
+        );
     }
 
     @Test
     public void checkAssignment_LeftIsErroneousTypeSymbol_DoesNotCheckAnything() {
-        doesNotCheckAnythingTest(mock(IErroneousTypeSymbol.class), mock(ITypeSymbol.class),
-                new IDoesNotCheckAnythingDelegate()
-                {
-                    @Override
-                    public void check(ITypeCheckPhaseController typeCheckerController, ITSPHPAst left,
-                            ITSPHPAst right) {
-                        typeCheckerController.checkAssignment(mock(ITSPHPAst.class), left, right);
-                    }
-                });
+        ITSPHPAst left = mock(ITSPHPAst.class);
+        IVariableSymbol variableSymbol = mock(IVariableSymbol.class);
+        when(left.getType()).thenReturn(TSPHPTypeCheckWalker.VariableId);
+        when(left.getSymbol()).thenReturn(variableSymbol);
+        ITypeSymbol leftTypeSymbol = mock(IErroneousTypeSymbol.class);
+        when(variableSymbol.getType()).thenReturn(leftTypeSymbol);
+
+        ITSPHPAst right = mock(ITSPHPAst.class);
+        ITypeSymbol rightTypeSymbol = mock(ITypeSymbol.class);
+        when(right.getEvalType()).thenReturn(rightTypeSymbol);
+
+        //act
+        ITypeCheckPhaseController typeCheckerController = createTypeCheckController();
+        typeCheckerController.checkAssignment(mock(ITSPHPAst.class), left, right);
+
+        verify(left).getType();
+        verify(left).getSymbol();
+        verify(variableSymbol).getType();
+        verify(right).getEvalType();
+        verifyNoMoreInteractions(
+                left,
+                right,
+                leftTypeSymbol,
+                rightTypeSymbol,
+                variableSymbol,
+                typeCheckerErrorReporter
+        );
     }
 
     @Test
     public void checkAssignment_RightIsErroneousTypeSymbol_DoesNotCheckAnything() {
-        doesNotCheckAnythingTest(mock(ITypeSymbol.class), mock(IErroneousTypeSymbol.class),
-                new IDoesNotCheckAnythingDelegate()
-                {
-                    @Override
-                    public void check(ITypeCheckPhaseController typeCheckerController, ITSPHPAst left,
-                            ITSPHPAst right) {
-                        typeCheckerController.checkAssignment(mock(ITSPHPAst.class), left, right);
-                    }
-                });
+        ITSPHPAst left = mock(ITSPHPAst.class);
+        IVariableSymbol variableSymbol = mock(IVariableSymbol.class);
+        when(left.getType()).thenReturn(TSPHPTypeCheckWalker.VariableId);
+        when(left.getSymbol()).thenReturn(variableSymbol);
+        ITypeSymbol leftTypeSymbol = mock(ITypeSymbol.class);
+        when(variableSymbol.getType()).thenReturn(leftTypeSymbol);
+
+        ITSPHPAst right = mock(ITSPHPAst.class);
+        ITypeSymbol rightTypeSymbol = mock(IErroneousTypeSymbol.class);
+        when(right.getEvalType()).thenReturn(rightTypeSymbol);
+
+        //act
+        ITypeCheckPhaseController typeCheckerController = createTypeCheckController();
+        typeCheckerController.checkAssignment(mock(ITSPHPAst.class), left, right);
+
+        verify(left).getType();
+        verify(left).getSymbol();
+        verify(variableSymbol).getType();
+        verify(right).getEvalType();
+        verifyNoMoreInteractions(
+                left,
+                right,
+                leftTypeSymbol,
+                rightTypeSymbol,
+                variableSymbol,
+                typeCheckerErrorReporter
+        );
     }
 
     @Test
     public void checkAssignment_LeftAndRightIsErroneousTypeSymbol_DoesNotCheckAnything() {
-        doesNotCheckAnythingTest(mock(IErroneousTypeSymbol.class), mock(IErroneousTypeSymbol.class),
-                new IDoesNotCheckAnythingDelegate()
-                {
-                    @Override
-                    public void check(ITypeCheckPhaseController typeCheckerController, ITSPHPAst left,
-                            ITSPHPAst right) {
-                        typeCheckerController.checkAssignment(mock(ITSPHPAst.class), left, right);
-                    }
-                });
+        ITSPHPAst left = mock(ITSPHPAst.class);
+        IVariableSymbol variableSymbol = mock(IVariableSymbol.class);
+        when(left.getType()).thenReturn(TSPHPTypeCheckWalker.VariableId);
+        when(left.getSymbol()).thenReturn(variableSymbol);
+        ITypeSymbol leftTypeSymbol = mock(IErroneousTypeSymbol.class);
+        when(variableSymbol.getType()).thenReturn(leftTypeSymbol);
+
+        ITSPHPAst right = mock(ITSPHPAst.class);
+        ITypeSymbol rightTypeSymbol = mock(IErroneousTypeSymbol.class);
+        when(right.getEvalType()).thenReturn(rightTypeSymbol);
+
+        //act
+        ITypeCheckPhaseController typeCheckerController = createTypeCheckController();
+        typeCheckerController.checkAssignment(mock(ITSPHPAst.class), left, right);
+
+        verify(left).getType();
+        verify(left).getSymbol();
+        verify(variableSymbol).getType();
+        verify(right).getEvalType();
+        verifyNoMoreInteractions(
+                left,
+                right,
+                leftTypeSymbol,
+                rightTypeSymbol,
+                variableSymbol,
+                typeCheckerErrorReporter
+        );
     }
 
     @Test
@@ -181,7 +267,8 @@ public class TypeCheckPhaseControllerErroneousSymbolTest
                             ITSPHPAst right) {
                         typeCheckerController.checkIdentity(mock(ITSPHPAst.class), left, right);
                     }
-                });
+                }
+        );
     }
 
     @Test
@@ -194,7 +281,8 @@ public class TypeCheckPhaseControllerErroneousSymbolTest
                             ITSPHPAst right) {
                         typeCheckerController.checkIdentity(mock(ITSPHPAst.class), left, right);
                     }
-                });
+                }
+        );
     }
 
     @Test
@@ -207,12 +295,14 @@ public class TypeCheckPhaseControllerErroneousSymbolTest
                             ITSPHPAst right) {
                         typeCheckerController.checkIdentity(mock(ITSPHPAst.class), left, right);
                     }
-                });
+                }
+        );
     }
 
     protected ITypeCheckPhaseController createTypeCheckController() {
         return new TypeCheckPhaseController(
-                symbolFactory, symbolResolver, typeCheckerErrorReporter, typeSystem, overloadResolver, accessResolver, astHelper);
+                symbolFactory, symbolResolver, typeCheckerErrorReporter, typeSystem, overloadResolver,
+                accessResolver, astHelper);
     }
 
 

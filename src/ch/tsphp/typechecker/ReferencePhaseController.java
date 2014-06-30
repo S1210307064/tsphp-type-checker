@@ -11,8 +11,8 @@ import ch.tsphp.common.ISymbol;
 import ch.tsphp.common.ITSPHPAst;
 import ch.tsphp.common.ITSPHPErrorAst;
 import ch.tsphp.common.ITypeSymbol;
-import ch.tsphp.common.exceptions.DefinitionException;
 import ch.tsphp.common.exceptions.ReferenceException;
+import ch.tsphp.common.exceptions.TSPHPException;
 import ch.tsphp.common.exceptions.TypeCheckerException;
 import ch.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
@@ -27,6 +27,7 @@ import ch.tsphp.typechecker.symbols.IVariableSymbol;
 import ch.tsphp.typechecker.symbols.erroneous.IErroneousSymbol;
 import ch.tsphp.typechecker.symbols.erroneous.IErroneousTypeSymbol;
 import ch.tsphp.typechecker.symbols.erroneous.IErroneousVariableSymbol;
+import org.antlr.runtime.RecognitionException;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -220,10 +221,7 @@ public class ReferencePhaseController implements IReferencePhaseController
             ITSPHPAst definitionAst = symbol.getDefinitionAst();
             isNotUsedBefore = definitionAst.isDefinedEarlierThan(ast);
             if (!isNotUsedBefore) {
-                DefinitionException exception = typeCheckErrorReporter.forwardReference(
-                        ast, definitionAst);
-                symbol = symbolFactory.createErroneousVariableSymbol(ast, exception);
-                ast.setSymbol(symbol);
+                typeCheckErrorReporter.forwardReference(ast, definitionAst);
             }
         }
         return isNotUsedBefore;
@@ -436,5 +434,10 @@ public class ReferencePhaseController implements IReferencePhaseController
     @Override
     public IErroneousTypeSymbol createErroneousTypeSymbol(ITSPHPErrorAst erroneousTypeAst) {
         return symbolFactory.createErroneousTypeSymbol(erroneousTypeAst, erroneousTypeAst.getException());
+    }
+
+    @Override
+    public IErroneousTypeSymbol createErroneousTypeSymbol(ITSPHPAst typeAst, RecognitionException ex) {
+        return symbolFactory.createErroneousTypeSymbol(typeAst, new TSPHPException(ex));
     }
 }
