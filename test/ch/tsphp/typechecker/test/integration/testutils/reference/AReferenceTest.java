@@ -76,7 +76,8 @@ public abstract class AReferenceTest extends ADefinitionTest
 
         commonTreeNodeStream.reset();
         reference = createReferenceWalker(commonTreeNodeStream, referencePhaseController, accessResolver);
-        reference.registerErrorLogger(new WriteExceptionToConsole());
+        registerReferenceErrorLogger();
+
         try {
             reference.compilationUnit();
         } catch (RecognitionException e) {
@@ -90,6 +91,10 @@ public abstract class AReferenceTest extends ADefinitionTest
                     + e.getMessage());
         }
         checkReferences();
+    }
+
+    protected void registerReferenceErrorLogger() {
+        reference.registerErrorLogger(new WriteExceptionToConsole());
     }
 
     protected static String getAliasFullType(String type) {

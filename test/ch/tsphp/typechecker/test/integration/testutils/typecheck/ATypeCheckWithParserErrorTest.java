@@ -32,6 +32,16 @@ public abstract class ATypeCheckWithParserErrorTest extends ATypeCheckTest
     }
 
     @Override
+    protected void registerParserErrorLogger() {
+        // no need to write the errors to the console
+    }
+
+    @Override
+    protected void registerReferenceErrorLogger() {
+        // no need to write the errors to the console
+    }
+
+    @Override
     protected void checkReferences() {
         assertFalse(testString + " failed. Exceptions occurred." + exceptions, typeCheckErrorReporter.hasFoundError());
         assertTrue(testString + " failed. reference walker exceptions expected but nothing was thrown.",

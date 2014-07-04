@@ -44,6 +44,14 @@ public class AssignmentOperatorWithParserErrorTest extends ATypeCheckWithParserE
         return Arrays.asList(new Object[][]{
                 //see TSPHP-535 - const type missing, should cause parser error but no type check error
                 {"const a = 1;"},
+                // see TSPHP-652 Exception when type for extends/implements is missing
+                {"class A extends {}"},
+                {"class A implements {}"},
+                {"interface A extends {}"},
+                //some additional ideas due to TSPHP-652
+                {"class A extends -{}"},
+                {"class A implements -{}"},
+                {"interface A extends -{}"},
         });
     }
 

@@ -24,6 +24,11 @@ public abstract class ATypeCheckWithReferenceErrorTest extends ATypeCheckTest
     }
 
     @Override
+    protected void registerReferenceErrorLogger() {
+        // no need to write the errors to the console
+    }
+
+    @Override
     protected void checkReferences() {
         assertTrue(testString + " failed. Exceptions expected but nothing was thrown." + exceptions,
                 typeCheckErrorReporter.hasFoundError());
