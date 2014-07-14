@@ -145,7 +145,8 @@ public class TypeCheckerErrorReporter implements ITypeCheckerErrorReporter
                         existingDefinition.getCharPositionInLine(),
                         newDefinition.getText(),
                         newDefinition.getLine(),
-                        newDefinition.getCharPositionInLine()));
+                        newDefinition.getCharPositionInLine())
+        );
 
         DefinitionException exception = new DefinitionException(errorMessage, existingDefinition, newDefinition);
         reportError(exception);
@@ -299,7 +300,8 @@ public class TypeCheckerErrorReporter implements ITypeCheckerErrorReporter
 
         String errorMessage = errorMessageProvider.getOperatorAmbiguousCastingErrorMessage(key,
                 new AmbiguousCastsErrorDto(operator.getText(), operator.getLine(), operator.getCharPositionInLine(),
-                        leftToRightReturnTypes, rightToLeftReturnTypes, leftReturnTypes, rightReturnTypes));
+                        leftToRightReturnTypes, rightToLeftReturnTypes, leftReturnTypes, rightReturnTypes)
+        );
         return createAndReportReferenceException(errorMessage, operator);
     }
 
@@ -445,7 +447,8 @@ public class TypeCheckerErrorReporter implements ITypeCheckerErrorReporter
         UnsupportedOperationException exception = new UnsupportedOperationException(
                 "Unsupported operator exception occurred. Please report bug to http://tsphp.ch/jira\nException "
                         + "was caused by operator \"" + operator.getText()
-                        + " on line " + operator.getLine() + "|" + operator.getCharPositionInLine(), operator);
+                        + " on line " + operator.getLine() + "|" + operator.getCharPositionInLine(), operator
+        );
         reportError(exception);
         return exception;
     }
@@ -554,8 +557,13 @@ public class TypeCheckerErrorReporter implements ITypeCheckerErrorReporter
     }
 
     @Override
-    public ReferenceException returnValueExpected(ITSPHPAst returnRoot, ITSPHPAst expression, ITypeSymbol typeSymbol) {
-        return addAndGetStatementTypeCheckError("returnValueExpected", returnRoot, expression, typeSymbol);
+    public ReferenceException returnValueExpected(ITSPHPAst returnRoot, ITypeSymbol typeSymbol) {
+        TypeCheckErrorDto errorDto = new TypeCheckErrorDto(
+                returnRoot.getText(), returnRoot.getLine(), returnRoot.getCharPositionInLine(),
+                getAbsoluteTypeName(typeSymbol), "");
+
+        String errorMessage = errorMessageProvider.getTypeCheckErrorMessage("returnValueExpected", errorDto);
+        return createAndReportReferenceException(errorMessage, returnRoot);
     }
 
     @Override
@@ -714,7 +722,8 @@ public class TypeCheckerErrorReporter implements ITypeCheckerErrorReporter
 
         return errorMessageProvider.getMissingImplementationErrorMessage("missingAbstractMethods",
                 new MissingImplementationErrorDto(
-                        identifier.getText(), identifier.getLine(), identifier.getCharPositionInLine(), dtos));
+                        identifier.getText(), identifier.getLine(), identifier.getCharPositionInLine(), dtos)
+        );
 
     }
 

@@ -759,7 +759,7 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
                 }
             } else {
                 if (expression == null) {
-                    typeCheckErrorReporter.returnValueExpected(returnRoot, expression, typeSymbol);
+                    typeCheckErrorReporter.returnValueExpected(returnRoot, typeSymbol);
                 } else {
                     checkIsSameOrSubType(expression, typeSymbol, new IErrorReporterCaller()
                     {

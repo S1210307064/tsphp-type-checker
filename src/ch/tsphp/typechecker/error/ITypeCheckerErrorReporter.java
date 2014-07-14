@@ -152,7 +152,7 @@ public interface ITypeCheckerErrorReporter extends ch.tsphp.common.IErrorReporte
 
     ReferenceException noReturnValueExpected(ITSPHPAst returnRoot, ITSPHPAst expression, ITypeSymbol typeSymbol);
 
-    ReferenceException returnValueExpected(ITSPHPAst returnRoot, ITSPHPAst expression, ITypeSymbol typeSymbol);
+    ReferenceException returnValueExpected(ITSPHPAst returnRoot, ITypeSymbol typeSymbol);
 
     ReferenceException wrongTypeReturn(ITSPHPAst returnRoot, ITSPHPAst expression, ITypeSymbol typeSymbol);
 

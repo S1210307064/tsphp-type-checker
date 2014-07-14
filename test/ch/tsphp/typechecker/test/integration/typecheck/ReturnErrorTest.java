@@ -15,6 +15,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -34,18 +35,24 @@ public class ReturnErrorTest extends ATypeCheckErrorTest
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
         List<Object[]> collection = new ArrayList<>();
+        collection.add(new Object[]{
+                "int $b=1; \n return $b;",
+                new ReferenceErrorDto[]{new ReferenceErrorDto("return", 2, 1)}
+        });
+        collection.addAll(getVariations("", ""));
+        collection.addAll(getVariations("class A{", "}"));
+        return collection;
+    }
+
+    private static Collection<Object[]> getVariations(String prefix, String appendix) {
+        List<Object[]> collection = new ArrayList<>();
         ReferenceErrorDto[] errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto("return", 2, 1)};
 
-        collection.add(new Object[]{"int $b=1; \n return $b;", errorDto});
-
         String[][] types = TypeHelper.getTypesInclDefaultValue();
-
         for (String[] type : types) {
             collection.add(new Object[]{
-                    "function void foo(){" + type[0] + " $b=" + type[1] + ";\n return $b;}", errorDto
-            });
-            collection.add(new Object[]{
-                    "class A{function void foo(){" + type[0] + " $b=" + type[1] + ";\n return $b;}}", errorDto
+                    prefix + "function void foo(){" + type[0] + " $b=" + type[1] + ";\n return $b;}" + appendix,
+                    errorDto
             });
         }
 
@@ -54,23 +61,18 @@ public class ReturnErrorTest extends ATypeCheckErrorTest
                 continue;
             }
             collection.add(new Object[]{
-                    "function " + types[i][0] + " foo(){"
-                            + types[i + 1][0] + " $b=" + types[i + 1][1] + ";\n return $b;}", errorDto
-            });
-            collection.add(new Object[]{
-                    "class A{function " + types[i][0] + " foo(){"
-                            + types[i + 1][0] + " $b=" + types[i + 1][1] + ";\n return $b;}}", errorDto
+                    prefix + "function " + types[i][0] + " foo(){"
+                            + types[i + 1][0] + " $b=" + types[i + 1][1] + ";\n return $b;}" + appendix,
+                    errorDto
             });
         }
 
-        collection.add(new Object[]{
-                "function \\ErrorException foo(){Exception $b=null;\n " + "return $b;}",
-                errorDto
-        });
-        collection.add(new Object[]{
-                "class A{function \\ErrorException foo(){Exception $b=null;\n " + "return $b;}}",
-                errorDto
-        });
+        collection.addAll(Arrays.asList(new Object[][]{
+                {prefix + "function \\ErrorException foo(){Exception $b=null;\n " + "return $b;}" + appendix, errorDto},
+                //see TSPHP-663 - return without value causes NullPointerException
+                {prefix + "function int foo(){\n return;}" + appendix, errorDto}
+        }));
+
         return collection;
     }
 }
