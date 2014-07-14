@@ -11,12 +11,7 @@ import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
 import ch.tsphp.typechecker.test.integration.testutils.typecheck.ATypeCheckWithReferenceErrorTest;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import org.mockito.exceptions.base.MockitoAssertionError;
-
-import java.util.Arrays;
-import java.util.Collection;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.spy;
@@ -64,8 +59,8 @@ public class AssignmentOperatorWithReferenceErrorTest extends ATypeCheckWithRefe
     }
 
     @Override
-    protected ITypeCheckerErrorReporter createTypeCheckErrorReporter() {
-        return spy(super.createTypeCheckErrorReporter());
+    protected ITypeCheckerErrorReporter createTypeCheckerErrorReporter() {
+        return spy(super.createTypeCheckerErrorReporter());
     }
 }
 

@@ -822,9 +822,12 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
             case TSPHPDefinitionWalker.Int:
             case TSPHPDefinitionWalker.Float:
             case TSPHPDefinitionWalker.String:
-            case TSPHPDefinitionWalker.TypeArray:
             case TSPHPDefinitionWalker.CONSTANT:
             case TSPHPDefinitionWalker.Null:
+                isNotConstantValue = false;
+                break;
+            case TSPHPDefinitionWalker.TypeArray:
+                //TODO TSPHP-789 check that it is a constant array
                 isNotConstantValue = false;
                 break;
             case TSPHPDefinitionWalker.UNARY_MINUS:

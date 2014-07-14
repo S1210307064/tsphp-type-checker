@@ -182,8 +182,11 @@ constantInit
 	
 parameterDefaultValue
 	:	
-	|	^(PARAMETER_DECLARATION type=. ^(VariableId expression))
-		{controller.checkConstantInitialValue($VariableId, $expression.start);}
+	|	^(PARAMETER_DECLARATION type=. ^(variableId=VariableId expression))
+		{
+		    $variableId.setEvalType($variableId.getSymbol().getType());
+		    controller.checkConstantInitialValue($variableId, $expression.start);
+		}
 	;
 	
 expression returns [ITypeSymbol type]

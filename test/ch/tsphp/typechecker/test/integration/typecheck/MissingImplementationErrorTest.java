@@ -103,7 +103,7 @@ public class MissingImplementationErrorTest extends ATypeCheckErrorTest
     }
 
     @Override
-    protected ITypeCheckerErrorReporter createTypeCheckErrorReporter() {
-        return spy(super.createTypeCheckErrorReporter());
+    protected ITypeCheckerErrorReporter createTypeCheckerErrorReporter() {
+        return spy(super.createTypeCheckerErrorReporter());
     }
 }

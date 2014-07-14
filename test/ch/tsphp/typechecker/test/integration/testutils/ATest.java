@@ -30,7 +30,7 @@ public abstract class ATest implements IErrorLogger
         parser = createParser();
         registerParserErrorLogger();
 
-        typeCheckErrorReporter = createTypeCheckErrorReporter();
+        typeCheckErrorReporter = createTypeCheckerErrorReporter();
         typeCheckErrorReporter.registerErrorLogger(this);
     }
 
@@ -46,7 +46,7 @@ public abstract class ATest implements IErrorLogger
         parser.registerErrorLogger(new WriteExceptionToConsole());
     }
 
-    protected ITypeCheckerErrorReporter createTypeCheckErrorReporter() {
+    protected ITypeCheckerErrorReporter createTypeCheckerErrorReporter() {
         return new TypeCheckerErrorReporter(new ErrorMessageProvider());
     }
 }

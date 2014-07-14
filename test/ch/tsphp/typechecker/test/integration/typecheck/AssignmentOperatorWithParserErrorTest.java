@@ -56,8 +56,8 @@ public class AssignmentOperatorWithParserErrorTest extends ATypeCheckWithParserE
     }
 
     @Override
-    protected ITypeCheckerErrorReporter createTypeCheckErrorReporter() {
-        return spy(super.createTypeCheckErrorReporter());
+    protected ITypeCheckerErrorReporter createTypeCheckerErrorReporter() {
+        return spy(super.createTypeCheckerErrorReporter());
     }
 }
 

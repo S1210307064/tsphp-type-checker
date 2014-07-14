@@ -14,7 +14,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @RunWith(Parameterized.class)
 public class ParameterDefaultValueTest extends AOperatorTypeCheckTest
@@ -31,6 +33,12 @@ public class ParameterDefaultValueTest extends AOperatorTypeCheckTest
 
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
-        return ConstantInitialValueHelper.testStrings("function void foo(", "){}", "$a", true, true, 1, 0, 3);
+        List<Object[]> collection = new ArrayList<>();
+        collection.addAll(ConstantInitialValueHelper.testStrings(
+                "function void foo(", "){}", "$a", true, true, 1, 0, 3));
+        collection.addAll(ConstantInitialValueHelper.testStrings(
+                "class A{function void foo(", "){}}", "$a", true, true, 1, 0, 4, 0, 3));
+        return collection;
+
     }
 }

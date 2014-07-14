@@ -159,8 +159,8 @@ public class VariableInitialisationErrorTest extends AReferenceDefinitionErrorTe
     }
 
     @Override
-    protected ITypeCheckerErrorReporter createTypeCheckErrorReporter() {
-        return spy(super.createTypeCheckErrorReporter());
+    protected ITypeCheckerErrorReporter createTypeCheckerErrorReporter() {
+        return spy(super.createTypeCheckerErrorReporter());
     }
 
     private static class PartiallyVerifier implements IInitialisedVerifier
