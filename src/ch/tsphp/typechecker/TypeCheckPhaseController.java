@@ -205,16 +205,21 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
             ITSPHPAst caseTrue, ITSPHPAst caseFalse) {
 
         checkTernaryCondition(operator, condition);
-        ITypeSymbol typeSymbol = caseTrue.getEvalType();
+        ITypeSymbol caseTrueType = caseTrue.getEvalType();
+        ITypeSymbol caseFalseType = caseFalse.getEvalType();
+        ITypeSymbol typeSymbol = caseTrueType;
 
-        if (areNotSameAndNoneIsSubType(caseTrue, caseFalse)) {
-            typeCheckErrorReporter.wrongTypeTernaryCases(caseTrue, caseFalse);
-        } else {
-            ITypeSymbol caseFalseType = caseFalse.getEvalType();
-            int promotionLevel = overloadResolver.getPromotionLevelFromTo(typeSymbol, caseFalseType);
-            if (caseFalseTypeIsParentType(promotionLevel)) {
-                typeSymbol = caseFalseType;
+        if (areNotErroneousTypes(caseTrueType, caseFalseType)) {
+            if (areNotSameAndNoneIsSubType(caseTrue, caseFalse)) {
+                typeCheckErrorReporter.wrongTypeTernaryCases(caseTrue, caseFalse);
+            } else {
+                int promotionLevel = overloadResolver.getPromotionLevelFromTo(caseTrueType, caseFalseType);
+                if (caseFalseTypeIsParentType(promotionLevel)) {
+                    typeSymbol = caseFalseType;
+                }
             }
+        } else if (!(caseFalseType instanceof IErroneousTypeSymbol)) {
+            typeSymbol = caseFalseType;
         }
         return typeSymbol;
     }
@@ -418,7 +423,7 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     @Override
     public void checkEquality(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right) {
-        if (areNotSameAndNoneIsSubType(left, right)) {
+        if (areNotErroneousTypes(left.getEvalType(), right.getEvalType()) && areNotSameAndNoneIsSubType(left, right)) {
 
             IVariableSymbol leftSymbol = getVariableSymbolFromExpression(left);
             IVariableSymbol rightSymbol = getVariableSymbolFromExpression(right);
@@ -513,18 +518,12 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
     }
 
     private boolean areNotSameAndNoneIsSubType(ITSPHPAst left, ITSPHPAst right) {
-        ITypeSymbol leftType = left.getEvalType();
-        ITypeSymbol rightType = right.getEvalType();
-        boolean areNotSameAndNoneIsSubType = false;
-        if (areNotErroneousTypes(leftType, rightType)) {
+        IVariableSymbol leftSymbol = getVariableSymbolFromExpression(left);
+        IVariableSymbol rightSymbol = getVariableSymbolFromExpression(right);
 
-            IVariableSymbol leftSymbol = getVariableSymbolFromExpression(left);
-            IVariableSymbol rightSymbol = getVariableSymbolFromExpression(right);
-
-            areNotSameAndNoneIsSubType = !overloadResolver.isSameOrParentTypeConsiderNull(rightSymbol, left);
-            if (areNotSameAndNoneIsSubType) {
-                areNotSameAndNoneIsSubType = !overloadResolver.isSameOrParentTypeConsiderNull(leftSymbol, right);
-            }
+        boolean areNotSameAndNoneIsSubType = !overloadResolver.isSameOrParentTypeConsiderNull(rightSymbol, left);
+        if (areNotSameAndNoneIsSubType) {
+            areNotSameAndNoneIsSubType = !overloadResolver.isSameOrParentTypeConsiderNull(leftSymbol, right);
         }
         return areNotSameAndNoneIsSubType;
     }
@@ -532,7 +531,7 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     @Override
     public void checkIdentity(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right) {
-        if (areNotSameAndNoneIsSubType(left, right)) {
+        if (areNotErroneousTypes(left.getEvalType(), right.getEvalType()) && areNotSameAndNoneIsSubType(left, right)) {
             typeCheckErrorReporter.wrongIdentityUsage(operator, left, right);
         }
 

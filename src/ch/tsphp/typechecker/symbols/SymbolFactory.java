@@ -152,7 +152,9 @@ public class SymbolFactory implements ISymbolFactory
 
     @Override
     public IVariableSymbol createErroneousVariableSymbol(ITSPHPAst ast, TSPHPException exception) {
-        return new ErroneousVariableSymbol(ast, exception);
+        IVariableSymbol variableSymbol = new ErroneousVariableSymbol(ast, exception);
+        variableSymbol.setType(createErroneousTypeSymbol(ast, exception));
+        return variableSymbol;
     }
 
     private Set<Integer> getModifiers(ITSPHPAst modifierAst) {

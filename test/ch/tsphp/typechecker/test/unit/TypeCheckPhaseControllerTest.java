@@ -6,10 +6,10 @@
 
 package ch.tsphp.typechecker.test.unit;
 
-import ch.tsphp.common.AstHelper;
 import ch.tsphp.common.AstHelperRegistry;
 import ch.tsphp.common.IAstHelper;
 import ch.tsphp.common.ITSPHPAst;
+import ch.tsphp.common.ITypeSymbol;
 import ch.tsphp.typechecker.IAccessResolver;
 import ch.tsphp.typechecker.IOverloadResolver;
 import ch.tsphp.typechecker.ISymbolResolver;
@@ -18,6 +18,7 @@ import ch.tsphp.typechecker.ITypeSystem;
 import ch.tsphp.typechecker.TypeCheckPhaseController;
 import ch.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
+import ch.tsphp.typechecker.symbols.IClassTypeSymbol;
 import ch.tsphp.typechecker.symbols.ISymbolFactory;
 import ch.tsphp.typechecker.symbols.erroneous.IErroneousTypeSymbol;
 import ch.tsphp.typechecker.utils.ITypeCheckerAstHelper;
@@ -25,6 +26,8 @@ import org.antlr.runtime.Token;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -58,7 +61,7 @@ public class TypeCheckPhaseControllerTest
     }
 
     @Test
-    public void checkConstantInitialValue_ForConstant_TypeRemainsConstant(){
+    public void checkConstantInitialValue_ForConstant_TypeRemainsConstant() {
         ITSPHPAst expression = getConstantExpression();
         Token token = mock(Token.class);
         when(token.getType()).thenReturn(TSPHPDefinitionWalker.CONSTANT);
@@ -75,7 +78,7 @@ public class TypeCheckPhaseControllerTest
     }
 
     @Test
-    public void checkConstantInitialValue_ForVariable_TypeRemainsVariableId(){
+    public void checkConstantInitialValue_ForVariable_TypeRemainsVariableId() {
         ITSPHPAst expression = getConstantExpression();
         Token token = mock(Token.class);
         when(token.getType()).thenReturn(TSPHPDefinitionWalker.VariableId);
@@ -95,6 +98,54 @@ public class TypeCheckPhaseControllerTest
         when(expression.getType()).thenReturn(TSPHPDefinitionWalker.Int);
         when(expression.getChildCount()).thenReturn(1);
         return expression;
+    }
+
+    @Test
+    public void resolveTernaryOperatorEvalType_CaseTrueIsErroneousType_ReturnCaseFalseType() {
+        ITypeSymbol caseTrueType = mock(IErroneousTypeSymbol.class);
+        ITypeSymbol caseFalseType = mock(IClassTypeSymbol.class);
+        ITSPHPAst caseTrueAst = mock(ITSPHPAst.class);
+        when(caseTrueAst.getEvalType()).thenReturn(caseTrueType);
+        ITSPHPAst caseFalseAst = mock(ITSPHPAst.class);
+        when(caseFalseAst.getEvalType()).thenReturn(caseFalseType);
+
+        ITypeCheckPhaseController controller = createTypeCheckController();
+        ITypeSymbol result = controller.resolveTernaryOperatorEvalType(
+                mock(ITSPHPAst.class), mock(ITSPHPAst.class), caseTrueAst, caseFalseAst);
+
+        assertThat(result, is(caseFalseType));
+    }
+
+    @Test
+    public void resolveTernaryOperatorEvalType_CaseFalseIsErroneousType_ReturnCaseTrueType() {
+        ITypeSymbol caseTrueType = mock(IClassTypeSymbol.class);
+        ITypeSymbol caseFalseType = mock(IErroneousTypeSymbol.class);
+        ITSPHPAst caseTrueAst = mock(ITSPHPAst.class);
+        when(caseTrueAst.getEvalType()).thenReturn(caseTrueType);
+        ITSPHPAst caseFalseAst = mock(ITSPHPAst.class);
+        when(caseFalseAst.getEvalType()).thenReturn(caseFalseType);
+
+        ITypeCheckPhaseController controller = createTypeCheckController();
+        ITypeSymbol result = controller.resolveTernaryOperatorEvalType(
+                mock(ITSPHPAst.class), mock(ITSPHPAst.class), caseTrueAst, caseFalseAst);
+
+        assertThat(result, is(caseTrueType));
+    }
+
+    @Test
+    public void resolveTernaryOperatorEvalType_CaseTrueAndFalseAreErroneousTypes_ReturnCaseTrueType() {
+        ITypeSymbol caseTrueType = mock(IErroneousTypeSymbol.class);
+        ITypeSymbol caseFalseType = mock(IErroneousTypeSymbol.class);
+        ITSPHPAst caseTrueAst = mock(ITSPHPAst.class);
+        when(caseTrueAst.getEvalType()).thenReturn(caseTrueType);
+        ITSPHPAst caseFalseAst = mock(ITSPHPAst.class);
+        when(caseFalseAst.getEvalType()).thenReturn(caseFalseType);
+
+        ITypeCheckPhaseController controller = createTypeCheckController();
+        ITypeSymbol result = controller.resolveTernaryOperatorEvalType(
+                mock(ITSPHPAst.class), mock(ITSPHPAst.class), caseTrueAst, caseFalseAst);
+
+        assertThat(result, is(caseTrueType));
     }
 
     protected ITypeCheckPhaseController createTypeCheckController() {

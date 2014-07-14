@@ -9,7 +9,6 @@ package ch.tsphp.typechecker.test.integration.typecheck;
 import ch.tsphp.common.ITSPHPAst;
 import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
 import ch.tsphp.typechecker.test.integration.testutils.typecheck.ATypeCheckWithReferenceErrorTest;
-import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.mockito.exceptions.base.MockitoAssertionError;
 
@@ -34,7 +33,7 @@ public class AssignmentOperatorWithReferenceErrorTest extends ATypeCheckWithRefe
 
     //see TSPHP-785 - forward reference should not cause type checker exception (only reference exception)
     @Test
-    public void checkAssignment_ForwardReference_OnlyReferenceException() throws RecognitionException {
+    public void checkAssignment_ForwardReference_NoTypeCheckExceptionAndOnlyReferenceException() {
         testString = "$s = 'hello'; string $s;";
         check();
         try {
@@ -47,8 +46,47 @@ public class AssignmentOperatorWithReferenceErrorTest extends ATypeCheckWithRefe
 
     //see TSPHP-785 - not defined variable should not cause type checker exception (only reference exception)
     @Test
-    public void checkAssignment_NotDefined_OnlyReferenceException() throws RecognitionException {
+    public void checkAssignment_NotDefined_NoTypeCheckExceptionAndOnlyReferenceException() {
         testString = "$s = 'hello';";
+        check();
+        try {
+            verify(typeCheckErrorReporter).notDefined(any(ITSPHPAst.class));
+        } catch (MockitoAssertionError e) {
+            System.err.println(testString + " failed.");
+            throw e;
+        }
+    }
+
+    //see TSPHP-735 - operation with undefined variable/constant results in NullPointerException
+    @Test
+    public void checkAssignment_UsingGlobalLikeLocal_NoTypeCheckExceptionAndOnlyReferenceException() {
+        testString = "int $a; function void foo(){$a = 2;}";
+        check();
+        try {
+            verify(typeCheckErrorReporter).notDefined(any(ITSPHPAst.class));
+        } catch (MockitoAssertionError e) {
+            System.err.println(testString + " failed.");
+            throw e;
+        }
+    }
+
+    //see TSPHP-735 - operation with undefined variable/constant results in NullPointerException
+    @Test
+    public void checkAssignment_UndefinedConstant_NoTypeCheckExceptionAndOnlyReferenceException() {
+        testString = "int $i = NOT_DEFINED_CONSTANT;";
+        check();
+        try {
+            verify(typeCheckErrorReporter).notDefined(any(ITSPHPAst.class));
+        } catch (MockitoAssertionError e) {
+            System.err.println(testString + " failed.");
+            throw e;
+        }
+    }
+
+    //see TSPHP-735 - operation with undefined variable/constant results in NullPointerException
+    @Test
+    public void checkAssignment_UndefinedVariableOnRHS_NoTypeCheckExceptionAndOnlyReferenceException() {
+        testString = "int $i = $notDefinedVariable;";
         check();
         try {
             verify(typeCheckErrorReporter).notDefined(any(ITSPHPAst.class));
