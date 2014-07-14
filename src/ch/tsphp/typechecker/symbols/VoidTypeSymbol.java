@@ -9,13 +9,13 @@ package ch.tsphp.typechecker.symbols;
 import ch.tsphp.common.ITSPHPAst;
 import ch.tsphp.common.ITypeSymbol;
 
-import java.util.Set;
+import java.util.HashSet;
 
 public class VoidTypeSymbol extends ATypeSymbol implements IVoidTypeSymbol
 {
 
     public VoidTypeSymbol() {
-        super(null, "void", (Set<ITypeSymbol>) null);
+        super(null, "void", new HashSet<ITypeSymbol>());
     }
 
     @Override

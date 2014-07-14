@@ -41,6 +41,11 @@ public class ReturnErrorTest extends ATypeCheckErrorTest
         });
         collection.addAll(getVariations("", ""));
         collection.addAll(getVariations("class A{", "}"));
+        //see TSPHP-489 - NullPointerException when function return value void is assigned to a variable
+        collection.add(new Object[]{
+                "function void foo(){} int \n $a = foo();",
+                new ReferenceErrorDto[]{new ReferenceErrorDto("=", 2, 1)}
+        });
         return collection;
     }
 
