@@ -37,6 +37,7 @@ public class BinaryOperatorWithReferenceErrorTest extends ATypeCheckWithReferenc
         // That's already checked in ATypeCheckWithReferenceErrorTest
     }
 
+    @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     @Test
     public void test() throws RecognitionException {
         check();
@@ -55,7 +56,9 @@ public class BinaryOperatorWithReferenceErrorTest extends ATypeCheckWithReferenc
                 {"if(NOT_DEFINED_CONSTANT < 10){}"},
                 {"if(10 < NOT_DEFINED_CONSTANT){}"},
                 {"if($notDefinedVariable < 10){}"},
-                {"if(10 < $notDefinedVariable){}"}
+                {"if(10 < $notDefinedVariable){}"},
+                //see TSPHP-669 - missing $ causes NullPointerException
+                {"for(int $i = 0; i < 10; ++$i){}"},
         });
     }
 
