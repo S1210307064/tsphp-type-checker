@@ -80,7 +80,12 @@ exitScope
 		|	BLOCK_CONDITIONAL
 		|	Foreach
 		) 
-		{currentScope = currentScope.getEnclosingScope();}
+		{
+		    //only get enclosing scope if a scope was defined - might not be the case due to syntax errors
+		    if(!(currentScope instanceof INamespaceScope)){
+		        currentScope = currentScope.getEnclosingScope();
+		    }
+		}
 	;   
     
 namespaceDefinition

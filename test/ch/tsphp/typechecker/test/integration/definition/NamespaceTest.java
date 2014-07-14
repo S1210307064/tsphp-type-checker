@@ -32,10 +32,6 @@ public class NamespaceTest extends ADefinitionTest
     @Test
     public void test() throws RecognitionException {
         check();
-    }
-
-    @Override
-    protected void verifyDefinitions() {
         Assert.assertEquals(testString + " failed.", namespaces, getNamespacesAsString());
     }
 
