@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 public class ParameterListHelper
 {
@@ -81,7 +82,9 @@ public class ParameterListHelper
         collection.addAll(getVariations("float?", "float", "|" + qMark));
 
         //cast and ? mixed
-        collection.addAll(getVariations("cast string?", "string", "|" + cast + ", " + qMark));
+        String typeModifierExpected = ModifierHelper.getModifiers(
+                new TreeSet<>(Arrays.asList(new Integer[]{cast, qMark})));
+        collection.addAll(getVariations("cast string?", "string", typeModifierExpected));
 
         collection.addAll(getVariationsForOptional());
 
@@ -166,6 +169,8 @@ public class ParameterListHelper
         String typeExpected = isDefinitionPhase ? "" : "int";
         int qMark = TSPHPDefinitionWalker.QuestionMark;
         int cast = TSPHPDefinitionWalker.Cast;
+        String typeModifiersCastAndNullable = ModifierHelper.getModifiers(
+                new TreeSet<>(Arrays.asList(new Integer[]{cast, qMark})));
 
         String a = prefixExpected + scopeName + "int " + scopeName + "$a" + typeExpected;
         String b = scopeName + "int " + scopeName + "$b" + typeExpected;
@@ -188,7 +193,7 @@ public class ParameterListHelper
                 {
                         prefix + "int $a,cast int? $b, int $c=-10, int $d=2.0" + appendix,
                         a + " "
-                                + b + "|" + cast + ", " + qMark + " "
+                                + b + typeModifiersCastAndNullable + " "
                                 + c + " "
                                 + d
                 },
@@ -217,7 +222,6 @@ public class ParameterListHelper
                                 + c + "|" + cast
                 }
         }));
-
 
         String[] types = TypeHelper.getClassInterfaceTypes();
 
