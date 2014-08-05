@@ -238,8 +238,10 @@ public class TypeSystem implements ITypeSystem
         resourceTypeSymbol = symbolFactory.createPseudoTypeSymbol("resource");
         globalDefaultNamespace.define(resourceTypeSymbol);
 
-        //predefiend classes
+        //predefined classes
         exceptionTypeSymbol = createClass("Exception");
+        defineMethodWithoutParameters(exceptionTypeSymbol, "getMessage()", stringNullableTypeSymbol);
+
         //TODO rstoll TSPHP-401 Define predefined Exceptions
         globalDefaultNamespace.define(exceptionTypeSymbol);
 
@@ -253,6 +255,18 @@ public class TypeSystem implements ITypeSystem
         ITSPHPAst classModifier = astHelper.createAst(TSPHPDefinitionWalker.CLASS_MODIFIER, "cMod");
         ITSPHPAst identifier = astHelper.createAst(TSPHPDefinitionWalker.TYPE_NAME, className);
         return symbolFactory.createClassTypeSymbol(classModifier, identifier, globalDefaultNamespace);
+    }
+
+    private void defineMethodWithoutParameters(IClassTypeSymbol classTypeSymbol, String methodName,
+            ITypeSymbol returnType) {
+        ITSPHPAst methodModifier = astHelper.createAst(TSPHPDefinitionWalker.METHOD_MODIFIER, "mMod");
+        methodModifier.addChild(astHelper.createAst(TSPHPDefinitionWalker.Public, "public"));
+        ITSPHPAst returnTypeModifier = astHelper.createAst(TSPHPDefinitionWalker.TYPE_MODIFIER, "tMod");
+        ITSPHPAst identifier = astHelper.createAst(TSPHPDefinitionWalker.Identifier, methodName);
+        IMethodSymbol methodSymbol = symbolFactory.createMethodSymbol(methodModifier, returnTypeModifier, identifier,
+                classTypeSymbol);
+        methodSymbol.setType(returnType);
+        classTypeSymbol.define(methodSymbol);
     }
 
     private void initMaps() {
