@@ -9,7 +9,6 @@ package ch.tsphp.typechecker.test.unit.branches.typecheck;
 import ch.tsphp.common.ITSPHPAst;
 import ch.tsphp.typechecker.test.integration.testutils.typecheck.TestTSPHPTypeCheckWalker;
 import ch.tsphp.typechecker.test.unit.testutils.ATypeCheckTest;
-import org.antlr.runtime.NoViableAltException;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
@@ -31,35 +30,9 @@ import static ch.tsphp.typechecker.antlr.TSPHPTypeCheckWalker.While;
 import static org.antlr.runtime.tree.TreeParser.UP;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.verify;
 
 public class ExpressionRootErrorTest extends ATypeCheckTest
 {
-
-    @Test
-    public void NotAnExpressionRoot_reportNoViableAltException() throws RecognitionException {
-        ITSPHPAst ast = createAst(VariableId);
-
-        TestTSPHPTypeCheckWalker walker = createWalker(ast);
-        walker.expressionRoot();
-
-        verify(walker).reportError(any(NoViableAltException.class));
-    }
-
-    @Test
-    public void NotAnExpressionRootAndBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
-        ITSPHPAst ast = createAst(VariableId);
-
-        TestTSPHPTypeCheckWalker walker = createWalker(ast);
-        walker.setBacktrackingLevel(1);
-        walker.expressionRoot();
-
-        assertThat(walker.getState().failed, is(true));
-        assertThat(treeNodeStream.LA(1), is(VariableId));
-    }
-
-
     @Test
     public void ExpressionWithoutChildrenBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
         ITSPHPAst ast = createAst(EXPRESSION);

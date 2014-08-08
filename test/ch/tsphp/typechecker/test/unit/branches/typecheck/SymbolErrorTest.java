@@ -23,32 +23,11 @@ import static ch.tsphp.typechecker.antlr.TSPHPTypeCheckWalker.VariableId;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 public class SymbolErrorTest extends ATypeCheckTest
 {
-
-    @Test
-    public void NotASymbol_reportNoViableAltException() throws RecognitionException {
-        ITSPHPAst ast = createAst(Try);
-
-        TestTSPHPTypeCheckWalker walker = createWalker(ast);
-        walker.symbol();
-
-        verify(walker).reportError(any(NoViableAltException.class));
-    }
-
-    @Test
-    public void NotASymbolAndBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
-        ITSPHPAst ast = createAst(Try);
-
-        TestTSPHPTypeCheckWalker walker = createWalker(ast);
-        walker.setBacktrackingLevel(1);
-        walker.symbol();
-
-        assertThat(walker.getState().failed, is(true));
-        assertThat(treeNodeStream.LA(1), is(Try));
-    }
 
     @Test
     public void FunctionCallWithWrongIdentifierAndBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
@@ -113,7 +92,7 @@ public class SymbolErrorTest extends ATypeCheckTest
         ast.addChild(createAst(TYPE_NAME));
         ast.addChild(createAst(Try));
 
-        TestTSPHPTypeCheckWalker walker = createWalker(ast);
+        TestTSPHPTypeCheckWalker walker = spy(createWalker(ast));
         walker.symbol();
 
         verify(walker).reportError(any(NoViableAltException.class));

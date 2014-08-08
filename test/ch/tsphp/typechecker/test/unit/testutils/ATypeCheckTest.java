@@ -12,14 +12,15 @@ import ch.tsphp.common.TSPHPAstAdaptor;
 import ch.tsphp.typechecker.IAccessResolver;
 import ch.tsphp.typechecker.ITypeCheckPhaseController;
 import ch.tsphp.typechecker.ITypeSystem;
+import ch.tsphp.typechecker.symbols.IVariableSymbol;
 import ch.tsphp.typechecker.test.integration.testutils.typecheck.TestTSPHPTypeCheckWalker;
 import org.antlr.runtime.CommonToken;
 import org.antlr.runtime.tree.CommonTreeNodeStream;
 import org.antlr.runtime.tree.TreeNodeStream;
 import org.junit.Ignore;
 
+import static ch.tsphp.typechecker.antlr.TSPHPTypeCheckWalker.VariableId;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 
 @Ignore
 public abstract class ATypeCheckTest
@@ -34,7 +35,7 @@ public abstract class ATypeCheckTest
         typeCheckPhaseController = mock(ITypeCheckPhaseController.class);
         accessResolver = mock(IAccessResolver.class);
         typeSystem = mock(ITypeSystem.class);
-        return spy(new TestTSPHPTypeCheckWalker(treeNodeStream, typeCheckPhaseController, accessResolver, typeSystem));
+        return new TestTSPHPTypeCheckWalker(treeNodeStream, typeCheckPhaseController, accessResolver, typeSystem);
     }
 
     protected TreeNodeStream createTreeNodeStream(ITSPHPAst ast) {
@@ -43,5 +44,11 @@ public abstract class ATypeCheckTest
 
     protected ITSPHPAst createAst(int tokenType) {
         return new TSPHPAst(new CommonToken(tokenType));
+    }
+
+    protected ITSPHPAst createVariable() {
+        ITSPHPAst variable = createAst(VariableId);
+        variable.setSymbol(mock(IVariableSymbol.class));
+        return variable;
     }
 }
