@@ -14,7 +14,6 @@ import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.mockito.exceptions.base.MockitoAssertionError;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -52,7 +51,7 @@ public class NotCorrectStartNodeTypeTest extends ATypeCheckTest
 
         try {
             verify(walker).reportError(any(NoViableAltException.class));
-        } catch (MockitoAssertionError e) {
+        } catch (Exception e) {
             fail(methodName + " failed - verify caused exception:\n" + e.getClass().getName() + e.getMessage());
         }
     }
@@ -80,11 +79,21 @@ public class NotCorrectStartNodeTypeTest extends ATypeCheckTest
                 {"bottomup", VariableId},
                 {"castOperator", Try},
                 {"classInterfaceDefinition", Try},
-                {"classInterfaceDefinition", Try},
+                {"constantInit", Try},
+                {"echo", Try},
+                {"equalityOperator", Try},
                 {"expression", Try},
+                {"expressionLists", Try},
                 {"expressionRoot", VariableId},
+                {"foreachLoop", Try},
+                {"identityOperator", Try},
+                {"parameterDefaultValue", Try},
+                {"postFixOperators", Try},
                 {"specialOperators", Try},
                 {"symbol", Try},
+                {"tryCatch", VariableId},
+                {"unaryOperator", Try},
+                {"variableInit", Try},
         });
     }
 }

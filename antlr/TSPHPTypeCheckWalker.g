@@ -150,7 +150,7 @@ echo 	:	^('echo' (expression {controller.checkEcho($expression.start);})+)
 	;
 
 variableInit
-	:	{$start.getParent().getType()!=Catch && $start.getParent().getType()!=Foreach}?
+	:	{$start.getParent() != null && $start.getParent().getType()!=Catch && $start.getParent().getType()!=Foreach}?
 		^(list=VARIABLE_DECLARATION_LIST 
 			type=. 
 			(	(	^(variableId=VariableId expression)

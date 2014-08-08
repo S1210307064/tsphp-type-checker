@@ -9,20 +9,16 @@ package ch.tsphp.typechecker.test.unit.branches.typecheck;
 import ch.tsphp.common.ITSPHPAst;
 import ch.tsphp.typechecker.test.integration.testutils.typecheck.TestTSPHPTypeCheckWalker;
 import ch.tsphp.typechecker.test.unit.testutils.ATypeCheckTest;
+import org.antlr.runtime.EarlyExitException;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
 import static ch.tsphp.typechecker.antlr.TSPHPTypeCheckWalker.Do;
-import static ch.tsphp.typechecker.antlr.TSPHPTypeCheckWalker.EOF;
 import static ch.tsphp.typechecker.antlr.TSPHPTypeCheckWalker.EXPRESSION;
 import static ch.tsphp.typechecker.antlr.TSPHPTypeCheckWalker.EXPRESSION_LIST;
-import static ch.tsphp.typechecker.antlr.TSPHPTypeCheckWalker.Echo;
 import static ch.tsphp.typechecker.antlr.TSPHPTypeCheckWalker.For;
-import static ch.tsphp.typechecker.antlr.TSPHPTypeCheckWalker.Foreach;
-import static ch.tsphp.typechecker.antlr.TSPHPTypeCheckWalker.If;
 import static ch.tsphp.typechecker.antlr.TSPHPTypeCheckWalker.Plus;
 import static ch.tsphp.typechecker.antlr.TSPHPTypeCheckWalker.Return;
-import static ch.tsphp.typechecker.antlr.TSPHPTypeCheckWalker.Switch;
 import static ch.tsphp.typechecker.antlr.TSPHPTypeCheckWalker.Throw;
 import static ch.tsphp.typechecker.antlr.TSPHPTypeCheckWalker.Try;
 import static ch.tsphp.typechecker.antlr.TSPHPTypeCheckWalker.VariableId;
@@ -30,21 +26,12 @@ import static ch.tsphp.typechecker.antlr.TSPHPTypeCheckWalker.While;
 import static org.antlr.runtime.tree.TreeParser.UP;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 public class ExpressionRootErrorTest extends ATypeCheckTest
 {
-    @Test
-    public void ExpressionWithoutChildrenBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
-        ITSPHPAst ast = createAst(EXPRESSION);
-
-        TestTSPHPTypeCheckWalker walker = createWalker(ast);
-        walker.setBacktrackingLevel(1);
-        walker.expressionRoot();
-
-        assertThat(walker.getState().failed, is(true));
-        assertThat(treeNodeStream.LA(1), is(EOF));
-    }
-
     @Test
     public void ExpressionWithErrorAndBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
         ITSPHPAst ast = createAst(EXPRESSION);
@@ -85,18 +72,6 @@ public class ExpressionRootErrorTest extends ATypeCheckTest
     }
 
     @Test
-    public void ThrowWithoutChildrenBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
-        ITSPHPAst ast = createAst(Throw);
-
-        TestTSPHPTypeCheckWalker walker = createWalker(ast);
-        walker.setBacktrackingLevel(1);
-        walker.expressionRoot();
-
-        assertThat(walker.getState().failed, is(true));
-        assertThat(treeNodeStream.LA(1), is(EOF));
-    }
-
-    @Test
     public void ThrowWithErroneousExpressionAndBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
         ITSPHPAst ast = createAst(Throw);
         ast.addChild(createAst(Plus));
@@ -110,18 +85,6 @@ public class ExpressionRootErrorTest extends ATypeCheckTest
     }
 
     @Test
-    public void IfWithoutChildrenBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
-        ITSPHPAst ast = createAst(If);
-
-        TestTSPHPTypeCheckWalker walker = createWalker(ast);
-        walker.setBacktrackingLevel(1);
-        walker.expressionRoot();
-
-        assertThat(walker.getState().failed, is(true));
-        assertThat(treeNodeStream.LA(1), is(EOF));
-    }
-
-    @Test
     public void IfWithErroneousExpressionAndBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
         ITSPHPAst ast = createAst(Throw);
         ast.addChild(createAst(Plus));
@@ -132,19 +95,6 @@ public class ExpressionRootErrorTest extends ATypeCheckTest
 
         assertThat(walker.getState().failed, is(true));
         assertThat(treeNodeStream.LA(1), is(UP));
-    }
-
-
-    @Test
-    public void WhileWithoutChildrenBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
-        ITSPHPAst ast = createAst(While);
-
-        TestTSPHPTypeCheckWalker walker = createWalker(ast);
-        walker.setBacktrackingLevel(1);
-        walker.expressionRoot();
-
-        assertThat(walker.getState().failed, is(true));
-        assertThat(treeNodeStream.LA(1), is(EOF));
     }
 
     @Test
@@ -161,18 +111,6 @@ public class ExpressionRootErrorTest extends ATypeCheckTest
     }
 
     @Test
-    public void DoWithoutChildrenBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
-        ITSPHPAst ast = createAst(Do);
-
-        TestTSPHPTypeCheckWalker walker = createWalker(ast);
-        walker.setBacktrackingLevel(1);
-        walker.expressionRoot();
-
-        assertThat(walker.getState().failed, is(true));
-        assertThat(treeNodeStream.LA(1), is(EOF));
-    }
-
-    @Test
     public void DoWithErroneousExpressionAndBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
         ITSPHPAst ast = createAst(Do);
         ast.addChild(createAst(EXPRESSION));
@@ -184,18 +122,6 @@ public class ExpressionRootErrorTest extends ATypeCheckTest
 
         assertThat(walker.getState().failed, is(true));
         assertThat(treeNodeStream.LA(1), is(UP));
-    }
-
-    @Test
-    public void ForWithoutChildrenBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
-        ITSPHPAst ast = createAst(For);
-
-        TestTSPHPTypeCheckWalker walker = createWalker(ast);
-        walker.setBacktrackingLevel(1);
-        walker.expressionRoot();
-
-        assertThat(walker.getState().failed, is(true));
-        assertThat(treeNodeStream.LA(1), is(EOF));
     }
 
     @Test
@@ -232,8 +158,9 @@ public class ExpressionRootErrorTest extends ATypeCheckTest
         ITSPHPAst ast = createAst(For);
         ast.addChild(createAst(VariableId));
         ITSPHPAst exprList = createAst(EXPRESSION_LIST);
-        ast.addChild(exprList);
         exprList.addChild(createAst(Plus));
+        ast.addChild(exprList);
+
 
         TestTSPHPTypeCheckWalker walker = createWalker(ast);
         walker.setBacktrackingLevel(1);
@@ -244,50 +171,32 @@ public class ExpressionRootErrorTest extends ATypeCheckTest
     }
 
     @Test
-    public void SwitchWithoutChildrenBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
-        ITSPHPAst ast = createAst(Switch);
+    public void ForWithErroneousExpressionList_reportEarlyExitException() throws RecognitionException {
+        ITSPHPAst ast = createAst(For);
+        ast.addChild(createAst(VariableId));
+        ITSPHPAst exprList = createAst(EXPRESSION_LIST);
+        exprList.addChild(createAst(Try));
+        ast.addChild(exprList);
 
-        TestTSPHPTypeCheckWalker walker = createWalker(ast);
-        walker.setBacktrackingLevel(1);
+        TestTSPHPTypeCheckWalker walker = spy(createWalker(ast));
         walker.expressionRoot();
 
-        assertThat(walker.getState().failed, is(true));
-        assertThat(treeNodeStream.LA(1), is(EOF));
+        verify(walker).reportError(any(EarlyExitException.class));
     }
 
     @Test
-    public void ForeachhWithoutChildrenBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
-        ITSPHPAst ast = createAst(Foreach);
+    public void ForWithErroneousExpressionListAndBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
+        ITSPHPAst ast = createAst(For);
+        ast.addChild(createAst(VariableId));
+        ITSPHPAst exprList = createAst(EXPRESSION_LIST);
+        exprList.addChild(createAst(Try));
+        ast.addChild(exprList);
 
         TestTSPHPTypeCheckWalker walker = createWalker(ast);
         walker.setBacktrackingLevel(1);
         walker.expressionRoot();
 
         assertThat(walker.getState().failed, is(true));
-        assertThat(treeNodeStream.LA(1), is(EOF));
-    }
-
-    @Test
-    public void TryWithoutChildrenBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
-        ITSPHPAst ast = createAst(Try);
-
-        TestTSPHPTypeCheckWalker walker = createWalker(ast);
-        walker.setBacktrackingLevel(1);
-        walker.expressionRoot();
-
-        assertThat(walker.getState().failed, is(true));
-        assertThat(treeNodeStream.LA(1), is(EOF));
-    }
-
-    @Test
-    public void EchoWithoutChildrenBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
-        ITSPHPAst ast = createAst(Echo);
-
-        TestTSPHPTypeCheckWalker walker = createWalker(ast);
-        walker.setBacktrackingLevel(1);
-        walker.expressionRoot();
-
-        assertThat(walker.getState().failed, is(true));
-        assertThat(treeNodeStream.LA(1), is(EOF));
+        assertThat(treeNodeStream.LA(1), is(Try));
     }
 }
