@@ -4,7 +4,7 @@
  * root folder or visit the project's website http://tsphp.ch/wiki/display/TSPHP/License
  */
 
-package ch.tsphp.typechecker.test.unit.branches.typecheck;
+package ch.tsphp.typechecker.test.unit.coverage.typecheck;
 
 import ch.tsphp.common.ITSPHPAst;
 import ch.tsphp.typechecker.test.integration.testutils.typecheck.TestTSPHPTypeCheckWalker;
@@ -26,8 +26,31 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
-public class SpecialOperatorsErrorTest extends ATypeCheckWalkerTest
+public class CastOperatorsErrorTest extends ATypeCheckWalkerTest
 {
+
+    @Test
+    public void NotACastOperator_reportNoViableAltException() throws RecognitionException {
+        ITSPHPAst ast = createAst(Try);
+
+        TestTSPHPTypeCheckWalker walker = spy(createWalker(ast));
+        walker.castOperator();
+
+        verify(walker).reportError(any(NoViableAltException.class));
+    }
+
+    @Test
+    public void NotACastOperatorAndBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
+        ITSPHPAst ast = createAst(Try);
+
+        TestTSPHPTypeCheckWalker walker = createWalker(ast);
+        walker.setBacktrackingLevel(1);
+        walker.castOperator();
+
+        assertThat(walker.getState().failed, is(true));
+        assertThat(treeNodeStream.LA(1), is(Try));
+    }
+
     @Test
     public void TernaryWithErroneousConditionAndBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
         ITSPHPAst ast = createAst(QuestionMark);

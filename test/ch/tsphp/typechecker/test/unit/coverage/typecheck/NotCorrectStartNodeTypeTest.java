@@ -4,11 +4,11 @@
  * root folder or visit the project's website http://tsphp.ch/wiki/display/TSPHP/License
  */
 
-package ch.tsphp.typechecker.test.unit.branches.definition;
+package ch.tsphp.typechecker.test.unit.coverage.typecheck;
 
 import ch.tsphp.common.ITSPHPAst;
-import ch.tsphp.typechecker.test.integration.testutils.definition.TestTSPHPDefinitionWalker;
-import ch.tsphp.typechecker.test.unit.testutils.ADefinitionWalkerTest;
+import ch.tsphp.typechecker.test.integration.testutils.typecheck.TestTSPHPTypeCheckWalker;
+import ch.tsphp.typechecker.test.unit.testutils.ATypeCheckWalkerTest;
 import org.antlr.runtime.NoViableAltException;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
@@ -20,7 +20,8 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static ch.tsphp.typechecker.antlr.TSPHPDefinitionWalker.Try;
+import static ch.tsphp.typechecker.antlr.TSPHPTypeCheckWalker.Try;
+import static ch.tsphp.typechecker.antlr.TSPHPTypeCheckWalker.VariableId;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
@@ -29,7 +30,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 @RunWith(Parameterized.class)
-public class NotCorrectStartNodeTypeTest extends ADefinitionWalkerTest
+public class NotCorrectStartNodeTypeTest extends ATypeCheckWalkerTest
 {
     private String methodName;
     private int tokenType;
@@ -44,8 +45,8 @@ public class NotCorrectStartNodeTypeTest extends ADefinitionWalkerTest
             throws RecognitionException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         ITSPHPAst ast = createAst(tokenType);
 
-        TestTSPHPDefinitionWalker walker = spy(createWalker(ast));
-        Method method = TestTSPHPDefinitionWalker.class.getMethod(methodName);
+        TestTSPHPTypeCheckWalker walker = spy(createWalker(ast));
+        Method method = TestTSPHPTypeCheckWalker.class.getMethod(methodName);
         method.invoke(walker);
 
         try {
@@ -60,9 +61,9 @@ public class NotCorrectStartNodeTypeTest extends ADefinitionWalkerTest
             throws RecognitionException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         ITSPHPAst ast = createAst(tokenType);
 
-        TestTSPHPDefinitionWalker walker = createWalker(ast);
+        TestTSPHPTypeCheckWalker walker = createWalker(ast);
         walker.setBacktrackingLevel(1);
-        Method method = TestTSPHPDefinitionWalker.class.getMethod(methodName);
+        Method method = TestTSPHPTypeCheckWalker.class.getMethod(methodName);
         method.invoke(walker);
 
         assertThat(methodName + " failed - state was false. ", walker.getState().failed, is(true));
@@ -72,27 +73,27 @@ public class NotCorrectStartNodeTypeTest extends ADefinitionWalkerTest
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
         return Arrays.asList(new Object[][]{
-                {"allTypesWithoutObjectAndResource", Try},
-                {"atom", Try},
-                {"blockConditional", Try},
-                {"bottomup", Try},
-                {"classDefinition", Try},
-                {"constant", Try},
-                {"constantDefinitionList", Try},
-                {"constructDefinition", Try},
-                {"exitNamespace", Try},
-                {"exitScope", Try},
+                {"allTypes", Try},
+                {"assignOperator", Try},
+                {"binaryOperator", Try},
+                {"bottomup", VariableId},
+                {"castOperator", Try},
+                {"classInterfaceDefinition", Try},
+                {"constantInit", Try},
+                {"echo", Try},
+                {"equalityOperator", Try},
+                {"expression", Try},
+                {"expressionLists", Try},
+                {"expressionRoot", VariableId},
                 {"foreachLoop", Try},
-                {"interfaceDefinition", Try},
-                {"methodFunctionCall", Try},
-                {"namespaceDefinition", Try},
-                {"parameterDeclaration", Try},
-                {"parameterDeclarationList", Try},
-                {"returnBreakContinue", Try},
-                {"topdown", Try},
-                {"useDeclaration", Try},
-                {"useDefinitionList", Try},
-                {"variableDeclarationList", Try},
+                {"identityOperator", Try},
+                {"parameterDefaultValue", Try},
+                {"postFixOperators", Try},
+                {"specialOperators", Try},
+                {"symbol", Try},
+                {"tryCatch", VariableId},
+                {"unaryOperator", Try},
+                {"variableInit", Try},
         });
     }
 }

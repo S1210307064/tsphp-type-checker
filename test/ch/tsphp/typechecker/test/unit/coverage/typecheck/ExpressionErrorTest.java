@@ -4,7 +4,7 @@
  * root folder or visit the project's website http://tsphp.ch/wiki/display/TSPHP/License
  */
 
-package ch.tsphp.typechecker.test.unit.branches.typecheck;
+package ch.tsphp.typechecker.test.unit.coverage.typecheck;
 
 import ch.tsphp.common.ITSPHPAst;
 import ch.tsphp.typechecker.test.integration.testutils.typecheck.TestTSPHPTypeCheckWalker;
