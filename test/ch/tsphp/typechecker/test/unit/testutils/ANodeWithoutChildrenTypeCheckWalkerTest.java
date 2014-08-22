@@ -17,13 +17,13 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 @Ignore
-public abstract class ANodeWithoutChildrenTest extends ATypeCheckTest
+public abstract class ANodeWithoutChildrenTypeCheckWalkerTest extends ATypeCheckWalkerTest
 {
     protected String testCase;
     protected int tokenType;
 
 
-    public ANodeWithoutChildrenTest(String theTestCase, int theTokenType) {
+    public ANodeWithoutChildrenTypeCheckWalkerTest(String theTestCase, int theTokenType) {
         testCase = theTestCase;
         tokenType = theTokenType;
     }

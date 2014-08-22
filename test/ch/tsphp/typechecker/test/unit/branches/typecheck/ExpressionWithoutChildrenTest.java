@@ -7,7 +7,7 @@
 package ch.tsphp.typechecker.test.unit.branches.typecheck;
 
 import ch.tsphp.typechecker.antlr.TSPHPTypeCheckWalker;
-import ch.tsphp.typechecker.test.unit.testutils.ANodeWithoutChildrenTest;
+import ch.tsphp.typechecker.test.unit.testutils.ANodeWithoutChildrenTypeCheckWalkerTest;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,7 +28,7 @@ import static ch.tsphp.typechecker.antlr.TSPHPTypeCheckWalker.Plus;
 import static ch.tsphp.typechecker.antlr.TSPHPTypeCheckWalker.UNARY_PLUS;
 
 @RunWith(Parameterized.class)
-public class ExpressionWithoutChildrenTest extends ANodeWithoutChildrenTest
+public class ExpressionWithoutChildrenTest extends ANodeWithoutChildrenTypeCheckWalkerTest
 {
 
     public ExpressionWithoutChildrenTest(String theTestCase, int theTokenType) {

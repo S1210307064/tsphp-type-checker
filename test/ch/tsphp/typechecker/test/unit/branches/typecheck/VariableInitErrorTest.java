@@ -8,7 +8,7 @@ package ch.tsphp.typechecker.test.unit.branches.typecheck;
 
 import ch.tsphp.common.ITSPHPAst;
 import ch.tsphp.typechecker.test.integration.testutils.typecheck.TestTSPHPTypeCheckWalker;
-import ch.tsphp.typechecker.test.unit.testutils.ATypeCheckTest;
+import ch.tsphp.typechecker.test.unit.testutils.ATypeCheckWalkerTest;
 import org.antlr.runtime.EarlyExitException;
 import org.antlr.runtime.NoViableAltException;
 import org.antlr.runtime.RecognitionException;
@@ -28,7 +28,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
-public class VariableInitErrorTest extends ATypeCheckTest
+public class VariableInitErrorTest extends ATypeCheckWalkerTest
 {
 
     @Test

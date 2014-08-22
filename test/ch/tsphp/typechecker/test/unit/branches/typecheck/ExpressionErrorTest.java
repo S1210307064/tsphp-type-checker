@@ -8,7 +8,7 @@ package ch.tsphp.typechecker.test.unit.branches.typecheck;
 
 import ch.tsphp.common.ITSPHPAst;
 import ch.tsphp.typechecker.test.integration.testutils.typecheck.TestTSPHPTypeCheckWalker;
-import ch.tsphp.typechecker.test.unit.testutils.ATypeCheckTest;
+import ch.tsphp.typechecker.test.unit.testutils.ATypeCheckWalkerTest;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
@@ -18,7 +18,7 @@ import static org.antlr.runtime.tree.TreeParser.UP;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class ExpressionErrorTest extends ATypeCheckTest
+public class ExpressionErrorTest extends ATypeCheckWalkerTest
 {
 
     @Test
