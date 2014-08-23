@@ -26,7 +26,6 @@ public abstract class AWalkerTest
         return new CommonTreeNodeStream(new TSPHPAstAdaptor(), ast);
     }
 
-
     protected ITSPHPAst createAst(int tokenType) {
         return new TSPHPAst(new CommonToken(tokenType));
     }

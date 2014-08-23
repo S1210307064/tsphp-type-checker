@@ -9,11 +9,11 @@ package ch.tsphp.typechecker.test.unit.coverage.typecheck;
 import ch.tsphp.common.ITSPHPAst;
 import ch.tsphp.typechecker.test.integration.testutils.typecheck.TestTSPHPTypeCheckWalker;
 import ch.tsphp.typechecker.test.unit.testutils.ATypeCheckWalkerTest;
-import org.antlr.runtime.NoViableAltException;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.mockito.ArgumentCaptor;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -25,7 +25,6 @@ import static ch.tsphp.typechecker.antlr.TSPHPTypeCheckWalker.VariableId;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
@@ -50,7 +49,9 @@ public class NotCorrectStartNodeTypeTest extends ATypeCheckWalkerTest
         method.invoke(walker);
 
         try {
-            verify(walker).reportError(any(NoViableAltException.class));
+            ArgumentCaptor<RecognitionException> captor = ArgumentCaptor.forClass(RecognitionException.class);
+            verify(walker).reportError(captor.capture());
+            assertThat(methodName + " - failed. Wrong token type", captor.getValue().token.getType(), is(tokenType));
         } catch (Exception e) {
             fail(methodName + " failed - verify caused exception:\n" + e.getClass().getName() + e.getMessage());
         }

@@ -13,6 +13,7 @@ import org.antlr.runtime.EarlyExitException;
 import org.antlr.runtime.NoViableAltException;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 import static ch.tsphp.typechecker.antlr.TSPHPTypeCheckWalker.EOF;
 import static ch.tsphp.typechecker.antlr.TSPHPTypeCheckWalker.EXPRESSION;
@@ -71,7 +72,9 @@ public class VariableInitErrorTest extends ATypeCheckWalkerTest
         TestTSPHPTypeCheckWalker walker = spy(createWalker(ast));
         walker.variableInit();
 
-        verify(walker).reportError(any(NoViableAltException.class));
+        ArgumentCaptor<NoViableAltException> captor = ArgumentCaptor.forClass(NoViableAltException.class);
+        verify(walker).reportError(captor.capture());
+        assertThat(captor.getValue().token.getType(), is(Try));
     }
 
     @Test

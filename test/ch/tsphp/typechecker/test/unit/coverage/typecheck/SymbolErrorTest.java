@@ -12,6 +12,7 @@ import ch.tsphp.typechecker.test.unit.testutils.ATypeCheckWalkerTest;
 import org.antlr.runtime.NoViableAltException;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 import static ch.tsphp.typechecker.antlr.TSPHPTypeCheckWalker.CLASS_STATIC_ACCESS;
 import static ch.tsphp.typechecker.antlr.TSPHPTypeCheckWalker.FUNCTION_CALL;
@@ -22,7 +23,6 @@ import static ch.tsphp.typechecker.antlr.TSPHPTypeCheckWalker.Try;
 import static ch.tsphp.typechecker.antlr.TSPHPTypeCheckWalker.VariableId;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
@@ -95,7 +95,9 @@ public class SymbolErrorTest extends ATypeCheckWalkerTest
         TestTSPHPTypeCheckWalker walker = spy(createWalker(ast));
         walker.symbol();
 
-        verify(walker).reportError(any(NoViableAltException.class));
+        ArgumentCaptor<NoViableAltException> captor = ArgumentCaptor.forClass(NoViableAltException.class);
+        verify(walker).reportError(captor.capture());
+        assertThat(captor.getValue().token.getType(), is(Try));
     }
 
     @Test
