@@ -30,6 +30,7 @@ public interface IDefinitionPhaseController
 
     void defineUse(INamespaceScope currentScope, ITSPHPAst type, ITSPHPAst alias);
 
+    @SuppressWarnings("checkstyle:parameternumber")
     IClassTypeSymbol defineClass(IScope currentScope, ITSPHPAst modifier, ITSPHPAst identifier,
             ITSPHPAst extendsIds, ITSPHPAst implementsIds);
 
@@ -37,12 +38,15 @@ public interface IDefinitionPhaseController
 
     void defineConstant(IScope currentScope, ITSPHPAst modifier, ITSPHPAst type, ITSPHPAst identifier);
 
+    @SuppressWarnings("checkstyle:parameternumber")
     IMethodSymbol defineConstruct(IScope currentScope, ITSPHPAst methodModifier, ITSPHPAst returnTypeModifier,
             ITSPHPAst returnType, ITSPHPAst identifier);
 
+    @SuppressWarnings("checkstyle:parameternumber")
     IInterfaceTypeSymbol defineInterface(IScope currentScope, ITSPHPAst modifier, ITSPHPAst identifier,
             ITSPHPAst extendsIds);
 
+    @SuppressWarnings("checkstyle:parameternumber")
     IMethodSymbol defineMethod(IScope currentScope, ITSPHPAst methodModifier,
             ITSPHPAst returnTypeModifier, ITSPHPAst returnType, ITSPHPAst identifier);
 

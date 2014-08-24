@@ -23,6 +23,7 @@ public class ScalarTypeSymbol extends ATypeSymbol implements IScalarTypeSymbol
     private boolean isNullable;
     private String defaultValue;
 
+    @SuppressWarnings("checkstyle:parameternumber")
     public ScalarTypeSymbol(
             String name,
             Set<ITypeSymbol> parentTypeSymbol,
@@ -35,6 +36,7 @@ public class ScalarTypeSymbol extends ATypeSymbol implements IScalarTypeSymbol
         init(theTokenTypeForCasting, isItNullable, theDefaultValueTokenType, theDefaultValue);
     }
 
+    @SuppressWarnings("checkstyle:parameternumber")
     public ScalarTypeSymbol(
             String name,
             ITypeSymbol parentTypeSymbol,

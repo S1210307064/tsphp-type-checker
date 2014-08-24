@@ -23,6 +23,7 @@ public class MethodSymbol extends AScopedSymbol implements IMethodSymbol
     private final List<IVariableSymbol> parameters = new ArrayList<>();
     private final Set<Integer> returnTypeModifier;
 
+    @SuppressWarnings("checkstyle:parameternumber")
     public MethodSymbol(
             IScopeHelper scopeHelper,
             ITSPHPAst definitionAst,

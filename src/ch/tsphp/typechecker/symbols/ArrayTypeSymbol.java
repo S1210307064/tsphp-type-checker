@@ -15,6 +15,7 @@ public class ArrayTypeSymbol extends ANullableTypeSymbol implements IArrayTypeSy
     private final ITypeSymbol valueTypeSymbol;
     private final int tokenType;
 
+    @SuppressWarnings("checkstyle:parameternumber")
     public ArrayTypeSymbol(String name, int theTokenType, ITypeSymbol theKeyTypeSymbol, ITypeSymbol theValueTypeSymbol,
             ITypeSymbol parentTypeSymbol) {
         super(name, parentTypeSymbol);

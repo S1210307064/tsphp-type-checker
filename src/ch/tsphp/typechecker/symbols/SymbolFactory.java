@@ -48,6 +48,7 @@ public class SymbolFactory implements ISymbolFactory
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameternumber")
     public IScalarTypeSymbol createScalarTypeSymbol(String name, int tokenTypeForCasting, ITypeSymbol parentTypeSymbol,
             boolean isNullable, int defaultValueTokenType, String defaultValue) {
         return new ScalarTypeSymbol(
@@ -60,6 +61,7 @@ public class SymbolFactory implements ISymbolFactory
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameternumber")
     public IScalarTypeSymbol createScalarTypeSymbol(String name, int tokenTypeForCasting,
             Set<ITypeSymbol> parentTypeSymbol, boolean isNullable, int defaultValueTokenType, String defaultValue) {
         return new ScalarTypeSymbol(

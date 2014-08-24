@@ -21,6 +21,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Provides some helper methods for polymorphic types.
+ */
 public abstract class APolymorphicTypeSymbol extends AScopedSymbol implements IPolymorphicTypeSymbol
 {
 
@@ -29,6 +32,7 @@ public abstract class APolymorphicTypeSymbol extends AScopedSymbol implements IP
     private boolean isObjectTheParentTypeSymbol = false;
     private Set<ISymbol> abstractSymbols;
 
+    @SuppressWarnings("checkstyle:parameternumber")
     public APolymorphicTypeSymbol(
             IScopeHelper scopeHelper,
             ITSPHPAst definitionAst,

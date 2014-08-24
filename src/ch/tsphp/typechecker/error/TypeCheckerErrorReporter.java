@@ -267,6 +267,7 @@ public class TypeCheckerErrorReporter implements ITypeCheckerErrorReporter
                 left, right, false);
     }
 
+    @SuppressWarnings("checkstyle:parameternumber")
     private ReferenceException addAndGetOperatorAmbiguousCastsException(String key, ITSPHPAst operator,
             CastingDto leftToRightCasts, CastingDto rightToLeftCasts,
             List<CastingDto> leftAmbiguities, List<CastingDto> rightAmbiguities, ITSPHPAst left, ITSPHPAst right,

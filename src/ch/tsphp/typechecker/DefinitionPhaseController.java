@@ -78,7 +78,9 @@ public class DefinitionPhaseController implements IDefinitionPhaseController
         defineVariable(currentScope, modifier, type, identifier);
     }
 
+
     @Override
+    @SuppressWarnings("checkstyle:parameternumber")
     public IInterfaceTypeSymbol defineInterface(IScope currentScope, ITSPHPAst modifier, ITSPHPAst identifier,
             ITSPHPAst extendsIds) {
         assignScopeToIdentifiers(currentScope, extendsIds);
@@ -105,6 +107,7 @@ public class DefinitionPhaseController implements IDefinitionPhaseController
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameternumber")
     public IClassTypeSymbol defineClass(IScope currentScope, ITSPHPAst modifier, ITSPHPAst identifier,
             ITSPHPAst extendsIds, ITSPHPAst implementsIds) {
         assignScopeToIdentifiers(currentScope, extendsIds);
@@ -115,6 +118,7 @@ public class DefinitionPhaseController implements IDefinitionPhaseController
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameternumber")
     public IMethodSymbol defineConstruct(IScope currentScope, ITSPHPAst methodModifier,
             ITSPHPAst returnTypeModifier, ITSPHPAst returnType, ITSPHPAst identifier) {
 
@@ -126,6 +130,7 @@ public class DefinitionPhaseController implements IDefinitionPhaseController
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameternumber")
     public IMethodSymbol defineMethod(IScope currentScope, ITSPHPAst methodModifier,
             ITSPHPAst returnTypeModifier, ITSPHPAst returnType, ITSPHPAst identifier) {
         returnType.setScope(currentScope);

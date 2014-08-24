@@ -46,7 +46,9 @@ public class TestDefinitionPhaseController extends DefinitionPhaseController imp
         symbols.add(new HashMap.SimpleEntry<>(alias.getSymbol(), type));
     }
 
+
     @Override
+    @SuppressWarnings("checkstyle:parameternumber")
     public IInterfaceTypeSymbol defineInterface(IScope currentScope, ITSPHPAst modifier, ITSPHPAst identifier,
             ITSPHPAst extendsIds) {
         IInterfaceTypeSymbol symbol = super.defineInterface(currentScope, modifier, identifier, extendsIds);
@@ -60,6 +62,7 @@ public class TestDefinitionPhaseController extends DefinitionPhaseController imp
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameternumber")
     public IClassTypeSymbol defineClass(IScope currentScope, ITSPHPAst modifier, ITSPHPAst identifier,
             ITSPHPAst extendsIds, ITSPHPAst implementsIds) {
         IClassTypeSymbol scope = super.defineClass(currentScope, modifier, identifier, extendsIds, implementsIds);
@@ -76,6 +79,7 @@ public class TestDefinitionPhaseController extends DefinitionPhaseController imp
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameternumber")
     public IMethodSymbol defineMethod(IScope currentScope, ITSPHPAst methodModifier,
             ITSPHPAst returnTypeModifier, ITSPHPAst returnType, ITSPHPAst identifier) {
         IMethodSymbol scope = super.defineMethod(currentScope, methodModifier, returnTypeModifier, returnType,

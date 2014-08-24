@@ -136,6 +136,7 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
         return new TypeCheckerAstHelper();
     }
 
+    @SuppressWarnings("checkstyle:parameternumber")
     protected ITypeCheckPhaseController createTypeCheckPhaseController(
             ISymbolFactory symbolFactory,
             ISymbolResolver symbolResolver,

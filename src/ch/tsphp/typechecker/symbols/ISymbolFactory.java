@@ -24,9 +24,11 @@ public interface ISymbolFactory
 
     IVoidTypeSymbol createVoidTypeSymbol();
 
+    @SuppressWarnings("checkstyle:parameternumber")
     IScalarTypeSymbol createScalarTypeSymbol(String name, int tokenType, ITypeSymbol parentTypeSymbol,
             boolean isNullable, int defaultValueTokenType, String defaultValue);
 
+    @SuppressWarnings("checkstyle:parameternumber")
     IScalarTypeSymbol createScalarTypeSymbol(String name, int tokenType, Set<ITypeSymbol> parentTypeSymbol,
             boolean isNullable, int defaultValueTokenType, String defaultValue);
 

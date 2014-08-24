@@ -49,6 +49,7 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
     private Map<Integer, List<IMethodSymbol>> unaryOperators = new HashMap<>();
     private Map<Integer, List<IMethodSymbol>> binaryOperators = new HashMap<>();
 
+    @SuppressWarnings("checkstyle:parameternumber")
     public TypeCheckPhaseController(
             ISymbolFactory theSymbolFactory,
             ISymbolResolver theSymbolResolver,
@@ -1026,12 +1027,18 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
         }
     }
 
+    /**
+     * Provides a method which returns the actual parameters, e.g. of a binary operation
+     */
     private interface IActualParameterGetter
     {
 
         List<ITSPHPAst> getActualParameters();
     }
 
+    /**
+     * Returns the actual parameters of a binary operation.
+     */
     private static class BinaryActualParameterGetter implements IActualParameterGetter
     {
 
@@ -1052,6 +1059,9 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
         }
     }
 
+    /**
+     * Returns the actual parameters of an unary operation.
+     */
     private static class UnaryActualParameterGetter implements IActualParameterGetter
     {
 
@@ -1069,6 +1079,9 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
         }
     }
 
+    /**
+     * "Delegate" to report a wrong call (method or function).
+     */
     private interface IWrongCallReporter
     {
 

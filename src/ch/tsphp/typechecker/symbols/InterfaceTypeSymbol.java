@@ -16,6 +16,7 @@ import java.util.Set;
 public class InterfaceTypeSymbol extends APolymorphicTypeSymbol implements IInterfaceTypeSymbol
 {
 
+    @SuppressWarnings("checkstyle:parameternumber")
     public InterfaceTypeSymbol(
             IScopeHelper scopeHelper,
             ITSPHPAst definitionAst,

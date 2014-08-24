@@ -18,6 +18,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * Represents a symbol which is a scope at the same type, e.g. a class or a method.
+ * <p/>
  * Adopted from the book "Language Implementation Patterns" by Terence Parr.
  */
 public abstract class AScopedSymbol extends ASymbolWithModifier implements IScope
@@ -29,6 +31,7 @@ public abstract class AScopedSymbol extends ASymbolWithModifier implements IScop
     protected final Map<String, Boolean> initialisedSymbols = new HashMap<>();
     //Warning! start code duplication - same as in AScope
 
+    @SuppressWarnings("checkstyle:parameternumber")
     public AScopedSymbol(
             IScopeHelper theScopeHelper
             , ITSPHPAst definitionAst

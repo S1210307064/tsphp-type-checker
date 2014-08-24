@@ -34,7 +34,7 @@ public class SymbolResolver implements ISymbolResolver
     private ILowerCaseStringMap<IGlobalNamespaceScope> globalNamespaceScopes = new LowerCaseStringMap<>();
     private final IGlobalNamespaceScope globalDefaultNamespace;
 
-
+    @SuppressWarnings("checkstyle:parameternumber")
     public SymbolResolver(
             IScopeHelper theScopeHelper,
             ISymbolFactory theSymbolFactory,

@@ -21,6 +21,7 @@ public class ClassTypeSymbol extends APolymorphicTypeSymbol implements IClassTyp
     private IVariableSymbol $this;
     private IClassTypeSymbol parent;
 
+    @SuppressWarnings("checkstyle:parameternumber")
     public ClassTypeSymbol(
             IScopeHelper scopeHelper,
             ITSPHPAst definitionAst,

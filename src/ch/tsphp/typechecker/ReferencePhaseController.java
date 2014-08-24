@@ -250,12 +250,13 @@ public class ReferencePhaseController implements IReferencePhaseController
     private boolean isNotDefinedInThisNorOuterScope(ISymbol symbol, IScope scope) {
         boolean isNotDefinedInThisNorOuterScope = true;
         IScope definitionScope = symbol.getDefinitionScope();
-        while (scope != null && scope instanceof IConditionalScope) {
-            if (scope == definitionScope) {
+        IScope tmpScope = scope;
+        while (tmpScope != null && tmpScope instanceof IConditionalScope) {
+            if (tmpScope == definitionScope) {
                 isNotDefinedInThisNorOuterScope = false;
                 break;
             }
-            scope = scope.getEnclosingScope();
+            tmpScope = tmpScope.getEnclosingScope();
         }
         return isNotDefinedInThisNorOuterScope;
     }

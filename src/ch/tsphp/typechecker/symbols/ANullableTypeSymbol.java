@@ -13,6 +13,9 @@ import ch.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 
 import java.util.Set;
 
+/**
+ * Represents a type which can hold the value null.
+ */
 public abstract class ANullableTypeSymbol extends ATypeSymbol
 {
 
