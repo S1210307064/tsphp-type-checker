@@ -9,6 +9,14 @@ package ch.tsphp.typechecker.scopes;
 import ch.tsphp.common.IScope;
 import ch.tsphp.common.ISymbol;
 
+/**
+ * Represents a scope which has case insensitive definition rules.
+ * <p/>
+ * That means, symbols defined in this scope are not case sensitive when it comes down to check whether a different
+ * symbol with the same identifier already exists.
+ * <p/>
+ * As an example, foo, Foo, fOo, FOO are all the same identifier in such a scope.
+ */
 public interface ICaseInsensitiveScope extends IScope
 {
 

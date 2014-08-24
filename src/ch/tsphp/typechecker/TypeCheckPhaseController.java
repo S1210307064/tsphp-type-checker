@@ -892,7 +892,8 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
     @Override
     public void checkPolymorphism(ITSPHPAst identifier) {
         checkAbstractImplemented(identifier);
-        //TODO rstoll check that overrides are ok
+        //TODO rstoll TSPHP-523 check constant override
+        //TODO rstoll TSPHP-424 check method override
     }
 
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")

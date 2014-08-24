@@ -13,6 +13,9 @@ import ch.tsphp.typechecker.symbols.IVariableSymbol;
 
 import java.util.List;
 
+/**
+ * Responsible to resolve overloads, e.g. method overload, operator overload etc.
+ */
 public interface IOverloadResolver
 {
 

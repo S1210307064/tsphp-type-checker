@@ -8,6 +8,9 @@ package ch.tsphp.typechecker.symbols;
 
 import ch.tsphp.common.ITypeSymbol;
 
+/**
+ * Represents the type array.
+ */
 public interface IArrayTypeSymbol extends ITypeSymbolWithPHPBuiltInCasting
 {
     ITypeSymbol getKeyTypeSymbol();

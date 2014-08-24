@@ -10,12 +10,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Provides a helper method to add an object to a list inside a map.
+ */
 public final class MapHelper
 {
 
     private MapHelper() {
     }
 
+    /**
+     * Add the given value to the list of the corresponding key.
+     * <p/>
+     * If there is not yet a list for the corresponding key then a new list for the key is created as well.
+     *
+     * @param map   The map containing the lists
+     * @param key   The key to be used
+     * @param value The value to be put into the list of the corresponding key
+     */
     public static <TKey, TValue> void addToListMap(Map<TKey, List<TValue>> map, TKey key, TValue value) {
         if (map.containsKey(key)) {
             map.get(key).add(value);

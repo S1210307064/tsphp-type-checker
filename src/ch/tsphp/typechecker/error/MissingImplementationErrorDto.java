@@ -8,6 +8,9 @@ package ch.tsphp.typechecker.error;
 
 import java.util.List;
 
+/**
+ * Represents the meta-data of missing implementation errors such as missing methods defined in an interface.
+ */
 public class MissingImplementationErrorDto extends ReferenceErrorDto
 {
     public List<SignatureDto> signatureDtos;

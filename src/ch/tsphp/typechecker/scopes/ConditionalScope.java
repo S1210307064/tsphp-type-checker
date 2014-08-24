@@ -11,6 +11,7 @@ import ch.tsphp.common.ISymbol;
 import ch.tsphp.common.ITSPHPAst;
 import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
 
+
 public class ConditionalScope extends AScope implements IConditionalScope
 {
     private final ITypeCheckerErrorReporter typeCheckerErrorReporter;

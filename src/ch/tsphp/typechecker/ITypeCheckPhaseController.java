@@ -10,6 +10,9 @@ import ch.tsphp.common.ITSPHPAst;
 import ch.tsphp.common.ITypeSymbol;
 import ch.tsphp.typechecker.symbols.IMethodSymbol;
 
+/**
+ * Represents the interface between the TSPHPTypeCheckWalker (ANTLR generated) and the logic.
+ */
 public interface ITypeCheckPhaseController
 {
     IMethodSymbol resolveFunctionCall(ITSPHPAst identifier, ITSPHPAst arguments);

@@ -18,6 +18,9 @@ import org.antlr.runtime.tree.TreeNodeStream;
 import java.util.ArrayDeque;
 import java.util.Collection;
 
+/**
+ * Extends TSPHPReferenceWalker by IErrorReporter.
+ */
 public class ErrorReportingTSPHPReferenceWalker extends TSPHPReferenceWalker implements IErrorReporter
 {
 

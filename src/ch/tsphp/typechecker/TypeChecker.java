@@ -14,7 +14,7 @@ import ch.tsphp.common.exceptions.TSPHPException;
 import ch.tsphp.typechecker.antlrmod.ErrorReportingTSPHPDefinitionWalker;
 import ch.tsphp.typechecker.antlrmod.ErrorReportingTSPHPReferenceWalker;
 import ch.tsphp.typechecker.antlrmod.ErrorReportingTSPHPTypeCheckWalker;
-import ch.tsphp.typechecker.error.ErrorMessageProvider;
+import ch.tsphp.typechecker.error.HardCodedErrorMessageProvider;
 import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
 import ch.tsphp.typechecker.error.TypeCheckerErrorReporter;
 import ch.tsphp.typechecker.scopes.IGlobalNamespaceScope;
@@ -79,7 +79,7 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
     }
 
     protected ITypeCheckerErrorReporter createTypeCheckerErrorReporter() {
-        return new TypeCheckerErrorReporter(new ErrorMessageProvider());
+        return new TypeCheckerErrorReporter(new HardCodedErrorMessageProvider());
     }
 
     protected IScopeHelper createScopeHelper(ITypeCheckerErrorReporter typeCheckerErrorReporter) {

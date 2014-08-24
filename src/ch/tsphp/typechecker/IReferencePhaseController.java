@@ -16,6 +16,9 @@ import org.antlr.runtime.RecognitionException;
 
 import java.util.List;
 
+/**
+ * Represents the interface between the TSPHPReferenceWalker (ANTLR generated) and the logic.
+ */
 public interface IReferencePhaseController
 {
     IVariableSymbol resolveConstant(ITSPHPAst ast);

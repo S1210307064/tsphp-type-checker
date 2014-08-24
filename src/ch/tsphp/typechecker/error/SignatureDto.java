@@ -8,6 +8,9 @@ package ch.tsphp.typechecker.error;
 
 import java.util.List;
 
+/**
+ * Represents a signature, e.g. method signature, function signature etc.
+ */
 public class SignatureDto
 {
     public String identifier;

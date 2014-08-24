@@ -6,7 +6,10 @@
 
 package ch.tsphp.typechecker.symbols;
 
-public interface ICanAlwaysCast
+/**
+ * Represents a symbol which can have the cast modifier and thus turns explicit casts into implicit ones.
+ */
+public interface ICanHaveCastModifier
 {
 
     boolean isAlwaysCasting();

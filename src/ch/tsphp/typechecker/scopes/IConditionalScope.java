@@ -8,6 +8,11 @@ package ch.tsphp.typechecker.scopes;
 
 import ch.tsphp.common.IScope;
 
+/**
+ * A scope guarded by a condition.
+ * <p/>
+ * See http://tsphp.ch/wiki/display/TSPHP/Variable+Scope#VariableScope-ConditionalScopes for more information
+ */
 public interface IConditionalScope extends IScope
 {
 

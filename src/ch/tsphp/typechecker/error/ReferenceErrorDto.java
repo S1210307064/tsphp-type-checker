@@ -6,6 +6,9 @@
 
 package ch.tsphp.typechecker.error;
 
+/**
+ * Represents the meta-data of reference errors.
+ */
 public class ReferenceErrorDto
 {
 

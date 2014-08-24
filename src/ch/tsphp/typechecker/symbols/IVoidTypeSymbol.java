@@ -8,7 +8,9 @@ package ch.tsphp.typechecker.symbols;
 
 import ch.tsphp.common.ITypeSymbol;
 
-
+/**
+ * Represents the type void.
+ */
 public interface IVoidTypeSymbol extends ITypeSymbol
 {
 }

@@ -8,6 +8,9 @@ package ch.tsphp.typechecker.symbols;
 
 import ch.tsphp.common.ITypeSymbol;
 
+/**
+ * Represents a type which has a PHP built-in cast method, e.g. int =&gt; (int).
+ */
 public interface ITypeSymbolWithPHPBuiltInCasting extends ITypeSymbol
 {
     int getTokenTypeForCasting();

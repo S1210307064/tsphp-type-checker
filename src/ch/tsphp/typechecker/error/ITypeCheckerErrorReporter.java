@@ -21,6 +21,13 @@ import ch.tsphp.typechecker.symbols.ISymbolWithAccessModifier;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Represents the type checker's error reporter.
+ * <p/>
+ * What ever error occurs in the definition, reference or type checking phase will be reported using an instance of
+ * this interface.
+ */
+@SuppressWarnings("checkstyle:methodcount")
 public interface ITypeCheckerErrorReporter extends ch.tsphp.common.IErrorReporter
 {
 

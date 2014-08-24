@@ -11,7 +11,7 @@ import ch.tsphp.common.IScope;
 import java.util.List;
 
 public interface IMethodSymbol extends ISymbolWithAccessModifier, IScope,
-        ICanBeStatic, ICanBeFinal, ICanBeAbstract, ICanAlwaysCast
+        ICanBeStatic, ICanBeFinal, ICanBeAbstract, ICanHaveCastModifier
 {
 
     void addParameter(IVariableSymbol variableSymbol);

@@ -6,6 +6,11 @@
 
 package ch.tsphp.typechecker.error;
 
+/**
+ * Represents the meta-data of a definition error.
+ * <p/>
+ * One example of a definition error is double variable declarations.
+ */
 public class DefinitionErrorDto extends ReferenceErrorDto
 {
 

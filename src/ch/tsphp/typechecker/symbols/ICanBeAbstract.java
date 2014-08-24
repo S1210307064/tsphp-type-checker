@@ -6,6 +6,9 @@
 
 package ch.tsphp.typechecker.symbols;
 
+/**
+ * Represents a symbol which can be abstract.
+ */
 public interface ICanBeAbstract
 {
 

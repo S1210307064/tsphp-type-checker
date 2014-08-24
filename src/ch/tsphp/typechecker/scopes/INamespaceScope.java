@@ -13,6 +13,9 @@ import ch.tsphp.typechecker.symbols.IAliasSymbol;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * A namespace scope contains all symbols defined on the namespace level as well as use definitions.
+ */
 public interface INamespaceScope extends ICaseInsensitiveScope
 {
 

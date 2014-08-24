@@ -8,6 +8,9 @@ package ch.tsphp.typechecker.error;
 
 import java.util.List;
 
+/**
+ * Represents the meta-data of errors which concerns wrong argument types, e.g. wrong method call.
+ */
 public class WrongArgumentTypeErrorDto extends ReferenceErrorDto
 {
 

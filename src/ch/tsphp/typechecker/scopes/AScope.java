@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * Provides some helper methods for scopes.
+ * <p/>
  * Adopted from the book "Language Implementation Patterns" by Terence Parr.
  */
 public abstract class AScope implements IScope

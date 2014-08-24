@@ -14,6 +14,9 @@ import ch.tsphp.common.ITSPHPAst;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Includes several helper methods which are used by different scopes.
+ */
 public interface IScopeHelper
 {
 

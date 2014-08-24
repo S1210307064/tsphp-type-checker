@@ -9,6 +9,20 @@ package ch.tsphp.typechecker;
 import ch.tsphp.common.ITSPHPAst;
 import ch.tsphp.common.ITypeSymbol;
 
+/**
+ * Represents a casting method, e.g. built-in casting method.
+ * <p/>
+ * To outline the example, a quick code example and the corresponding translation to PHP 5.4
+ * <pre>
+ *     int $i = (int) 1.2;
+ * </pre>
+ * translation
+ * <pre>
+ *     $i = (int) 1.2;
+ * </pre>
+ * <p/>
+ * (int) is the built-in casting method.
+ */
 public interface ICastingMethod
 {
 

@@ -8,6 +8,9 @@ package ch.tsphp.typechecker.scopes;
 
 import ch.tsphp.common.ISymbol;
 
+/**
+ * "Delegate" to report already defined symbols.
+ */
 public interface IAlreadyDefinedMethodCaller
 {
     void callAccordingAlreadyDefinedMethod(ISymbol firstDefinition, ISymbol symbolToCheck);

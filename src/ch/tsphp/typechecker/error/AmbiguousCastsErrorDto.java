@@ -8,6 +8,20 @@ package ch.tsphp.typechecker.error;
 
 import java.util.List;
 
+/**
+ * Represents the meta-data of an ambiguous casts.
+ * <p/>
+ * For instance, if class A can be casted to B and to C and we have the two following methods (overload):
+ * <pre>
+ *     function void foo(cast B $b){}
+ *     function void foo(cast C $b){}
+ * </pre>
+ * Then it is not possible to chose which overload should be taken if the method is called like this
+ * <pre>
+ *     $o->foo(new A());
+ * </pre>
+ * which results in an ambiguous cast error.
+ */
 public class AmbiguousCastsErrorDto extends ReferenceErrorDto
 {
 

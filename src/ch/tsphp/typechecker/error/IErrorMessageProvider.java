@@ -6,6 +6,12 @@
 
 package ch.tsphp.typechecker.error;
 
+/**
+ * Represents a collection of error messages.
+ * <p/>
+ * This interface does not define how the error messages are stored (hard coded, file,
+ * db etc.) nor which language they have
+ */
 public interface IErrorMessageProvider
 {
 

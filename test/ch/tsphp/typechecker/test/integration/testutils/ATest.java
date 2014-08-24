@@ -10,7 +10,7 @@ import ch.tsphp.common.IErrorLogger;
 import ch.tsphp.common.IParser;
 import ch.tsphp.common.exceptions.TSPHPException;
 import ch.tsphp.parser.ParserFacade;
-import ch.tsphp.typechecker.error.ErrorMessageProvider;
+import ch.tsphp.typechecker.error.HardCodedErrorMessageProvider;
 import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
 import ch.tsphp.typechecker.error.TypeCheckerErrorReporter;
 import org.junit.Ignore;
@@ -47,6 +47,6 @@ public abstract class ATest implements IErrorLogger
     }
 
     protected ITypeCheckerErrorReporter createTypeCheckerErrorReporter() {
-        return new TypeCheckerErrorReporter(new ErrorMessageProvider());
+        return new TypeCheckerErrorReporter(new HardCodedErrorMessageProvider());
     }
 }

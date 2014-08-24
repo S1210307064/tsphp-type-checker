@@ -32,6 +32,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@SuppressWarnings("checkstyle:methodcount")
 public class TypeCheckerErrorReporter implements ITypeCheckerErrorReporter
 {
 

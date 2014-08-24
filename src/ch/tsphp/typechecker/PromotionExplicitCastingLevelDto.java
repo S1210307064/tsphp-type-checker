@@ -8,6 +8,11 @@ package ch.tsphp.typechecker;
 
 import java.io.Serializable;
 
+/**
+ * Represents a tuple composed of the promotion level and the explicit casting level.
+ * <p/>
+ * The explicit casting level tells how many castings have to be applied until one type is casted to another.
+ */
 public class PromotionExplicitCastingLevelDto implements Serializable
 {
 

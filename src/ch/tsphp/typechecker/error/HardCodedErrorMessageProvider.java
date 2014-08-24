@@ -9,7 +9,10 @@ package ch.tsphp.typechecker.error;
 import java.util.Arrays;
 import java.util.HashMap;
 
-public class ErrorMessageProvider extends AErrorMessageProvider
+/**
+ * Provides english error messages.
+ */
+public class HardCodedErrorMessageProvider extends AErrorMessageProvider
 {
 
     @Override

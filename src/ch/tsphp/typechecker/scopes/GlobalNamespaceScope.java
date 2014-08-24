@@ -15,6 +15,7 @@ import ch.tsphp.typechecker.utils.MapHelper;
 
 import java.util.List;
 
+
 public class GlobalNamespaceScope extends AScope implements IGlobalNamespaceScope
 {
 

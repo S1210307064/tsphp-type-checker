@@ -19,6 +19,9 @@ import org.antlr.runtime.tree.TreeNodeStream;
 import java.util.ArrayDeque;
 import java.util.Collection;
 
+/**
+ * Extends TSPHPTypeCheckWalker by IErrorReporter.
+ */
 public class ErrorReportingTSPHPTypeCheckWalker extends TSPHPTypeCheckWalker implements IErrorReporter
 {
 

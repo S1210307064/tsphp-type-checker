@@ -16,6 +16,9 @@ import ch.tsphp.typechecker.symbols.IClassTypeSymbol;
 import ch.tsphp.typechecker.symbols.IInterfaceTypeSymbol;
 import ch.tsphp.typechecker.symbols.IMethodSymbol;
 
+/**
+ * Represents the interface between the TSPHPDefinitionWalker (ANTLR generated) and the logic.
+ */
 public interface IDefinitionPhaseController
 {
 

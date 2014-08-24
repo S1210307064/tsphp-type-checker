@@ -6,6 +6,9 @@
 
 package ch.tsphp.typechecker.symbols;
 
+/**
+ * Represents a symbol which can be static.
+ */
 public interface ICanBeStatic
 {
     boolean isStatic();

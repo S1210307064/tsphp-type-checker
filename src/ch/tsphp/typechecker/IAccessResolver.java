@@ -11,6 +11,9 @@ import ch.tsphp.typechecker.symbols.IPolymorphicTypeSymbol;
 import ch.tsphp.typechecker.symbols.ISymbolWithAccessModifier;
 import ch.tsphp.typechecker.symbols.IVariableSymbol;
 
+/**
+ * Represents a resolver which resolve access operations such as access to a class constant.
+ */
 public interface IAccessResolver
 {
     IVariableSymbol resolveClassConstantAccess(ITSPHPAst accessor, ITSPHPAst id);

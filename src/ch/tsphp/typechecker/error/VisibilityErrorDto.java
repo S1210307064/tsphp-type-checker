@@ -6,6 +6,9 @@
 
 package ch.tsphp.typechecker.error;
 
+/**
+ * Represents the meta-data of visibility violations.
+ */
 public class VisibilityErrorDto extends ReferenceErrorDto
 {
     public String visibility;

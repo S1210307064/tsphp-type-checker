@@ -18,6 +18,11 @@ import ch.tsphp.typechecker.symbols.IVoidTypeSymbol;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Represents the type system of TSPHP.
+ * <p/>
+ * It provides methods to retrieve built-in type symbols such as bool, int, float etc.
+ */
 public interface ITypeSystem
 {
 

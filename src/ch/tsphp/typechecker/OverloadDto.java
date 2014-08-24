@@ -11,12 +11,30 @@ import ch.tsphp.typechecker.symbols.IMethodSymbol;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * Represents meta-data of an overload, e.g. method overload etc.
+ */
 public class OverloadDto implements Serializable
 {
 
     public IMethodSymbol methodSymbol;
+
+    /**
+     * Count which tells how many parameters fit since they can be promoted.
+     * <p/>
+     * Promotion is happening when for instance Exception is required and ErrorException provided (this corresponds
+     * to one promotion level)
+     */
     public int parameterPromotedCount;
+
+    /**
+     * Summation of promotion levels
+     */
     public int promotionsTotal;
+
+    /**
+     * All the parameters which need casting
+     */
     public List<CastingDto> parametersNeedCasting;
 
     public OverloadDto(IMethodSymbol theMethodSymbol, int howManyParameterWerePromoted, int thePromotionsInTotal,

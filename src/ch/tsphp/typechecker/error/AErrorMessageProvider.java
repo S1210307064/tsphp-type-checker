@@ -10,6 +10,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Provide some helper methods for IErrorMessageProviders.
+ * <p/>
+ * However, it does not define how error messages are load and does leave it to the concrete sub-classes.
+ */
 public abstract class AErrorMessageProvider implements IErrorMessageProvider
 {
 
