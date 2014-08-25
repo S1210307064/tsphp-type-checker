@@ -10,7 +10,7 @@ import ch.tsphp.common.ITSPHPAst;
 import ch.tsphp.typechecker.CastingDto;
 
 /**
- * Provides helper methods which can be used to modify an AST
+ * Provides helper methods which can be used to modify an AST.
  */
 public interface ITypeCheckerAstHelper
 {

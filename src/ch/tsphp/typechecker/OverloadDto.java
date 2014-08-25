@@ -28,12 +28,12 @@ public class OverloadDto implements Serializable
     public int parameterPromotedCount;
 
     /**
-     * Summation of promotion levels
+     * Summation of promotion levels.
      */
     public int promotionsTotal;
 
     /**
-     * All the parameters which need casting
+     * All the parameters which need casting.
      */
     public List<CastingDto> parametersNeedCasting;
 
