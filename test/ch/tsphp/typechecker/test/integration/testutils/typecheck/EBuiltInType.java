@@ -15,7 +15,7 @@ public enum EBuiltInType
     String,
     Array,
     Resource,
-    Object,
+    Mixed,
     BoolNullable,
     IntNullable,
     FloatNullable,

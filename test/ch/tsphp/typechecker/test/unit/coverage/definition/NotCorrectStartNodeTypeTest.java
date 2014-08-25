@@ -72,7 +72,7 @@ public class NotCorrectStartNodeTypeTest extends ADefinitionWalkerTest
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
         return Arrays.asList(new Object[][]{
-                {"allTypesWithoutObjectAndResource", Try},
+                {"allTypesWithoutMixedAndResource", Try},
                 {"atom", Try},
                 {"blockConditional", Try},
                 {"bottomup", Try},

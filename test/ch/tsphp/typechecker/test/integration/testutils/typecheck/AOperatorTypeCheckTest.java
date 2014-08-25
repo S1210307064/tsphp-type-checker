@@ -30,7 +30,7 @@ public abstract class AOperatorTypeCheckTest extends ATypeCheckTest
     public static final EBuiltInType StringNullable = EBuiltInType.StringNullable;
     public static final EBuiltInType Array = EBuiltInType.Array;
     public static final EBuiltInType Resource = EBuiltInType.Resource;
-    public static final EBuiltInType Object = EBuiltInType.Object;
+    public static final EBuiltInType Mixed = EBuiltInType.Mixed;
     public static final EBuiltInType Exception = EBuiltInType.Exception;
     public static final EBuiltInType ErrorException = EBuiltInType.ErrorException;
     public static final EBuiltInType Null = EBuiltInType.Null;
@@ -113,9 +113,9 @@ public abstract class AOperatorTypeCheckTest extends ATypeCheckTest
             case Void:
                 typeSymbol = typeSystem.getVoidTypeSymbol();
                 break;
-            case Object:
+            case Mixed:
             default:
-                typeSymbol = typeSystem.getObjectTypeSymbol();
+                typeSymbol = typeSystem.getMixedTypeSymbol();
                 break;
         }
         return typeSymbol;

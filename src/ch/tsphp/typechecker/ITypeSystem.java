@@ -56,7 +56,7 @@ public interface ITypeSystem
 
     IPseudoTypeSymbol getResourceTypeSymbol();
 
-    IPseudoTypeSymbol getObjectTypeSymbol();
+    IPseudoTypeSymbol getMixedTypeSymbol();
 
     IClassTypeSymbol getExceptionTypeSymbol();
 

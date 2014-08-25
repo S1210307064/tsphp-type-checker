@@ -60,9 +60,9 @@ public class VariableDeclarationListHelper
         collection.addAll(getVariations(prefix + "int", "=", appendix,
                 prefixExpected, appendixExpected, scopeName, scopeName, "int", typeExpected));
 
-        typeExpected = (isDefinitionPhase ? "" : "object") + typeModifiers;
-        collection.addAll(getVariations(prefix + "object", "=", appendix,
-                prefixExpected, appendixExpected, scopeName, scopeName, "object", typeExpected));
+        typeExpected = (isDefinitionPhase ? "" : "mixed") + typeModifiers;
+        collection.addAll(getVariations(prefix + "mixed", "=", appendix,
+                prefixExpected, appendixExpected, scopeName, scopeName, "mixed", typeExpected));
 
         typeExpected = (isDefinitionPhase ? "" : "float") + typeModifiers;
         collection.addAll(getVariations(prefix + "float", "=()", appendix,

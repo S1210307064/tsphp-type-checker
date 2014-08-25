@@ -62,7 +62,7 @@ public class ReturnErrorTest extends ATypeCheckErrorTest
         }
 
         for (int i = 0; i < types.length - 1; ++i) {
-            if (types[i][0].equals("object") || types[i][0].equals("Exception")) {
+            if (types[i][0].equals("mixed") || types[i][0].equals("Exception")) {
                 continue;
             }
             collection.add(new Object[]{

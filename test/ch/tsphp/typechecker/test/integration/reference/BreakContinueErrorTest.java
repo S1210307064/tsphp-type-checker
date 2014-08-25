@@ -42,7 +42,7 @@ public class BreakContinueErrorTest extends AReferenceErrorTest
                 //switch is treated like a loop in PHP
                 {"int $a=1; switch($a){case 1:", "}"},
                 {"for(;;){", "}"},
-                {"foreach([1,2] as object $v){", "}"},
+                {"foreach([1,2] as mixed $v){", "}"},
                 {"while(true){", "}"},
                 {"do{", "}while(true);"}
         };
@@ -50,7 +50,7 @@ public class BreakContinueErrorTest extends AReferenceErrorTest
                 //switch is treated like a loop in PHP
                 {"int $b=3; switch($b){case 1:", "}"},
                 {"for(;;){", "}"},
-                {"foreach([1,2] as object $v2){", "}"},
+                {"foreach([1,2] as mixed $v2){", "}"},
                 {"while(true){", "}"},
                 {"do{", "}while(true);"}
         };
@@ -58,7 +58,7 @@ public class BreakContinueErrorTest extends AReferenceErrorTest
                 //switch is treated like a loop in PHP
                 {"int $c=3; switch($c){case 1:", "}"},
                 {"for(;;){", "}"},
-                {"foreach([1,2] as object $v3){", "}"},
+                {"foreach([1,2] as mixed $v3){", "}"},
                 {"while(true){", "}"},
                 {"do{", "}while(true);"}
         };

@@ -758,7 +758,7 @@ allTypes[boolean isNullable] returns [ITypeSymbol type]
 
 	:	scalarTypes[isNullable] {$type = $scalarTypes.type;}
 	|	classInterfaceType {$type = $classInterfaceType.type;}
-	|	arrayOrResourceOrObject {$type = $arrayOrResourceOrObject.type;}
+	|	arrayOrResourceOrMixed {$type = $arrayOrResourceOrMixed.type;}
 	;
 	
 scalarTypes[boolean isNullable] returns [ITypeSymbol type]
@@ -808,7 +808,7 @@ catch[RecognitionException re]{
     $type = controller.createErroneousTypeSymbol($start, re);
 }
 	
-arrayOrResourceOrObject returns [ITypeSymbol type]
+arrayOrResourceOrMixed returns [ITypeSymbol type]
 @init{
     if(state.backtracking == 1 && $start instanceof ITSPHPErrorAst){
         $type = controller.createErroneousTypeSymbol((ITSPHPErrorAst)$start);
@@ -818,7 +818,7 @@ arrayOrResourceOrObject returns [ITypeSymbol type]
     }
 }
 	:	(	'array'
-		|	'object'
+		|	'mixed'
 		|	'resource'
 		)
 		{

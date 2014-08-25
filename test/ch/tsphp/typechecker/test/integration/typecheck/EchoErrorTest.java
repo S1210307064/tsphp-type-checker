@@ -39,7 +39,7 @@ public class EchoErrorTest extends ATypeCheckErrorTest
                 new ReferenceErrorDto("$b", 3, 1)
         };
 
-        String[] types = new String[]{"array", "resource", "object"};
+        String[] types = new String[]{"array", "resource", "mixed"};
         for (String type : types) {
             collection.add(new Object[]{type + " $b=null;echo\n $b;", errorDto});
             collection.add(new Object[]{type + " $b=null;echo\n $b,\n $b;", errorTwo});

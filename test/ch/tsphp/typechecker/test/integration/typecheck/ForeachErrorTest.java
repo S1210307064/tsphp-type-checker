@@ -46,18 +46,18 @@ public class ForeachErrorTest extends ATypeCheckErrorTest
                 continue;
             }
             collection.addAll(Arrays.asList(new Object[][]{
-                    {type[0] + " $b=" + type[1] + ";\n foreach($b as object $v);", errorDto},
-                    {type[0] + " $b=" + type[1] + ";\n foreach($b as string $k => object $v);", errorDto},
-                    {type[0] + " $b=" + type[1] + ";\n foreach($b as float\n $k => object $v);", twoErrorDto},
-                    {type[0] + " $b=" + type[1] + ";\n foreach($b as int\n $k => object $v);", twoErrorDto},
-                    {type[0] + " $b=" + type[1] + ";\n foreach($b as bool\n $k => object $v);", twoErrorDto}
+                    {type[0] + " $b=" + type[1] + ";\n foreach($b as mixed $v);", errorDto},
+                    {type[0] + " $b=" + type[1] + ";\n foreach($b as string $k => mixed $v);", errorDto},
+                    {type[0] + " $b=" + type[1] + ";\n foreach($b as float\n $k => mixed $v);", twoErrorDto},
+                    {type[0] + " $b=" + type[1] + ";\n foreach($b as int\n $k => mixed $v);", twoErrorDto},
+                    {type[0] + " $b=" + type[1] + ";\n foreach($b as bool\n $k => mixed $v);", twoErrorDto}
             }));
         }
 
 
         for (String[] type : types) {
             //only object is supported as type of the values at the moment
-            if (type[0].equals("object")) {
+            if (type[0].equals("mixed")) {
                 continue;
             }
             collection.add(new Object[]{

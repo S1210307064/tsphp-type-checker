@@ -32,7 +32,7 @@ public class ClassMemberInitErrorTest extends ATypeCheckErrorTest
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
         Collection<Object[]> collection =
-                ConstantInitialValueHelper.errorTestStrings("class A{", ";}", "$a", true, false);
+                ConstantInitialValueHelper.errorTestStrings("class A{", ";}", "$a", true);
 
         collection.add(new Object[]{
                 "class A{private int $a;private int\n $b = $this->a;}",

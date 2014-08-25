@@ -346,7 +346,7 @@ allTypes
 	|	'string'
 	|	'array'
 	|	'resource'
-	|	'object'
+	|	'mixed'
 	|	TYPE_NAME
 	;
 

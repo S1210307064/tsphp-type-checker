@@ -38,11 +38,11 @@ public class ArrayAccessTest extends AOperatorTypeCheckTest
         for (String type : types) {
             collection.add(new Object[]{
                     "array $a = [1,2];" + type + " $b=1; $a[$b];",
-                    new TypeCheckStruct[]{struct("arrAccess", Object, 1, 2, 0)}
+                    new TypeCheckStruct[]{struct("arrAccess", Mixed, 1, 2, 0)}
             });
             collection.add(new Object[]{
                     "array $a = [1,2];" + type + " $b=1; $a = (array) $a[$b]; $a[$b];",
-                    new TypeCheckStruct[]{struct("arrAccess", Object, 1, 3, 0)}
+                    new TypeCheckStruct[]{struct("arrAccess", Mixed, 1, 3, 0)}
             });
         }
         return collection;

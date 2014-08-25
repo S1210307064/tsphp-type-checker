@@ -26,7 +26,7 @@ public class TypeHelper
     public static final EBuiltInType StringNullable = EBuiltInType.StringNullable;
     public static final EBuiltInType Array = EBuiltInType.Array;
     public static final EBuiltInType Resource = EBuiltInType.Resource;
-    public static final EBuiltInType Object = EBuiltInType.Object;
+    public static final EBuiltInType Mixed = EBuiltInType.Mixed;
     public static final EBuiltInType Exception = EBuiltInType.Exception;
     public static final EBuiltInType ErrorException = EBuiltInType.ErrorException;
     public static final EBuiltInType Null = EBuiltInType.Null;
@@ -50,7 +50,7 @@ public class TypeHelper
         };
     }
 
-    public static List<String> getAllTypesWithoutResourceAndObject() {
+    public static List<String> getAllTypesWithoutResourceAndMixed() {
         List<String> collection = new ArrayList<>();
         collection.addAll(Arrays.asList(getScalarTypes()));
         collection.add("array");
@@ -63,7 +63,7 @@ public class TypeHelper
         collection.addAll(Arrays.asList(getClassInterfaceTypes()));
         collection.add("array");
         collection.add("resource");
-        collection.add("object");
+        collection.add("mixed");
         return collection;
     }
 
@@ -72,7 +72,7 @@ public class TypeHelper
         collection.addAll(Arrays.asList(getScalarTypes()));
         collection.add("array");
         collection.add("resource");
-        collection.add("object");
+        collection.add("mixed");
         return collection;
     }
 
@@ -115,7 +115,7 @@ public class TypeHelper
             adder.add("cast " + type, type, new TreeSet<>(Arrays.asList(new Integer[]{cast})));
         }
         adder.add("resource", "resource", new TreeSet<Integer>());
-        adder.add("object", "object", new TreeSet<Integer>());
+        adder.add("mixed", "mixed", new TreeSet<Integer>());
     }
 
 
@@ -131,7 +131,7 @@ public class TypeHelper
                 {"string?", "null"},
                 {"array", "null"},
                 {"resource", "null"},
-                {"object", "null"},
+                {"mixed", "null"},
         };
     }
 
@@ -147,7 +147,7 @@ public class TypeHelper
                 {"string?", "null"},
                 {"array", "null"},
                 {"resource", "null"},
-                {"object", "null"},
+                {"mixed", "null"},
                 {"Exception", "null"},
                 {"ErrorException", "null"}
         };
@@ -166,7 +166,7 @@ public class TypeHelper
                 {"string?", StringNullable, "null"},
                 {"array", Array, "null"},
                 {"resource", Resource, "null"},
-                {"object", Object, "null"},
+                {"mixed", Mixed, "null"},
                 {"\\Exception", Exception, "null"},
                 {"\\ErrorException", ErrorException, "null"},
                 {"void", Void, ""}

@@ -80,7 +80,7 @@ public class ReturnCheckHelper
                 {prefix + "if(true){" + statement + "}" + appendix, errorDto},
                 {prefix + "while(true){" + statement + "}" + appendix, errorDto},
                 {prefix + "for(;;){" + statement + "}" + appendix, errorDto},
-                {prefix + "foreach([1,2] as object $v){" + statement + "}" + appendix, errorDto},
+                {prefix + "foreach([1,2] as mixed $v){" + statement + "}" + appendix, errorDto},
                 {prefix + "try{" + statement + "}catch(\\Exception $e){}" + appendix, errorDto},
                 {prefix + "try{}catch(\\Exception $e){" + statement + "}" + appendix, errorDto},
                 //not all catch blocks return/throw

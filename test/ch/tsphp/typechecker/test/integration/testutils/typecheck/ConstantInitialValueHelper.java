@@ -17,7 +17,7 @@ public class ConstantInitialValueHelper
 {
 
     public static Collection<Object[]> errorTestStrings(String prefix, String appendix, String identifier,
-            boolean isNotConstant, boolean isParameter) {
+            boolean isNotConstant) {
         List<Object[]> collection = new ArrayList<>();
         ReferenceErrorDto[] errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto("=", 2, 1)};
         ReferenceErrorDto[] errorDtoExpression = new ReferenceErrorDto[]{new ReferenceErrorDto("$a", 2, 1)};
@@ -175,7 +175,7 @@ public class ConstantInitialValueHelper
                             errorDtoExpression
                     },
                     {
-                            prefix + "object\n " + identifier + " = new Exception()" + appendix,
+                            prefix + "mixed\n " + identifier + " = new Exception()" + appendix,
                             errorDtoExpression
                     },}));
         }
@@ -311,27 +311,27 @@ public class ConstantInitialValueHelper
                             new TypeCheckStruct[]{struct("array", AOperatorTypeCheckTest.Array, accessOrder)}
                     },
                     {
-                            prefix + "object " + identifier + " = true" + appendix,
+                            prefix + "mixed " + identifier + " = true" + appendix,
                             new TypeCheckStruct[]{struct("true", AOperatorTypeCheckTest.Bool, accessOrder)}
                     },
                     {
-                            prefix + "object " + identifier + " = false" + appendix,
+                            prefix + "mixed " + identifier + " = false" + appendix,
                             new TypeCheckStruct[]{struct("false", AOperatorTypeCheckTest.Bool, accessOrder)}
                     },
                     {
-                            prefix + "object " + identifier + " = 1" + appendix,
+                            prefix + "mixed " + identifier + " = 1" + appendix,
                             new TypeCheckStruct[]{struct("1", AOperatorTypeCheckTest.Int, accessOrder)}
                     },
                     {
-                            prefix + "object " + identifier + " = 1.0" + appendix,
+                            prefix + "mixed " + identifier + " = 1.0" + appendix,
                             new TypeCheckStruct[]{struct("1.0", AOperatorTypeCheckTest.Float, accessOrder)}
                     },
                     {
-                            prefix + "object " + identifier + " = 'hello'" + appendix,
+                            prefix + "mixed " + identifier + " = 'hello'" + appendix,
                             new TypeCheckStruct[]{struct("'hello'", AOperatorTypeCheckTest.String, accessOrder)}
                     },
                     {
-                            prefix + "object " + identifier + " = [1,2]" + appendix,
+                            prefix + "mixed " + identifier + " = [1,2]" + appendix,
                             new TypeCheckStruct[]{struct("array", AOperatorTypeCheckTest.Array, accessOrder)}
                     }
             }));
@@ -346,7 +346,7 @@ public class ConstantInitialValueHelper
                                 new TypeCheckStruct[]{struct("null", AOperatorTypeCheckTest.Null, accessOrder)}
                         },
                         {
-                                prefix + "object? " + identifier + " = null" + appendix,
+                                prefix + "mixed? " + identifier + " = null" + appendix,
                                 new TypeCheckStruct[]{struct("null", AOperatorTypeCheckTest.Null, accessOrder)}
                         },
                         {

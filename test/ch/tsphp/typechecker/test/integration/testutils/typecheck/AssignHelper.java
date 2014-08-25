@@ -21,8 +21,8 @@ import static ch.tsphp.typechecker.test.integration.testutils.typecheck.AOperato
 import static ch.tsphp.typechecker.test.integration.testutils.typecheck.AOperatorTypeCheckTest.FloatNullable;
 import static ch.tsphp.typechecker.test.integration.testutils.typecheck.AOperatorTypeCheckTest.Int;
 import static ch.tsphp.typechecker.test.integration.testutils.typecheck.AOperatorTypeCheckTest.IntNullable;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.AOperatorTypeCheckTest.Mixed;
 import static ch.tsphp.typechecker.test.integration.testutils.typecheck.AOperatorTypeCheckTest.Null;
-import static ch.tsphp.typechecker.test.integration.testutils.typecheck.AOperatorTypeCheckTest.Object;
 import static ch.tsphp.typechecker.test.integration.testutils.typecheck.AOperatorTypeCheckTest.Resource;
 import static ch.tsphp.typechecker.test.integration.testutils.typecheck.AOperatorTypeCheckTest.String;
 import static ch.tsphp.typechecker.test.integration.testutils.typecheck.AOperatorTypeCheckTest.StringNullable;
@@ -96,21 +96,21 @@ public class AssignHelper
                 {"array $a " + assign + " null;", struct("null", Array, Null)},
                 {"resource $b=null; resource $a " + assign + " $b;", structTwo("$b", Resource, Resource)},
                 {"resource $a " + assign + " null;", struct("null", Resource, Null)},
-                {"object $a " + assign + " true;", struct("true", Object, Bool)},
-                {"object $a " + assign + " false;", struct("false", Object, Bool)},
-                {"object $a " + assign + " 1;", struct("1", Object, Int)},
-                {"object $a " + assign + " 1.0;", struct("1.0", Object, Float)},
-                {"object $a " + assign + " 'hello';", struct("'hello'", Object, String)},
-                {"object $a " + assign + " [1,2];", struct("array", Object, Array)},
-                {"bool? $b=null; object $a " + assign + " $b;", structTwo("$b", Object, BoolNullable)},
-                {"int? $b=null; object $a " + assign + " $b;", structTwo("$b", Object, IntNullable)},
-                {"float? $b=1; object $a " + assign + " $b;", structTwo("$b", Object, FloatNullable)},
-                {"string? $b=1; object $a " + assign + " $b;", structTwo("$b", Object, StringNullable)},
-                {"resource $b=null; object $a " + assign + " $b;", structTwo("$b", Object, Resource)},
-                {"object $b=3; object $a " + assign + " $b;", structTwo("$b", Object, Object)},
-                {"Exception $b=null; object $a " + assign + " $b;", structTwo("$b", Object, Exception)},
-                {"ErrorException $b=null; object $a " + assign + " $b;", structTwo("$b", Object, ErrorException)},
-                {"object $a " + assign + " null;", struct("null", Object, Null)},
+                {"mixed $a " + assign + " true;", struct("true", Mixed, Bool)},
+                {"mixed $a " + assign + " false;", struct("false", Mixed, Bool)},
+                {"mixed $a " + assign + " 1;", struct("1", Mixed, Int)},
+                {"mixed $a " + assign + " 1.0;", struct("1.0", Mixed, Float)},
+                {"mixed $a " + assign + " 'hello';", struct("'hello'", Mixed, String)},
+                {"mixed $a " + assign + " [1,2];", struct("array", Mixed, Array)},
+                {"bool? $b=null; mixed $a " + assign + " $b;", structTwo("$b", Mixed, BoolNullable)},
+                {"int? $b=null; mixed $a " + assign + " $b;", structTwo("$b", Mixed, IntNullable)},
+                {"float? $b=1; mixed $a " + assign + " $b;", structTwo("$b", Mixed, FloatNullable)},
+                {"string? $b=1; mixed $a " + assign + " $b;", structTwo("$b", Mixed, StringNullable)},
+                {"resource $b=null; mixed $a " + assign + " $b;", structTwo("$b", Mixed, Resource)},
+                {"mixed $b=3; mixed $a " + assign + " $b;", structTwo("$b", Mixed, Mixed)},
+                {"Exception $b=null; mixed $a " + assign + " $b;", structTwo("$b", Mixed, Exception)},
+                {"ErrorException $b=null; mixed $a " + assign + " $b;", structTwo("$b", Mixed, ErrorException)},
+                {"mixed $a " + assign + " null;", struct("null", Mixed, Null)},
                 {
                         "ErrorException $b=null; ErrorException $a " + assign + " $b;",
                         structTwo("$b", ErrorException, ErrorException)
@@ -135,7 +135,7 @@ public class AssignHelper
                 {"float?", FloatNullable, "null"},
                 {"string", String, "''"},
                 {"string?", StringNullable, "null"},
-                {"object", Object, "false"}
+                {"mixed", Mixed, "false"}
         };
         Object[][] castToBoolTypes = new Object[][]{
                 {"array", Array, "null"},
@@ -156,7 +156,7 @@ public class AssignHelper
                 {"float?", FloatNullable, "null"},
                 {"string", String, "''"},
                 {"string?", StringNullable, "null"},
-                {"object", Object, "null"}
+                {"mixed", Mixed, "null"}
         };
         addVariations(noCastNeededTypes, castTypes, castToBoolTypes, "int", Int, Bool);
 
@@ -171,7 +171,7 @@ public class AssignHelper
                 {"float?", FloatNullable, "null"},
                 {"string", String, "''"},
                 {"string?", StringNullable, "null"},
-                {"object", Object, "null"}
+                {"mixed", Mixed, "null"}
         };
         addVariations(noCastNeededTypes, castTypes, castToBoolTypes, "float", Float, Bool);
 
@@ -186,7 +186,7 @@ public class AssignHelper
                 {"int?", IntNullable, "null"},
                 {"float?", FloatNullable, "null"},
                 {"string?", StringNullable, "null"},
-                {"object", Object, "null"}
+                {"mixed", Mixed, "null"}
         };
         addVariations(noCastNeededTypes, castTypes, castToBoolTypes, "string", String, Bool);
 
@@ -201,7 +201,7 @@ public class AssignHelper
                 {"float?", FloatNullable, "null"},
                 {"string", String, "''"},
                 {"string?", StringNullable, "null"},
-                {"object", Object, "null"}
+                {"mixed", Mixed, "null"}
         };
         addVariations(noCastNeededTypes, castTypes, castToBoolTypes, "bool?", BoolNullable, BoolNullable);
 
@@ -216,7 +216,7 @@ public class AssignHelper
                 {"float?", FloatNullable, "null"},
                 {"string", String, "''"},
                 {"string?", StringNullable, "null"},
-                {"object", Object, "null"}
+                {"mixed", Mixed, "null"}
         };
 
         addVariations(noCastNeededTypes, castTypes, castToBoolTypes, "int?", IntNullable, BoolNullable);
@@ -232,7 +232,7 @@ public class AssignHelper
         castTypes = new Object[][]{
                 {"string", String, "''"},
                 {"string?", StringNullable, "null"},
-                {"object", Object, "null"}
+                {"mixed", Mixed, "null"}
         };
         addVariations(noCastNeededTypes, castTypes, castToBoolTypes, "float?", FloatNullable, BoolNullable);
 
@@ -246,7 +246,7 @@ public class AssignHelper
                 {"float?", FloatNullable, "null"},
                 {"string?", StringNullable, "null"},};
         castTypes = new Object[][]{
-                {"object", Object, "null"}
+                {"mixed", Mixed, "null"}
         };
         addVariations(noCastNeededTypes, castTypes, castToBoolTypes, "string?", StringNullable, BoolNullable);
 
@@ -263,7 +263,7 @@ public class AssignHelper
                 {"int?", IntNullable, "null"},
                 {"float?", FloatNullable, "null"},
                 {"string?", StringNullable, "null"},
-                {"object", Object, "null"},
+                {"mixed", Mixed, "null"},
                 {"resource", Resource, "null"},
                 {"Exception", Exception, "null"},
                 {"ErrorException", ErrorException, "null"}
@@ -393,7 +393,7 @@ public class AssignHelper
                 {"string?", "null"},
                 {"array", "null"},
                 {"resource", "null"},
-                {"object", "null"},
+                {"mixed", "null"},
                 {"Exception", "null"},
                 {"ErrorException", "null"}
         });
@@ -407,7 +407,7 @@ public class AssignHelper
                 {"string?", "null"},
                 {"array", "null"},
                 {"resource", "null"},
-                {"object", "null"},
+                {"mixed", "null"},
                 {"Exception", "null"},
                 {"ErrorException", "null"}
         });
@@ -421,7 +421,7 @@ public class AssignHelper
                 {"string?", "null"},
                 {"array", "null"},
                 {"resource", "null"},
-                {"object", "null"},
+                {"mixed", "null"},
                 {"Exception", "null"},
                 {"ErrorException", "null"}
         });
@@ -433,7 +433,7 @@ public class AssignHelper
                 {"string?", "null"},
                 {"array", "null"},
                 {"resource", "null"},
-                {"object", "null"},
+                {"mixed", "null"},
                 {"Exception", "null"},
                 {"ErrorException", "null"}
         });
@@ -446,7 +446,7 @@ public class AssignHelper
                 {"string?", "null"},
                 {"array", "null"},
                 {"resource", "null"},
-                {"object", "null"},
+                {"mixed", "null"},
                 {"Exception", "null"},
                 {"ErrorException", "null"}
         });
@@ -456,7 +456,7 @@ public class AssignHelper
                 {"string?", "null"},
                 {"array", "null"},
                 {"resource", "null"},
-                {"object", "null"},
+                {"mixed", "null"},
                 {"Exception", "null"},
                 {"ErrorException", "null"}
         });
@@ -468,7 +468,7 @@ public class AssignHelper
                 {"string?", "null"},
                 {"array", "null"},
                 {"resource", "null"},
-                {"object", "null"},
+                {"mixed", "null"},
                 {"Exception", "null"},
                 {"ErrorException", "null"}
         });
@@ -476,7 +476,7 @@ public class AssignHelper
         addErrorStringToCollection($a, errorDto, "string?", new String[][]{
                 {"array", "null"},
                 {"resource", "null"},
-                {"object", "null"},
+                {"mixed", "null"},
                 {"Exception", "null"},
                 {"ErrorException", "null"}
         });
@@ -491,7 +491,7 @@ public class AssignHelper
                 {"string", "''"},
                 {"string?", "null"},
                 {"resource", "null"},
-                {"object", "null"},
+                {"mixed", "null"},
                 {"Exception", "null"},
                 {"ErrorException", "null"}
         });
@@ -506,7 +506,7 @@ public class AssignHelper
                 {"string", "''"},
                 {"string?", "null"},
                 {"array", "null"},
-                {"object", "null"},
+                {"mixed", "null"},
                 {"Exception", "null"},
                 {"ErrorException", "null"}
         });
@@ -522,7 +522,7 @@ public class AssignHelper
                 {"string?", "null"},
                 {"array", "null"},
                 {"resource", "null"},
-                {"object", "null"},
+                {"mixed", "null"},
                 {"Exception", "null"},
         });
 
@@ -537,7 +537,7 @@ public class AssignHelper
                 {"string?", "null"},
                 {"array", "null"},
                 {"resource", "null"},
-                {"object", "null"},
+                {"mixed", "null"},
         });
 
         return collection;

@@ -106,15 +106,15 @@ public class VariableDefinitionConditionalScopesTest extends ADefinitionSymbolTe
                 });
         collection.add(
                 new Object[]{
-                        "foreach($a as string $k => object $v){}",
+                        "foreach($a as string $k => mixed $v){}",
                         defaultNamespace + "cScope.string " + defaultNamespace + "cScope.$k "
-                                + defaultNamespace + "cScope.object " + defaultNamespace + "cScope.$v"
+                                + defaultNamespace + "cScope.mixed " + defaultNamespace + "cScope.$v"
                 });
         collection.add(
                 new Object[]{
-                        "namespace a{foreach($a as string $k => object $v);}",
+                        "namespace a{foreach($a as string $k => mixed $v);}",
                         aNamespace + "cScope.string " + aNamespace + "cScope.$k "
-                                + aNamespace + "cScope.object " + aNamespace + "cScope.$v"
+                                + aNamespace + "cScope.mixed " + aNamespace + "cScope.$v"
                 });
 
         //definition in catch header

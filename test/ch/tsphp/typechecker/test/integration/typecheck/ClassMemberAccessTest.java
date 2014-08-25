@@ -46,7 +46,7 @@ public class ClassMemberAccessTest extends AOperatorTypeCheckTest
                 {"string?", StringNullable},
                 {"array", Array},
                 {"resource", Resource},
-                {"object", Object},
+                {"mixed", Mixed},
                 {"Exception", Exception},
                 {"ErrorException", ErrorException}
         };

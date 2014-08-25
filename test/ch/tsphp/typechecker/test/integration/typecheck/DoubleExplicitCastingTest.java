@@ -29,7 +29,7 @@ public class DoubleExplicitCastingTest extends AOperatorTypeCheckTest
     @Test
     public void test() throws RecognitionException {
         typeSystem.getExplicitCastings()
-                .get(typeSystem.getObjectTypeSymbol())
+                .get(typeSystem.getMixedTypeSymbol())
                 .remove(typeSystem.getBoolTypeSymbol());
 
         check();

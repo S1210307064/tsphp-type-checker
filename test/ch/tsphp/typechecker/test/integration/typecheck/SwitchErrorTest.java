@@ -39,7 +39,7 @@ public class SwitchErrorTest extends ATypeCheckErrorTest
         String[][] types = new String[][]{
                 {"array", "null"},
                 {"resource", "null"},
-                {"object", "null"},
+                {"mixed", "null"},
                 {"Exception", "null"},
                 {"ErrorException", "null"}
         };
@@ -60,7 +60,7 @@ public class SwitchErrorTest extends ATypeCheckErrorTest
                 {"string?", "null"},
                 {"array", "null"},
                 {"resource", "null"},
-                {"object", "null"},
+                {"mixed", "null"},
                 {"Exception", "null"},
                 {"ErrorException", "null"}
         });
@@ -74,7 +74,7 @@ public class SwitchErrorTest extends ATypeCheckErrorTest
                 {"string?", "null"},
                 {"array", "null"},
                 {"resource", "null"},
-                {"object", "null"},
+                {"mixed", "null"},
                 {"Exception", "null"},
                 {"ErrorException", "null"}
         });
@@ -88,7 +88,7 @@ public class SwitchErrorTest extends ATypeCheckErrorTest
                 {"string?", "null"},
                 {"array", "null"},
                 {"resource", "null"},
-                {"object", "null"},
+                {"mixed", "null"},
                 {"Exception", "null"},
                 {"ErrorException", "null"}
         });
@@ -100,7 +100,7 @@ public class SwitchErrorTest extends ATypeCheckErrorTest
                 {"string?", "null"},
                 {"array", "null"},
                 {"resource", "null"},
-                {"object", "null"},
+                {"mixed", "null"},
                 {"Exception", "null"},
                 {"ErrorException", "null"}
         });
@@ -113,7 +113,7 @@ public class SwitchErrorTest extends ATypeCheckErrorTest
                 {"string?", "null"},
                 {"array", "null"},
                 {"resource", "null"},
-                {"object", "null"},
+                {"mixed", "null"},
                 {"Exception", "null"},
                 {"ErrorException", "null"}
         });
@@ -123,7 +123,7 @@ public class SwitchErrorTest extends ATypeCheckErrorTest
                 {"string?", "null"},
                 {"array", "null"},
                 {"resource", "null"},
-                {"object", "null"},
+                {"mixed", "null"},
                 {"Exception", "null"},
                 {"ErrorException", "null"}
         });
@@ -135,7 +135,7 @@ public class SwitchErrorTest extends ATypeCheckErrorTest
                 {"string?", "null"},
                 {"array", "null"},
                 {"resource", "null"},
-                {"object", "null"},
+                {"mixed", "null"},
                 {"Exception", "null"},
                 {"ErrorException", "null"}
         });
@@ -143,7 +143,7 @@ public class SwitchErrorTest extends ATypeCheckErrorTest
         addToCollection(collection, errorDto, "string?", "null", new String[][]{
                 {"array", "null"},
                 {"resource", "null"},
-                {"object", "null"},
+                {"mixed", "null"},
                 {"Exception", "null"},
                 {"ErrorException", "null"}
         });

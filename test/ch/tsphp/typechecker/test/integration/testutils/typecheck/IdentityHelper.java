@@ -22,8 +22,8 @@ import static ch.tsphp.typechecker.test.integration.testutils.typecheck.AOperato
 import static ch.tsphp.typechecker.test.integration.testutils.typecheck.AOperatorTypeCheckTest.FloatNullable;
 import static ch.tsphp.typechecker.test.integration.testutils.typecheck.AOperatorTypeCheckTest.Int;
 import static ch.tsphp.typechecker.test.integration.testutils.typecheck.AOperatorTypeCheckTest.IntNullable;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.AOperatorTypeCheckTest.Mixed;
 import static ch.tsphp.typechecker.test.integration.testutils.typecheck.AOperatorTypeCheckTest.Null;
-import static ch.tsphp.typechecker.test.integration.testutils.typecheck.AOperatorTypeCheckTest.Object;
 import static ch.tsphp.typechecker.test.integration.testutils.typecheck.AOperatorTypeCheckTest.Resource;
 import static ch.tsphp.typechecker.test.integration.testutils.typecheck.AOperatorTypeCheckTest.String;
 import static ch.tsphp.typechecker.test.integration.testutils.typecheck.AOperatorTypeCheckTest.StringNullable;
@@ -106,24 +106,24 @@ public class IdentityHelper
                     {"array    $a=null; $a  " + op + " null;", struct("null", Array, Null)},
                     {"resource $b=null; resource $a=null; $a  " + op + " $b;", structTwo("$b", Resource, Resource)},
                     {"resource $a=null; $a  " + op + " null;", struct("null", Resource, Null)},
-                    {"object   $a=null; $a  " + op + " true;", struct("true", Object, Bool)},
-                    {"object   $a=null; $a  " + op + " false;", struct("false", Object, Bool)},
-                    {"object   $a=null; $a  " + op + " 1;", struct("1", Object, Int)},
-                    {"object   $a=null; $a  " + op + " 1.0;", struct("1.0", Object, Float)},
-                    {"object   $a=null; $a  " + op + " 'hello';", struct("'hello'", Object, String)},
-                    {"object   $a=null; $a  " + op + " [1,2];", struct("array", Object, Array)},
-                    {"bool?    $b=null; object $a=null; $a  " + op + " $b;", structTwo("$b", Object, BoolNullable)},
-                    {"int?     $b=null; object $a=null; $a  " + op + " $b;", structTwo("$b", Object, IntNullable)},
-                    {"float?   $b=null; object $a=null; $a  " + op + " $b;", structTwo("$b", Object, FloatNullable)},
-                    {"string?  $b=null; object $a=null; $a  " + op + " $b;", structTwo("$b", Object, StringNullable)},
-                    {"resource $b=null; object $a=null; $a  " + op + " $b;", structTwo("$b", Object, Resource)},
-                    {"object   $b=null; object $a=null; $a  " + op + " $b;", structTwo("$b", Object, Object)},
-                    {"object   $a=null; $a  " + op + " null;", struct("null", Object, Null)},
+                    {"mixed   $a=null; $a  " + op + " true;", struct("true", Mixed, Bool)},
+                    {"mixed   $a=null; $a  " + op + " false;", struct("false", Mixed, Bool)},
+                    {"mixed   $a=null; $a  " + op + " 1;", struct("1", Mixed, Int)},
+                    {"mixed   $a=null; $a  " + op + " 1.0;", struct("1.0", Mixed, Float)},
+                    {"mixed   $a=null; $a  " + op + " 'hello';", struct("'hello'", Mixed, String)},
+                    {"mixed   $a=null; $a  " + op + " [1,2];", struct("array", Mixed, Array)},
+                    {"bool?    $b=null; mixed $a=null; $a  " + op + " $b;", structTwo("$b", Mixed, BoolNullable)},
+                    {"int?     $b=null; mixed $a=null; $a  " + op + " $b;", structTwo("$b", Mixed, IntNullable)},
+                    {"float?   $b=null; mixed $a=null; $a  " + op + " $b;", structTwo("$b", Mixed, FloatNullable)},
+                    {"string?  $b=null; mixed $a=null; $a  " + op + " $b;", structTwo("$b", Mixed, StringNullable)},
+                    {"resource $b=null; mixed $a=null; $a  " + op + " $b;", structTwo("$b", Mixed, Resource)},
+                    {"mixed   $b=null; mixed $a=null; $a  " + op + " $b;", structTwo("$b", Mixed, Mixed)},
+                    {"mixed   $a=null; $a  " + op + " null;", struct("null", Mixed, Null)},
                     {"ErrorException $a=null; $a  " + op + " null;", struct("null", ErrorException, Null)},
                     {
-                            "ErrorException $b=null; object $a=null; $a  " + op + " $b;",
-                            structTwo("$b", Object, ErrorException)},
-                    {"Exception $b=null; object $a=null; $a  " + op + " $b;", structTwo("$b", Object, Exception)},
+                            "ErrorException $b=null; mixed $a=null; $a  " + op + " $b;",
+                            structTwo("$b", Mixed, ErrorException)},
+                    {"Exception $b=null; mixed $a=null; $a  " + op + " $b;", structTwo("$b", Mixed, Exception)},
                     {"Exception $a=null; $a  " + op + " null;", struct("null", Exception, Null)}
             }));
         }

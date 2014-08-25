@@ -18,7 +18,7 @@ import java.util.Set;
 public interface ISymbolFactory
 {
 
-    void setObjectTypeSymbol(ITypeSymbol typeSymbol);
+    void setMixedTypeSymbol(ITypeSymbol typeSymbol);
 
     INullTypeSymbol createNullTypeSymbol();
 

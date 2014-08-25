@@ -42,7 +42,7 @@ public class ArrayAccessErrorTest extends ATypeCheckErrorTest
                 {"string?", "null"},
                 {"array", "null"},
                 {"resource", "null"},
-                {"object", "null"},
+                {"mixed", "null"},
                 {"Exception", "null"},
                 {"ErrorException", "null"}
         };

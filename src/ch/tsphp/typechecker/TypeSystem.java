@@ -50,7 +50,7 @@ public class TypeSystem implements ITypeSystem
     private IScalarTypeSymbol stringNullableTypeSymbol;
     private IArrayTypeSymbol arrayTypeSymbol;
     private IPseudoTypeSymbol resourceTypeSymbol;
-    private IPseudoTypeSymbol objectTypeSymbol;
+    private IPseudoTypeSymbol mixedTypeSymbol;
     private IClassTypeSymbol exceptionTypeSymbol;
     //
     private final IGlobalNamespaceScope globalDefaultNamespace;
@@ -145,8 +145,8 @@ public class TypeSystem implements ITypeSystem
     }
 
     @Override
-    public IPseudoTypeSymbol getObjectTypeSymbol() {
-        return objectTypeSymbol;
+    public IPseudoTypeSymbol getMixedTypeSymbol() {
+        return mixedTypeSymbol;
     }
 
     @Override
@@ -165,10 +165,10 @@ public class TypeSystem implements ITypeSystem
         return castingMethod;
     }
 
-    protected void defineObjectTypeSymbol() {
-        objectTypeSymbol = symbolFactory.createPseudoTypeSymbol("object");
-        symbolFactory.setObjectTypeSymbol(objectTypeSymbol);
-        globalDefaultNamespace.define(objectTypeSymbol);
+    protected void defineMixedTypeSymbol() {
+        mixedTypeSymbol = symbolFactory.createPseudoTypeSymbol("mixed");
+        symbolFactory.setMixedTypeSymbol(mixedTypeSymbol);
+        globalDefaultNamespace.define(mixedTypeSymbol);
     }
 
     private void defineBuiltInTypes() {
@@ -178,10 +178,10 @@ public class TypeSystem implements ITypeSystem
         voidTypeSymbol = symbolFactory.createVoidTypeSymbol();
         globalDefaultNamespace.define(voidTypeSymbol);
 
-        defineObjectTypeSymbol();
+        defineMixedTypeSymbol();
 
         stringNullableTypeSymbol = symbolFactory.createScalarTypeSymbol("string?", TSPHPDefinitionWalker.TypeString,
-                objectTypeSymbol, true,
+                mixedTypeSymbol, true,
                 TSPHPDefinitionWalker.Null, "null");
         globalDefaultNamespace.define(stringNullableTypeSymbol);
 
@@ -202,7 +202,7 @@ public class TypeSystem implements ITypeSystem
 
 
         Set<ITypeSymbol> parentTypes = new HashSet<>();
-        parentTypes.add(objectTypeSymbol);
+        parentTypes.add(mixedTypeSymbol);
         parentTypes.add(stringNullableTypeSymbol);
         stringTypeSymbol = symbolFactory.createScalarTypeSymbol("string", TSPHPDefinitionWalker.TypeString,
                 parentTypes, false,
@@ -232,7 +232,7 @@ public class TypeSystem implements ITypeSystem
         globalDefaultNamespace.define(boolTypeSymbol);
 
         arrayTypeSymbol = symbolFactory.createArrayTypeSymbol("array", TSPHPDefinitionWalker.TypeArray,
-                stringTypeSymbol, objectTypeSymbol);
+                stringTypeSymbol, mixedTypeSymbol);
         globalDefaultNamespace.define(arrayTypeSymbol);
 
         resourceTypeSymbol = symbolFactory.createPseudoTypeSymbol("resource");
@@ -501,9 +501,9 @@ public class TypeSystem implements ITypeSystem
     private void defineExplicitCastings() {
         ITypeSymbol[][] castings = new ITypeSymbol[][]{
                 //everything can be casted to bool and array
-                {objectTypeSymbol, boolNullableTypeSymbol},
-                {objectTypeSymbol, boolTypeSymbol},
-                {objectTypeSymbol, arrayTypeSymbol},
+                {mixedTypeSymbol, boolNullableTypeSymbol},
+                {mixedTypeSymbol, boolTypeSymbol},
+                {mixedTypeSymbol, arrayTypeSymbol},
                 //
                 {boolNullableTypeSymbol, intTypeSymbol},
                 {boolNullableTypeSymbol, floatTypeSymbol},

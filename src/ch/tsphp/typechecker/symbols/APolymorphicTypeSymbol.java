@@ -29,7 +29,7 @@ public abstract class APolymorphicTypeSymbol extends AScopedSymbol implements IP
 
     protected Set<ITypeSymbol> parentTypeSymbols = new HashSet<>();
     protected final ILowerCaseStringMap<List<ISymbol>> symbolsCaseInsensitive = new LowerCaseStringMap<>();
-    private boolean isObjectTheParentTypeSymbol = false;
+    private boolean isMixedTheParentTypeSymbol = false;
     private Set<ISymbol> abstractSymbols;
 
     @SuppressWarnings("checkstyle:parameternumber")
@@ -42,7 +42,7 @@ public abstract class APolymorphicTypeSymbol extends AScopedSymbol implements IP
             ITypeSymbol theParentTypeSymbol) {
         super(scopeHelper, definitionAst, modifiers, name, enclosingScope);
         parentTypeSymbols.add(theParentTypeSymbol);
-        isObjectTheParentTypeSymbol = theParentTypeSymbol.getName().equals("object");
+        isMixedTheParentTypeSymbol = theParentTypeSymbol.getName().equals("object");
     }
 
     @Override
@@ -79,9 +79,9 @@ public abstract class APolymorphicTypeSymbol extends AScopedSymbol implements IP
 
     @Override
     public void addParentTypeSymbol(IPolymorphicTypeSymbol aParent) {
-        if (isObjectTheParentTypeSymbol) {
+        if (isMixedTheParentTypeSymbol) {
             parentTypeSymbols = new HashSet<>();
-            isObjectTheParentTypeSymbol = false;
+            isMixedTheParentTypeSymbol = false;
         }
         parentTypeSymbols.add(aParent);
     }

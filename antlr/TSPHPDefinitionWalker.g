@@ -194,14 +194,14 @@ atom
     		|	identifier='self'
     			//self and parent are already covered above
     		|	^(CLASS_STATIC_ACCESS identifier=(TYPE_NAME|'self'|'parent') .)
-    		|	^(CAST ^(TYPE . type=allTypesWithoutObjectAndResource) .) {$identifier=$type.start;}
+    		|	^(CAST ^(TYPE . type=allTypesWithoutMixedAndResource) .) {$identifier=$type.start;}
     		|	^('instanceof' . (identifier=VariableId | identifier=TYPE_NAME))
     		|	^('new' identifier=TYPE_NAME .)
 	    	)
        		{$identifier.setScope(currentScope);}
 	;
 
-allTypesWithoutObjectAndResource
+allTypesWithoutMixedAndResource
 	:	'bool'
 	|	'int'
 	|	'float'

@@ -24,15 +24,15 @@ import java.util.Set;
 public class SymbolFactory implements ISymbolFactory
 {
     private final IScopeHelper scopeHelper;
-    private ITypeSymbol objectTypeSymbol = null;
+    private ITypeSymbol mixedTypeSymbol = null;
 
     public SymbolFactory(IScopeHelper theScopeHelper) {
         scopeHelper = theScopeHelper;
     }
 
     @Override
-    public void setObjectTypeSymbol(ITypeSymbol typeSymbol) {
-        objectTypeSymbol = typeSymbol;
+    public void setMixedTypeSymbol(ITypeSymbol typeSymbol) {
+        mixedTypeSymbol = typeSymbol;
     }
 
     @Override
@@ -76,12 +76,12 @@ public class SymbolFactory implements ISymbolFactory
     @Override
     public IArrayTypeSymbol createArrayTypeSymbol(String name, int tokenType,
             ITypeSymbol keyValue, ITypeSymbol valueType) {
-        return new ArrayTypeSymbol(name, tokenType, keyValue, valueType, objectTypeSymbol);
+        return new ArrayTypeSymbol(name, tokenType, keyValue, valueType, mixedTypeSymbol);
     }
 
     @Override
     public IPseudoTypeSymbol createPseudoTypeSymbol(String name) {
-        return new PseudoTypeSymbol(name, objectTypeSymbol);
+        return new PseudoTypeSymbol(name, mixedTypeSymbol);
     }
 
     @Override
@@ -91,7 +91,7 @@ public class SymbolFactory implements ISymbolFactory
 
     @Override
     public IAliasTypeSymbol createAliasTypeSymbol(ITSPHPAst definitionAst, String name) {
-        return new AliasTypeSymbol(definitionAst, name, objectTypeSymbol);
+        return new AliasTypeSymbol(definitionAst, name, mixedTypeSymbol);
     }
 
     @Override
@@ -103,7 +103,7 @@ public class SymbolFactory implements ISymbolFactory
                 getModifiers(modifier),
                 identifier.getText(),
                 currentScope,
-                objectTypeSymbol);
+                mixedTypeSymbol);
     }
 
     @Override
@@ -115,7 +115,7 @@ public class SymbolFactory implements ISymbolFactory
                 getModifiers(classModifierAst),
                 identifier.getText(),
                 currentScope,
-                objectTypeSymbol);
+                mixedTypeSymbol);
     }
 
     @Override

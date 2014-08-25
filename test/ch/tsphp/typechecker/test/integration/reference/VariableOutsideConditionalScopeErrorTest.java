@@ -76,8 +76,8 @@ public class VariableOutsideConditionalScopeErrorTest extends AReferenceDefiniti
 
         DefinitionErrorDto[] errorDto = new DefinitionErrorDto[]{new DefinitionErrorDto("$a", 2, 1, "$a", 3, 1)};
         collection.addAll(Arrays.asList(new Object[][]{
-                {prefix + "foreach([1,2] as object\n $a); \n $a; " + appendix, errorDto},
-                {prefix + "foreach([1,2] as string\n $a => object $v); \n $a; " + appendix, errorDto}
+                {prefix + "foreach([1,2] as mixed\n $a); \n $a; " + appendix, errorDto},
+                {prefix + "foreach([1,2] as string\n $a => mixed $v); \n $a; " + appendix, errorDto}
         }));
 
         return collection;
@@ -95,7 +95,7 @@ public class VariableOutsideConditionalScopeErrorTest extends AReferenceDefiniti
                 {prefix + "int $b=1; switch($b){case 1: " + declaration + "} " + statement + "" + appendix, errorDto},
                 {prefix + "for(;;)" + declaration + " " + statement + " " + appendix, errorDto},
                 {prefix + "for(;;){" + declaration + "} " + statement + " " + appendix, errorDto},
-                {prefix + "foreach([1,2] as object $b){" + declaration + "} " + statement + " " + appendix, errorDto},
+                {prefix + "foreach([1,2] as mixed $b){" + declaration + "} " + statement + " " + appendix, errorDto},
                 {prefix + "while(true)" + declaration + " " + statement + "" + appendix, errorDto},
                 {prefix + "if(true){ do{" + declaration + "}while(true);} " + statement + "" + appendix, errorDto},
                 {prefix + "try{ " + declaration + "}catch(\\Exception $e){" + statement + "}" + appendix, errorDto},

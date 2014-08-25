@@ -103,7 +103,7 @@ public class VariableInitialisationErrorTest extends AReferenceDefinitionErrorTe
                 {prefix + "int\n $a; for(;;){$a = 1;}\n $a;" + appendix, errorDto, new PartiallyVerifier()},
                 {prefix + "for(int\n $a;\n $a < 10; ){}" + appendix, errorDto, new NotVerifier()},
                 {
-                        prefix + "int\n $a; foreach([1] as object $v){$a = 1;}\n $a;" + appendix,
+                        prefix + "int\n $a; foreach([1] as mixed $v){$a = 1;}\n $a;" + appendix,
                         errorDto, new PartiallyVerifier()
                 },
                 {
