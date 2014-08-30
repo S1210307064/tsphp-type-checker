@@ -20,8 +20,10 @@ options {
 
 package ch.tsphp.typechecker.antlr;
 
+import ch.tsphp.common.ISymbol;
 import ch.tsphp.common.ITypeSymbol;
 import ch.tsphp.common.ITSPHPAst;
+import ch.tsphp.common.ITSPHPErrorAst;
 import ch.tsphp.typechecker.IAccessResolver;
 import ch.tsphp.typechecker.ITypeCheckPhaseController;
 import ch.tsphp.typechecker.ITypeSystem;
@@ -217,7 +219,6 @@ symbol returns [ITypeSymbol type]
 			{
 			    IMethodSymbol methodSymbol = controller.resolveFunctionCall($identifier, $args);
 		     	    $identifier.setSymbol(methodSymbol);
-			    $type = methodSymbol.getType();
 			}
 			
 		|	^(METHOD_CALL callee=. identifier=Identifier args=.)
@@ -225,7 +226,6 @@ symbol returns [ITypeSymbol type]
 			    $callee.setEvalType($callee.getSymbol().getType());
 			    IMethodSymbol methodSymbol = controller.resolveMethodCall($callee, $identifier, $args);
 			    $identifier.setSymbol(methodSymbol);
-			    $type = methodSymbol.getType();
 			}
 			
 		|	^(METHOD_CALL_STATIC calleeStatic=TYPE_NAME identifier=Identifier args=.)	
@@ -233,12 +233,18 @@ symbol returns [ITypeSymbol type]
 			    $calleeStatic.setEvalType((ITypeSymbol) $calleeStatic.getSymbol());
 			    IMethodSymbol methodSymbol = controller.resolveStaticMethodCall($calleeStatic, $identifier, $args);
 			    $identifier.setSymbol(methodSymbol);
-			    $type = methodSymbol.getType();
 			}
 
 		|	^(CLASS_STATIC_ACCESS accessor=. (identifier=CLASS_STATIC_ACCESS_VARIABLE_ID|identifier=CONSTANT))
 		)
-		{$type = $identifier.getSymbol().getType();}		
+		{
+		    ISymbol symbol =  $identifier.getSymbol();
+		    if(symbol != null) {
+		        $type = symbol.getType();
+		    } else {
+		        $type = controller.createErroneousTypeForMissingSymbol($identifier);
+		    }
+		}
 	;
    
 unaryOperator returns [ITypeSymbol type]

@@ -922,6 +922,13 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
 
     }
 
+    @Override
+    public IErroneousTypeSymbol createErroneousTypeForMissingSymbol(ITSPHPAst identifier) {
+        ReferenceException exception = new ReferenceException(
+                "identifier " + identifier.getText() + "does not have a symbol.", identifier);
+        return symbolFactory.createErroneousTypeSymbol(identifier, exception);
+    }
+
     /**
      * A "delegate" which represents a call of a method on an ITypeCheckerErrorReporter.
      */

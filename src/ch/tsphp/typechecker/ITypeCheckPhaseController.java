@@ -9,6 +9,7 @@ package ch.tsphp.typechecker;
 import ch.tsphp.common.ITSPHPAst;
 import ch.tsphp.common.ITypeSymbol;
 import ch.tsphp.typechecker.symbols.IMethodSymbol;
+import ch.tsphp.typechecker.symbols.erroneous.IErroneousTypeSymbol;
 
 /**
  * Represents the interface between the TSPHPTypeCheckWalker (ANTLR generated) and the logic.
@@ -77,4 +78,6 @@ public interface ITypeCheckPhaseController
     void checkPolymorphism(ITSPHPAst identifier);
 
     void addDefaultValue(ITSPHPAst variableId);
+
+    IErroneousTypeSymbol createErroneousTypeForMissingSymbol(ITSPHPAst identifier);
 }
