@@ -447,8 +447,8 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     @Override
     public void checkEquality(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right) {
-        if (areNotErroneousTypes(left.getEvalType(), right.getEvalType()) &&
-                areNotSameAndNoneIsSubTypeConsiderFalseAndNull(left, right)) {
+        if (areNotErroneousTypes(left.getEvalType(), right.getEvalType())
+                && areNotSameAndNoneIsSubTypeConsiderFalseAndNull(left, right)) {
 
             TypeWithModifiersDto leftDto = getTypeSymbolWithModifierDtoFromExpression(left);
             TypeWithModifiersDto rightDto = getTypeSymbolWithModifierDtoFromExpression(right);

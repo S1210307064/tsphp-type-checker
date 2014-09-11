@@ -9,7 +9,10 @@ package ch.tsphp.typechecker.symbols;
 import ch.tsphp.common.ITSPHPAst;
 import ch.tsphp.common.symbols.modifiers.IModifierSet;
 
+/**
+ * Provides a helper method to retrieve a IModifierSet from an modifier AST.
+ */
 public interface IModifierHelper
 {
-    public IModifierSet getModifiers(ITSPHPAst modifierAst);
+    IModifierSet getModifiers(ITSPHPAst modifierAst);
 }

@@ -59,10 +59,10 @@ public class ClassMemberInitialValueSingleOnlyErrorTest extends ATypeCheckErrorT
         }
 
         collection.addAll(Arrays.asList(new Object[][]{
-                {"class A{bool   \n $b = true & false; }", refErrorDto("$b", 2, 1)},
-                {"class A{bool!  \n $b = true & false; }", refErrorDto("$b", 2, 1)},
-                {"class A{bool?  \n $b = true & false; }", refErrorDto("$b", 2, 1)},
-                {"class A{bool!? \n $b = true & false; }", refErrorDto("$b", 2, 1)},
+                {"class A{bool   \n $b = true && false; }", refErrorDto("$b", 2, 1)},
+                {"class A{bool!  \n $b = true && false; }", refErrorDto("$b", 2, 1)},
+                {"class A{bool?  \n $b = true && false; }", refErrorDto("$b", 2, 1)},
+                {"class A{bool!? \n $b = true && false; }", refErrorDto("$b", 2, 1)},
                 {"class A{int   \n $b = 1 + 1; }", refErrorDto("$b", 2, 1)},
                 {"class A{int!  \n $b = 1 + 4; }", refErrorDto("$b", 2, 1)},
                 {"class A{int?  \n $b = 1 + 3; }", refErrorDto("$b", 2, 1)},

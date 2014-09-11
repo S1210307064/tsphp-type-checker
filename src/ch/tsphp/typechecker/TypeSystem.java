@@ -305,26 +305,7 @@ public class TypeSystem implements ITypeSystem
         globalDefaultNamespace.define(voidTypeSymbol);
 
         defineMixedTypeSymbol();
-
-        boolTypeSymbol = defineScalarType("bool", TypeBool, Bool, "false");
-        boolFalseableTypeSymbol = defineFalseableScalarType("bool!", TypeBool, Bool);
-        boolNullableTypeSymbol = defineNullableScalarType("bool?", TypeBool, Bool);
-        boolFalseableAndNullableTypeSymbol = defineFalseableAndNullableScalarType("bool!?", TypeBool, Bool);
-
-        intTypeSymbol = defineScalarType("int", TypeInt, Int, "0");
-        intFalseableTypeSymbol = defineFalseableScalarType("int!", TypeInt, Int);
-        intNullableTypeSymbol = defineNullableScalarType("int?", TypeInt, Int);
-        intFalseableAndNullableTypeSymbol = defineFalseableAndNullableScalarType("int!?", TypeInt, Int);
-
-        floatTypeSymbol = defineScalarType("float", TypeFloat, Float, "0.0");
-        floatFalseableTypeSymbol = defineFalseableScalarType("float!", TypeFloat, Float);
-        floatNullableTypeSymbol = defineNullableScalarType("float?", TypeFloat, Float);
-        floatFalseableAndNullableTypeSymbol = defineFalseableAndNullableScalarType("float!?", TypeFloat, Float);
-
-        stringTypeSymbol = defineScalarType("string", TypeString, String, "''");
-        stringFalseableTypeSymbol = defineFalseableScalarType("string!", TypeString, String);
-        stringNullableTypeSymbol = defineNullableScalarType("string?", TypeString, String);
-        stringFalseableAndNullableTypeSymbol = defineFalseableAndNullableScalarType("string!?", TypeString, String);
+        defineScalarTypeSymbols();
 
         arrayTypeSymbol = symbolFactory.createArrayTypeSymbol("array", TypeArray, stringTypeSymbol, mixedTypeSymbol);
         globalDefaultNamespace.define(arrayTypeSymbol);
@@ -354,11 +335,34 @@ public class TypeSystem implements ITypeSystem
         globalDefaultNamespace.define(errorException);
     }
 
+
     protected void defineMixedTypeSymbol() {
         mixedTypeSymbol = symbolFactory.createPseudoTypeSymbol("mixed");
         mixedTypeSymbol.addModifier(LogicNot);
         symbolFactory.setMixedTypeSymbol(mixedTypeSymbol);
         globalDefaultNamespace.define(mixedTypeSymbol);
+    }
+
+    private void defineScalarTypeSymbols() {
+        boolTypeSymbol = defineScalarType("bool", TypeBool, Bool, "false");
+        boolFalseableTypeSymbol = defineFalseableScalarType("bool!", TypeBool, Bool);
+        boolNullableTypeSymbol = defineNullableScalarType("bool?", TypeBool, Bool);
+        boolFalseableAndNullableTypeSymbol = defineFalseableAndNullableScalarType("bool!?", TypeBool, Bool);
+
+        intTypeSymbol = defineScalarType("int", TypeInt, Int, "0");
+        intFalseableTypeSymbol = defineFalseableScalarType("int!", TypeInt, Int);
+        intNullableTypeSymbol = defineNullableScalarType("int?", TypeInt, Int);
+        intFalseableAndNullableTypeSymbol = defineFalseableAndNullableScalarType("int!?", TypeInt, Int);
+
+        floatTypeSymbol = defineScalarType("float", TypeFloat, Float, "0.0");
+        floatFalseableTypeSymbol = defineFalseableScalarType("float!", TypeFloat, Float);
+        floatNullableTypeSymbol = defineNullableScalarType("float?", TypeFloat, Float);
+        floatFalseableAndNullableTypeSymbol = defineFalseableAndNullableScalarType("float!?", TypeFloat, Float);
+
+        stringTypeSymbol = defineScalarType("string", TypeString, String, "''");
+        stringFalseableTypeSymbol = defineFalseableScalarType("string!", TypeString, String);
+        stringNullableTypeSymbol = defineNullableScalarType("string?", TypeString, String);
+        stringFalseableAndNullableTypeSymbol = defineFalseableAndNullableScalarType("string!?", TypeString, String);
     }
 
     private IScalarTypeSymbol defineScalarType(
@@ -464,7 +468,6 @@ public class TypeSystem implements ITypeSystem
     }
 
     private void defineOperators() {
-
         defineLogicOperators();
         defineBitLevelOperators();
         defineRelationalOperators();
@@ -561,69 +564,11 @@ public class TypeSystem implements ITypeSystem
         };
         for (Object[] operator : operators) {
             //bool
-            addToBinaryOperators(operator, boolTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, boolTypeSymbol, boolFalseableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, boolTypeSymbol, boolNullableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, boolTypeSymbol, boolFalseableAndNullableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, boolTypeSymbol, intTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, boolTypeSymbol, intFalseableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, boolTypeSymbol, intNullableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, boolTypeSymbol, intFalseableAndNullableTypeSymbol, intTypeSymbol);
-
-            //bool!
-            addToBinaryOperators(operator, boolFalseableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, boolFalseableTypeSymbol, boolNullableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, boolFalseableTypeSymbol, boolFalseableAndNullableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, boolFalseableTypeSymbol, intTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, boolFalseableTypeSymbol, intFalseableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, boolFalseableTypeSymbol, intNullableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, boolFalseableTypeSymbol, intFalseableAndNullableTypeSymbol, intTypeSymbol);
-
-            //bool?
-            addToBinaryOperators(operator, boolNullableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, boolNullableTypeSymbol, boolFalseableAndNullableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, boolNullableTypeSymbol, intTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, boolNullableTypeSymbol, intFalseableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, boolNullableTypeSymbol, intNullableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, boolNullableTypeSymbol, intFalseableAndNullableTypeSymbol, intTypeSymbol);
-
-            //bool!?
-            addToBinaryOperators(operator, boolFalseableAndNullableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, boolFalseableAndNullableTypeSymbol, intTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, boolFalseableAndNullableTypeSymbol, intFalseableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, boolFalseableAndNullableTypeSymbol, intNullableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, boolFalseableAndNullableTypeSymbol, intFalseableAndNullableTypeSymbol, intTypeSymbol);
+            defineBinaryOperatorForBool(operator, intTypeSymbol);
+            defineBinaryOperatorForBoolInt(operator, intTypeSymbol);
 
             //int
-            addToBinaryOperators(operator, intTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, intTypeSymbol, intFalseableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, intTypeSymbol, intNullableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, intTypeSymbol, intFalseableAndNullableTypeSymbol, intTypeSymbol);
-
-            //int!
-            addToBinaryOperators(operator, intFalseableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, intFalseableTypeSymbol, intNullableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, intFalseableTypeSymbol, intFalseableAndNullableTypeSymbol, intTypeSymbol);
-
-            //int?
-            addToBinaryOperators(operator, intNullableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, intNullableTypeSymbol, intFalseableAndNullableTypeSymbol, intTypeSymbol);
-
-            //int!?
-            addToBinaryOperators(operator, intFalseableAndNullableTypeSymbol, intTypeSymbol);
+            defineBinaryOperatorForInt(operator, intTypeSymbol);
         }
 
         addToUnaryOperators(new Object[]{"~", BitwiseNot}, boolTypeSymbol, intTypeSymbol);
@@ -635,6 +580,291 @@ public class TypeSystem implements ITypeSystem
         addToUnaryOperators(new Object[]{"~", BitwiseNot}, intFalseableTypeSymbol, intTypeSymbol);
         addToUnaryOperators(new Object[]{"~", BitwiseNot}, intNullableTypeSymbol, intTypeSymbol);
         addToUnaryOperators(new Object[]{"~", BitwiseNot}, intFalseableAndNullableTypeSymbol, intTypeSymbol);
+    }
+
+    private void defineBinaryOperatorForBool(Object[] operator, ITypeSymbol returnType) {
+        //bool
+        addToBinaryOperators(operator, boolTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(operator, boolTypeSymbol, boolFalseableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(operator, boolTypeSymbol, boolNullableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, boolTypeSymbol, boolFalseableAndNullableTypeSymbol, returnType);
+        //bool!
+        addToBinaryOperators(operator, boolFalseableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(operator, boolFalseableTypeSymbol, boolNullableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, boolFalseableTypeSymbol, boolFalseableAndNullableTypeSymbol, returnType);
+        //bool?
+        addToBinaryOperators(operator, boolNullableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, boolNullableTypeSymbol, boolFalseableAndNullableTypeSymbol, returnType);
+
+        //bool!?
+        addToBinaryOperators(operator, boolFalseableAndNullableTypeSymbol, returnType);
+    }
+
+    private void defineBinaryOperatorForBoolInt(Object[] operator, ITypeSymbol returnType) {
+        //bool
+        addToBinaryOperatorsInclReversed(operator, boolTypeSymbol, intTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(operator, boolTypeSymbol, intFalseableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(operator, boolTypeSymbol, intNullableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, boolTypeSymbol, intFalseableAndNullableTypeSymbol, returnType);
+        //bool!
+        addToBinaryOperatorsInclReversed(operator, boolFalseableTypeSymbol, intTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(operator, boolFalseableTypeSymbol, intFalseableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(operator, boolFalseableTypeSymbol, intNullableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, boolFalseableTypeSymbol, intFalseableAndNullableTypeSymbol, returnType);
+        //bool?
+        addToBinaryOperatorsInclReversed(operator, boolNullableTypeSymbol, intTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(operator, boolNullableTypeSymbol, intFalseableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(operator, boolNullableTypeSymbol, intNullableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, boolNullableTypeSymbol, intFalseableAndNullableTypeSymbol, returnType);
+        //bool!?
+        addToBinaryOperatorsInclReversed(
+                operator, boolFalseableAndNullableTypeSymbol, intTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, boolFalseableAndNullableTypeSymbol, intFalseableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, boolFalseableAndNullableTypeSymbol, intNullableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, boolFalseableAndNullableTypeSymbol, intFalseableAndNullableTypeSymbol, returnType);
+
+
+    }
+
+    private void defineBinaryOperatorForBoolFloat(Object[] operator, ITypeSymbol returnType) {
+        //bool
+        addToBinaryOperatorsInclReversed(operator, boolTypeSymbol, floatTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(operator, boolTypeSymbol, floatFalseableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(operator, boolTypeSymbol, floatNullableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, boolTypeSymbol, floatFalseableAndNullableTypeSymbol, returnType);
+        //bool!
+        addToBinaryOperatorsInclReversed(operator, boolFalseableTypeSymbol, floatTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(operator, boolFalseableTypeSymbol, floatFalseableTypeSymbol,
+                returnType);
+        addToBinaryOperatorsInclReversed(operator, boolFalseableTypeSymbol, floatNullableTypeSymbol,
+                returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, boolFalseableTypeSymbol, floatFalseableAndNullableTypeSymbol, returnType);
+        //bool?
+        addToBinaryOperatorsInclReversed(operator, boolNullableTypeSymbol, floatTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(operator, boolNullableTypeSymbol, floatFalseableTypeSymbol,
+                returnType);
+        addToBinaryOperatorsInclReversed(operator, boolNullableTypeSymbol, floatNullableTypeSymbol,
+                returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, boolNullableTypeSymbol, floatFalseableAndNullableTypeSymbol, returnType);
+        //bool!?
+        addToBinaryOperatorsInclReversed(
+                operator, boolFalseableAndNullableTypeSymbol, floatTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, boolFalseableAndNullableTypeSymbol, floatFalseableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, boolFalseableAndNullableTypeSymbol, floatNullableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, boolFalseableAndNullableTypeSymbol, floatFalseableAndNullableTypeSymbol, returnType);
+
+    }
+
+    private void defineBinaryOperatorForBoolString(Object[] operator, ITypeSymbol returnType) {
+        //bool
+        addToBinaryOperatorsInclReversed(operator, boolTypeSymbol, stringTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(operator, boolTypeSymbol, stringFalseableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(operator, boolTypeSymbol, stringNullableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, boolTypeSymbol, stringFalseableAndNullableTypeSymbol, returnType);
+        //bool!
+        addToBinaryOperatorsInclReversed(operator, boolFalseableTypeSymbol, stringTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(operator, boolFalseableTypeSymbol, stringFalseableTypeSymbol,
+                returnType);
+        addToBinaryOperatorsInclReversed(operator, boolFalseableTypeSymbol, stringNullableTypeSymbol,
+                returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, boolFalseableTypeSymbol, stringFalseableAndNullableTypeSymbol, returnType);
+        //bool?
+        addToBinaryOperatorsInclReversed(operator, boolNullableTypeSymbol, stringTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(operator, boolNullableTypeSymbol, stringFalseableTypeSymbol,
+                returnType);
+        addToBinaryOperatorsInclReversed(operator, boolNullableTypeSymbol, stringNullableTypeSymbol,
+                returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, boolNullableTypeSymbol, stringFalseableAndNullableTypeSymbol, returnType);
+        //bool!?
+        addToBinaryOperatorsInclReversed(
+                operator, boolFalseableAndNullableTypeSymbol, stringTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, boolFalseableAndNullableTypeSymbol, stringFalseableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, boolFalseableAndNullableTypeSymbol, stringNullableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, boolFalseableAndNullableTypeSymbol, stringFalseableAndNullableTypeSymbol, returnType);
+    }
+
+    private void defineBinaryOperatorForInt(Object[] operator, ITypeSymbol returnType) {
+        //int
+        addToBinaryOperators(operator, intTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(operator, intTypeSymbol, intFalseableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(operator, intTypeSymbol, intNullableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, intTypeSymbol, intFalseableAndNullableTypeSymbol, returnType);
+        //int!
+        addToBinaryOperators(operator, intFalseableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(operator, intFalseableTypeSymbol, intNullableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, intFalseableTypeSymbol, intFalseableAndNullableTypeSymbol, returnType);
+        //int?
+        addToBinaryOperators(operator, intNullableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, intNullableTypeSymbol, intFalseableAndNullableTypeSymbol, returnType);
+        //int!?
+        addToBinaryOperators(operator, intFalseableAndNullableTypeSymbol, returnType);
+    }
+
+    private void defineBinaryOperatorForIntFloat(Object[] operator, ITypeSymbol returnType) {
+        //int
+        addToBinaryOperatorsInclReversed(operator, intTypeSymbol, floatTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(operator, intTypeSymbol, floatFalseableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(operator, intTypeSymbol, floatNullableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, intTypeSymbol, floatFalseableAndNullableTypeSymbol, returnType);
+        //int!
+        addToBinaryOperatorsInclReversed(operator, intFalseableTypeSymbol, floatTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(operator, intFalseableTypeSymbol, floatFalseableTypeSymbol,
+                returnType);
+        addToBinaryOperatorsInclReversed(operator, intFalseableTypeSymbol, floatNullableTypeSymbol,
+                returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, intFalseableTypeSymbol, floatFalseableAndNullableTypeSymbol, returnType);
+        //int?
+        addToBinaryOperatorsInclReversed(operator, intNullableTypeSymbol, floatTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(operator, intNullableTypeSymbol, floatFalseableTypeSymbol,
+                returnType);
+        addToBinaryOperatorsInclReversed(operator, intNullableTypeSymbol, floatNullableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, intNullableTypeSymbol, floatFalseableAndNullableTypeSymbol, returnType);
+        //int!?
+        addToBinaryOperatorsInclReversed(
+                operator, intFalseableAndNullableTypeSymbol, floatTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, intFalseableAndNullableTypeSymbol, floatFalseableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, intFalseableAndNullableTypeSymbol, floatNullableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, intFalseableAndNullableTypeSymbol, floatFalseableAndNullableTypeSymbol, returnType);
+    }
+
+    private void defineBinaryOperatorForIntString(Object[] operator, ITypeSymbol returnType) {
+        //int
+        addToBinaryOperatorsInclReversed(operator, intTypeSymbol, stringTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(operator, intTypeSymbol, stringFalseableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(operator, intTypeSymbol, stringNullableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, intTypeSymbol, stringFalseableAndNullableTypeSymbol, returnType);
+        //int!
+        addToBinaryOperatorsInclReversed(operator, intFalseableTypeSymbol, stringTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(operator, intFalseableTypeSymbol, stringFalseableTypeSymbol,
+                returnType);
+        addToBinaryOperatorsInclReversed(operator, intFalseableTypeSymbol, stringNullableTypeSymbol,
+                returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, intFalseableTypeSymbol, stringFalseableAndNullableTypeSymbol, returnType);
+        //int?
+        addToBinaryOperatorsInclReversed(operator, intNullableTypeSymbol, stringTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(operator, intNullableTypeSymbol, stringFalseableTypeSymbol,
+                returnType);
+        addToBinaryOperatorsInclReversed(operator, intNullableTypeSymbol, stringNullableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, intNullableTypeSymbol, stringFalseableAndNullableTypeSymbol, returnType);
+        //int!?
+        addToBinaryOperatorsInclReversed(
+                operator, intFalseableAndNullableTypeSymbol, stringTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, intFalseableAndNullableTypeSymbol, stringFalseableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, intFalseableAndNullableTypeSymbol, stringNullableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, intFalseableAndNullableTypeSymbol, stringFalseableAndNullableTypeSymbol, returnType);
+    }
+
+    private void defineBinaryOperatorForFloat(Object[] operator, ITypeSymbol returnType) {
+        //float
+        addToBinaryOperators(operator, floatTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(operator, floatTypeSymbol, floatFalseableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(operator, floatTypeSymbol, floatNullableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, floatTypeSymbol, floatFalseableAndNullableTypeSymbol, returnType);
+        //float!
+        addToBinaryOperators(operator, floatFalseableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(operator, floatFalseableTypeSymbol, floatNullableTypeSymbol,
+                returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, floatFalseableTypeSymbol, floatFalseableAndNullableTypeSymbol, returnType);
+
+        //float?
+        addToBinaryOperators(operator, floatNullableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, floatNullableTypeSymbol, floatFalseableAndNullableTypeSymbol, returnType);
+
+        //float!?
+        addToBinaryOperators(operator, floatFalseableAndNullableTypeSymbol, returnType);
+    }
+
+    private void defineBinaryOperatorForFloatString(Object[] operator, ITypeSymbol returnType) {
+        //float
+        addToBinaryOperatorsInclReversed(operator, floatTypeSymbol, stringTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(operator, floatTypeSymbol, stringFalseableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(operator, floatTypeSymbol, stringNullableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, floatTypeSymbol, stringFalseableAndNullableTypeSymbol, returnType);
+        //float!
+        addToBinaryOperatorsInclReversed(operator, floatFalseableTypeSymbol, stringTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, floatFalseableTypeSymbol, stringFalseableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, floatFalseableTypeSymbol, stringNullableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, floatFalseableTypeSymbol, stringFalseableAndNullableTypeSymbol, returnType);
+        //float?
+        addToBinaryOperatorsInclReversed(operator, floatNullableTypeSymbol, stringTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(operator, floatNullableTypeSymbol, stringFalseableTypeSymbol,
+                returnType);
+        addToBinaryOperatorsInclReversed(operator, floatNullableTypeSymbol, stringNullableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, floatNullableTypeSymbol, stringFalseableAndNullableTypeSymbol, returnType);
+        //float!?
+        addToBinaryOperatorsInclReversed(
+                operator, floatFalseableAndNullableTypeSymbol, stringTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, floatFalseableAndNullableTypeSymbol, stringFalseableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, floatFalseableAndNullableTypeSymbol, stringNullableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, floatFalseableAndNullableTypeSymbol, stringFalseableAndNullableTypeSymbol, returnType);
+    }
+
+    private void defineBinaryOperatorForString(Object[] operator, ITypeSymbol returnType) {
+        //string
+        addToBinaryOperators(operator, stringTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(operator, stringTypeSymbol, stringFalseableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(operator, stringTypeSymbol, stringNullableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, stringTypeSymbol, stringFalseableAndNullableTypeSymbol, returnType);
+        //string!
+        addToBinaryOperators(operator, stringFalseableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, stringFalseableTypeSymbol, stringNullableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, stringFalseableTypeSymbol, stringFalseableAndNullableTypeSymbol, returnType);
+        //string?
+        addToBinaryOperators(operator, stringNullableTypeSymbol, returnType);
+        addToBinaryOperatorsInclReversed(
+                operator, stringNullableTypeSymbol, stringFalseableAndNullableTypeSymbol, returnType);
+        //string!?
+        addToBinaryOperators(operator, stringFalseableAndNullableTypeSymbol, returnType);
     }
 
     private void addToBinaryOperatorsInclReversed(
@@ -653,76 +883,13 @@ public class TypeSystem implements ITypeSystem
 
         for (Object[] operator : operators) {
             //int
-            addToBinaryOperators(operator, intTypeSymbol, boolTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, intTypeSymbol, intFalseableTypeSymbol, boolTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, intTypeSymbol, intNullableTypeSymbol, boolTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, intTypeSymbol, intFalseableAndNullableTypeSymbol, boolTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, intTypeSymbol, floatTypeSymbol, boolTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, intTypeSymbol, floatFalseableTypeSymbol, boolTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, intTypeSymbol, floatNullableTypeSymbol, boolTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, intTypeSymbol, floatFalseableAndNullableTypeSymbol, boolTypeSymbol);
-
-            //int!
-            addToBinaryOperators(operator, intFalseableTypeSymbol, boolTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, intFalseableTypeSymbol, intNullableTypeSymbol, boolTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, intFalseableTypeSymbol, intFalseableAndNullableTypeSymbol, boolTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, intFalseableTypeSymbol, floatTypeSymbol, boolTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, intFalseableTypeSymbol, floatFalseableTypeSymbol,
-                    boolTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, intFalseableTypeSymbol, floatNullableTypeSymbol,
-                    boolTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, intFalseableTypeSymbol, floatFalseableAndNullableTypeSymbol, boolTypeSymbol);
-
-            //int?
-            addToBinaryOperators(operator, intNullableTypeSymbol, boolTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, intNullableTypeSymbol, intFalseableAndNullableTypeSymbol, boolTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, intNullableTypeSymbol, floatTypeSymbol, boolTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, intNullableTypeSymbol, floatFalseableTypeSymbol,
-                    boolTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, intNullableTypeSymbol, floatNullableTypeSymbol, boolTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, intNullableTypeSymbol, floatFalseableAndNullableTypeSymbol, boolTypeSymbol);
-
-            //int!?
-            addToBinaryOperators(operator, intFalseableAndNullableTypeSymbol, boolTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, intFalseableAndNullableTypeSymbol, floatTypeSymbol, boolTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, intFalseableAndNullableTypeSymbol, floatFalseableTypeSymbol, boolTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, intFalseableAndNullableTypeSymbol, floatNullableTypeSymbol, boolTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, intFalseableAndNullableTypeSymbol, floatFalseableAndNullableTypeSymbol, boolTypeSymbol);
+            defineBinaryOperatorForInt(operator, boolTypeSymbol);
+            defineBinaryOperatorForIntFloat(operator, boolTypeSymbol);
 
             //float
-            addToBinaryOperators(operator, floatTypeSymbol, boolTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, floatTypeSymbol, floatFalseableTypeSymbol, boolTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, floatTypeSymbol, floatNullableTypeSymbol, boolTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, floatTypeSymbol, floatFalseableAndNullableTypeSymbol, boolTypeSymbol);
-
-            //float!
-            addToBinaryOperators(operator, floatFalseableTypeSymbol, boolTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, floatFalseableTypeSymbol, floatNullableTypeSymbol,
-                    boolTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, floatFalseableTypeSymbol, floatFalseableAndNullableTypeSymbol, boolTypeSymbol);
-
-            //float?
-            addToBinaryOperators(operator, floatNullableTypeSymbol, boolTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, floatNullableTypeSymbol, floatFalseableAndNullableTypeSymbol, boolTypeSymbol);
-
-            //float!?
-            addToBinaryOperators(operator, floatFalseableAndNullableTypeSymbol, boolTypeSymbol);
+            defineBinaryOperatorForFloat(operator, boolTypeSymbol);
         }
     }
-
 
     private void defineArithmeticOperators() {
         Object[][] operators = new Object[][]{
@@ -735,146 +902,18 @@ public class TypeSystem implements ITypeSystem
         };
 
         for (Object[] operator : operators) {
+
             //bool
-            addToBinaryOperators(operator, boolTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, boolTypeSymbol, boolFalseableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, boolTypeSymbol, boolNullableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, boolTypeSymbol, boolFalseableAndNullableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, boolTypeSymbol, intTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, boolTypeSymbol, intFalseableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, boolTypeSymbol, intNullableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, boolTypeSymbol, intFalseableAndNullableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, boolTypeSymbol, floatTypeSymbol, floatTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, boolTypeSymbol, floatFalseableTypeSymbol, floatTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, boolTypeSymbol, floatNullableTypeSymbol, floatTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, boolTypeSymbol, floatFalseableAndNullableTypeSymbol, floatTypeSymbol);
-
-            //bool!
-            addToBinaryOperators(operator, boolFalseableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, boolFalseableTypeSymbol, boolNullableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, boolFalseableTypeSymbol, boolFalseableAndNullableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, boolFalseableTypeSymbol, intTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, boolFalseableTypeSymbol, intFalseableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, boolFalseableTypeSymbol, intNullableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, boolFalseableTypeSymbol, intFalseableAndNullableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, boolFalseableTypeSymbol, floatTypeSymbol, floatTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, boolFalseableTypeSymbol, floatFalseableTypeSymbol,
-                    floatTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, boolFalseableTypeSymbol, floatNullableTypeSymbol,
-                    floatTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, boolFalseableTypeSymbol, floatFalseableAndNullableTypeSymbol, floatTypeSymbol);
-
-            //bool?
-            addToBinaryOperators(operator, boolNullableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, boolNullableTypeSymbol, boolFalseableAndNullableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, boolNullableTypeSymbol, intTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, boolNullableTypeSymbol, intFalseableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, boolNullableTypeSymbol, intNullableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, boolNullableTypeSymbol, intFalseableAndNullableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, boolNullableTypeSymbol, floatTypeSymbol, floatTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, boolNullableTypeSymbol, floatFalseableTypeSymbol,
-                    floatTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, boolNullableTypeSymbol, floatNullableTypeSymbol,
-                    floatTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, boolNullableTypeSymbol, floatFalseableAndNullableTypeSymbol, floatTypeSymbol);
-
-            //bool!?
-            addToBinaryOperators(operator, boolFalseableAndNullableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, boolFalseableAndNullableTypeSymbol, intTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, boolFalseableAndNullableTypeSymbol, intFalseableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, boolFalseableAndNullableTypeSymbol, intNullableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, boolFalseableAndNullableTypeSymbol, intFalseableAndNullableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, boolFalseableAndNullableTypeSymbol, floatTypeSymbol, floatTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, boolFalseableAndNullableTypeSymbol, floatFalseableTypeSymbol, floatTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, boolFalseableAndNullableTypeSymbol, floatNullableTypeSymbol, floatTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, boolFalseableAndNullableTypeSymbol, floatFalseableAndNullableTypeSymbol, floatTypeSymbol);
+            defineBinaryOperatorForBool(operator, intTypeSymbol);
+            defineBinaryOperatorForBoolInt(operator, intTypeSymbol);
+            defineBinaryOperatorForBoolFloat(operator, floatTypeSymbol);
 
             //int
-            addToBinaryOperators(operator, intTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, intTypeSymbol, intFalseableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, intTypeSymbol, intNullableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, intTypeSymbol, intFalseableAndNullableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, intTypeSymbol, floatTypeSymbol, floatTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, intTypeSymbol, floatFalseableTypeSymbol, floatTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, intTypeSymbol, floatNullableTypeSymbol, floatTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, intTypeSymbol, floatFalseableAndNullableTypeSymbol, floatTypeSymbol);
-
-            //int!
-            addToBinaryOperators(operator, intFalseableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, intFalseableTypeSymbol, intNullableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, intFalseableTypeSymbol, intFalseableAndNullableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, intFalseableTypeSymbol, floatTypeSymbol, floatTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, intFalseableTypeSymbol, floatFalseableTypeSymbol,
-                    floatTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, intFalseableTypeSymbol, floatNullableTypeSymbol,
-                    floatTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, intFalseableTypeSymbol, floatFalseableAndNullableTypeSymbol, floatTypeSymbol);
-
-            //int?
-            addToBinaryOperators(operator, intNullableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, intNullableTypeSymbol, intFalseableAndNullableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, intNullableTypeSymbol, floatTypeSymbol, floatTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, intNullableTypeSymbol, floatFalseableTypeSymbol,
-                    floatTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, intNullableTypeSymbol, floatNullableTypeSymbol, floatTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, intNullableTypeSymbol, floatFalseableAndNullableTypeSymbol, floatTypeSymbol);
-
-            //int!?
-            addToBinaryOperators(operator, intFalseableAndNullableTypeSymbol, intTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, intFalseableAndNullableTypeSymbol, floatTypeSymbol, floatTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, intFalseableAndNullableTypeSymbol, floatFalseableTypeSymbol, floatTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, intFalseableAndNullableTypeSymbol, floatNullableTypeSymbol, floatTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, intFalseableAndNullableTypeSymbol, floatFalseableAndNullableTypeSymbol, floatTypeSymbol);
+            defineBinaryOperatorForInt(operator, intTypeSymbol);
+            defineBinaryOperatorForIntFloat(operator, floatTypeSymbol);
 
             //float
-            addToBinaryOperators(operator, floatTypeSymbol, floatTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, floatTypeSymbol, floatFalseableTypeSymbol, floatTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, floatTypeSymbol, floatNullableTypeSymbol, floatTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, floatTypeSymbol, floatFalseableAndNullableTypeSymbol, floatTypeSymbol);
-
-            //float!
-            addToBinaryOperators(operator, floatFalseableTypeSymbol, floatTypeSymbol);
-            addToBinaryOperatorsInclReversed(operator, floatFalseableTypeSymbol, floatNullableTypeSymbol,
-                    floatTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, floatFalseableTypeSymbol, floatFalseableAndNullableTypeSymbol, floatTypeSymbol);
-
-            //float?
-            addToBinaryOperators(operator, floatNullableTypeSymbol, floatTypeSymbol);
-            addToBinaryOperatorsInclReversed(
-                    operator, floatNullableTypeSymbol, floatFalseableAndNullableTypeSymbol, floatTypeSymbol);
-
-            //float!?
-            addToBinaryOperators(operator, floatFalseableAndNullableTypeSymbol, floatTypeSymbol);
-
+            defineBinaryOperatorForFloat(operator, floatTypeSymbol);
         }
 
         operators = new Object[][]{
@@ -925,250 +964,30 @@ public class TypeSystem implements ITypeSystem
         addToBinaryOperators(new Object[]{"+", Plus}, arrayTypeSymbol, arrayTypeSymbol);
     }
 
+
     private void defineDotOperator() {
         Object[] operator = new Object[]{".", Dot};
 
         //bool
-        addToBinaryOperators(operator, boolTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, boolTypeSymbol, boolFalseableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, boolTypeSymbol, boolNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, boolTypeSymbol, boolFalseableAndNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, boolTypeSymbol, intTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, boolTypeSymbol, intFalseableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, boolTypeSymbol, intNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, boolTypeSymbol, intFalseableAndNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, boolTypeSymbol, floatTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, boolTypeSymbol, floatFalseableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, boolTypeSymbol, floatNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, boolTypeSymbol, floatFalseableAndNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, boolTypeSymbol, stringTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, boolTypeSymbol, stringFalseableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, boolTypeSymbol, stringNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, boolTypeSymbol, stringFalseableAndNullableTypeSymbol, stringTypeSymbol);
-
-        //bool!
-        addToBinaryOperators(operator, boolFalseableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, boolFalseableTypeSymbol, boolNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, boolFalseableTypeSymbol, boolFalseableAndNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, boolFalseableTypeSymbol, intTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, boolFalseableTypeSymbol, intFalseableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, boolFalseableTypeSymbol, intNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, boolFalseableTypeSymbol, intFalseableAndNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, boolFalseableTypeSymbol, floatTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, boolFalseableTypeSymbol, floatFalseableTypeSymbol,
-                stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, boolFalseableTypeSymbol, floatNullableTypeSymbol,
-                stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, boolFalseableTypeSymbol, floatFalseableAndNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, boolFalseableTypeSymbol, stringTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, boolFalseableTypeSymbol, stringFalseableTypeSymbol,
-                stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, boolFalseableTypeSymbol, stringNullableTypeSymbol,
-                stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, boolFalseableTypeSymbol, stringFalseableAndNullableTypeSymbol, stringTypeSymbol);
-
-        //bool?
-        addToBinaryOperators(operator, boolNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, boolNullableTypeSymbol, boolFalseableAndNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, boolNullableTypeSymbol, intTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, boolNullableTypeSymbol, intFalseableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, boolNullableTypeSymbol, intNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, boolNullableTypeSymbol, intFalseableAndNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, boolNullableTypeSymbol, floatTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, boolNullableTypeSymbol, floatFalseableTypeSymbol,
-                stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, boolNullableTypeSymbol, floatNullableTypeSymbol,
-                stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, boolNullableTypeSymbol, floatFalseableAndNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, boolNullableTypeSymbol, stringTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, boolNullableTypeSymbol, stringFalseableTypeSymbol,
-                stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, boolNullableTypeSymbol, stringNullableTypeSymbol,
-                stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, boolNullableTypeSymbol, stringFalseableAndNullableTypeSymbol, stringTypeSymbol);
-
-        //bool!?
-        addToBinaryOperators(operator, boolFalseableAndNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, boolFalseableAndNullableTypeSymbol, intTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, boolFalseableAndNullableTypeSymbol, intFalseableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, boolFalseableAndNullableTypeSymbol, intNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, boolFalseableAndNullableTypeSymbol, intFalseableAndNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, boolFalseableAndNullableTypeSymbol, floatTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, boolFalseableAndNullableTypeSymbol, floatFalseableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, boolFalseableAndNullableTypeSymbol, floatNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, boolFalseableAndNullableTypeSymbol, floatFalseableAndNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, boolFalseableAndNullableTypeSymbol, stringTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, boolFalseableAndNullableTypeSymbol, stringFalseableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, boolFalseableAndNullableTypeSymbol, stringNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, boolFalseableAndNullableTypeSymbol, stringFalseableAndNullableTypeSymbol, stringTypeSymbol);
+        defineBinaryOperatorForBool(operator, stringTypeSymbol);
+        defineBinaryOperatorForBoolInt(operator, stringTypeSymbol);
+        defineBinaryOperatorForBoolFloat(operator, stringTypeSymbol);
+        defineBinaryOperatorForBoolString(operator, stringTypeSymbol);
 
         //int
-        addToBinaryOperators(operator, intTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, intTypeSymbol, intFalseableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, intTypeSymbol, intNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, intTypeSymbol, intFalseableAndNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, intTypeSymbol, floatTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, intTypeSymbol, floatFalseableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, intTypeSymbol, floatNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, intTypeSymbol, floatFalseableAndNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, intTypeSymbol, stringTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, intTypeSymbol, stringFalseableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, intTypeSymbol, stringNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, intTypeSymbol, stringFalseableAndNullableTypeSymbol, stringTypeSymbol);
-
-        //int!
-        addToBinaryOperators(operator, intFalseableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, intFalseableTypeSymbol, intNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, intFalseableTypeSymbol, intFalseableAndNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, intFalseableTypeSymbol, floatTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, intFalseableTypeSymbol, floatFalseableTypeSymbol,
-                stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, intFalseableTypeSymbol, floatNullableTypeSymbol,
-                stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, intFalseableTypeSymbol, floatFalseableAndNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, intFalseableTypeSymbol, stringTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, intFalseableTypeSymbol, stringFalseableTypeSymbol,
-                stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, intFalseableTypeSymbol, stringNullableTypeSymbol,
-                stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, intFalseableTypeSymbol, stringFalseableAndNullableTypeSymbol, stringTypeSymbol);
-
-        //int?
-        addToBinaryOperators(operator, intNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, intNullableTypeSymbol, intFalseableAndNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, intNullableTypeSymbol, floatTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, intNullableTypeSymbol, floatFalseableTypeSymbol,
-                stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, intNullableTypeSymbol, floatNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, intNullableTypeSymbol, floatFalseableAndNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, intNullableTypeSymbol, stringTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, intNullableTypeSymbol, stringFalseableTypeSymbol,
-                stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, intNullableTypeSymbol, stringNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, intNullableTypeSymbol, stringFalseableAndNullableTypeSymbol, stringTypeSymbol);
-
-        //int!?
-        addToBinaryOperators(operator, intFalseableAndNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, intFalseableAndNullableTypeSymbol, floatTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, intFalseableAndNullableTypeSymbol, floatFalseableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, intFalseableAndNullableTypeSymbol, floatNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, intFalseableAndNullableTypeSymbol, floatFalseableAndNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, intFalseableAndNullableTypeSymbol, stringTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, intFalseableAndNullableTypeSymbol, stringFalseableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, intFalseableAndNullableTypeSymbol, stringNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, intFalseableAndNullableTypeSymbol, stringFalseableAndNullableTypeSymbol, stringTypeSymbol);
+        defineBinaryOperatorForInt(operator, stringTypeSymbol);
+        defineBinaryOperatorForIntFloat(operator, stringTypeSymbol);
+        defineBinaryOperatorForIntString(operator, stringTypeSymbol);
 
         //float
-        addToBinaryOperators(operator, floatTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, floatTypeSymbol, floatFalseableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, floatTypeSymbol, floatNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, floatTypeSymbol, floatFalseableAndNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, floatTypeSymbol, stringTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, floatTypeSymbol, stringFalseableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, floatTypeSymbol, stringNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, floatTypeSymbol, stringFalseableAndNullableTypeSymbol, stringTypeSymbol);
-
-        //float!
-        addToBinaryOperators(operator, floatFalseableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, floatFalseableTypeSymbol, floatNullableTypeSymbol,
-                stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, floatFalseableTypeSymbol, floatFalseableAndNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, floatFalseableTypeSymbol, stringTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, floatFalseableTypeSymbol, stringFalseableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, floatFalseableTypeSymbol, stringNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, floatFalseableTypeSymbol, stringFalseableAndNullableTypeSymbol, stringTypeSymbol);
-
-        //float?
-        addToBinaryOperators(operator, floatNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, floatNullableTypeSymbol, floatFalseableAndNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, floatNullableTypeSymbol, stringTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, floatNullableTypeSymbol, stringFalseableTypeSymbol,
-                stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, floatNullableTypeSymbol, stringNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, floatNullableTypeSymbol, stringFalseableAndNullableTypeSymbol, stringTypeSymbol);
-
-        //float!?
-        addToBinaryOperators(operator, floatFalseableAndNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, floatFalseableAndNullableTypeSymbol, stringTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, floatFalseableAndNullableTypeSymbol, stringFalseableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, floatFalseableAndNullableTypeSymbol, stringNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, floatFalseableAndNullableTypeSymbol, stringFalseableAndNullableTypeSymbol, stringTypeSymbol);
+        defineBinaryOperatorForFloat(operator, stringTypeSymbol);
+        defineBinaryOperatorForFloatString(operator, stringTypeSymbol);
 
         //string
-        addToBinaryOperators(operator, stringTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, stringTypeSymbol, stringFalseableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(operator, stringTypeSymbol, stringNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, stringTypeSymbol, stringFalseableAndNullableTypeSymbol, stringTypeSymbol);
-
-        //string!
-        addToBinaryOperators(operator, stringFalseableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, stringFalseableTypeSymbol, stringNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, stringFalseableTypeSymbol, stringFalseableAndNullableTypeSymbol, stringTypeSymbol);
-
-        //string?
-        addToBinaryOperators(operator, stringNullableTypeSymbol, stringTypeSymbol);
-        addToBinaryOperatorsInclReversed(
-                operator, stringNullableTypeSymbol, stringFalseableAndNullableTypeSymbol, stringTypeSymbol);
-        //string!?
-        addToBinaryOperators(operator, stringFalseableAndNullableTypeSymbol, stringTypeSymbol);
+        defineBinaryOperatorForString(operator, stringTypeSymbol);
     }
 
+    @SuppressWarnings("checkstyle:methodlength")
     private void defineImplicitCastings() {
         ITypeSymbolWithPHPBuiltInCasting[][] castings = new ITypeSymbolWithPHPBuiltInCasting[][]{
                 //bool to bool
@@ -1283,6 +1102,7 @@ public class TypeSystem implements ITypeSystem
         }
     }
 
+    @SuppressWarnings("checkstyle:methodlength")
     private void defineExplicitCastings() {
         ITypeSymbol[][] castings = new ITypeSymbol[][]{
                 //everything can be casted to bool and array
@@ -1481,7 +1301,6 @@ public class TypeSystem implements ITypeSystem
                     new BuiltInCastingMethod(astHelper, (ITypeSymbolWithPHPBuiltInCasting) fromTo[1]));
         }
     }
-
 
     @Override
     public void addExplicitCastFromTo(ITypeSymbol actualParameterType, ITypeSymbol formalParameterType) {

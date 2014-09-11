@@ -25,8 +25,8 @@ public abstract class ASymbolWithModifier extends ASymbol implements ISymbolWith
 
     @Override
     public String toString() {
-        return super.toString() + ch.tsphp.typechecker.utils.ModifierHelper.getModifiersAsString(new TreeSet<>
-                (modifiers));
+        return super.toString() + ch.tsphp.typechecker.utils.ModifierHelper.getModifiersAsString(
+                new TreeSet<>(modifiers));
     }
 
     @Override

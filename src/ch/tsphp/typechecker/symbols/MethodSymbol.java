@@ -102,8 +102,8 @@ public class MethodSymbol extends AScopedSymbol implements IMethodSymbol
 
     @Override
     public String toString() {
-        return super.toString() + ch.tsphp.typechecker.utils.ModifierHelper.getModifiersAsString(new TreeSet<>
-                (returnTypeModifiers));
+        return super.toString() + ch.tsphp.typechecker.utils.ModifierHelper.getModifiersAsString(
+                new TreeSet<>(returnTypeModifiers));
     }
 
     //Warning! start code duplication - same as in GlobalNamespaceScope
