@@ -36,7 +36,7 @@ public class ThrowErrorTest extends ATypeCheckErrorTest
         List<Object[]> collection = new ArrayList<>();
         ReferenceErrorDto[] errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto("throw", 2, 1)};
 
-        String[][] types = TypeHelper.getTypesInclDefaultValueWithoutExceptions();
+        String[][] types = TypeHelper.getAllTypesInclDefaultValueWithoutExceptions();
         for (String type[] : types) {
             collection.add(new Object[]{type[0] + " $b=" + type[1] + ";\n throw $b;", errorDto});
         }

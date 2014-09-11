@@ -6,7 +6,7 @@
 
 package ch.tsphp.typechecker.symbols;
 
-import ch.tsphp.common.ITypeSymbol;
+import ch.tsphp.common.symbols.ITypeSymbol;
 
 /**
  * Represents a type which does not actually exists as such like mixed or resource.

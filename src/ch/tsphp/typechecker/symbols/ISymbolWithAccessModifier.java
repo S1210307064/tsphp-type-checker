@@ -6,14 +6,12 @@
 
 package ch.tsphp.typechecker.symbols;
 
-public interface ISymbolWithAccessModifier extends ISymbolWithModifier
+import ch.tsphp.common.symbols.ISymbolWithModifier;
+import ch.tsphp.common.symbols.modifiers.ICanBePrivate;
+import ch.tsphp.common.symbols.modifiers.ICanBeProtected;
+import ch.tsphp.common.symbols.modifiers.ICanBePublic;
+
+public interface ISymbolWithAccessModifier extends ISymbolWithModifier, ICanBePublic, ICanBeProtected, ICanBePrivate
 {
-
-    boolean isPublic();
-
-    boolean isProtected();
-
-    boolean isPrivate();
-
     boolean canBeAccessedFrom(int type);
 }

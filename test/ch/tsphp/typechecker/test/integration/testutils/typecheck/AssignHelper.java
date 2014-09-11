@@ -12,20 +12,32 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static ch.tsphp.typechecker.test.integration.testutils.typecheck.AOperatorTypeCheckTest.Array;
-import static ch.tsphp.typechecker.test.integration.testutils.typecheck.AOperatorTypeCheckTest.Bool;
-import static ch.tsphp.typechecker.test.integration.testutils.typecheck.AOperatorTypeCheckTest.BoolNullable;
-import static ch.tsphp.typechecker.test.integration.testutils.typecheck.AOperatorTypeCheckTest.ErrorException;
-import static ch.tsphp.typechecker.test.integration.testutils.typecheck.AOperatorTypeCheckTest.Exception;
-import static ch.tsphp.typechecker.test.integration.testutils.typecheck.AOperatorTypeCheckTest.Float;
-import static ch.tsphp.typechecker.test.integration.testutils.typecheck.AOperatorTypeCheckTest.FloatNullable;
-import static ch.tsphp.typechecker.test.integration.testutils.typecheck.AOperatorTypeCheckTest.Int;
-import static ch.tsphp.typechecker.test.integration.testutils.typecheck.AOperatorTypeCheckTest.IntNullable;
-import static ch.tsphp.typechecker.test.integration.testutils.typecheck.AOperatorTypeCheckTest.Mixed;
-import static ch.tsphp.typechecker.test.integration.testutils.typecheck.AOperatorTypeCheckTest.Null;
-import static ch.tsphp.typechecker.test.integration.testutils.typecheck.AOperatorTypeCheckTest.Resource;
-import static ch.tsphp.typechecker.test.integration.testutils.typecheck.AOperatorTypeCheckTest.String;
-import static ch.tsphp.typechecker.test.integration.testutils.typecheck.AOperatorTypeCheckTest.StringNullable;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.Array;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.ArrayFalseable;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.Bool;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.BoolFalseable;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.BoolFalseableAndNullable;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.BoolNullable;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.ErrorException;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.ErrorExceptionFalseable;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.Exception;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.ExceptionFalseable;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.Float;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.FloatFalseable;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.FloatFalseableAndNullable;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.FloatNullable;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.Int;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.IntFalseable;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.IntFalseableAndNullable;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.IntNullable;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.Mixed;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.Null;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.Resource;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.ResourceFalseable;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.String;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.StringFalseable;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.StringFalseableAndNullable;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.StringNullable;
 
 public class AssignHelper
 {
@@ -33,9 +45,9 @@ public class AssignHelper
     private static Collection<Object[]> collection;
     private static boolean isDeclaration;
 
-    public static void addAssignments(Collection<Object[]> theCollection, boolean isDeclaration) {
+    public static void addAssignments(Collection<Object[]> theCollection, boolean isItDeclaration) {
         collection = theCollection;
-        AssignHelper.isDeclaration = isDeclaration;
+        isDeclaration = isItDeclaration;
 
         addSimpleAssignment();
 
@@ -43,83 +55,191 @@ public class AssignHelper
     }
 
     private static void addSimpleAssignment() {
+        Object[][] types = new Object[][]{
+                {"bool", "false", Bool, Bool},
+                {"bool", "true", Bool, Bool},
+                {"bool!", "false", BoolFalseable, Bool},
+                {"bool!", "true", BoolFalseable, Bool},
+                {"bool?", "false", BoolNullable, Bool},
+                {"bool?", "true", BoolNullable, Bool},
+                {"bool?", "null", BoolNullable, Null},
+                {"bool!?", "false", BoolFalseableAndNullable, Bool},
+                {"bool!?", "true", BoolFalseableAndNullable, Bool},
+                {"bool!?", "null", BoolFalseableAndNullable, Null},
+                {"int", "1", Int, Int},
+                {"int!", "1", IntFalseable, Int},
+                {"int!", "false", IntFalseable, Bool},
+                {"int?", "1", IntNullable, Int},
+                {"int?", "null", IntNullable, Null},
+                {"int!?", "1", IntFalseableAndNullable, Int},
+                {"int!?", "false", IntFalseableAndNullable, Bool},
+                {"int!?", "null", IntFalseableAndNullable, Null},
+                {"float", "1.3", Float, Float},
+                {"float!", "1.3", FloatFalseable, Float},
+                {"float!", "false", FloatFalseable, Bool},
+                {"float?", "1.3", FloatNullable, Float},
+                {"float?", "null", FloatNullable, Null},
+                {"float!?", "1.3", FloatFalseableAndNullable, Float},
+                {"float!?", "false", FloatFalseableAndNullable, Bool},
+                {"float!?", "null", FloatFalseableAndNullable, Null},
+                {"string", "'hello'", String, String},
+                {"string", "\"hi\"", String, String},
+                {"string!", "'hello'", StringFalseable, String},
+                {"string!", "\"hi\"", StringFalseable, String},
+                {"string!", "false", StringFalseable, Bool},
+                {"string?", "'hello'", StringNullable, String},
+                {"string?", "\"hi\"", StringNullable, String},
+                {"string?", "null", StringNullable, Null},
+                {"string!?", "'hello'", StringFalseableAndNullable, String},
+                {"string!?", "\"hi\"", StringFalseableAndNullable, String},
+                {"string!?", "false", StringFalseableAndNullable, Bool},
+                {"string!?", "null", StringFalseableAndNullable, Null},
+                //array is covered below
+                {"resource", "null", Resource, Null},
+                {"resource!", "null", ResourceFalseable, Null},
+                {"resource!", "false", ResourceFalseable, Bool},
+                {"mixed", "false", Mixed, Bool},
+                {"mixed", "true", Mixed, Bool},
+                {"mixed", "1", Mixed, Int},
+                {"mixed", "1.0", Mixed, Float},
+                {"mixed", "'hey'", Mixed, String},
+                {"mixed", "\"hi\"", Mixed, String},
+                {"mixed", "null", Mixed, Null},
+                //mixed in conjunction with array is covered below
+                //mixed in conjunction with falseable and nullable types is covered further below
+        };
+
         String assign = isDeclaration ? " = " : "; $a = ";
+        for (Object[] type : types) {
+            collection.addAll(Arrays.asList(new Object[][]{
+                    {
+                            type[0] + " $a " + assign + type[1] + ";",
+                            struct((String) type[1], (EBuiltInType) type[2], (EBuiltInType) type[3])
+                    },
+                    {
+                            type[0] + " $b = " + type[1] + "; " + type[0] + "$a " + assign + " $b;",
+                            structTwo("$b", (EBuiltInType) type[2], (EBuiltInType) type[2])
+                    }
+            }));
+        }
+
+        types = new Object[][]{
+                {"array", "[1,2]", "array", Array, Array},
+                {"array", "array(2,3,4)", "array", Array, Array},
+                {"array", "null", "null", Array, Null},
+                {"array!", "[1,2]", "array", ArrayFalseable, Array},
+                {"array!", "array(2,3,4)", "array", ArrayFalseable, Array},
+                {"array!", "null", "null", ArrayFalseable, Null},
+                {"array!", "false", "false", ArrayFalseable, Bool},
+                {"mixed", "[1,2]", "array", Mixed, Array},
+                {"mixed", "array(3,4)", "array", Mixed, Array}
+        };
+        for (Object[] type : types) {
+            collection.addAll(Arrays.asList(new Object[][]{
+                    {
+                            type[0] + " $a " + assign + type[1] + ";",
+                            struct((String) type[2], (EBuiltInType) type[3], (EBuiltInType) type[4])
+                    },
+                    {
+                            type[0] + " $b = " + type[1] + "; " + type[0] + "$a " + assign + " $b;",
+                            structTwo("$b", (EBuiltInType) type[3], (EBuiltInType) type[3])
+                    }
+            }));
+        }
+
+        types = new Object[][]{
+                {"bool", "false", Bool},
+                {"bool!", "false", BoolFalseable},
+                {"bool?", "null", BoolNullable},
+                {"bool!?", "null", BoolFalseableAndNullable},
+                {"int", "2", Int},
+                {"int!", "false", IntFalseable},
+                {"int?", "null", IntNullable},
+                {"int!?", "null", IntFalseableAndNullable},
+                {"float", "3.4", Float},
+                {"float!", "false", FloatFalseable},
+                {"float?", "null", FloatNullable},
+                {"float!?", "null", FloatFalseableAndNullable},
+                {"string", "'hi'", String},
+                {"string!", "false", StringFalseable},
+                {"string?", "null", StringNullable},
+                {"string!?", "null", StringFalseableAndNullable},
+                {"array!", "null", ArrayFalseable},
+                {"resource", "null", Resource},
+                {"resource!", "null", ResourceFalseable},
+                {"Exception", "null", Exception},
+                {"ErrorException", "null", ErrorException},
+        };
+        for (Object[] type : types) {
+            collection.add(new Object[]{
+                    type[0] + " $b= " + type[1] + "; mixed $a " + assign + " $b;",
+                    structTwo("$b", Mixed, (EBuiltInType) type[2])
+            });
+        }
+
+
         collection.addAll(Arrays.asList(new Object[][]{
-                {"bool $a " + assign + " false;", struct("false", Bool, Bool)},
-                {"const bool a = true; bool $a " + assign + " a;", structTwo("a#", Bool, Bool)},
-                {"bool $a " + assign + " true;", struct("true", Bool, Bool)},
-                {"bool? $a " + assign + " false;", struct("false", BoolNullable, Bool)},
-                {"const bool a = true; bool? $a " + assign + " a;", structTwo("a#", BoolNullable, Bool)},
-                {"bool? $a " + assign + " true;", struct("true", BoolNullable, Bool)},
-                {"bool? $a " + assign + " null;", struct("null", BoolNullable, Null)},
-                {"bool? $b=true; bool? $a " + assign + " $b;", structTwo("$b", BoolNullable, BoolNullable)},
-                {"int $a " + assign + " true;", struct("true", Int, Bool)},
-                {"int $a " + assign + " 1;", struct("1", Int, Int)},
-                {"const int a = 1; int $a " + assign + " a;", structTwo("a#", Int, Int)},
-                {"int? $a " + assign + " true;", struct("true", IntNullable, Bool)},
-                {"int? $a " + assign + " 1;", struct("1", IntNullable, Int)},
-                {"const int a = 1; int? $a " + assign + " a;", structTwo("a#", IntNullable, Int)},
-                {"int? $a " + assign + " null;", struct("null", IntNullable, Null)},
-                {"bool? $b=null; int? $a " + assign + " $b;", structTwo("$b", IntNullable, BoolNullable)},
-                {"int? $b=3; int? $a " + assign + " $b;", structTwo("$b", IntNullable, IntNullable)},
-                {"float $a " + assign + " true;", struct("true", Float, Bool)},
-                {"float $a " + assign + " 6;", struct("6", Float, Int)},
-                {"float $a " + assign + " 2.56;", struct("2.56", Float, Float)},
-                {"const float a = 1; float $a " + assign + " a;", structTwo("a#", Float, Float)},
-                {"float? $a " + assign + " true;", struct("true", FloatNullable, Bool)},
-                {"float? $a " + assign + " 6;", struct("6", FloatNullable, Int)},
-                {"float? $a " + assign + " 2.56;", struct("2.56", FloatNullable, Float)},
-                {"const float a = 2.12; float? $a " + assign + " a;", structTwo("a#", FloatNullable, Float)},
-                {"float? $a " + assign + " null;", struct("null", FloatNullable, Null)},
-                {" bool? $b=false; float? $a " + assign + " $b;", structTwo("$b", FloatNullable, BoolNullable)},
-                {"int? $b=5; float? $a " + assign + " $b;", structTwo("$b", FloatNullable, IntNullable)},
-                {"float? $b=null; float? $a " + assign + " $b;", structTwo("$b", FloatNullable, FloatNullable)},
-                {"string $a " + assign + " true;", struct("true", String, Bool)},
-                {"string $a " + assign + " 1;", struct("1", String, Int)},
-                {"string $a " + assign + " 5.6;", struct("5.6", String, Float)},
-                {"string $a " + assign + " 'hello';", struct("'hello'", String, String)},
-                {"const string a = 'hello'; string $a " + assign + " a;", structTwo("a#", String, String)},
-                {"string $a " + assign + " \"yellow\";", struct("\"yellow\"", String, String)},
-                {"string? $a " + assign + " true;", struct("true", StringNullable, Bool)},
-                {"string? $a " + assign + " 1;", struct("1", StringNullable, Int)},
-                {"string? $a " + assign + " 5.6;", struct("5.6", StringNullable, Float)},
-                {"string? $a " + assign + " 'hello';", struct("'hello'", StringNullable, String)},
-                {"const string a = 'hello'; string? $a " + assign + " a;", structTwo("a#", StringNullable, String)},
-                {"string? $a " + assign + " \"yellow\";", struct("\"yellow\"", StringNullable, String)},
-                {"string? $a " + assign + " null;", struct("null", StringNullable, Null)},
-                {"bool? $b=false; string? $a " + assign + " $b;", structTwo("$b", StringNullable, BoolNullable)},
-                {"int? $b=1; string? $a " + assign + " $b;", structTwo("$b", StringNullable, IntNullable)},
-                {"float? $b=1; string? $a " + assign + " $b;", structTwo("$b", StringNullable, FloatNullable)},
-                {"string? $b=''; string? $a " + assign + " $b;", structTwo("$b", StringNullable, StringNullable)},
-                {"array $a " + assign + " [0];", struct("array", Array, Array)},
-                {"array $a " + assign + " array(1,2);", struct("array", Array, Array)},
-                {"array $a " + assign + " null;", struct("null", Array, Null)},
-                {"resource $b=null; resource $a " + assign + " $b;", structTwo("$b", Resource, Resource)},
-                {"resource $a " + assign + " null;", struct("null", Resource, Null)},
-                {"mixed $a " + assign + " true;", struct("true", Mixed, Bool)},
-                {"mixed $a " + assign + " false;", struct("false", Mixed, Bool)},
-                {"mixed $a " + assign + " 1;", struct("1", Mixed, Int)},
-                {"mixed $a " + assign + " 1.0;", struct("1.0", Mixed, Float)},
-                {"mixed $a " + assign + " 'hello';", struct("'hello'", Mixed, String)},
-                {"mixed $a " + assign + " [1,2];", struct("array", Mixed, Array)},
-                {"bool? $b=null; mixed $a " + assign + " $b;", structTwo("$b", Mixed, BoolNullable)},
-                {"int? $b=null; mixed $a " + assign + " $b;", structTwo("$b", Mixed, IntNullable)},
-                {"float? $b=1; mixed $a " + assign + " $b;", structTwo("$b", Mixed, FloatNullable)},
-                {"string? $b=1; mixed $a " + assign + " $b;", structTwo("$b", Mixed, StringNullable)},
-                {"resource $b=null; mixed $a " + assign + " $b;", structTwo("$b", Mixed, Resource)},
-                {"mixed $b=3; mixed $a " + assign + " $b;", structTwo("$b", Mixed, Mixed)},
-                {"Exception $b=null; mixed $a " + assign + " $b;", structTwo("$b", Mixed, Exception)},
-                {"ErrorException $b=null; mixed $a " + assign + " $b;", structTwo("$b", Mixed, ErrorException)},
-                {"mixed $a " + assign + " null;", struct("null", Mixed, Null)},
-                {
-                        "ErrorException $b=null; ErrorException $a " + assign + " $b;",
-                        structTwo("$b", ErrorException, ErrorException)
-                },
-                {"ErrorException $a " + assign + " null;", struct("null", ErrorException, Null)},
-                {"ErrorException $b=null; Exception $a " + assign + " $b;", structTwo("$b", Exception, ErrorException)},
-                {"Exception $b=null; Exception $a " + assign + " $b;", structTwo("$b", Exception, Exception)},
-                {"Exception $a " + assign + " null;", struct("null", Exception, Null)}
-        }));
+                        {"const bool a = true; bool $a " + assign + " a;", structTwo("a#", Bool, Bool)},
+                        {"const bool a = true; bool! $a " + assign + " a;", structTwo("a#", BoolFalseable, Bool)},
+                        {"const bool a = true; bool? $a " + assign + " a;", structTwo("a#", BoolNullable, Bool)},
+                        {
+                                "const bool a = true; bool!? $a " + assign + " a;",
+                                structTwo("a#", BoolFalseableAndNullable, Bool)
+                        },
+                        {"const int a = 1; int $a " + assign + " a;", structTwo("a#", Int, Int)},
+                        {"const int a = 1; int! $a " + assign + " a;", structTwo("a#", IntFalseable, Int)},
+                        {"const int a = 1; int? $a " + assign + " a;", structTwo("a#", IntNullable, Int)},
+                        {
+                                "const int a = 1; int!? $a " + assign + " a;",
+                                structTwo("a#", IntFalseableAndNullable, Int)
+                        },
+                        {"const float a = 1.2; float $a " + assign + " a;", structTwo("a#", Float, Float)},
+                        {"const float a = 1.2; float! $a " + assign + " a;", structTwo("a#", FloatFalseable, Float)},
+                        {"const float a = 1.2; float? $a " + assign + " a;", structTwo("a#", FloatNullable, Float)},
+                        {
+                                "const float a = 1.2; float!? $a " + assign + " a;",
+                                structTwo("a#", FloatFalseableAndNullable, Float)
+                        },
+                        {"const string a = 'hi'; string $a " + assign + " a;", structTwo("a#", String, String)},
+                        {
+                                "const string a = 'hi'; string! $a " + assign + " a;",
+                                structTwo("a#", StringFalseable, String)
+                        },
+                        {
+                                "const string a = 'hi'; string? $a " + assign + " a;",
+                                structTwo("a#", StringNullable, String)
+                        },
+                        {
+                                "const string a = 'hi'; string!? $a " + assign + " a;",
+                                structTwo("a#", StringFalseableAndNullable, String)
+                        },
+                        {"const string a = \"hey\"; string $a " + assign + " a;", structTwo("a#", String, String)},
+                        {
+                                "const string a = \"hey\"; string! $a " + assign + " a;",
+                                structTwo("a#", StringFalseable, String)
+                        },
+                        {
+                                "const string a = \"hey\"; string? $a " + assign + " a;",
+                                structTwo("a#", StringNullable, String)
+                        },
+                        {
+                                "const string a = \"hey\"; string!? $a " + assign + " a;",
+                                structTwo("a#", StringFalseableAndNullable, String)
+                        },
+                        {
+                                "ErrorException $b=null; ErrorException $a " + assign + " $b;",
+                                structTwo("$b", ErrorException, ErrorException)
+                        },
+                        {"ErrorException $a " + assign + " null;", struct("null", ErrorException, Null)},
+                        {
+                                "ErrorException $b=null; Exception $a " + assign + " $b;",
+                                structTwo("$b", Exception, ErrorException)
+                        },
+                        {"Exception $b=null; Exception $a " + assign + " $b;", structTwo("$b", Exception, Exception)},
+                        {"Exception $a " + assign + " null;", struct("null", Exception, Null)}
+                }
+
+        ));
     }
 
     private static void addCastingAssignment() {
@@ -128,157 +248,537 @@ public class AssignHelper
                 {"bool", Bool, "false"}
         };
         Object[][] castTypes = new Object[][]{
+                {"bool!", BoolFalseable, "false"},
                 {"bool?", BoolNullable, "false"},
+                {"bool!?", BoolFalseableAndNullable, "false"},
                 {"int", Int, "1"},
+                {"int!", IntFalseable, "false"},
                 {"int?", IntNullable, "null"},
+                {"int!?", IntFalseableAndNullable, "null"},
                 {"float", Float, "1.0"},
+                {"float!", FloatFalseable, "false"},
                 {"float?", FloatNullable, "null"},
+                {"float!?", FloatFalseableAndNullable, "null"},
                 {"string", String, "''"},
+                {"string!", StringFalseable, "false"},
                 {"string?", StringNullable, "null"},
-                {"mixed", Mixed, "false"}
-        };
-        Object[][] castToBoolTypes = new Object[][]{
+                {"string!?", StringFalseableAndNullable, "null"},
                 {"array", Array, "null"},
+                {"array!", ArrayFalseable, "null"},
                 {"resource", Resource, "null"},
+                {"resource!", ResourceFalseable, "null"},
+                {"mixed", Mixed, "false"},
                 {"Exception", Exception, "null"},
-                {"ErrorException", ErrorException, "null"}
+                {"Exception!", ExceptionFalseable, "null"},
+                {"ErrorException", ErrorException, "null"},
+                {"ErrorException!", ErrorExceptionFalseable, "null"}
         };
-        addVariations(noCastNeededTypes, castTypes, castToBoolTypes, "bool", Bool, Bool);
+        addVariations(noCastNeededTypes, castTypes, "bool", Bool);
 
         noCastNeededTypes = new Object[][]{
                 {"bool", Bool, "false"},
-                {"int", Int, "1"}
+                {"bool!", BoolFalseable, "false"}
         };
         castTypes = new Object[][]{
                 {"bool?", BoolNullable, "null"},
+                {"bool!?", BoolFalseableAndNullable, "false"},
+                {"int", Int, "1"},
+                {"int!", IntFalseable, "false"},
                 {"int?", IntNullable, "null"},
-                {"float", Float, "0.0"},
+                {"int!?", IntFalseableAndNullable, "null"},
+                {"float", Float, "1.0"},
+                {"float!", FloatFalseable, "false"},
                 {"float?", FloatNullable, "null"},
+                {"float!?", FloatFalseableAndNullable, "null"},
                 {"string", String, "''"},
+                {"string!", StringFalseable, "false"},
                 {"string?", StringNullable, "null"},
-                {"mixed", Mixed, "null"}
+                {"string!?", StringFalseableAndNullable, "null"},
+                {"array", Array, "null"},
+                {"array!", ArrayFalseable, "null"},
+                {"resource", Resource, "null"},
+                {"resource!", ResourceFalseable, "null"},
+                {"mixed", Mixed, "false"},
+                {"Exception", Exception, "null"},
+                {"Exception!", ExceptionFalseable, "null"},
+                {"ErrorException", ErrorException, "null"},
+                {"ErrorException!", ErrorExceptionFalseable, "null"}
         };
-        addVariations(noCastNeededTypes, castTypes, castToBoolTypes, "int", Int, Bool);
-
-        noCastNeededTypes = new Object[][]{
-                {"bool", Bool, "false"},
-                {"int", Int, "0"},
-                {"float", Float, "0.0"}
-        };
-        castTypes = new Object[][]{
-                {"bool?", BoolNullable, "null"},
-                {"int?", IntNullable, "null"},
-                {"float?", FloatNullable, "null"},
-                {"string", String, "''"},
-                {"string?", StringNullable, "null"},
-                {"mixed", Mixed, "null"}
-        };
-        addVariations(noCastNeededTypes, castTypes, castToBoolTypes, "float", Float, Bool);
-
-        noCastNeededTypes = new Object[][]{
-                {"bool", Bool, "false"},
-                {"int", Int, "0"},
-                {"float", Float, "0.0"},
-                {"string", String, "''"}
-        };
-        castTypes = new Object[][]{
-                {"bool?", BoolNullable, "null"},
-                {"int?", IntNullable, "null"},
-                {"float?", FloatNullable, "null"},
-                {"string?", StringNullable, "null"},
-                {"mixed", Mixed, "null"}
-        };
-        addVariations(noCastNeededTypes, castTypes, castToBoolTypes, "string", String, Bool);
+        addVariations(noCastNeededTypes, castTypes, "bool!", BoolFalseable);
 
         noCastNeededTypes = new Object[][]{
                 {"bool", Bool, "false"},
                 {"bool?", BoolNullable, "null"}
         };
         castTypes = new Object[][]{
-                {"int", Int, "0"},
-                {"int?", IntNullable, "null"},
-                {"float", Float, "0.0"},
-                {"float?", FloatNullable, "null"},
-                {"string", String, "''"},
-                {"string?", StringNullable, "null"},
-                {"mixed", Mixed, "null"}
-        };
-        addVariations(noCastNeededTypes, castTypes, castToBoolTypes, "bool?", BoolNullable, BoolNullable);
-
-        noCastNeededTypes = new Object[][]{
-                {"bool", Bool, "false"},
-                {"bool?", BoolNullable, "null"},
-                {"int", Int, "0"},
-                {"int?", IntNullable, "null"}
-        };
-        castTypes = new Object[][]{
-                {"float", Float, "0.0"},
-                {"float?", FloatNullable, "null"},
-                {"string", String, "''"},
-                {"string?", StringNullable, "null"},
-                {"mixed", Mixed, "null"}
-        };
-
-        addVariations(noCastNeededTypes, castTypes, castToBoolTypes, "int?", IntNullable, BoolNullable);
-
-        noCastNeededTypes = new Object[][]{
-                {"bool", Bool, "false"},
+                {"bool!", BoolFalseable, "false"},
+                {"bool!?", BoolFalseableAndNullable, "false"},
                 {"int", Int, "1"},
-                {"float", Float, "0.0"},
-                {"bool?", BoolNullable, "null"},
+                {"int!", IntFalseable, "false"},
                 {"int?", IntNullable, "null"},
-                {"float?", FloatNullable, "null"}
-        };
-        castTypes = new Object[][]{
+                {"int!?", IntFalseableAndNullable, "null"},
+                {"float", Float, "1.0"},
+                {"float!", FloatFalseable, "false"},
+                {"float?", FloatNullable, "null"},
+                {"float!?", FloatFalseableAndNullable, "null"},
                 {"string", String, "''"},
+                {"string!", StringFalseable, "false"},
                 {"string?", StringNullable, "null"},
-                {"mixed", Mixed, "null"}
+                {"string!?", StringFalseableAndNullable, "null"},
+                {"array", Array, "null"},
+                {"array!", ArrayFalseable, "null"},
+                {"resource", Resource, "null"},
+                {"resource!", ResourceFalseable, "null"},
+                {"mixed", Mixed, "false"},
+                {"Exception", Exception, "null"},
+                {"Exception!", ExceptionFalseable, "null"},
+                {"ErrorException", ErrorException, "null"},
+                {"ErrorException!", ErrorExceptionFalseable, "null"}
         };
-        addVariations(noCastNeededTypes, castTypes, castToBoolTypes, "float?", FloatNullable, BoolNullable);
+        addVariations(noCastNeededTypes, castTypes, "bool?", BoolNullable);
 
         noCastNeededTypes = new Object[][]{
                 {"bool", Bool, "false"},
-                {"int", Int, "1"},
-                {"float", Float, "0.0"},
-                {"string", String, "''"},
+                {"bool!", BoolFalseable, "false"},
                 {"bool?", BoolNullable, "null"},
-                {"int?", IntNullable, "null"},
-                {"float?", FloatNullable, "null"},
-                {"string?", StringNullable, "null"},};
+                {"bool!?", BoolFalseableAndNullable, "false"},
+        };
         castTypes = new Object[][]{
+                {"int", Int, "1"},
+                {"int!", IntFalseable, "false"},
+                {"int?", IntNullable, "null"},
+                {"int!?", IntFalseableAndNullable, "null"},
+                {"float", Float, "1.0"},
+                {"float!", FloatFalseable, "false"},
+                {"float?", FloatNullable, "null"},
+                {"float!?", FloatFalseableAndNullable, "null"},
+                {"string", String, "''"},
+                {"string!", StringFalseable, "false"},
+                {"string?", StringNullable, "null"},
+                {"string!?", StringFalseableAndNullable, "null"},
+                {"array", Array, "null"},
+                {"array!", ArrayFalseable, "null"},
+                {"resource", Resource, "null"},
+                {"resource!", ResourceFalseable, "null"},
+                {"mixed", Mixed, "false"},
+                {"Exception", Exception, "null"},
+                {"Exception!", ExceptionFalseable, "null"},
+                {"ErrorException", ErrorException, "null"},
+                {"ErrorException!", ErrorExceptionFalseable, "null"}
+        };
+        addVariations(noCastNeededTypes, castTypes, "bool!?", BoolFalseableAndNullable);
+
+        noCastNeededTypes = new Object[][]{
+                {"int", Int, "1"}
+        };
+        castTypes = new Object[][]{
+                {"bool", Bool, "false"},
+                {"bool!", BoolFalseable, "false"},
+                {"bool?", BoolNullable, "false"},
+                {"bool!?", BoolFalseableAndNullable, "false"},
+                {"int!", IntFalseable, "false"},
+                {"int?", IntNullable, "null"},
+                {"int!?", IntFalseableAndNullable, "null"},
+                {"float", Float, "1.0"},
+                {"float!", FloatFalseable, "false"},
+                {"float?", FloatNullable, "null"},
+                {"float!?", FloatFalseableAndNullable, "null"},
+                {"string", String, "''"},
+                {"string!", StringFalseable, "false"},
+                {"string?", StringNullable, "null"},
+                {"string!?", StringFalseableAndNullable, "null"},
                 {"mixed", Mixed, "null"}
         };
-        addVariations(noCastNeededTypes, castTypes, castToBoolTypes, "string?", StringNullable, BoolNullable);
+        addVariations(noCastNeededTypes, castTypes, "int", Int);
 
+        noCastNeededTypes = new Object[][]{
+                {"int", Int, "1"},
+                {"int!", IntFalseable, "false"},
+        };
+        castTypes = new Object[][]{
+                {"bool", Bool, "false"},
+                {"bool!", BoolFalseable, "false"},
+                {"bool?", BoolNullable, "false"},
+                {"bool!?", BoolFalseableAndNullable, "false"},
+                {"int?", IntNullable, "null"},
+                {"int!?", IntFalseableAndNullable, "null"},
+                {"float", Float, "1.0"},
+                {"float!", FloatFalseable, "false"},
+                {"float?", FloatNullable, "null"},
+                {"float!?", FloatFalseableAndNullable, "null"},
+                {"string", String, "''"},
+                {"string!", StringFalseable, "false"},
+                {"string?", StringNullable, "null"},
+                {"string!?", StringFalseableAndNullable, "null"},
+                {"mixed", Mixed, "null"}
+        };
+        addVariations(noCastNeededTypes, castTypes, "int!", IntFalseable);
+
+        noCastNeededTypes = new Object[][]{
+                {"int", Int, "1"},
+                {"int?", IntNullable, "null"},
+        };
+        castTypes = new Object[][]{
+                {"bool", Bool, "false"},
+                {"bool!", BoolFalseable, "false"},
+                {"bool?", BoolNullable, "false"},
+                {"bool!?", BoolFalseableAndNullable, "false"},
+                {"int!", IntFalseable, "false"},
+                {"int!?", IntFalseableAndNullable, "null"},
+                {"float", Float, "1.0"},
+                {"float!", FloatFalseable, "false"},
+                {"float?", FloatNullable, "null"},
+                {"float!?", FloatFalseableAndNullable, "null"},
+                {"string", String, "''"},
+                {"string!", StringFalseable, "false"},
+                {"string?", StringNullable, "null"},
+                {"string!?", StringFalseableAndNullable, "null"},
+                {"mixed", Mixed, "null"}
+        };
+        addVariations(noCastNeededTypes, castTypes, "int?", IntNullable);
+
+        noCastNeededTypes = new Object[][]{
+                {"int", Int, "1"},
+                {"int!", IntFalseable, "false"},
+                {"int?", IntNullable, "null"},
+                {"int!?", IntFalseableAndNullable, "null"},
+        };
+        castTypes = new Object[][]{
+                {"bool", Bool, "false"},
+                {"bool!", BoolFalseable, "false"},
+                {"bool?", BoolNullable, "false"},
+                {"bool!?", BoolFalseableAndNullable, "false"},
+                {"float", Float, "1.0"},
+                {"float!", FloatFalseable, "false"},
+                {"float?", FloatNullable, "null"},
+                {"float!?", FloatFalseableAndNullable, "null"},
+                {"string", String, "''"},
+                {"string!", StringFalseable, "false"},
+                {"string?", StringNullable, "null"},
+                {"string!?", StringFalseableAndNullable, "null"},
+                {"mixed", Mixed, "null"}
+        };
+        addVariations(noCastNeededTypes, castTypes, "int!?", IntFalseableAndNullable);
+
+        noCastNeededTypes = new Object[][]{
+                {"float", Float, "1.0"},
+        };
+        castTypes = new Object[][]{
+                {"bool", Bool, "false"},
+                {"bool!", BoolFalseable, "false"},
+                {"bool?", BoolNullable, "false"},
+                {"bool!?", BoolFalseableAndNullable, "false"},
+                {"int", Int, "1"},
+                {"int!", IntFalseable, "false"},
+                {"int?", IntNullable, "null"},
+                {"int!?", IntFalseableAndNullable, "null"},
+                {"float!", FloatFalseable, "false"},
+                {"float?", FloatNullable, "null"},
+                {"float!?", FloatFalseableAndNullable, "null"},
+                {"string", String, "''"},
+                {"string!", StringFalseable, "false"},
+                {"string?", StringNullable, "null"},
+                {"string!?", StringFalseableAndNullable, "null"},
+                {"mixed", Mixed, "null"}
+        };
+        addVariations(noCastNeededTypes, castTypes, "float", Float);
+
+        noCastNeededTypes = new Object[][]{
+                {"float", Float, "1.0"},
+                {"float!", FloatFalseable, "false"},
+        };
+        castTypes = new Object[][]{
+                {"bool", Bool, "false"},
+                {"bool!", BoolFalseable, "false"},
+                {"bool?", BoolNullable, "false"},
+                {"bool!?", BoolFalseableAndNullable, "false"},
+                {"int", Int, "1"},
+                {"int!", IntFalseable, "false"},
+                {"int?", IntNullable, "null"},
+                {"int!?", IntFalseableAndNullable, "null"},
+                {"float?", FloatNullable, "null"},
+                {"float!?", FloatFalseableAndNullable, "null"},
+                {"string", String, "''"},
+                {"string!", StringFalseable, "false"},
+                {"string?", StringNullable, "null"},
+                {"string!?", StringFalseableAndNullable, "null"},
+                {"mixed", Mixed, "null"}
+        };
+        addVariations(noCastNeededTypes, castTypes, "float!", FloatFalseable);
+
+        noCastNeededTypes = new Object[][]{
+                {"float", Float, "1.0"},
+                {"float?", FloatNullable, "null"},
+        };
+        castTypes = new Object[][]{
+                {"bool", Bool, "false"},
+                {"bool!", BoolFalseable, "false"},
+                {"bool?", BoolNullable, "false"},
+                {"bool!?", BoolFalseableAndNullable, "false"},
+                {"int", Int, "1"},
+                {"int!", IntFalseable, "false"},
+                {"int?", IntNullable, "null"},
+                {"int!?", IntFalseableAndNullable, "null"},
+                {"float!", FloatFalseable, "false"},
+                {"float!?", FloatFalseableAndNullable, "null"},
+                {"string", String, "''"},
+                {"string!", StringFalseable, "false"},
+                {"string?", StringNullable, "null"},
+                {"string!?", StringFalseableAndNullable, "null"},
+                {"mixed", Mixed, "null"}
+        };
+        addVariations(noCastNeededTypes, castTypes, "float?", FloatNullable);
+
+        noCastNeededTypes = new Object[][]{
+                {"float", Float, "1.0"},
+                {"float!", FloatFalseable, "false"},
+                {"float?", FloatNullable, "null"},
+                {"float!?", FloatFalseableAndNullable, "null"},
+        };
+        castTypes = new Object[][]{
+                {"bool", Bool, "false"},
+                {"bool!", BoolFalseable, "false"},
+                {"bool?", BoolNullable, "false"},
+                {"bool!?", BoolFalseableAndNullable, "false"},
+                {"int", Int, "1"},
+                {"int!", IntFalseable, "false"},
+                {"int?", IntNullable, "null"},
+                {"int!?", IntFalseableAndNullable, "null"},
+                {"string", String, "''"},
+                {"string!", StringFalseable, "false"},
+                {"string?", StringNullable, "null"},
+                {"string!?", StringFalseableAndNullable, "null"},
+                {"mixed", Mixed, "null"}
+        };
+        addVariations(noCastNeededTypes, castTypes, "float!?", FloatFalseableAndNullable);
+
+        noCastNeededTypes = new Object[][]{
+                {"string", String, "''"},
+        };
+        castTypes = new Object[][]{
+                {"bool", Bool, "false"},
+                {"bool!", BoolFalseable, "false"},
+                {"bool?", BoolNullable, "false"},
+                {"bool!?", BoolFalseableAndNullable, "false"},
+                {"int", Int, "1"},
+                {"int!", IntFalseable, "false"},
+                {"int?", IntNullable, "null"},
+                {"int!?", IntFalseableAndNullable, "null"},
+                {"float", Float, "1.0"},
+                {"float!", FloatFalseable, "false"},
+                {"float?", FloatNullable, "null"},
+                {"float!?", FloatFalseableAndNullable, "null"},
+                {"string!", StringFalseable, "false"},
+                {"string?", StringNullable, "null"},
+                {"string!?", StringFalseableAndNullable, "null"},
+                {"mixed", Mixed, "null"}
+        };
+        addVariations(noCastNeededTypes, castTypes, "string", String);
+
+        noCastNeededTypes = new Object[][]{
+                {"string", String, "''"},
+                {"string!", StringFalseable, "false"},
+        };
+        castTypes = new Object[][]{
+                {"bool", Bool, "false"},
+                {"bool!", BoolFalseable, "false"},
+                {"bool?", BoolNullable, "false"},
+                {"bool!?", BoolFalseableAndNullable, "false"},
+                {"int", Int, "1"},
+                {"int!", IntFalseable, "false"},
+                {"int?", IntNullable, "null"},
+                {"int!?", IntFalseableAndNullable, "null"},
+                {"float", Float, "1.0"},
+                {"float!", FloatFalseable, "false"},
+                {"float?", FloatNullable, "null"},
+                {"float!?", FloatFalseableAndNullable, "null"},
+                {"string?", StringNullable, "null"},
+                {"string!?", StringFalseableAndNullable, "null"},
+                {"mixed", Mixed, "null"}
+        };
+        addVariations(noCastNeededTypes, castTypes, "string!", StringFalseable);
+
+        noCastNeededTypes = new Object[][]{
+                {"string", String, "''"},
+                {"string?", StringNullable, "null"},
+        };
+        castTypes = new Object[][]{
+                {"bool", Bool, "false"},
+                {"bool!", BoolFalseable, "false"},
+                {"bool?", BoolNullable, "false"},
+                {"bool!?", BoolFalseableAndNullable, "false"},
+                {"int", Int, "1"},
+                {"int!", IntFalseable, "false"},
+                {"int?", IntNullable, "null"},
+                {"int!?", IntFalseableAndNullable, "null"},
+                {"float", Float, "1.0"},
+                {"float!", FloatFalseable, "false"},
+                {"float?", FloatNullable, "null"},
+                {"float!?", FloatFalseableAndNullable, "null"},
+                {"string!", StringFalseable, "false"},
+                {"string!?", StringFalseableAndNullable, "null"},
+                {"mixed", Mixed, "null"}
+        };
+        addVariations(noCastNeededTypes, castTypes, "string?", StringNullable);
+
+        noCastNeededTypes = new Object[][]{
+                {"string", String, "''"},
+                {"string!", StringFalseable, "false"},
+                {"string?", StringNullable, "null"},
+                {"string!?", StringFalseableAndNullable, "null"},
+        };
+        castTypes = new Object[][]{
+                {"bool", Bool, "false"},
+                {"bool!", BoolFalseable, "false"},
+                {"bool?", BoolNullable, "false"},
+                {"bool!?", BoolFalseableAndNullable, "false"},
+                {"int", Int, "1"},
+                {"int!", IntFalseable, "false"},
+                {"int?", IntNullable, "null"},
+                {"int!?", IntFalseableAndNullable, "null"},
+                {"float", Float, "1.0"},
+                {"float!", FloatFalseable, "false"},
+                {"float?", FloatNullable, "null"},
+                {"float!?", FloatFalseableAndNullable, "null"},
+                {"mixed", Mixed, "null"}
+        };
+        addVariations(noCastNeededTypes, castTypes, "string!?", StringFalseableAndNullable);
 
         noCastNeededTypes = new Object[][]{
                 {"array", Array, "[]"}
         };
         castTypes = new Object[][]{
                 {"bool", Bool, "false"},
+                {"bool!", BoolFalseable, "false"},
+                {"bool?", BoolNullable, "false"},
+                {"bool!?", BoolFalseableAndNullable, "false"},
                 {"int", Int, "1"},
-                {"float", Float, "0.0"},
-                {"string", String, "''"},
-                {"bool?", BoolNullable, "null"},
+                {"int!", IntFalseable, "false"},
                 {"int?", IntNullable, "null"},
+                {"int!?", IntFalseableAndNullable, "null"},
+                {"float", Float, "1.0"},
+                {"float!", FloatFalseable, "false"},
                 {"float?", FloatNullable, "null"},
+                {"float!?", FloatFalseableAndNullable, "null"},
+                {"string", String, "''"},
+                {"string!", StringFalseable, "false"},
                 {"string?", StringNullable, "null"},
-                {"mixed", Mixed, "null"},
+                {"string!?", StringFalseableAndNullable, "null"},
+                {"array!", ArrayFalseable, "null"},
                 {"resource", Resource, "null"},
+                {"resource!", ResourceFalseable, "null"},
+                {"mixed", Mixed, "false"},
                 {"Exception", Exception, "null"},
-                {"ErrorException", ErrorException, "null"}
+                {"Exception!", ExceptionFalseable, "null"},
+                {"ErrorException", ErrorException, "null"},
+                {"ErrorException!", ErrorExceptionFalseable, "null"}
         };
-        castToBoolTypes = new Object[][]{};
-        addVariations(noCastNeededTypes, castTypes, castToBoolTypes, "array", Array, BoolNullable);
+        addVariations(noCastNeededTypes, castTypes, "array", Array);
 
+        noCastNeededTypes = new Object[][]{
+                {"array", Array, "[]"},
+                {"array!", ArrayFalseable, "null"}
+        };
+        castTypes = new Object[][]{
+                {"bool", Bool, "false"},
+                {"bool!", BoolFalseable, "false"},
+                {"bool?", BoolNullable, "false"},
+                {"bool!?", BoolFalseableAndNullable, "false"},
+                {"int", Int, "1"},
+                {"int!", IntFalseable, "false"},
+                {"int?", IntNullable, "null"},
+                {"int!?", IntFalseableAndNullable, "null"},
+                {"float", Float, "1.0"},
+                {"float!", FloatFalseable, "false"},
+                {"float?", FloatNullable, "null"},
+                {"float!?", FloatFalseableAndNullable, "null"},
+                {"string", String, "''"},
+                {"string!", StringFalseable, "false"},
+                {"string?", StringNullable, "null"},
+                {"string!?", StringFalseableAndNullable, "null"},
+                {"resource", Resource, "null"},
+                {"resource!", ResourceFalseable, "null"},
+                {"mixed", Mixed, "false"},
+                {"Exception", Exception, "null"},
+                {"Exception!", ExceptionFalseable, "null"},
+                {"ErrorException", ErrorException, "null"},
+                {"ErrorException!", ErrorExceptionFalseable, "null"}
+        };
+        addVariations(noCastNeededTypes, castTypes, "array!", ArrayFalseable);
+
+        noCastNeededTypes = new Object[][]{
+                {"Exception", Exception, "null"},
+                {"ErrorException", ErrorException, "null"},
+        };
+        castTypes = new Object[][]{
+                {"mixed", Mixed, "false"},
+                {"Exception!", ExceptionFalseable, "null"},
+        };
+        addVariations(noCastNeededTypes, castTypes, "Exception", Exception);
+        addSubTypeFalseableCasting(
+                "ErrorException", "null", ErrorExceptionFalseable, ErrorException, "Exception", Exception);
+
+
+        noCastNeededTypes = new Object[][]{
+                {"Exception", Exception, "null"},
+                {"Exception!", ExceptionFalseable, "null"},
+        };
+        castTypes = new Object[][]{
+                {"mixed", Mixed, "false"},
+                {"ErrorException", ErrorException, "null"},
+                //TODO rstoll TSPHP-291 Generics - if TSPHP has implemented a mechanism for covariant generics, then
+                //this assignment would work if falseable types were implemented by such an internal class
+                //{"ErrorException!", ErrorExceptionFalseable, "null"}
+        };
+        addVariations(noCastNeededTypes, castTypes, "Exception!", ExceptionFalseable);
+
+        noCastNeededTypes = new Object[][]{
+                {"ErrorException", ErrorException, "null"},
+        };
+        castTypes = new Object[][]{
+                {"mixed", Mixed, "false"},
+                {"Exception", Exception, "null"},
+                //TODO rstoll TSPHP-291 Generics - if TSPHP has implemented a mechanism for covariant generics, then
+                //this assignment would work if falseable types were implemented by such an internal class
+                //{"Exception!", ExceptionFalseable, "null"},
+                {"ErrorException!", ErrorExceptionFalseable, "null"}
+        };
+        addVariations(noCastNeededTypes, castTypes, "ErrorException", ErrorException);
+
+        noCastNeededTypes = new Object[][]{
+                {"ErrorException", ErrorException, "null"},
+                {"ErrorException!", ErrorExceptionFalseable, "null"}
+        };
+        castTypes = new Object[][]{
+                //TODO rstoll TSPHP-291 Generics - if TSPHP has implemented a mechanism for covariant generics, then
+                //this assignment would work if falseable types were implemented by such an internal class
+                //{"Exception", Exception, "null"},
+                //{"Exception!", ExceptionFalseable, "null"},
+                {"mixed", Mixed, "false"},
+        };
+        addVariations(noCastNeededTypes, castTypes, "ErrorException!", ErrorExceptionFalseable);
     }
 
-    private static void addVariations(Object[][] noCastTypes, Object[][] castTypes, Object[][] castToBoolTypes,
-            String typeName, EBuiltInType type, EBuiltInType boolType) {
-        String typeNameWithoutNullable = typeName;
-        if (typeName.endsWith("?")) {
-            typeNameWithoutNullable = typeName.substring(0, typeName.length() - 1);
-        }
+    private static void addSubTypeFalseableCasting(String rightTypeNameWithoutFalseable, String initValue,
+            EBuiltInType rightType, EBuiltInType castingType, String leftTypeName, EBuiltInType leftType) {
+
+        String assign = isDeclaration ? " = " : "; $a = ";
+        String castAssign = isDeclaration ? " =() " : "; $a =() ";
+
+        collection.add(new Object[]{
+                rightTypeNameWithoutFalseable + "! $b = " + initValue + "; "
+                        + "cast " + leftTypeName + " $a " + assign + " $b;",
+                structSubCast(rightTypeNameWithoutFalseable, leftType, rightType, castingType)
+        });
+        collection.add(new Object[]{
+                rightTypeNameWithoutFalseable + "! $b = " + initValue + "; "
+                        + "cast " + leftTypeName + " $a " + castAssign + " $b;",
+                structSubCast(rightTypeNameWithoutFalseable, leftType, rightType, castingType)
+        });
+    }
+
+    private static void addVariations(
+            Object[][] noCastTypes, Object[][] castTypes, String typeName, EBuiltInType type) {
 
         String assign = isDeclaration ? " = " : "; $a = ";
         String castAssign = isDeclaration ? " =() " : "; $a =() ";
@@ -290,29 +790,18 @@ public class AssignHelper
             });
             collection.add(new Object[]{
                     type2[0] + " $b = " + type2[2] + "; " + typeName + " $a " + castAssign + "  $b;",
-                    structCast(typeNameWithoutNullable, type, (EBuiltInType) type2[1])
+                    structCast(typeName, type, (EBuiltInType) type2[1])
             });
         }
 
         for (Object[] type2 : castTypes) {
             collection.add(new Object[]{
                     type2[0] + " $b = " + type2[2] + "; cast " + typeName + " $a " + assign + " $b;",
-                    structCast(typeNameWithoutNullable, type, (EBuiltInType) type2[1])
+                    structCast(typeName, type, (EBuiltInType) type2[1])
             });
             collection.add(new Object[]{
                     type2[0] + " $b = " + type2[2] + "; " + typeName + " $a " + castAssign + "  $b;",
-                    structCast(typeNameWithoutNullable, type, (EBuiltInType) type2[1])
-            });
-        }
-
-        for (Object[] type2 : castToBoolTypes) {
-            collection.add(new Object[]{
-                    type2[0] + " $b = " + type2[2] + "; cast " + typeName + " $a " + assign + " $b;",
-                    structCastBool(type, boolType, (EBuiltInType) type2[1])
-            });
-            collection.add(new Object[]{
-                    type2[0] + " $b = " + type2[2] + "; " + typeName + " $a " + castAssign + "  $b;",
-                    structCastBool(type, boolType, (EBuiltInType) type2[1])
+                    structCast(typeName, type, (EBuiltInType) type2[1])
             });
         }
     }
@@ -359,21 +848,20 @@ public class AssignHelper
         };
     }
 
-    private static Object structCastBool(EBuiltInType leftType,
-            EBuiltInType boolType, EBuiltInType initType) {
-
+    private static TypeCheckStruct[] structSubCast(
+            String typeName, EBuiltInType leftType, EBuiltInType rightType, EBuiltInType castingType) {
         return isDeclaration
                 ? new TypeCheckStruct[]{
-                AOperatorTypeCheckTest.struct("casting", boolType, 1, 1, 1, 0),
-                AOperatorTypeCheckTest.struct("bool", boolType, 1, 1, 1, 0, 0, 1),
-                AOperatorTypeCheckTest.struct("$b", initType, 1, 1, 1, 0, 1)
+                AOperatorTypeCheckTest.struct("casting", castingType, 1, 1, 1, 0),
+                AOperatorTypeCheckTest.struct(typeName, castingType, 1, 1, 1, 0, 0, 1),
+                AOperatorTypeCheckTest.struct("$b", rightType, 1, 1, 1, 0, 1)
         }
                 : new TypeCheckStruct[]{
-                AOperatorTypeCheckTest.struct("=", boolType, 1, 2, 0),
+                AOperatorTypeCheckTest.struct("=", castingType, 1, 2, 0),
                 AOperatorTypeCheckTest.struct("$a", leftType, 1, 2, 0, 0),
-                AOperatorTypeCheckTest.struct("casting", boolType, 1, 2, 0, 1),
-                AOperatorTypeCheckTest.struct("bool", boolType, 1, 2, 0, 1, 0, 1),
-                AOperatorTypeCheckTest.struct("$b", initType, 1, 2, 0, 1, 1)
+                AOperatorTypeCheckTest.struct("casting", castingType, 1, 2, 0, 1),
+                AOperatorTypeCheckTest.struct(typeName, castingType, 1, 2, 0, 1, 0, 1),
+                AOperatorTypeCheckTest.struct("$b", rightType, 1, 2, 0, 1, 1)
         };
     }
 

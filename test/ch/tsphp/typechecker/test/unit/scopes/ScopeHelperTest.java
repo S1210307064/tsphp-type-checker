@@ -8,9 +8,9 @@ package ch.tsphp.typechecker.test.unit.scopes;
 
 import ch.tsphp.common.ILowerCaseStringMap;
 import ch.tsphp.common.IScope;
-import ch.tsphp.common.ISymbol;
 import ch.tsphp.common.ITSPHPAst;
 import ch.tsphp.common.LowerCaseStringMap;
+import ch.tsphp.common.symbols.ISymbol;
 import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
 import ch.tsphp.typechecker.scopes.IAlreadyDefinedMethodCaller;
 import ch.tsphp.typechecker.scopes.IGlobalNamespaceScope;

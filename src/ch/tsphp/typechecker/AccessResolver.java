@@ -7,9 +7,9 @@
 package ch.tsphp.typechecker;
 
 import ch.tsphp.common.ITSPHPAst;
-import ch.tsphp.common.ITypeSymbol;
 import ch.tsphp.common.exceptions.DefinitionException;
 import ch.tsphp.common.exceptions.ReferenceException;
+import ch.tsphp.common.symbols.ITypeSymbol;
 import ch.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
 import ch.tsphp.typechecker.symbols.IPolymorphicTypeSymbol;

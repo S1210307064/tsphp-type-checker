@@ -6,12 +6,12 @@
 
 package ch.tsphp.typechecker.error;
 
-import ch.tsphp.common.ISymbol;
 import ch.tsphp.common.ITSPHPAst;
-import ch.tsphp.common.ITypeSymbol;
 import ch.tsphp.common.exceptions.DefinitionException;
 import ch.tsphp.common.exceptions.ReferenceException;
 import ch.tsphp.common.exceptions.UnsupportedOperationException;
+import ch.tsphp.common.symbols.ISymbol;
+import ch.tsphp.common.symbols.ITypeSymbol;
 import ch.tsphp.typechecker.AmbiguousCallException;
 import ch.tsphp.typechecker.CastingDto;
 import ch.tsphp.typechecker.symbols.IArrayTypeSymbol;
@@ -96,10 +96,10 @@ public interface ITypeCheckerErrorReporter extends ch.tsphp.common.IErrorReporte
     UnsupportedOperationException unsupportedOperator(ITSPHPAst operator);
 
     ReferenceException ambiguousUnaryOperatorUsage(ITSPHPAst operator, ITSPHPAst expression,
-            AmbiguousCallException ex);
+            AmbiguousCallException exception);
 
     ReferenceException ambiguousBinaryOperatorUsage(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right,
-            AmbiguousCallException ex);
+            AmbiguousCallException exception);
 
     ReferenceException ambiguousCall(ITSPHPAst identifier, AmbiguousCallException exception,
             List<ITSPHPAst> actualParameters);
@@ -108,7 +108,7 @@ public interface ITypeCheckerErrorReporter extends ch.tsphp.common.IErrorReporte
             CastingDto leftToRightCasts, CastingDto rightToLeftCasts,
             List<CastingDto> leftAmbiguities, List<CastingDto> rightAmbiguities);
 
-    ReferenceException ambiguousCasts(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right,
+    ReferenceException ambiguousCasts(ITSPHPAst operator, ITypeSymbol leftType, ITypeSymbol rightType,
             List<CastingDto> ambiguousCasts);
 
     ReferenceException wrongBinaryOperatorUsage(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right,
@@ -131,7 +131,7 @@ public interface ITypeCheckerErrorReporter extends ch.tsphp.common.IErrorReporte
 
     ReferenceException wrongAssignment(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right);
 
-    ReferenceException notSameOrParentType(ITSPHPAst statement, ITSPHPAst expression, ITypeSymbol typeSymbol);
+    ReferenceException notSameOrParentType(ITSPHPAst expression, ITypeSymbol typeSymbol);
 
     ReferenceException wrongTypeIf(ITSPHPAst ifRoot, ITSPHPAst expression, ITypeSymbol typeSymbol);
 

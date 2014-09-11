@@ -6,9 +6,9 @@
 
 package ch.tsphp.typechecker.test.integration.reference;
 
-import ch.tsphp.common.ISymbol;
 import ch.tsphp.common.ITSPHPAst;
-import ch.tsphp.common.ITypeSymbol;
+import ch.tsphp.common.symbols.ISymbol;
+import ch.tsphp.common.symbols.ITypeSymbol;
 import ch.tsphp.typechecker.scopes.INamespaceScope;
 import ch.tsphp.typechecker.test.integration.testutils.AstTestHelper;
 import ch.tsphp.typechecker.test.integration.testutils.TypeHelper;
@@ -35,23 +35,25 @@ public class ResolvePrimitiveTypeTest extends ATypeSystemTest
     }
 
     @Test
-    public void testResolveType() {
-        INamespaceScope scope = definer.defineNamespace("\\");
-        ISymbol typeSymbol = definer.getGlobalNamespaceScopes().get("\\").getSymbols().get(type).get(0);
+    public void testResolveExistingType_ReturnExisting() {
+        INamespaceScope scope = definitionPhaseController.defineNamespace("\\");
+        ISymbol typeSymbol = definitionPhaseController.getGlobalNamespaceScopes().get("\\").getSymbols()
+                .get(type).get(0);
         ITSPHPAst ast = AstTestHelper.getAstWithTokenText(type, scope);
 
-        ITypeSymbol result = referencePhaseController.resolvePrimitiveType(ast);
+        ITypeSymbol result = referencePhaseController.resolvePrimitiveType(ast, null);
 
         assertThat(result, is(typeSymbol));
     }
 
     @Test
-    public void testResolveTypeFromOtherNamespace() {
-        INamespaceScope scope = definer.defineNamespace("\\a\\a\\");
-        ISymbol typeSymbol = definer.getGlobalNamespaceScopes().get("\\").getSymbols().get(type).get(0);
+    public void testResolveExistingTypeFromOtherNamespace_ReturnExisting() {
+        INamespaceScope scope = definitionPhaseController.defineNamespace("\\a\\a\\");
+        ISymbol typeSymbol = definitionPhaseController.getGlobalNamespaceScopes().get("\\").getSymbols()
+                .get(type).get(0);
         ITSPHPAst ast = AstTestHelper.getAstWithTokenText(type, scope);
 
-        ITypeSymbol result = referencePhaseController.resolvePrimitiveType(ast);
+        ITypeSymbol result = referencePhaseController.resolvePrimitiveType(ast, null);
 
         assertThat(result, is(typeSymbol));
     }

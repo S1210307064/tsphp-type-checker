@@ -7,8 +7,8 @@
 package ch.tsphp.typechecker.test.integration.testutils.definition;
 
 import ch.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
-import ch.tsphp.typechecker.symbols.ModifierHelper;
 import ch.tsphp.typechecker.test.integration.testutils.TypeHelper;
+import ch.tsphp.typechecker.utils.ModifierHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,7 +30,7 @@ public class ConstantHelper
                 TSPHPDefinitionWalker.Static,
                 TSPHPDefinitionWalker.Final
         }));
-        String mod = ModifierHelper.getModifiers(modifiers);
+        String mod = ModifierHelper.getModifiersAsString(modifiers);
 
         for (String type : types) {
             String typeExpected = isDefinitionPhase ? "" : type;

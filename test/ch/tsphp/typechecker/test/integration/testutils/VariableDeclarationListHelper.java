@@ -6,7 +6,7 @@
 
 package ch.tsphp.typechecker.test.integration.testutils;
 
-import ch.tsphp.typechecker.symbols.ModifierHelper;
+import ch.tsphp.typechecker.utils.ModifierHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,7 +31,7 @@ public class VariableDeclarationListHelper
 
 
         final List<Object[]> collection = new ArrayList<>();
-        TypeHelper.getAllTypesInclModifier(new IAdder()
+        TypeHelper.addAllTypesInclModifier(new IAdder()
         {
             @SuppressWarnings("unchecked")
             @Override
@@ -40,7 +40,7 @@ public class VariableDeclarationListHelper
                 if (modifier != null) {
                     modifiers.addAll(modifier);
                 }
-                String typeModifiers = ModifierHelper.getModifiers(modifiers);
+                String typeModifiers = ModifierHelper.getModifiersAsString(modifiers);
                 collection.add(new Object[]{
                         prefix + type + "$a" + appendix,
                         prefixExpected + scopeName + typeExpected + " "
@@ -54,7 +54,7 @@ public class VariableDeclarationListHelper
             }
         });
 
-        String typeModifiers = ModifierHelper.getModifiers(modifier);
+        String typeModifiers = ModifierHelper.getModifiersAsString(modifier);
 
         String typeExpected = (isDefinitionPhase ? "" : "int") + typeModifiers;
         collection.addAll(getVariations(prefix + "int", "=", appendix,

@@ -6,6 +6,9 @@
 
 package ch.tsphp.typechecker.symbols;
 
+
+import ch.tsphp.common.symbols.modifiers.ICanBeFinal;
+
 public interface IClassTypeSymbol extends IPolymorphicTypeSymbol, ICanBeFinal
 {
 

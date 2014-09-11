@@ -8,13 +8,13 @@ package ch.tsphp.typechecker.error;
 
 import ch.tsphp.common.IErrorLogger;
 import ch.tsphp.common.IScope;
-import ch.tsphp.common.ISymbol;
 import ch.tsphp.common.ITSPHPAst;
-import ch.tsphp.common.ITypeSymbol;
 import ch.tsphp.common.exceptions.DefinitionException;
 import ch.tsphp.common.exceptions.ReferenceException;
 import ch.tsphp.common.exceptions.TypeCheckerException;
 import ch.tsphp.common.exceptions.UnsupportedOperationException;
+import ch.tsphp.common.symbols.ISymbol;
+import ch.tsphp.common.symbols.ITypeSymbol;
 import ch.tsphp.typechecker.AmbiguousCallException;
 import ch.tsphp.typechecker.CastingDto;
 import ch.tsphp.typechecker.ICastingMethod;
@@ -245,11 +245,11 @@ public class TypeCheckerErrorReporter implements ITypeCheckerErrorReporter
         if (noAmbiguousCasts(leftAmbiguities, rightAmbiguities)) {
             exception = addAndGetOperatorAmbiguousCastsException("operatorBothSideCast",
                     operator, leftToRightCasts, rightToLeftCasts,
-                    leftAmbiguities, rightAmbiguities, left, right, true);
+                    leftAmbiguities, rightAmbiguities, left.getEvalType(), right.getEvalType(), true);
         } else {
             exception = addAndGetOperatorAmbiguousCastsException("operatorAmbiguousCasts",
                     operator, leftToRightCasts, rightToLeftCasts,
-                    leftAmbiguities, rightAmbiguities, left, right, true);
+                    leftAmbiguities, rightAmbiguities, left.getEvalType(), right.getEvalType(), true);
         }
 
         return exception;
@@ -261,43 +261,46 @@ public class TypeCheckerErrorReporter implements ITypeCheckerErrorReporter
     }
 
     @Override
-    public ReferenceException ambiguousCasts(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right,
+    public ReferenceException ambiguousCasts(
+            ITSPHPAst operator,
+            ITypeSymbol leftType, ITypeSymbol rightType,
             List<CastingDto> ambiguousCastings) {
         return addAndGetOperatorAmbiguousCastsException("ambiguousCasts", operator, null, null, null, ambiguousCastings,
-                left, right, false);
+                leftType, rightType, false);
     }
 
     @SuppressWarnings("checkstyle:parameternumber")
     private ReferenceException addAndGetOperatorAmbiguousCastsException(String key, ITSPHPAst operator,
             CastingDto leftToRightCasts, CastingDto rightToLeftCasts,
-            List<CastingDto> leftAmbiguities, List<CastingDto> rightAmbiguities, ITSPHPAst left, ITSPHPAst right,
+            List<CastingDto> leftAmbiguities, List<CastingDto> rightAmbiguities,
+            ITypeSymbol leftType, ITypeSymbol rightType,
             boolean doBothSideCast) {
 
-        String leftType = getAbsoluteTypeName(left.getEvalType());
-        String rightType = getAbsoluteTypeName(right.getEvalType());
+        String leftAbsoluteType = getAbsoluteTypeName(leftType);
+        String rightAbsoluteType = getAbsoluteTypeName(rightType);
 
         List<String> leftToRightReturnTypes;
         if (doBothSideCast) {
-            leftToRightReturnTypes = getReturnTypes(leftToRightCasts, leftType, rightType);
+            leftToRightReturnTypes = getReturnTypes(leftToRightCasts, leftAbsoluteType, rightAbsoluteType);
         } else {
             leftToRightReturnTypes = new ArrayList<>();
-            leftToRightReturnTypes.add(leftType);
+            leftToRightReturnTypes.add(leftAbsoluteType);
         }
         List<List<String>> leftReturnTypes = new ArrayList<>();
         if (leftAmbiguities != null) {
-            addReturnTypes(leftReturnTypes, leftAmbiguities, leftType, rightType);
+            addReturnTypes(leftReturnTypes, leftAmbiguities, leftAbsoluteType, rightAbsoluteType);
         }
 
         List<String> rightToLeftReturnTypes;
         if (doBothSideCast) {
-            rightToLeftReturnTypes = getReturnTypes(rightToLeftCasts, rightType, leftType);
+            rightToLeftReturnTypes = getReturnTypes(rightToLeftCasts, rightAbsoluteType, leftAbsoluteType);
         } else {
             rightToLeftReturnTypes = new ArrayList<>();
-            rightToLeftReturnTypes.add(rightType);
+            rightToLeftReturnTypes.add(rightAbsoluteType);
         }
         List<List<String>> rightReturnTypes = new ArrayList<>();
         if (rightAmbiguities != null) {
-            addReturnTypes(rightReturnTypes, rightAmbiguities, rightType, leftType);
+            addReturnTypes(rightReturnTypes, rightAmbiguities, rightAbsoluteType, leftAbsoluteType);
         }
 
         String errorMessage = errorMessageProvider.getOperatorAmbiguousCastingErrorMessage(key,
@@ -332,16 +335,16 @@ public class TypeCheckerErrorReporter implements ITypeCheckerErrorReporter
 
     @Override
     public ReferenceException ambiguousUnaryOperatorUsage(ITSPHPAst operator, ITSPHPAst expression,
-            AmbiguousCallException ex) {
+            AmbiguousCallException exception) {
 
-        return addAndGetAmbiguousCallException("ambiguousOperatorUsage", operator, ex, expression);
+        return addAndGetAmbiguousCallException("ambiguousOperatorUsage", operator, exception, expression);
     }
 
     @Override
     public ReferenceException ambiguousBinaryOperatorUsage(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right,
-            AmbiguousCallException ex) {
+            AmbiguousCallException exception) {
 
-        return addAndGetAmbiguousCallException("ambiguousOperatorUsage", operator, ex, left, right);
+        return addAndGetAmbiguousCallException("ambiguousOperatorUsage", operator, exception, left, right);
     }
 
     @Override
@@ -487,8 +490,8 @@ public class TypeCheckerErrorReporter implements ITypeCheckerErrorReporter
     }
 
     @Override
-    public ReferenceException notSameOrParentType(ITSPHPAst statement, ITSPHPAst expression, ITypeSymbol typeSymbol) {
-        return addAndGetStatementTypeCheckError("notSameOrParentType", statement, expression, typeSymbol);
+    public ReferenceException notSameOrParentType(ITSPHPAst expression, ITypeSymbol typeSymbol) {
+        return addAndGetStatementTypeCheckError("notSameOrParentType", expression, expression, typeSymbol);
     }
 
     @Override

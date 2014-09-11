@@ -35,36 +35,29 @@ public class ForeachErrorTest extends ATypeCheckErrorTest
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
         List<Object[]> collection = new ArrayList<>();
-        ReferenceErrorDto[] errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto("foreach", 2, 1)};
-        ReferenceErrorDto[] twoErrorDto = new ReferenceErrorDto[]{
-                new ReferenceErrorDto("foreach", 2, 1),
-                new ReferenceErrorDto("$k", 3, 1)
-        };
-        String[][] types = TypeHelper.getTypesInclDefaultValue();
+        String[][] types = TypeHelper.getAllTypesInclDefaultValue();
         for (String[] type : types) {
-            if (type[0].equals("array")) {
-                continue;
+            //check that type is array
+            if (!type[0].equals("array")) {
+                collection.add(new Object[]{
+                        type[0] + " $b=" + type[1] + ";\n foreach($b as mixed $v);",
+                        refErrorDto("foreach", 2, 1)
+                });
             }
-            collection.addAll(Arrays.asList(new Object[][]{
-                    {type[0] + " $b=" + type[1] + ";\n foreach($b as mixed $v);", errorDto},
-                    {type[0] + " $b=" + type[1] + ";\n foreach($b as string $k => mixed $v);", errorDto},
-                    {type[0] + " $b=" + type[1] + ";\n foreach($b as float\n $k => mixed $v);", twoErrorDto},
-                    {type[0] + " $b=" + type[1] + ";\n foreach($b as int\n $k => mixed $v);", twoErrorDto},
-                    {type[0] + " $b=" + type[1] + ";\n foreach($b as bool\n $k => mixed $v);", twoErrorDto}
-            }));
+
+            //only mixed is supported as type of the values at the moment
+            if (!type[0].equals("mixed")) {
+                collection.add(new Object[]{"foreach([1,2] as " + type[0] + "\n $v);", refErrorDto("$v", 2, 1)});
+            }
         }
 
+        //only string is supported as type of the keys as the moment
+        collection.addAll(Arrays.asList(new Object[][]{
+                {"foreach([1] as bool \n $k => mixed $v);", refErrorDto("$k", 2, 1)},
+                {"foreach([1] as int \n $k => mixed $v);", refErrorDto("$k", 2, 1)},
+                {"foreach([1] as float \n $k => mixed $v);", refErrorDto("$k", 2, 1)}
+        }));
 
-        for (String[] type : types) {
-            //only object is supported as type of the values at the moment
-            if (type[0].equals("mixed")) {
-                continue;
-            }
-            collection.add(new Object[]{
-                    "foreach([1,2] as " + type[0] + "\n $v);",
-                    new ReferenceErrorDto[]{new ReferenceErrorDto("$v", 2, 1)}
-            });
-        }
         return collection;
     }
 }

@@ -8,7 +8,7 @@ package ch.tsphp.typechecker;
 
 import ch.tsphp.common.IAstHelper;
 import ch.tsphp.common.ITSPHPAst;
-import ch.tsphp.common.ITypeSymbol;
+import ch.tsphp.common.symbols.ITypeSymbol;
 import ch.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import org.antlr.runtime.Token;
 
@@ -46,19 +46,20 @@ public abstract class ACastingMethod implements ICastingMethod
         //create the cast based on the given (to take the given position etc.)
         ITSPHPAst cast = astHelper.createAst(ast);
 
-        //^(CASTING ^(TYPE (TYPE_MODIFIER ?) type) expression)
+        //^(CAST ^(TYPE (TYPE_MODIFIER ! ?) type) expression)
         Token token = cast.getToken();
         token.setType(TSPHPDefinitionWalker.CAST);
         token.setText("casting");
         ITSPHPAst typeRoot = astHelper.createAst(TSPHPDefinitionWalker.TYPE, "type");
         ITSPHPAst typeModifier = astHelper.createAst(TSPHPDefinitionWalker.TYPE_MODIFIER, "tMod");
-
-        String typeName = typeSymbol.getName();
-        if (typeName.endsWith("?")) {
-            typeModifier.addChild(astHelper.createAst(TSPHPDefinitionWalker.QuestionMark, "?"));
-            typeName = typeName.substring(0, typeName.length() - 1);
+        if (typeSymbol.isFalseable()) {
+            typeModifier.addChild(astHelper.createAst(TSPHPDefinitionWalker.LogicNot, "!"));
         }
-        ITSPHPAst type = astHelper.createAst(getTokenType(), typeName);
+        if (typeSymbol.isNullable()) {
+            typeModifier.addChild(astHelper.createAst(TSPHPDefinitionWalker.QuestionMark, "?"));
+        }
+
+        ITSPHPAst type = astHelper.createAst(getTokenType(), typeSymbol.getName());
         type.setEvalType(typeSymbol);
         typeRoot.addChild(typeModifier);
         typeRoot.addChild(type);

@@ -213,11 +213,19 @@ public class ScopeTestHelper
         return accessOrder;
     }
 
-    public static ITSPHPAst getAst(ITSPHPAst ast, String testString, List<Integer> astAccessOrder) {
+    public static ITSPHPAst getAst(
+            ITSPHPAst ast, String testString, ScopeTestStruct testStruct) {
+
         ITSPHPAst tmp = ast;
-        for (Integer index : astAccessOrder) {
+        ITSPHPAst tmp2 = ast;
+        for (Integer index : testStruct.accessOrderToNode) {
             if (index != null) {
-                org.junit.Assert.assertNotNull(testString + " failed. Could not reach path.", tmp);
+                org.junit.Assert.assertNotNull(
+                        testString + " failed.\n"
+                                + "Could not reach path to " + testStruct.astText + "\n"
+                                + "Last node was " + tmp2.getText(),
+                        tmp);
+                tmp2 = tmp;
                 tmp = tmp.getChild(index);
             }
         }

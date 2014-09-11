@@ -6,7 +6,7 @@
 
 package ch.tsphp.typechecker;
 
-import ch.tsphp.common.ITypeSymbol;
+import ch.tsphp.common.symbols.ITypeSymbol;
 import ch.tsphp.typechecker.symbols.IArrayTypeSymbol;
 import ch.tsphp.typechecker.symbols.IClassTypeSymbol;
 import ch.tsphp.typechecker.symbols.IMethodSymbol;
@@ -30,6 +30,8 @@ public interface ITypeSystem
 
     Map<Integer, List<IMethodSymbol>> getBinaryOperators();
 
+    Map<ITypeSymbol, Map<ITypeSymbol, ICastingMethod>> getImplicitCasting();
+
     Map<ITypeSymbol, Map<ITypeSymbol, ICastingMethod>> getExplicitCastings();
 
     IVoidTypeSymbol getVoidTypeSymbol();
@@ -38,27 +40,59 @@ public interface ITypeSystem
 
     IScalarTypeSymbol getBoolTypeSymbol();
 
+    IScalarTypeSymbol getBoolFalseableTypeSymbol();
+
     IScalarTypeSymbol getBoolNullableTypeSymbol();
+
+    IScalarTypeSymbol getBoolFalseableAndNullableTypeSymbol();
 
     IScalarTypeSymbol getIntTypeSymbol();
 
+    IScalarTypeSymbol getIntFalseableTypeSymbol();
+
     IScalarTypeSymbol getIntNullableTypeSymbol();
+
+    IScalarTypeSymbol getIntFalseableAndNullableTypeSymbol();
 
     IScalarTypeSymbol getFloatTypeSymbol();
 
+    IScalarTypeSymbol getFloatFalseableTypeSymbol();
+
     IScalarTypeSymbol getFloatNullableTypeSymbol();
+
+    IScalarTypeSymbol getFloatFalseableAndNullableTypeSymbol();
 
     IScalarTypeSymbol getStringTypeSymbol();
 
+    IScalarTypeSymbol getStringFalseableTypeSymbol();
+
     IScalarTypeSymbol getStringNullableTypeSymbol();
+
+    IScalarTypeSymbol getStringFalseableAndNullableTypeSymbol();
 
     IArrayTypeSymbol getArrayTypeSymbol();
 
+    IArrayTypeSymbol getArrayFalseableTypeSymbol();
+
     IPseudoTypeSymbol getResourceTypeSymbol();
+
+    IPseudoTypeSymbol getResourceFalseableTypeSymbol();
 
     IPseudoTypeSymbol getMixedTypeSymbol();
 
     IClassTypeSymbol getExceptionTypeSymbol();
 
-    ICastingMethod getStandardCastingMethod(ITypeSymbol formalParameter);
+    ICastingMethod getStandardCastingMethod(ITypeSymbol formalParameterType);
+
+    void addExplicitCastFromTo(ITypeSymbol actualParameterType, ITypeSymbol formalParameterType);
+
+    void addExplicitCastFromTo(ITypeSymbol actualParameterType, ITypeSymbol formalParameterType,
+            ICastingMethod castingMethod);
+
+    void addImplicitCastFromTo(ITypeSymbol actualParameterType, ITypeSymbol formalParameterType);
+
+    void addImplicitCastFromTo(ITypeSymbol actualParameterType, ITypeSymbol formalParameterType,
+            ICastingMethod castingMethod);
+
+
 }

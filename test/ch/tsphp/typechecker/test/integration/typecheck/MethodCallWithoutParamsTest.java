@@ -40,14 +40,12 @@ public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
         List<Object[]> collection = new ArrayList<>();
         String dfault = "\\.\\.";
 
-        Object[][] types = TypeHelper.getTypesInclTokenAndDefaultValue();
+        Object[][] types = TypeHelper.getAllTypesInclTokenAndDefaultValue();
 
-        int count = 0;
         for (Object[] type : types) {
-            ++count;
             String kind = "class";
             String body = "{" + type[0] + " $a=" + type[2] + "; return $a;}";
-            if (count == 14) {
+            if (type[0].equals("void")) {
                 body = "{}";
             }
 
@@ -184,9 +182,10 @@ public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
             }
 
             body = "{" + type[0] + " $a=" + type[2] + "; return $a;}";
-            if (count == 14) {
+            if (type[0].equals("void")) {
                 body = "{}";
             }
+
             collection.addAll(Arrays.asList(new Object[][]{
                     //this
                     {

@@ -37,19 +37,19 @@ public class LogicOperatorTest extends AOperatorTypeCheckTest
         String[] arithmeticOperators = new String[]{"or", "xor", "and", "||", "&&"};
         for (String operator : arithmeticOperators) {
             collection.addAll(Arrays.asList(new Object[][]{
-                    {"true " + operator + " true;", new TypeCheckStruct[]{struct(operator, Bool, 1, 0, 0)}},
-                    {"false " + operator + " false;", new TypeCheckStruct[]{struct(operator, Bool, 1, 0, 0)}},
-                    {"true " + operator + " false;", new TypeCheckStruct[]{struct(operator, Bool, 1, 0, 0)}},
-                    {"false " + operator + " true;", new TypeCheckStruct[]{struct(operator, Bool, 1, 0, 0)}},
+                    {"true " + operator + " true;", typeStruct(operator, Bool, 1, 0, 0)},
+                    {"false " + operator + " false;", typeStruct(operator, Bool, 1, 0, 0)},
+                    {"true " + operator + " false;", typeStruct(operator, Bool, 1, 0, 0)},
+                    {"false " + operator + " true;", typeStruct(operator, Bool, 1, 0, 0)},
                     {"true " + operator + " false " + operator + " true;", new TypeCheckStruct[]{
                             struct(operator, Bool, 1, 0, 0),
                             struct(operator, Bool, 1, 0, 0, 0)
-                    }
-                    },}));
+                    }},
+            }));
         }
         collection.addAll(Arrays.asList(new Object[][]{
-                {"!true;", new TypeCheckStruct[]{struct("!", Bool, 1, 0, 0)}},
-                {"!false;", new TypeCheckStruct[]{struct("!", Bool, 1, 0, 0)}}
+                {"!true;", typeStruct("!", Bool, 1, 0, 0)},
+                {"!false;", typeStruct("!", Bool, 1, 0, 0)}
         }));
         return collection;
     }

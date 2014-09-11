@@ -6,7 +6,7 @@
 
 package ch.tsphp.typechecker.symbols;
 
-import ch.tsphp.common.ITypeSymbol;
+import ch.tsphp.common.symbols.ITypeSymbol;
 
 /**
  * Adopted from the book "Language Implementation Patterns" by Terence Parr.

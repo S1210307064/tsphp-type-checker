@@ -34,14 +34,14 @@ public class ArrayAccessTest extends AOperatorTypeCheckTest
     public static Collection<Object[]> testStrings() {
         List<Object[]> collection = new ArrayList<>();
 
-        String[] types = new String[]{"int", "float", "string"};
-        for (String type : types) {
+        String[][] types = new String[][]{{"bool", "true"}, {"int", "1"}, {"float", "1.0"}, {"string", "'hello'"}};
+        for (String[] type : types) {
             collection.add(new Object[]{
-                    "array $a = [1,2];" + type + " $b=1; $a[$b];",
+                    "array $a = [1,2];" + type[0] + " $b = " + type[1] + "; $a[$b];",
                     new TypeCheckStruct[]{struct("arrAccess", Mixed, 1, 2, 0)}
             });
             collection.add(new Object[]{
-                    "array $a = [1,2];" + type + " $b=1; $a = (array) $a[$b]; $a[$b];",
+                    "array $a = [1,2];" + type[0] + " $b=" + type[1] + "; $a = (array) $a[$b]; $a[$b];",
                     new TypeCheckStruct[]{struct("arrAccess", Mixed, 1, 3, 0)}
             });
         }

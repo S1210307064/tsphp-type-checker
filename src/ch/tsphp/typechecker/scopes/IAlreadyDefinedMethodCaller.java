@@ -6,7 +6,7 @@
 
 package ch.tsphp.typechecker.scopes;
 
-import ch.tsphp.common.ISymbol;
+import ch.tsphp.common.symbols.ISymbol;
 
 /**
  * "Delegate" to report already defined symbols.

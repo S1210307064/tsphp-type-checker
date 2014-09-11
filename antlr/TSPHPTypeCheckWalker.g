@@ -20,8 +20,8 @@ options {
 
 package ch.tsphp.typechecker.antlr;
 
-import ch.tsphp.common.ISymbol;
-import ch.tsphp.common.ITypeSymbol;
+import ch.tsphp.common.symbols.ISymbol;
+import ch.tsphp.common.symbols.ITypeSymbol;
 import ch.tsphp.common.ITSPHPAst;
 import ch.tsphp.common.ITSPHPErrorAst;
 import ch.tsphp.typechecker.IAccessResolver;

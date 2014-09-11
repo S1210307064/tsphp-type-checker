@@ -9,6 +9,7 @@ package ch.tsphp.typechecker.symbols.erroneous;
 import ch.tsphp.common.ITSPHPAst;
 import ch.tsphp.common.exceptions.TSPHPException;
 import ch.tsphp.typechecker.symbols.IVariableSymbol;
+import ch.tsphp.typechecker.symbols.TypeWithModifiersDto;
 
 import java.util.List;
 
@@ -28,6 +29,11 @@ public class ErroneousMethodSymbol extends AErroneousScopedSymbol implements IEr
 
     @Override
     public List<IVariableSymbol> getParameters() {
+        throw new UnsupportedOperationException(ERROR_MESSAGE);
+    }
+
+    @Override
+    public TypeWithModifiersDto toTypeWithModifiersDto() {
         throw new UnsupportedOperationException(ERROR_MESSAGE);
     }
 
@@ -69,5 +75,15 @@ public class ErroneousMethodSymbol extends AErroneousScopedSymbol implements IEr
     @Override
     public boolean isPrivate() {
         return false;
+    }
+
+    @Override
+    public boolean isFalseable() {
+        return true;
+    }
+
+    @Override
+    public boolean isNullable() {
+        return true;
     }
 }

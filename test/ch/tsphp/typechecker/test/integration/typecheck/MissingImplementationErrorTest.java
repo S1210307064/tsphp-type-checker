@@ -6,8 +6,8 @@
 
 package ch.tsphp.typechecker.test.integration.typecheck;
 
-import ch.tsphp.common.ISymbol;
 import ch.tsphp.common.ITSPHPAst;
+import ch.tsphp.common.symbols.ISymbol;
 import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
 import ch.tsphp.typechecker.error.ReferenceErrorDto;
 import ch.tsphp.typechecker.test.integration.testutils.typecheck.ATypeCheckErrorTest;

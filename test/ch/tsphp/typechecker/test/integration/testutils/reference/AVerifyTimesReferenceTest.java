@@ -8,8 +8,10 @@ package ch.tsphp.typechecker.test.integration.testutils.reference;
 
 import ch.tsphp.typechecker.IReferencePhaseController;
 import ch.tsphp.typechecker.ISymbolResolver;
+import ch.tsphp.typechecker.ITypeSystem;
 import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
 import ch.tsphp.typechecker.scopes.IGlobalNamespaceScope;
+import ch.tsphp.typechecker.symbols.IModifierHelper;
 import ch.tsphp.typechecker.symbols.ISymbolFactory;
 import org.junit.Ignore;
 import org.mockito.exceptions.base.MockitoAssertionError;
@@ -43,8 +45,15 @@ public abstract class AVerifyTimesReferenceTest extends AReferenceTest
             ISymbolFactory theSymbolFactory,
             ISymbolResolver theSymbolResolver,
             ITypeCheckerErrorReporter theTypeCheckerErrorReporter,
+            ITypeSystem theTypeSystem,
+            IModifierHelper theModifierHelper,
             IGlobalNamespaceScope theGlobalDefaultNamespace) {
         return spy(super.createReferencePhaseController(
-                theSymbolFactory, theSymbolResolver,theTypeCheckerErrorReporter, theGlobalDefaultNamespace));
+                theSymbolFactory,
+                theSymbolResolver,
+                theTypeCheckerErrorReporter,
+                theTypeSystem,
+                theModifierHelper,
+                theGlobalDefaultNamespace));
     }
 }

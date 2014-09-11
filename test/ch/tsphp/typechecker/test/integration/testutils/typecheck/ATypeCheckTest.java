@@ -75,7 +75,7 @@ public abstract class ATypeCheckTest extends AReferenceTest
     }
 
     protected void checkErrors() {
-        Assert.assertFalse(testString + " failed. Exceptions occurred." + exceptions,
+        Assert.assertFalse(testString + " failed. Exceptions occurred.\n" + exceptions,
                 typeCheckErrorReporter.hasFoundError());
 
 

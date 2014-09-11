@@ -11,12 +11,14 @@ import ch.tsphp.typechecker.AccessResolver;
 import ch.tsphp.typechecker.IAccessResolver;
 import ch.tsphp.typechecker.IReferencePhaseController;
 import ch.tsphp.typechecker.ISymbolResolver;
+import ch.tsphp.typechecker.ITypeSystem;
 import ch.tsphp.typechecker.ReferencePhaseController;
 import ch.tsphp.typechecker.SymbolResolver;
 import ch.tsphp.typechecker.antlrmod.ErrorReportingTSPHPReferenceWalker;
 import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
 import ch.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tsphp.typechecker.scopes.IScopeHelper;
+import ch.tsphp.typechecker.symbols.IModifierHelper;
 import ch.tsphp.typechecker.symbols.ISymbolFactory;
 import ch.tsphp.typechecker.test.integration.testutils.TestSymbolFactory;
 import ch.tsphp.typechecker.test.integration.testutils.WriteExceptionToConsole;
@@ -48,12 +50,18 @@ public abstract class AReferenceTest extends ADefinitionTest
                 scopeHelper,
                 symbolFactory,
                 typeCheckErrorReporter,
-                definer.getGlobalNamespaceScopes(),
-                definer.getGlobalDefaultNamespace());
+                definitionPhaseController.getGlobalNamespaceScopes(),
+                definitionPhaseController.getGlobalDefaultNamespace());
 
         accessResolver = createAccessResolver(symbolFactory, typeCheckErrorReporter);
+
         referencePhaseController = createReferencePhaseController(
-                symbolFactory, symbolResolver, typeCheckErrorReporter, definer.getGlobalDefaultNamespace());
+                symbolFactory,
+                symbolResolver,
+                typeCheckErrorReporter,
+                typeSystem,
+                modifierHelper,
+                definitionPhaseController.getGlobalDefaultNamespace());
     }
 
     protected abstract void verifyReferences();
@@ -72,8 +80,6 @@ public abstract class AReferenceTest extends ADefinitionTest
     }
 
     protected void afterVerifyDefinitions() {
-
-
         commonTreeNodeStream.reset();
         reference = createReferenceWalker(commonTreeNodeStream, referencePhaseController, accessResolver);
         registerReferenceErrorLogger();
@@ -81,10 +87,10 @@ public abstract class AReferenceTest extends ADefinitionTest
         try {
             reference.compilationUnit();
         } catch (RecognitionException e) {
+            e.printStackTrace();
             Assert.fail(testString + " failed. Unexpected exception occurred, " +
                     "should be caught by the ErrorReportingTSPHPReferenceWalker.\n"
                     + e.getMessage());
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(testString + " failed. Unexpected exception occurred in the reference phase.\n"
@@ -132,9 +138,16 @@ public abstract class AReferenceTest extends ADefinitionTest
             ISymbolFactory theSymbolFactory,
             ISymbolResolver theSymbolResolver,
             ITypeCheckerErrorReporter theTypeCheckerErrorReporter,
+            ITypeSystem theTypeSystem,
+            IModifierHelper theModifierHelper,
             IGlobalNamespaceScope globalDefaultNamespace) {
         return new ReferencePhaseController(
-                theSymbolFactory, theSymbolResolver, theTypeCheckerErrorReporter, globalDefaultNamespace);
+                theSymbolFactory,
+                theSymbolResolver,
+                theTypeCheckerErrorReporter,
+                theTypeSystem,
+                theModifierHelper,
+                globalDefaultNamespace);
     }
 
     protected ErrorReportingTSPHPReferenceWalker createReferenceWalker(

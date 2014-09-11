@@ -38,15 +38,14 @@ public class MethodCallStaticWithoutParamsTest extends AReferenceAstTypeCheckTes
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
         List<Object[]> collection = new ArrayList<>();
-        Object[][] types = TypeHelper.getTypesInclTokenAndDefaultValue();
+        Object[][] types = TypeHelper.getAllTypesInclTokenAndDefaultValue();
 
-        int count = 0;
         for (Object[] type : types) {
-            ++count;
             String stat = type[0] + " $a=" + type[2] + "; return $a;";
-            if (count == 14) {
+            if (type[0].equals("void")) {
                 stat = "";
             }
+
             EBuiltInType returnType = (EBuiltInType) type[1];
             collection.addAll(Arrays.asList(new Object[][]{
                     {

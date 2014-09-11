@@ -7,7 +7,7 @@
 package ch.tsphp.typechecker;
 
 import ch.tsphp.common.ITSPHPAst;
-import ch.tsphp.common.ITypeSymbol;
+import ch.tsphp.common.symbols.ITypeSymbol;
 
 /**
  * Represents a casting method, e.g. built-in casting method.

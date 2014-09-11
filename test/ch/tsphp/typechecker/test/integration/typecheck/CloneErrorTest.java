@@ -37,7 +37,7 @@ public class CloneErrorTest extends ATypeCheckErrorTest
         ReferenceErrorDto[] errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto("clone", 2, 1)};
 
 
-        String[][] types = TypeHelper.getTypesInclDefaultValueWithoutExceptions();
+        String[][] types = TypeHelper.getAllTypesInclDefaultValueWithoutExceptions();
 
         for (String[] type : types) {
             collection.add(new Object[]{type[0] + " $b=" + type[1] + ";\n clone $b;", errorDto});

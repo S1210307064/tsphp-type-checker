@@ -7,15 +7,15 @@
 package ch.tsphp.typechecker.symbols;
 
 import ch.tsphp.common.IScope;
-import ch.tsphp.common.ISymbol;
 import ch.tsphp.common.ITSPHPAst;
 import ch.tsphp.common.LowerCaseStringMap;
+import ch.tsphp.common.symbols.ISymbol;
+import ch.tsphp.common.symbols.modifiers.IModifierSet;
 import ch.tsphp.typechecker.scopes.IScopeHelper;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Represents a symbol which is a scope at the same type, e.g. a class or a method.
@@ -33,11 +33,11 @@ public abstract class AScopedSymbol extends ASymbolWithModifier implements IScop
 
     @SuppressWarnings("checkstyle:parameternumber")
     public AScopedSymbol(
-            IScopeHelper theScopeHelper
-            , ITSPHPAst definitionAst
-            , Set<Integer> modifiers
-            , String name
-            , IScope theEnclosingScope) {
+            IScopeHelper theScopeHelper,
+            ITSPHPAst definitionAst,
+            IModifierSet modifiers,
+            String name,
+            IScope theEnclosingScope) {
         super(definitionAst, modifiers, name);
         enclosingScope = theEnclosingScope;
         scopeHelper = theScopeHelper;

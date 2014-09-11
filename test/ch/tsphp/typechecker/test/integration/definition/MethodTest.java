@@ -7,11 +7,11 @@
 package ch.tsphp.typechecker.test.integration.definition;
 
 import ch.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
-import ch.tsphp.typechecker.symbols.ModifierHelper;
 import ch.tsphp.typechecker.test.integration.testutils.IAdder;
 import ch.tsphp.typechecker.test.integration.testutils.ParameterListHelper;
 import ch.tsphp.typechecker.test.integration.testutils.TypeHelper;
 import ch.tsphp.typechecker.test.integration.testutils.definition.ADefinitionSymbolTest;
+import ch.tsphp.typechecker.utils.ModifierHelper;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,7 +30,7 @@ public class MethodTest extends ADefinitionSymbolTest
 
     private static String prefix = "namespace a{ class b{";
     private static String appendix = "}}";
-    private static String prefixExpected = "\\a\\.\\a\\.b ";
+    private static String prefixExpected = "\\a\\.\\a\\.b|" + TSPHPDefinitionWalker.QuestionMark + " ";
     private static List<Object[]> collection;
 
     public MethodTest(String testString, String expectedResult) {
@@ -54,11 +54,11 @@ public class MethodTest extends ADefinitionSymbolTest
     }
 
     private static void addReturnTypes() {
-        TypeHelper.getAllTypesInclModifier(new IAdder()
+        TypeHelper.addAllTypesInclModifier(new IAdder()
         {
             @Override
             public void add(String type, String typeExpected, SortedSet modifiers) {
-                String typeModifiers = ModifierHelper.getModifiers(modifiers);
+                String typeModifiers = ModifierHelper.getModifiersAsString(modifiers);
                 collection.add(new Object[]{
                         prefix + "function " + type + " get(){}" + appendix,
                         prefixExpected + "\\a\\.\\a\\.b." + typeExpected
@@ -128,7 +128,8 @@ public class MethodTest extends ADefinitionSymbolTest
             collection.add(new Object[]{
                     prefix + variation[0] + " function void foo(){}" + appendix,
                     prefixExpected + "\\a\\.\\a\\.b.void "
-                            + "\\a\\.\\a\\.b.foo()" + ModifierHelper.getModifiers((SortedSet<Integer>) variation[1])
+                            + "\\a\\.\\a\\.b.foo()" + ModifierHelper.getModifiersAsString((SortedSet<Integer>)
+                            variation[1])
             });
         }
 
@@ -144,16 +145,19 @@ public class MethodTest extends ADefinitionSymbolTest
             collection.add(new Object[]{
                     prefix + variation[0] + " function void foo();" + appendix,
                     prefixExpected + "\\a\\.\\a\\.b.void "
-                            + "\\a\\.\\a\\.b.foo()" + ModifierHelper.getModifiers((SortedSet<Integer>) variation[1])
+                            + "\\a\\.\\a\\.b.foo()" + ModifierHelper.getModifiersAsString((SortedSet<Integer>)
+                            variation[1])
             });
         }
         collection.add(new Object[]{
                 prefix + "abstract function void foo(); abstract function void bar();" + appendix,
                 prefixExpected + "\\a\\.\\a\\.b.void "
-                        + "\\a\\.\\a\\.b.foo()" + ModifierHelper.getModifiers((SortedSet<Integer>) variations[0][1])
+                        + "\\a\\.\\a\\.b.foo()" + ModifierHelper.getModifiersAsString((SortedSet<Integer>)
+                        variations[0][1])
                         + " "
                         + "\\a\\.\\a\\.b.void "
-                        + "\\a\\.\\a\\.b.bar()" + ModifierHelper.getModifiers((SortedSet<Integer>) variations[0][1])
+                        + "\\a\\.\\a\\.b.bar()" + ModifierHelper.getModifiersAsString((SortedSet<Integer>)
+                        variations[0][1])
         });
     }
 

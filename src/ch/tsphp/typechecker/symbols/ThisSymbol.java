@@ -26,4 +26,19 @@ public class ThisSymbol extends ASymbolWithAccessModifier implements IVariableSy
     public boolean isAlwaysCasting() {
         return false;
     }
+
+    @Override
+    public boolean isFalseable() {
+        return false;
+    }
+
+    @Override
+    public boolean isNullable() {
+        return false;
+    }
+
+    @Override
+    public TypeWithModifiersDto toTypeWithModifiersDto() {
+        return new TypeWithModifiersDto(getType(), modifiers);
+    }
 }

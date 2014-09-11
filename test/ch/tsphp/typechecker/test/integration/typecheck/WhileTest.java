@@ -32,10 +32,12 @@ public class WhileTest extends AOperatorTypeCheckTest
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
         return Arrays.asList(new Object[][]{
-                {"while(true);", new TypeCheckStruct[]{struct("true", Bool, 1, 0, 0)}},
-                {"while(false);", new TypeCheckStruct[]{struct("false", Bool, 1, 0, 0)}},
-                {"do;while(true);", new TypeCheckStruct[]{struct("true", Bool, 1, 0, 1)}},
-                {"do;while(false);", new TypeCheckStruct[]{struct("false", Bool, 1, 0, 1)}}
+                {"while(true);", typeStruct("true", Bool, 1, 0, 0)},
+                {"while(false);", typeStruct("false", Bool, 1, 0, 0)},
+                {"do;while(true);", typeStruct("true", Bool, 1, 0, 1)},
+                {"do;while(false);", typeStruct("false", Bool, 1, 0, 1)},
+                {"bool $b = true; while($b);", typeStruct("$b", Bool, 1, 1, 0)},
+                {"bool $b = true; do;while($b);", typeStruct("$b", Bool, 1, 1, 1)},
         });
     }
 }

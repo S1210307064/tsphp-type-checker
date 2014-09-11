@@ -42,18 +42,18 @@ public class TernaryOperatorTest extends AOperatorTypeCheckTest
                         struct("$b", Float, 1, 2, 0, 2)}
                 },
                 //parent type left
-                {"string $a=''; int $b=1; true ? $a : $b;", new TypeCheckStruct[]{
-                        struct("?", String, 1, 2, 0),
+                {"Exception $a=null; ErrorException $b=null; true ? $a : $b;", new TypeCheckStruct[]{
+                        struct("?", Exception, 1, 2, 0),
                         struct("true", Bool, 1, 2, 0, 0),
-                        struct("$a", String, 1, 2, 0, 1),
-                        struct("$b", Int, 1, 2, 0, 2)}
+                        struct("$a", Exception, 1, 2, 0, 1),
+                        struct("$b", ErrorException, 1, 2, 0, 2)}
                 },
                 //parent type right
-                {"bool $a=false; int $b=1; true ? $a : $b;", new TypeCheckStruct[]{
-                        struct("?", Int, 1, 2, 0),
+                {"ErrorException $a=null; Exception $b=null; true ? $a : $b;", new TypeCheckStruct[]{
+                        struct("?", Exception, 1, 2, 0),
                         struct("true", Bool, 1, 2, 0, 0),
-                        struct("$a", Bool, 1, 2, 0, 1),
-                        struct("$b", Int, 1, 2, 0, 2)}
+                        struct("$a", ErrorException, 1, 2, 0, 1),
+                        struct("$b", Exception, 1, 2, 0, 2)}
                 },
         });
     }

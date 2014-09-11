@@ -9,6 +9,7 @@ package ch.tsphp.typechecker.test.integration.definition;
 import ch.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tsphp.typechecker.test.integration.testutils.TypeHelper;
 import ch.tsphp.typechecker.test.integration.testutils.definition.ADefinitionSymbolTest;
+import ch.tsphp.typechecker.utils.ModifierHelper;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 @RunWith(Parameterized.class)
 public class InterfaceTest extends ADefinitionSymbolTest
@@ -36,20 +39,23 @@ public class InterfaceTest extends ADefinitionSymbolTest
     public static Collection<Object[]> testStrings() {
         List<Object[]> collection = new ArrayList<>();
 
-        int abstr = TSPHPDefinitionWalker.Abstract;
+        SortedSet<Integer> modifiers = new TreeSet<>();
+        modifiers.add(TSPHPDefinitionWalker.Abstract);
+        modifiers.add(TSPHPDefinitionWalker.QuestionMark);
+        String abstr = ModifierHelper.getModifiersAsString(modifiers);
 
         collection.addAll(Arrays.asList(new Object[][]{
-                {"interface a{}", "\\.\\.a|" + abstr},
+                {"interface a{}", "\\.\\.a" + abstr},
                 {
                         "interface a{} interface b{} interface c extends a\\b{}",
-                        "\\.\\.a|" + abstr + " " + "\\.\\.b|" + abstr + " "
-                                + "\\.\\.a\\b " + "\\.\\.c|" + abstr
+                        "\\.\\.a" + abstr + " " + "\\.\\.b" + abstr + " "
+                                + "\\.\\.a\\b " + "\\.\\.c" + abstr
                 },
                 {
                         "namespace x{interface a{}} namespace y{interface b{}} "
                                 + "namespace z{interface c extends a\\b{}} namespace{interface d{}}",
-                        "\\x\\.\\x\\.a|" + abstr + " " + "\\y\\.\\y\\.b|" + abstr + " "
-                                + "\\z\\.\\z\\.a\\b " + "\\z\\.\\z\\.c|" + abstr + " " + "\\.\\.d|" + abstr
+                        "\\x\\.\\x\\.a" + abstr + " " + "\\y\\.\\y\\.b" + abstr + " "
+                                + "\\z\\.\\z\\.a\\b " + "\\z\\.\\z\\.c" + abstr + " " + "\\.\\.d" + abstr
                 }
         }));
 
@@ -58,20 +64,19 @@ public class InterfaceTest extends ADefinitionSymbolTest
         for (String type : types) {
             collection.add(new Object[]{
                     "namespace b; interface a extends " + type + "{}",
-                    "\\b\\.\\b\\." + type + " " + "\\b\\.\\b\\.a|" + abstr
+                    "\\b\\.\\b\\." + type + " " + "\\b\\.\\b\\.a" + abstr
             });
             collection.add(new Object[]{
                     "interface a extends " + type + "," + type + "{}",
                     "\\.\\." + type + " " + "\\.\\." + type + " "
-                            + "\\.\\.a|" + abstr
+                            + "\\.\\.a" + abstr
             });
             collection.add(new Object[]{
                     "interface a extends " + type + "," + type + "," + type + "{}",
                     "\\.\\." + type + " " + "\\.\\." + type + " " + "\\.\\." + type + " "
-                            + "\\.\\.a|" + abstr
+                            + "\\.\\.a" + abstr
             });
         }
-
 
         return collection;
     }

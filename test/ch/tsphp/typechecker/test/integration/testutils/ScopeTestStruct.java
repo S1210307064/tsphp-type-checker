@@ -13,11 +13,11 @@ public class ScopeTestStruct
 
     public String astText;
     public String astScope;
-    public List<Integer> astAccessOrder;
+    public List<Integer> accessOrderToNode;
 
     public ScopeTestStruct(String theAstText, String theAstScope, List<Integer> theAstAccessOrder) {
         astText = theAstText;
         astScope = theAstScope;
-        astAccessOrder = theAstAccessOrder;
+        accessOrderToNode = theAstAccessOrder;
     }
 }

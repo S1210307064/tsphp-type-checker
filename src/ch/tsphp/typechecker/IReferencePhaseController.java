@@ -8,7 +8,7 @@ package ch.tsphp.typechecker;
 
 import ch.tsphp.common.ITSPHPAst;
 import ch.tsphp.common.ITSPHPErrorAst;
-import ch.tsphp.common.ITypeSymbol;
+import ch.tsphp.common.symbols.ITypeSymbol;
 import ch.tsphp.typechecker.symbols.IScalarTypeSymbol;
 import ch.tsphp.typechecker.symbols.IVariableSymbol;
 import ch.tsphp.typechecker.symbols.erroneous.IErroneousTypeSymbol;
@@ -29,19 +29,18 @@ public interface IReferencePhaseController
 
     IVariableSymbol resolveVariable(ITSPHPAst ast);
 
-    IScalarTypeSymbol resolveScalarType(ITSPHPAst typeAst, boolean isNullable);
+    IScalarTypeSymbol resolveScalarType(ITSPHPAst typeAst, ITSPHPAst typeModifierAst);
 
-    ITypeSymbol resolvePrimitiveType(ITSPHPAst typeASt);
+    ITypeSymbol resolvePrimitiveType(ITSPHPAst typeASt, ITSPHPAst typeModifierAst);
 
     /**
      * Try to resolve the type for the given typeAst and returns an
      * {@link IErroneousTypeSymbol} if the type could not be found.
      *
      * @param typeAst The AST node which contains the type name. For instance, int, MyClass, \Exception etc.
-     * @return The corresponding type or a {@link IErroneousTypeSymbol}
-     * if could not be found.
+     * @return The corresponding type or a {@link IErroneousTypeSymbol} if could not be found.
      */
-    ITypeSymbol resolveType(ITSPHPAst typeAst);
+    ITypeSymbol resolveType(ITSPHPAst typeAst, ITSPHPAst typeModifierAst);
 
     ITypeSymbol resolveUseType(ITSPHPAst typeAst, ITSPHPAst alias);
 

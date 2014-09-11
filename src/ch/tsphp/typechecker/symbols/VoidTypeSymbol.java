@@ -7,7 +7,7 @@
 package ch.tsphp.typechecker.symbols;
 
 import ch.tsphp.common.ITSPHPAst;
-import ch.tsphp.common.ITypeSymbol;
+import ch.tsphp.common.symbols.ITypeSymbol;
 
 import java.util.HashSet;
 
@@ -19,13 +19,8 @@ public class VoidTypeSymbol extends ATypeSymbol implements IVoidTypeSymbol
     }
 
     @Override
-    public boolean isNullable() {
-        return false;
-    }
-
-    @Override
     public ITSPHPAst getDefaultValue() {
-        throw new UnsupportedOperationException("Void has no default value and should not be used as type"
-                + " other than return type of a function/method.");
+        throw new UnsupportedOperationException("Void has no default value and should only be used as return type of "
+                + "a function/method and not in other cases.");
     }
 }

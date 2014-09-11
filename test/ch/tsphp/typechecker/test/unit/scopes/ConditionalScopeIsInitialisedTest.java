@@ -7,7 +7,7 @@
 package ch.tsphp.typechecker.test.unit.scopes;
 
 import ch.tsphp.common.IScope;
-import ch.tsphp.common.ISymbol;
+import ch.tsphp.common.symbols.ISymbol;
 import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
 import ch.tsphp.typechecker.scopes.ConditionalScope;
 import ch.tsphp.typechecker.scopes.IConditionalScope;

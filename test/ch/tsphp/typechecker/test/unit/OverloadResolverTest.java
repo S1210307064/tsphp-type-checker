@@ -392,7 +392,7 @@ public class OverloadResolverTest
         TypeWithModifiersDto dto = new TypeWithModifiersDto(actualType, new ModifierSet());
 
         IOverloadResolver resolver = createResolver();
-        int result = resolver.getPromotionLevelFromToConsiderNullAndFalse(actualType, "$a", dto);
+        int result = resolver.getPromotionLevelFromToConsiderFalseAndNull(actualType, "$a", dto);
 
         assertThat(result, is(0));
     }
@@ -405,7 +405,7 @@ public class OverloadResolverTest
         TypeWithModifiersDto dto = new TypeWithModifiersDto(actualType, modifiers);
 
         IOverloadResolver resolver = createResolver();
-        int result = resolver.getPromotionLevelFromToConsiderNullAndFalse(actualType, "$a", dto);
+        int result = resolver.getPromotionLevelFromToConsiderFalseAndNull(actualType, "$a", dto);
 
         assertThat(result, is(0));
     }
@@ -418,7 +418,7 @@ public class OverloadResolverTest
         TypeWithModifiersDto dto = new TypeWithModifiersDto(actualType, modifiers);
 
         IOverloadResolver resolver = createResolver();
-        int result = resolver.getPromotionLevelFromToConsiderNullAndFalse(actualType, "$a", dto);
+        int result = resolver.getPromotionLevelFromToConsiderFalseAndNull(actualType, "$a", dto);
 
         assertThat(result, is(0));
     }
@@ -432,7 +432,7 @@ public class OverloadResolverTest
         TypeWithModifiersDto dto = new TypeWithModifiersDto(actualType, modifiers);
 
         IOverloadResolver resolver = createResolver();
-        int result = resolver.getPromotionLevelFromToConsiderNullAndFalse(actualType, "$a", dto);
+        int result = resolver.getPromotionLevelFromToConsiderFalseAndNull(actualType, "$a", dto);
 
         assertThat(result, is(0));
     }
@@ -450,7 +450,7 @@ public class OverloadResolverTest
 
         //act
         IOverloadResolver resolver = createResolver();
-        int result = resolver.getPromotionLevelFromToConsiderNullAndFalse(actualType, "$a", dto);
+        int result = resolver.getPromotionLevelFromToConsiderFalseAndNull(actualType, "$a", dto);
 
         assertThat(result, is(1));
     }
@@ -469,7 +469,7 @@ public class OverloadResolverTest
 
         //act
         IOverloadResolver resolver = createResolver();
-        int result = resolver.getPromotionLevelFromToConsiderNullAndFalse(actualType, "$a", dto);
+        int result = resolver.getPromotionLevelFromToConsiderFalseAndNull(actualType, "$a", dto);
 
         assertThat(result, is(1));
     }
@@ -488,7 +488,7 @@ public class OverloadResolverTest
 
         //act
         IOverloadResolver resolver = createResolver();
-        int result = resolver.getPromotionLevelFromToConsiderNullAndFalse(actualType, "$a", dto);
+        int result = resolver.getPromotionLevelFromToConsiderFalseAndNull(actualType, "$a", dto);
 
         assertThat(result, is(1));
     }
@@ -508,7 +508,7 @@ public class OverloadResolverTest
 
         //act
         IOverloadResolver resolver = createResolver();
-        int result = resolver.getPromotionLevelFromToConsiderNullAndFalse(actualType, "$a", dto);
+        int result = resolver.getPromotionLevelFromToConsiderFalseAndNull(actualType, "$a", dto);
 
         assertThat(result, is(1));
     }
@@ -531,7 +531,7 @@ public class OverloadResolverTest
 
         //act
         IOverloadResolver resolver = createResolver();
-        int result = resolver.getPromotionLevelFromToConsiderNullAndFalse(actualType, "$a", dto);
+        int result = resolver.getPromotionLevelFromToConsiderFalseAndNull(actualType, "$a", dto);
 
         assertThat(result, is(2));
     }
@@ -555,7 +555,7 @@ public class OverloadResolverTest
 
         //act
         IOverloadResolver resolver = createResolver();
-        int result = resolver.getPromotionLevelFromToConsiderNullAndFalse(actualType, "$a", dto);
+        int result = resolver.getPromotionLevelFromToConsiderFalseAndNull(actualType, "$a", dto);
 
         assertThat(result, is(2));
     }
@@ -579,7 +579,7 @@ public class OverloadResolverTest
 
         //act
         IOverloadResolver resolver = createResolver();
-        int result = resolver.getPromotionLevelFromToConsiderNullAndFalse(actualType, "$a", dto);
+        int result = resolver.getPromotionLevelFromToConsiderFalseAndNull(actualType, "$a", dto);
 
         assertThat(result, is(2));
     }
@@ -604,7 +604,7 @@ public class OverloadResolverTest
 
         //act
         IOverloadResolver resolver = createResolver();
-        int result = resolver.getPromotionLevelFromToConsiderNullAndFalse(actualType, "$a", dto);
+        int result = resolver.getPromotionLevelFromToConsiderFalseAndNull(actualType, "$a", dto);
 
         assertThat(result, is(2));
     }
@@ -621,7 +621,7 @@ public class OverloadResolverTest
 
         //act
         IOverloadResolver resolver = createResolver(typeSystem);
-        int result = resolver.getPromotionLevelFromToConsiderNullAndFalse(bool, "false", dto);
+        int result = resolver.getPromotionLevelFromToConsiderFalseAndNull(bool, "false", dto);
 
         assertThat(result, is(-1));
     }
@@ -639,7 +639,7 @@ public class OverloadResolverTest
 
         //act
         IOverloadResolver resolver = createResolver(typeSystem);
-        int result = resolver.getPromotionLevelFromToConsiderNullAndFalse(bool, "false", dto);
+        int result = resolver.getPromotionLevelFromToConsiderFalseAndNull(bool, "false", dto);
 
         assertThat(result, is(0));
     }
@@ -657,7 +657,7 @@ public class OverloadResolverTest
 
         //act
         IOverloadResolver resolver = createResolver(typeSystem);
-        int result = resolver.getPromotionLevelFromToConsiderNullAndFalse(bool, "false", dto);
+        int result = resolver.getPromotionLevelFromToConsiderFalseAndNull(bool, "false", dto);
 
         assertThat(result, is(-1));
     }
@@ -676,7 +676,7 @@ public class OverloadResolverTest
 
         //act
         IOverloadResolver resolver = createResolver(typeSystem);
-        int result = resolver.getPromotionLevelFromToConsiderNullAndFalse(bool, "false", dto);
+        int result = resolver.getPromotionLevelFromToConsiderFalseAndNull(bool, "false", dto);
 
         assertThat(result, is(0));
     }
@@ -693,7 +693,7 @@ public class OverloadResolverTest
 
         //act
         IOverloadResolver resolver = createResolver(typeSystem);
-        int result = resolver.getPromotionLevelFromToConsiderNullAndFalse(bool, "true", dto);
+        int result = resolver.getPromotionLevelFromToConsiderFalseAndNull(bool, "true", dto);
 
         assertThat(result, is(-1));
     }
@@ -710,7 +710,7 @@ public class OverloadResolverTest
 
         //act
         IOverloadResolver resolver = createResolver(typeSystem);
-        int result = resolver.getPromotionLevelFromToConsiderNullAndFalse(nullType, "null", dto);
+        int result = resolver.getPromotionLevelFromToConsiderFalseAndNull(nullType, "null", dto);
 
         assertThat(result, is(-1));
     }
@@ -728,7 +728,7 @@ public class OverloadResolverTest
 
         //act
         IOverloadResolver resolver = createResolver(typeSystem);
-        int result = resolver.getPromotionLevelFromToConsiderNullAndFalse(nullType, "null", dto);
+        int result = resolver.getPromotionLevelFromToConsiderFalseAndNull(nullType, "null", dto);
 
         assertThat(result, is(-1));
     }
@@ -746,7 +746,7 @@ public class OverloadResolverTest
 
         //act
         IOverloadResolver resolver = createResolver(typeSystem);
-        int result = resolver.getPromotionLevelFromToConsiderNullAndFalse(nullType, "null", dto);
+        int result = resolver.getPromotionLevelFromToConsiderFalseAndNull(nullType, "null", dto);
 
         assertThat(result, is(0));
     }
@@ -765,7 +765,7 @@ public class OverloadResolverTest
 
         //act
         IOverloadResolver resolver = createResolver(typeSystem);
-        int result = resolver.getPromotionLevelFromToConsiderNullAndFalse(nullType, "null", dto);
+        int result = resolver.getPromotionLevelFromToConsiderFalseAndNull(nullType, "null", dto);
 
         assertThat(result, is(0));
     }

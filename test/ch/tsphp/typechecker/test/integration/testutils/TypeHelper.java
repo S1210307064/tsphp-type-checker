@@ -7,37 +7,40 @@
 package ch.tsphp.typechecker.test.integration.testutils;
 
 import ch.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
-import ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
 
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.Array;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.ArrayFalseable;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.Bool;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.BoolFalseable;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.BoolFalseableAndNullable;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.BoolNullable;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.ErrorException;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.Exception;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.Float;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.FloatFalseable;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.FloatFalseableAndNullable;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.FloatNullable;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.Int;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.IntFalseable;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.IntFalseableAndNullable;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.IntNullable;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.Mixed;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.Resource;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.ResourceFalseable;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.String;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.StringFalseable;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.StringFalseableAndNullable;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.StringNullable;
+import static ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType.Void;
+
+
 public class TypeHelper
 {
-    public static final EBuiltInType Bool = EBuiltInType.Bool;
-    public static final EBuiltInType BoolNullable = EBuiltInType.BoolNullable;
-    public static final EBuiltInType Int = EBuiltInType.Int;
-    public static final EBuiltInType IntNullable = EBuiltInType.IntNullable;
-    public static final EBuiltInType Float = EBuiltInType.Float;
-    public static final EBuiltInType FloatNullable = EBuiltInType.FloatNullable;
-    public static final EBuiltInType String = EBuiltInType.String;
-    public static final EBuiltInType StringNullable = EBuiltInType.StringNullable;
-    public static final EBuiltInType Array = EBuiltInType.Array;
-    public static final EBuiltInType Resource = EBuiltInType.Resource;
-    public static final EBuiltInType Mixed = EBuiltInType.Mixed;
-    public static final EBuiltInType Exception = EBuiltInType.Exception;
-    public static final EBuiltInType ErrorException = EBuiltInType.ErrorException;
-    public static final EBuiltInType Null = EBuiltInType.Null;
-    public static final EBuiltInType Void = EBuiltInType.Void;
-
-    public static List<String> getAllTypes() {
-        List<String> types = new ArrayList<>();
-        types.addAll(getPrimitiveTypes());
-        types.addAll(Arrays.asList(getClassInterfaceTypes()));
-        return types;
-    }
 
     public static String[] getClassInterfaceTypes() {
         return new String[]{
@@ -48,14 +51,6 @@ public class TypeHelper
                 "\\f\\D",
                 "\\g\\b\\A"
         };
-    }
-
-    public static List<String> getAllTypesWithoutResourceAndMixed() {
-        List<String> collection = new ArrayList<>();
-        collection.addAll(Arrays.asList(getScalarTypes()));
-        collection.add("array");
-        collection.addAll(Arrays.asList(getClassInterfaceTypes()));
-        return collection;
     }
 
     public static List<String> getAllTypesWithoutScalar() {
@@ -76,15 +71,6 @@ public class TypeHelper
         return collection;
     }
 
-    public static String[] getNullableScalarTypes() {
-        return new String[]{
-                "bool?",
-                "int?",
-                "float?",
-                "string?"
-        };
-    }
-
     public static String[] getScalarTypes() {
         return new String[]{
                 "bool",
@@ -94,78 +80,121 @@ public class TypeHelper
         };
     }
 
-    public static void getAllTypesInclModifier(IAdder adder) {
+    public static void addAllTypesInclModifier(IAdder adder) {
         String[] types = getScalarTypes();
         int cast = TSPHPDefinitionWalker.Cast;
         int questionMark = TSPHPDefinitionWalker.QuestionMark;
+        int logicNot = TSPHPDefinitionWalker.LogicNot;
 
         for (String type : types) {
             adder.add(type, type, new TreeSet<Integer>());
             adder.add("cast " + type, type, new TreeSet<>(Arrays.asList(new Integer[]{cast})));
             adder.add(type + "?", type, new TreeSet<>(Arrays.asList(new Integer[]{questionMark})));
+            adder.add(type + "!", type, new TreeSet<>(Arrays.asList(new Integer[]{logicNot})));
             adder.add("cast " + type + "?", type, new TreeSet<>(Arrays.asList(new Integer[]{cast, questionMark})));
+            adder.add("cast " + type + "!", type, new TreeSet<>(Arrays.asList(new Integer[]{cast, logicNot})));
+            adder.add(type + "!?", type, new TreeSet<>(Arrays.asList(new Integer[]{questionMark, logicNot})));
+            adder.add("cast " + type + "!?", type,
+                    new TreeSet<>(Arrays.asList(new Integer[]{cast, questionMark, logicNot})));
         }
 
         adder.add("array", "array", new TreeSet<Integer>());
         adder.add("cast array", "array", new TreeSet<>(Arrays.asList(new Integer[]{cast})));
+        adder.add("array!", "array", new TreeSet<>(Arrays.asList(new Integer[]{logicNot})));
+        adder.add("cast array!", "array", new TreeSet<>(Arrays.asList(new Integer[]{cast, logicNot})));
 
         types = getClassInterfaceTypes();
         for (String type : types) {
             adder.add(type, type, new TreeSet<Integer>());
             adder.add("cast " + type, type, new TreeSet<>(Arrays.asList(new Integer[]{cast})));
+            adder.add(type + "!", type, new TreeSet<>(Arrays.asList(new Integer[]{logicNot})));
+            adder.add("cast " + type + "!", type, new TreeSet<>(Arrays.asList(new Integer[]{cast, logicNot})));
         }
         adder.add("resource", "resource", new TreeSet<Integer>());
+        adder.add("resource!", "resource", new TreeSet<>(Arrays.asList(new Integer[]{logicNot})));
         adder.add("mixed", "mixed", new TreeSet<Integer>());
     }
 
 
-    public static String[][] getTypesInclDefaultValueWithoutExceptions() {
+    public static String[][] getAllTypesInclDefaultValueWithoutExceptions() {
         return new String[][]{
                 {"bool", "false"},
+                {"bool!", "false"},
                 {"bool?", "null"},
+                {"bool!?", "null"},
                 {"int", "0"},
+                {"int!", "false"},
                 {"int?", "null"},
+                {"int!?", "null"},
                 {"float", "0.0"},
+                {"float!", "false"},
                 {"float?", "null"},
+                {"float!?", "null"},
                 {"string", "''"},
+                {"string!", "false"},
                 {"string?", "null"},
+                {"string!?", "null"},
                 {"array", "null"},
+                {"array!", "null"},
                 {"resource", "null"},
+                {"resource!", "null"},
                 {"mixed", "null"},
         };
     }
 
-    public static String[][] getTypesInclDefaultValue() {
+    public static String[][] getAllTypesInclDefaultValue() {
         return new String[][]{
                 {"bool", "false"},
+                {"bool!", "false"},
                 {"bool?", "null"},
+                {"bool!?", "null"},
                 {"int", "0"},
+                {"int!", "false"},
                 {"int?", "null"},
+                {"int!?", "null"},
                 {"float", "0.0"},
+                {"float!", "false"},
                 {"float?", "null"},
+                {"float!?", "null"},
                 {"string", "''"},
+                {"string!", "false"},
                 {"string?", "null"},
+                {"string!?", "null"},
                 {"array", "null"},
+                {"array!", "null"},
                 {"resource", "null"},
+                {"resource!", "null"},
                 {"mixed", "null"},
                 {"Exception", "null"},
-                {"ErrorException", "null"}
+                {"Exception!", "null"},
+                {"ErrorException", "null"},
+                {"ErrorException!", "null"}
         };
     }
 
 
-    public static Object[][] getTypesInclTokenAndDefaultValue() {
+    public static Object[][] getAllTypesInclTokenAndDefaultValue() {
         return new Object[][]{
                 {"bool", Bool, "false"},
-                {"int", Int, "0"},
-                {"float", Float, "0.0"},
-                {"string", String, "''"},
+                {"bool!", BoolFalseable, "false"},
                 {"bool?", BoolNullable, "null"},
+                {"bool!?", BoolFalseableAndNullable, "null"},
+                {"int", Int, "0"},
+                {"int!", IntFalseable, "false"},
                 {"int?", IntNullable, "null"},
+                {"int!?", IntFalseableAndNullable, "null"},
+                {"float", Float, "0.0"},
+                {"float!", FloatFalseable, "false"},
                 {"float?", FloatNullable, "null"},
+                {"float!?", FloatFalseableAndNullable, "null"},
+                {"string", String, "''"},
+                {"string!", StringFalseable, "false"},
                 {"string?", StringNullable, "null"},
+                {"string!?", StringFalseableAndNullable, "null"},
                 {"array", Array, "null"},
+                {"array!", ArrayFalseable, "false"},
                 {"resource", Resource, "null"},
+                {"resource!", ResourceFalseable, "null"},
                 {"mixed", Mixed, "null"},
                 {"\\Exception", Exception, "null"},
                 {"\\ErrorException", ErrorException, "null"},

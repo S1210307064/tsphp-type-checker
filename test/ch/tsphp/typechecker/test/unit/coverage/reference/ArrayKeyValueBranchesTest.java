@@ -4,18 +4,19 @@
  * root folder or visit the project's website http://tsphp.ch/wiki/display/TSPHP/License
  */
 
-package ch.tsphp.typechecker.test.unit;
+package ch.tsphp.typechecker.test.unit.coverage.reference;
 
 import ch.tsphp.common.ITSPHPAst;
 import ch.tsphp.typechecker.IAccessResolver;
 import ch.tsphp.typechecker.IReferencePhaseController;
 import ch.tsphp.typechecker.antlr.TSPHPReferenceWalker;
 import org.antlr.runtime.RecognitionException;
+import org.antlr.runtime.tree.TreeAdaptor;
 import org.antlr.runtime.tree.TreeNodeStream;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.mockito.exceptions.base.MockitoException;
+import org.mockito.exceptions.base.MockitoAssertionError;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -95,6 +96,7 @@ import static ch.tsphp.typechecker.antlr.TSPHPReferenceWalker.UNARY_MINUS;
 import static ch.tsphp.typechecker.antlr.TSPHPReferenceWalker.UNARY_PLUS;
 import static ch.tsphp.typechecker.antlr.TSPHPReferenceWalker.UP;
 import static ch.tsphp.typechecker.antlr.TSPHPReferenceWalker.VariableId;
+import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -103,15 +105,20 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(Parameterized.class)
-public class TSPHPReferenceWalkerBranchesTest
+public class ArrayKeyValueBranchesTest
 {
     private int counter = 0;
     private String operator;
     private Integer[] tokens;
 
-    public TSPHPReferenceWalkerBranchesTest(String theOperator, Integer[] theTokens) {
+    public ArrayKeyValueBranchesTest(String theOperator, Integer[] theTokens) {
         operator = theOperator;
         tokens = theTokens;
+    }
+
+    @Test
+    public void arrayKeyValue_WithoutKey_CallsExpressionThrice() throws RecognitionException {
+        withoutKeySuccess(operator, tokens);
     }
 
     @Parameterized.Parameters
@@ -187,11 +194,6 @@ public class TSPHPReferenceWalkerBranchesTest
         return new Object[]{operator, tokens};
     }
 
-    @Test
-    public void arrayKeyValue_WithoutKey_CallsExpressionTrice() throws RecognitionException {
-        withoutKeySuccess(operator, tokens);
-    }
-
     private void withoutKeySuccess(final String operator, final Integer... tokens) throws RecognitionException {
         counter = 0;
 
@@ -224,12 +226,14 @@ public class TSPHPReferenceWalkerBranchesTest
             }
         }).when(input).consume();
 
+        TreeAdaptor treeAdaptor = mock(TreeAdaptor.class);
+        when(input.getTreeAdaptor()).thenReturn(treeAdaptor);
 
-        when(input.getTreeAdaptor()).thenAnswer(new Answer<Object>()
+        when(treeAdaptor.getType(anyObject())).thenAnswer(new Answer<Object>()
         {
             @Override
             public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
-                throw new MockitoException("operator: " + operator + " failed. current counter: " + counter);
+                throw new MockitoAssertionError("operator: " + operator + " failed. current counter: " + counter);
             }
         });
         when(input.LT(1)).thenReturn(mock(ITSPHPAst.class));

@@ -43,35 +43,42 @@ public class AssignmentOperatorTest extends AOperatorTypeCheckTest
         addCompoundAssignment();
 
         collection.addAll(Arrays.asList(new Object[][]{
-                //see TSPHP-433
-                {"bool? $b; int $i = $b = true;", new TypeCheckStruct[]{
-                        struct("$i", Int, 1, 1, 1),
+                //see TSPHP-433 types in expressions could sometimes be sub type
+                //TODO rstoll since the change of the type hierarchy (see TSPHP-681) bool is no longer a
+                // sub-type of bool? hence this should not work anymore.
+                {"bool? $bN; bool $b = $bN = true;", new TypeCheckStruct[]{
+                        struct("$b", Bool, 1, 1, 1),
                         struct("=", Bool, 1, 1, 1, 0),
-                        struct("$b", BoolNullable, 1, 1, 1, 0, 0),
+                        struct("$bN", BoolNullable, 1, 1, 1, 0, 0),
                         struct("true", Bool, 1, 1, 1, 0, 1)
                 }},
-                {"float $b; string $c; int $i = $b = $c = false;", new TypeCheckStruct[]{
-                        struct("$i", Int, 1, 2, 1),
-                        struct("=", Bool, 1, 2, 1, 0),
-                        struct("$b", Float, 1, 2, 1, 0, 0),
-                        struct("=", Bool, 1, 2, 1, 0, 1),
-                        struct("$c", String, 1, 2, 1, 0, 1, 0),
-                        struct("false", Bool, 1, 2, 1, 0, 1, 1)
-                }}
+                {"bool!? $bFN; bool? $bN; bool! $bF; bool $b = $bF = $bN = $bFN = true;", new TypeCheckStruct[]{
+                        struct("$b", Bool, 1, 3, 1),
+                        struct("=", Bool, 1, 3, 1, 0),
+                        struct("$bF", BoolFalseable, 1, 3, 1, 0, 0),
+                        struct("$bN", BoolNullable, 1, 3, 1, 0, 1, 0),
+                        struct("$bFN", BoolFalseableAndNullable, 1, 3, 1, 0, 1, 1, 0),
+                        struct("true", Bool, 1, 3, 1, 0, 1, 1, 1)
+                }},
         }));
 
         return collection;
     }
 
     private static void addCompoundAssignment() {
-
         String[][] declarations = new String[][]{
-                {"int     $a=0;    ", "class A{int $a;}     A $a = new A();", "class A{static int $a;} "},
-                {"int?    $a=null; ", "class A{ int? $a;}   A $a = new A();", "class A{static int? $a;} "},
-                {"float   $a=0.0;  ", "class A{float $a;}   A $a = new A();", "class A{static float $a;} "},
-                {"float?  $a=null; ", "class A{float? $a;}  A $a = new A();", "class A{static float? $a;} "},
-                {"string  $a='';   ", "class A{string $a;}  A $a = new A();", "class A{static string $a;} "},
-                {"string? $a=null; ", "class A{string? $a;} A $a = new A();", "class A{static string? $a;} "}
+                {"int      $a=0;    ", "class A{int $a;}      A $a = new A();", "class A{static int $a;} "},
+                {"int!     $a=false;", "class A{int! $a;}     A $a = new A();", "class A{static int! $a;} "},
+                {"int?     $a=null; ", "class A{int? $a;}     A $a = new A();", "class A{static int? $a;} "},
+                {"int!?    $a=null; ", "class A{int!? $a;}    A $a = new A();", "class A{static int!? $a;} "},
+                {"float    $a=1.0;    ", "class A{float $a;}    A $a = new A();", "class A{static float $a;} "},
+                {"float!   $a=false;", "class A{float! $a;}   A $a = new A();", "class A{static float! $a;} "},
+                {"float?   $a=null; ", "class A{float? $a;}   A $a = new A();", "class A{static float? $a;} "},
+                {"float!?  $a=null; ", "class A{float!? $a;}  A $a = new A();", "class A{static float!? $a;} "},
+                {"string   $a='';    ", "class A{string $a;}   A $a = new A();", "class A{static string $a;} "},
+                {"string!  $a=false;", "class A{string! $a;}  A $a = new A();", "class A{static string! $a;} "},
+                {"string?  $a=null; ", "class A{string? $a;}  A $a = new A();", "class A{static string? $a;} "},
+                {"string!? $a=null; ", "class A{string!? $a;} A $a = new A();", "class A{static string!? $a;} "},
         };
         String[] access = new String[]{"$a ", "$a->a ", "A::$a "};
         String[] allAssignOperators = new String[]{"+=", "-=", "/=", "*=", "&=", "|=", "^=", "%=", "<<=", ">>="};
@@ -81,78 +88,59 @@ public class AssignmentOperatorTest extends AOperatorTypeCheckTest
                 {typeStruct("=", Float, 1, 1, 0), typeStruct("=", Float, 1, 2, 0), typeStruct("=", Float, 1, 1, 0)},
                 {typeStruct("=", Float, 1, 2, 0), typeStruct("=", Float, 1, 3, 0), typeStruct("=", Float, 1, 2, 0)},
                 {typeStruct("=", String, 1, 1, 0), typeStruct("=", String, 1, 2, 0), typeStruct("=", String, 1, 1, 0)},
-                {typeStruct("=", String, 1, 2, 0), typeStruct("=", String, 1, 3, 0), typeStruct("=", String, 1, 2, 0)}
+                {typeStruct("=", String, 1, 2, 0), typeStruct("=", String, 1, 3, 0), typeStruct("=", String, 1, 2, 0)},
         };
         TypeCheckStruct[] struct1;
         TypeCheckStruct[] struct2;
         String decl;
         for (int i = 0; i < 3; ++i) {
             for (String operator : allAssignOperators) {
-                decl = declarations[0][i];
                 struct1 = structs[0][i];
                 struct2 = structs[1][i];
-                collection.addAll(Arrays.asList(new Object[][]{
-                        {decl + access[i] + operator + " true;", struct1},
-                        {decl + access[i] + operator + " false;", struct1},
-                        {decl + "bool? $b=false; " + access[i] + operator + " $b;", struct2},
-                        {decl + access[i] + operator + " 1;", struct1},
-                        {decl + "int? $b=false; " + access[i] + operator + " $b;", struct2}
-                }));
-                decl = declarations[1][i];
-                collection.addAll(Arrays.asList(new Object[][]{
-                        {decl + access[i] + operator + " true;", struct1},
-                        {decl + access[i] + operator + " false;", struct1},
-                        {decl + "bool? $b=false; " + access[i] + operator + " $b;", struct2},
-                        {decl + access[i] + operator + " 1;", struct1},
-                        {decl + "int? $b=false;" + access[i] + operator + " $b;", struct2}
-                }));
+                for (int j = 0; j < 4; ++j) {
+                    decl = declarations[j][i];
+
+                    collection.addAll(Arrays.asList(new Object[][]{
+                            {decl + access[i] + operator + " true;", struct1},
+                            {decl + access[i] + operator + " false;", struct1},
+                            {decl + "bool? $b=false; " + access[i] + operator + " $b;", struct2},
+                            {decl + access[i] + operator + " 1;", struct1},
+                            {decl + "int? $b=false; " + access[i] + operator + " $b;", struct2}
+                    }));
+                }
             }
 
             String[] floatCompatibleAssignOperators = new String[]{"+=", "-=", "/=", "*=", "%="};
             for (String operator : floatCompatibleAssignOperators) {
-                decl = declarations[2][i];
                 struct1 = structs[2][i];
                 struct2 = structs[3][i];
-                collection.addAll(Arrays.asList(new Object[][]{
-                        {decl + access[i] + operator + " true;", struct1},
-                        {decl + access[i] + operator + " false;", struct1},
-                        {decl + "bool? $b=false;" + access[i] + operator + " $b;", struct2},
-                        {decl + access[i] + operator + " 1;", struct1},
-                        {decl + "int? $b=null;" + access[i] + operator + " $b;", struct2},
-                        {decl + access[i] + operator + " 1.0;", struct1},
-                        {decl + "float? $b=null;" + access[i] + operator + " $b;", struct2},
-                }));
-                decl = declarations[3][i];
-                collection.addAll(Arrays.asList(new Object[][]{
-                        {decl + access[i] + operator + " true;", struct1},
-                        {decl + access[i] + operator + " false;", struct1},
-                        {decl + "bool? $b=false;" + access[i] + operator + " $b;", struct2},
-                        {decl + access[i] + operator + " 1;", struct1},
-                        {decl + "int? $b=null;" + access[i] + operator + " $b;", struct2},
-                        {decl + access[i] + operator + " 1.0;", struct1},
-                        {decl + "float? $b=null;" + access[i] + operator + " $b;", struct2}
-                }));
+                for (int j = 4; j < 8; ++j) {
+                    decl = declarations[j][i];
+                    collection.addAll(Arrays.asList(new Object[][]{
+                            {decl + access[i] + operator + " true;", struct1},
+                            {decl + access[i] + operator + " false;", struct1},
+                            {decl + "bool? $b=false;" + access[i] + operator + " $b;", struct2},
+                            {decl + access[i] + operator + " 1;", struct1},
+                            {decl + "int? $b=null;" + access[i] + operator + " $b;", struct2},
+                            {decl + access[i] + operator + " 1.0;", struct1},
+                            {decl + "float? $b=null;" + access[i] + operator + " $b;", struct2},
+                    }));
+                }
             }
-            decl = declarations[4][i];
             struct1 = structs[4][i];
             struct2 = structs[5][i];
-            collection.addAll(Arrays.asList(new Object[][]{
-                    {decl + access[i] + ".= true;", struct1},
-                    {decl + access[i] + ".= false;", struct1},
-                    {decl + access[i] + ".= 1;", struct1},
-                    {decl + access[i] + ".= 1.0;", struct1},
-                    {decl + access[i] + ".= 'hello';", struct1},
-                    {decl + " string? $b=null; " + access[i] + ".= $b;", struct2},
-            }));
-            decl = declarations[5][i];
-            collection.addAll(Arrays.asList(new Object[][]{
-                    {decl + access[i] + ".= false;", struct1},
-                    {decl + access[i] + ".= false;", struct1},
-                    {decl + access[i] + ".= 1;", struct1},
-                    {decl + access[i] + ".= 1.0;", struct1},
-                    {decl + access[i] + ".= 'hello';", struct1},
-                    {decl + "string? $b='';" + access[i] + ".= $b;", struct2}
-            }));
+            for (int j = 8; j < 12; ++j) {
+                decl = declarations[j][i];
+
+                collection.addAll(Arrays.asList(new Object[][]{
+                        {decl + access[i] + ".= true;", struct1},
+                        {decl + access[i] + ".= false;", struct1},
+                        {decl + access[i] + ".= 1;", struct1},
+                        {decl + access[i] + ".= 1.0;", struct1},
+                        {decl + access[i] + ".= 'hello';", struct1},
+                        {decl + " string? $b=null; " + access[i] + ".= $b;", struct2},
+                }));
+            }
         }
     }
 }

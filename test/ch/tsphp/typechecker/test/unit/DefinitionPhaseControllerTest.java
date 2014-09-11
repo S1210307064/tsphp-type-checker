@@ -8,8 +8,8 @@ package ch.tsphp.typechecker.test.unit;
 
 import ch.tsphp.common.ILowerCaseStringMap;
 import ch.tsphp.common.IScope;
-import ch.tsphp.common.ISymbol;
 import ch.tsphp.common.ITSPHPAst;
+import ch.tsphp.common.symbols.ISymbol;
 import ch.tsphp.typechecker.DefinitionPhaseController;
 import ch.tsphp.typechecker.IDefinitionPhaseController;
 import ch.tsphp.typechecker.scopes.IConditionalScope;

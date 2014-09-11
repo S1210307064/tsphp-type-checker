@@ -8,8 +8,8 @@ package ch.tsphp.typechecker.symbols;
 
 import ch.tsphp.common.IScope;
 import ch.tsphp.common.ITSPHPAst;
-import ch.tsphp.common.ITypeSymbol;
 import ch.tsphp.common.exceptions.TSPHPException;
+import ch.tsphp.common.symbols.ITypeSymbol;
 import ch.tsphp.typechecker.symbols.erroneous.IErroneousMethodSymbol;
 import ch.tsphp.typechecker.symbols.erroneous.IErroneousTypeSymbol;
 
@@ -25,12 +25,8 @@ public interface ISymbolFactory
     IVoidTypeSymbol createVoidTypeSymbol();
 
     @SuppressWarnings("checkstyle:parameternumber")
-    IScalarTypeSymbol createScalarTypeSymbol(String name, int tokenType, ITypeSymbol parentTypeSymbol,
-            boolean isNullable, int defaultValueTokenType, String defaultValue);
-
-    @SuppressWarnings("checkstyle:parameternumber")
     IScalarTypeSymbol createScalarTypeSymbol(String name, int tokenType, Set<ITypeSymbol> parentTypeSymbol,
-            boolean isNullable, int defaultValueTokenType, String defaultValue);
+            int defaultValueTokenType, String defaultValue);
 
     IArrayTypeSymbol createArrayTypeSymbol(String name, int tokenType, ITypeSymbol keyValue, ITypeSymbol valueType);
 

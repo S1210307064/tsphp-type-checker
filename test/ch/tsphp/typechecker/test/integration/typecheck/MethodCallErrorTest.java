@@ -38,7 +38,7 @@ public class MethodCallErrorTest extends ATypeCheckErrorTest
 
         ReferenceErrorDto[] errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto("$a", 2, 1)};
 
-        String[][] types = TypeHelper.getTypesInclDefaultValueWithoutExceptions();
+        String[][] types = TypeHelper.getAllTypesInclDefaultValueWithoutExceptions();
         //call on a non-object
         for (String[] type : types) {
             collection.add(new Object[]{type[0] + " $a=" + type[1] + ";\n $a->foo();", errorDto});

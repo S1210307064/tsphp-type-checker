@@ -21,7 +21,9 @@ import ch.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tsphp.typechecker.scopes.IScopeHelper;
 import ch.tsphp.typechecker.scopes.ScopeFactory;
 import ch.tsphp.typechecker.scopes.ScopeHelper;
+import ch.tsphp.typechecker.symbols.IModifierHelper;
 import ch.tsphp.typechecker.symbols.ISymbolFactory;
+import ch.tsphp.typechecker.symbols.ModifierHelper;
 import ch.tsphp.typechecker.symbols.SymbolFactory;
 import ch.tsphp.typechecker.utils.ITypeCheckerAstHelper;
 import ch.tsphp.typechecker.utils.TypeCheckerAstHelper;
@@ -38,20 +40,24 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
     private IReferencePhaseController referencePhaseController;
     private ITypeCheckPhaseController typeCheckPhaseController;
     private IAccessResolver accessResolver;
-    private ITypeSystem typeSystem;
     private ITypeCheckerErrorReporter typeCheckErrorReporter;
+    private ITypeSystem typeSystem;
+
 
     private final Collection<IErrorLogger> errorLoggers = new ArrayDeque<>();
     private boolean hasFoundError = false;
 
     public TypeChecker() {
+        // in order that the TypeCheckerErrorReporter does not lose its registered ErrorLoggers it has to be here and
+        // not in the init method. Reset will use init()
         typeCheckErrorReporter = createTypeCheckerErrorReporter();
         init();
     }
 
     private void init() {
         IScopeHelper scopeHelper = createScopeHelper(typeCheckErrorReporter);
-        ISymbolFactory symbolFactory = createSymbolFactory(scopeHelper);
+        IModifierHelper modifierHelper = createModifierHelper();
+        ISymbolFactory symbolFactory = createSymbolFactory(scopeHelper, modifierHelper);
         definitionPhaseController = createDefinitionPhaseController(scopeHelper, symbolFactory, typeCheckErrorReporter);
         IGlobalNamespaceScope globalDefaultNamespace = definitionPhaseController.getGlobalDefaultNamespace();
 
@@ -63,7 +69,12 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
         accessResolver = createAccessResolver(symbolFactory, typeCheckErrorReporter);
 
         referencePhaseController = createReferencePhaseController(
-                symbolFactory, symbolResolver, typeCheckErrorReporter, globalDefaultNamespace);
+                symbolFactory,
+                symbolResolver,
+                typeCheckErrorReporter,
+                typeSystem,
+                modifierHelper,
+                globalDefaultNamespace);
 
         IOverloadResolver overloadResolver = createOverloadResolver(typeSystem);
         ITypeCheckerAstHelper typeCheckerAstHelper = createTypeCheckerAstHelper();
@@ -78,6 +89,10 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
                 typeCheckerAstHelper);
     }
 
+    protected IModifierHelper createModifierHelper() {
+        return new ModifierHelper();
+    }
+
     protected ITypeCheckerErrorReporter createTypeCheckerErrorReporter() {
         return new TypeCheckerErrorReporter(new HardCodedErrorMessageProvider());
     }
@@ -86,8 +101,8 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
         return new ScopeHelper(typeCheckerErrorReporter);
     }
 
-    protected ISymbolFactory createSymbolFactory(IScopeHelper scopeHelper) {
-        return new SymbolFactory(scopeHelper);
+    protected ISymbolFactory createSymbolFactory(IScopeHelper scopeHelper, IModifierHelper modifierHelper) {
+        return new SymbolFactory(scopeHelper, modifierHelper);
     }
 
     protected ITypeSystem createTypeSystem(ISymbolFactory symbolFactory, IGlobalNamespaceScope globalDefaultNamespace) {
@@ -120,11 +135,15 @@ public class TypeChecker implements ITypeChecker, IErrorLogger
             ISymbolFactory symbolFactory,
             ISymbolResolver symbolResolver,
             ITypeCheckerErrorReporter theTypeCheckErrorReporter,
+            ITypeSystem theTypeSystem,
+            IModifierHelper theModifierHelper,
             IGlobalNamespaceScope globalDefaultNamespace) {
         return new ReferencePhaseController(
                 symbolFactory,
                 symbolResolver,
                 theTypeCheckErrorReporter,
+                theTypeSystem,
+                theModifierHelper,
                 globalDefaultNamespace);
     }
 

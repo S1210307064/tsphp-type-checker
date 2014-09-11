@@ -37,9 +37,9 @@ public class ForErrorTest extends ATypeCheckErrorTest
         ReferenceErrorDto[] errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto("for", 2, 1)};
 
 
-        String[][] types = TypeHelper.getTypesInclDefaultValue();
+        String[][] types = TypeHelper.getAllTypesInclDefaultValue();
         for (String[] type : types) {
-            if (type[0].equals("bool")) {
+            if (type[0].equals("bool") || type[0].equals("bool!")) {
                 continue;
             }
             collection.add(new Object[]{type[0] + " $b=" + type[1] + ";\n for(;$b;);", errorDto});

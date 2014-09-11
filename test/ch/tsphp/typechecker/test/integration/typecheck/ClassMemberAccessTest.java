@@ -37,18 +37,30 @@ public class ClassMemberAccessTest extends AOperatorTypeCheckTest
 
         Object[][] types = new Object[][]{
                 {"bool", Bool},
-                {"int", Int},
-                {"float", Float},
-                {"string", String},
+                {"bool!", BoolFalseable},
                 {"bool?", BoolNullable},
+                {"bool!?", BoolFalseableAndNullable},
+                {"int", Int},
+                {"int!", IntFalseable},
                 {"int?", IntNullable},
+                {"int!?", IntFalseableAndNullable},
+                {"float", Float},
+                {"float!", FloatFalseable},
                 {"float?", FloatNullable},
+                {"float!?", FloatFalseableAndNullable},
+                {"string", String},
+                {"string!", StringFalseable},
                 {"string?", StringNullable},
+                {"string!?", StringFalseableAndNullable},
                 {"array", Array},
+                {"array!", ArrayFalseable},
                 {"resource", Resource},
+                {"resource!", ResourceFalseable},
                 {"mixed", Mixed},
                 {"Exception", Exception},
-                {"ErrorException", ErrorException}
+                {"Exception!", ExceptionFalseable},
+                {"ErrorException", ErrorException},
+                {"ErrorException!", ErrorExceptionFalseable},
         };
 
         for (Object[] type : types) {

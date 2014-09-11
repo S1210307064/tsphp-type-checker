@@ -6,9 +6,9 @@
 
 package ch.tsphp.typechecker.symbols.erroneous;
 
-import ch.tsphp.common.ASymbol;
 import ch.tsphp.common.ITSPHPAst;
 import ch.tsphp.common.exceptions.TSPHPException;
+import ch.tsphp.common.symbols.ASymbol;
 
 public abstract class AErroneousSymbol extends ASymbol implements IErroneousSymbol
 {

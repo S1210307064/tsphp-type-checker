@@ -6,16 +6,16 @@
 
 package ch.tsphp.typechecker.symbols.erroneous;
 
-import ch.tsphp.common.ASymbol;
 import ch.tsphp.common.IScope;
-import ch.tsphp.common.ISymbol;
 import ch.tsphp.common.ITSPHPAst;
 import ch.tsphp.common.exceptions.TSPHPException;
-import ch.tsphp.typechecker.symbols.ISymbolWithModifier;
+import ch.tsphp.common.symbols.ASymbol;
+import ch.tsphp.common.symbols.ISymbol;
+import ch.tsphp.common.symbols.ISymbolWithModifier;
+import ch.tsphp.common.symbols.modifiers.IModifierSet;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public abstract class AErroneousScopedSymbol extends ASymbol implements IErroneousSymbol, IScope, ISymbolWithModifier
 {
@@ -75,12 +75,12 @@ public abstract class AErroneousScopedSymbol extends ASymbol implements IErroneo
     }
 
     @Override
-    public Set<Integer> getModifiers() {
+    public IModifierSet getModifiers() {
         throw new UnsupportedOperationException(ERROR_MESSAGE_MODIFIER);
     }
 
     @Override
-    public void setModifiers(Set<Integer> modifier) {
+    public void setModifiers(IModifierSet modifier) {
         throw new UnsupportedOperationException(ERROR_MESSAGE_MODIFIER);
     }
 

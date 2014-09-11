@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import static ch.tsphp.typechecker.antlr.TSPHPDefinitionWalker.QuestionMark;
+
 @RunWith(Parameterized.class)
 public class ClassMemberTest extends ADefinitionSymbolTest
 {
@@ -57,7 +59,7 @@ public class ClassMemberTest extends ADefinitionSymbolTest
 
         for (Object[] variation : variations) {
             collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
-                    "class a{ " + variation[0] + " ", ";}", "\\.\\.a ", "", "\\.\\.a.",
+                    "class a{ " + variation[0] + " ", ";}", "\\.\\.a|" + QuestionMark + " ", "", "\\.\\.a.",
                     (SortedSet<Integer>) variation[1]));
         }
 

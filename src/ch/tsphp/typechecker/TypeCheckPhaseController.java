@@ -7,22 +7,28 @@
 package ch.tsphp.typechecker;
 
 import ch.tsphp.common.AstHelperRegistry;
-import ch.tsphp.common.ISymbol;
 import ch.tsphp.common.ITSPHPAst;
-import ch.tsphp.common.ITypeSymbol;
 import ch.tsphp.common.exceptions.DefinitionException;
 import ch.tsphp.common.exceptions.ReferenceException;
 import ch.tsphp.common.exceptions.TSPHPException;
 import ch.tsphp.common.exceptions.TypeCheckerException;
+import ch.tsphp.common.symbols.ISymbol;
+import ch.tsphp.common.symbols.ISymbolWithModifier;
+import ch.tsphp.common.symbols.ITypeSymbol;
+import ch.tsphp.common.symbols.modifiers.IModifierSet;
 import ch.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
+import ch.tsphp.typechecker.antlr.TSPHPTypeCheckWalker;
 import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
 import ch.tsphp.typechecker.symbols.IArrayTypeSymbol;
 import ch.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tsphp.typechecker.symbols.IPolymorphicTypeSymbol;
+import ch.tsphp.typechecker.symbols.IScalarTypeSymbol;
 import ch.tsphp.typechecker.symbols.ISymbolFactory;
 import ch.tsphp.typechecker.symbols.ISymbolWithAccessModifier;
 import ch.tsphp.typechecker.symbols.IVariableSymbol;
 import ch.tsphp.typechecker.symbols.IVoidTypeSymbol;
+import ch.tsphp.typechecker.symbols.ModifierSet;
+import ch.tsphp.typechecker.symbols.TypeWithModifiersDto;
 import ch.tsphp.typechecker.symbols.erroneous.IErroneousMethodSymbol;
 import ch.tsphp.typechecker.symbols.erroneous.IErroneousSymbol;
 import ch.tsphp.typechecker.symbols.erroneous.IErroneousTypeSymbol;
@@ -197,7 +203,8 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
                 unaryOperators,
                 new UnaryActualParameterGetter(expression),
                 new UnaryOperatorErroneousChecker(expression.getEvalType()),
-                ambiguousCallReporter, wrongOperatorUsageReporter));
+                ambiguousCallReporter,
+                wrongOperatorUsageReporter));
     }
 
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
@@ -211,7 +218,7 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
         ITypeSymbol typeSymbol = caseTrueType;
 
         if (areNotErroneousTypes(caseTrueType, caseFalseType)) {
-            if (areNotSameAndNoneIsSubType(caseTrue, caseFalse)) {
+            if (areNotSameAndNoneIsSubTypeConsiderFalseAndNull(caseTrue, caseFalse)) {
                 typeCheckErrorReporter.wrongTypeTernaryCases(caseTrue, caseFalse);
             } else {
                 int promotionLevel = overloadResolver.getPromotionLevelFromTo(caseTrueType, caseFalseType);
@@ -225,13 +232,28 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
         return typeSymbol;
     }
 
+    private boolean areNotSameAndNoneIsSubTypeConsiderFalseAndNull(ITSPHPAst left, ITSPHPAst right) {
+        TypeWithModifiersDto leftDto = getTypeSymbolWithModifierDtoFromExpression(left);
+        TypeWithModifiersDto rightDto = getTypeSymbolWithModifierDtoFromExpression(right);
+
+        boolean areNotSameAndNoneIsSubType = !overloadResolver.isSameOrSubTypeConsiderFalseAndNull(
+                left.getEvalType(), left.getText(), rightDto);
+
+        if (areNotSameAndNoneIsSubType) {
+            areNotSameAndNoneIsSubType = !overloadResolver.isSameOrSubTypeConsiderFalseAndNull(
+                    right.getEvalType(), right.getText(), leftDto);
+        }
+        return areNotSameAndNoneIsSubType;
+    }
+
     private boolean caseFalseTypeIsParentType(int promotionLevel) {
         return promotionLevel > 0;
     }
 
     private void checkTernaryCondition(final ITSPHPAst operator, final ITSPHPAst condition) {
         final ITypeSymbol typeExpected = typeSystem.getBoolTypeSymbol();
-        checkIsSameOrSubType(condition, typeExpected, new IErrorReporterCaller()
+        TypeWithModifiersDto dto = new TypeWithModifiersDto(typeExpected, new ModifierSet());
+        checkIsSameOrSubTypeOrHasImplicitCastConsiderFalseAndNull(condition, dto, new IErrorReporterCaller()
         {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
             @Override
@@ -252,7 +274,7 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
         if (!(evalType instanceof IErroneousSymbol)) {
             IArrayTypeSymbol arrayTypeSymbol = typeSystem.getArrayTypeSymbol();
             int promotionCount = overloadResolver.getPromotionLevelFromTo(evalType, arrayTypeSymbol);
-            if (overloadResolver.isSameOrParentType(promotionCount)) {
+            if (overloadResolver.isSameOrSubType(promotionCount)) {
                 IArrayTypeSymbol arrayType = (IArrayTypeSymbol) evalType;
                 keyTypeSymbol = arrayType.getKeyTypeSymbol();
                 returnTypeArrayAccess = arrayType.getValueTypeSymbol();
@@ -270,7 +292,8 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
         }
 
         final ITypeSymbol typeSymbol = keyTypeSymbol;
-        checkIsSameOrSubType(index, typeSymbol, new IErrorReporterCaller()
+        TypeWithModifiersDto dto = new TypeWithModifiersDto(typeSymbol, new ModifierSet());
+        checkIsSameOrSubTypeOrHasImplicitCastConsiderFalseAndNull(index, dto, new IErrorReporterCaller()
         {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
             @Override
@@ -424,13 +447,14 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     @Override
     public void checkEquality(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right) {
-        if (areNotErroneousTypes(left.getEvalType(), right.getEvalType()) && areNotSameAndNoneIsSubType(left, right)) {
+        if (areNotErroneousTypes(left.getEvalType(), right.getEvalType()) &&
+                areNotSameAndNoneIsSubTypeConsiderFalseAndNull(left, right)) {
 
-            IVariableSymbol leftSymbol = getVariableSymbolFromExpression(left);
-            IVariableSymbol rightSymbol = getVariableSymbolFromExpression(right);
+            TypeWithModifiersDto leftDto = getTypeSymbolWithModifierDtoFromExpression(left);
+            TypeWithModifiersDto rightDto = getTypeSymbolWithModifierDtoFromExpression(right);
 
-            CastingDto leftToRight = overloadResolver.getCastingDtoAlwaysCasting(rightSymbol, left);
-            CastingDto rightToLeft = overloadResolver.getCastingDtoAlwaysCasting(leftSymbol, right);
+            CastingDto leftToRight = overloadResolver.getCastingDtoInAlwaysCastingMode(left, rightDto);
+            CastingDto rightToLeft = overloadResolver.getCastingDtoInAlwaysCastingMode(right, leftDto);
 
             if (haveBothSideCast(leftToRight, rightToLeft)) {
                 typeCheckErrorReporter.operatorAmbiguousCasts(operator, left, right,
@@ -440,10 +464,12 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
                 typeCheckErrorReporter.wrongEqualityUsage(operator, left, right);
 
             } else if (hasAmbiguousCast(rightToLeft)) {
-                typeCheckErrorReporter.ambiguousCasts(operator, left, right, rightToLeft.ambiguousCasts);
+                typeCheckErrorReporter.ambiguousCasts(
+                        operator, left.getEvalType(), right.getEvalType(), rightToLeft.ambiguousCasts);
 
             } else if (hasAmbiguousCast(leftToRight)) {
-                typeCheckErrorReporter.ambiguousCasts(operator, left, right, leftToRight.ambiguousCasts);
+                typeCheckErrorReporter.ambiguousCasts(
+                        operator, left.getEvalType(), right.getEvalType(), leftToRight.ambiguousCasts);
             }
         }
     }
@@ -460,7 +486,7 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
         return castingDto != null && castingDto.ambiguousCasts != null && !castingDto.ambiguousCasts.isEmpty();
     }
 
-    private IVariableSymbol getVariableSymbolFromExpression(ITSPHPAst expression) {
+    private TypeWithModifiersDto getTypeSymbolWithModifierDtoFromExpression(ITSPHPAst expression) {
         IVariableSymbol variableSymbol;
 
         ISymbol symbol = expression.getSymbol();
@@ -470,24 +496,24 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
             variableSymbol = symbolFactory.createVariableSymbol(null, expression);
             variableSymbol.setType(expression.getEvalType());
         }
-        return variableSymbol;
+        return variableSymbol.toTypeWithModifiersDto();
     }
 
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     @Override
-    public void checkAssignment(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right) {
-        ISymbol leftSymbol = getSymbolFromVariableOrField(left);
-        if (leftSymbol != null && leftSymbol instanceof IVariableSymbol) {
+    public void checkAssignment(final ITSPHPAst operator, final ITSPHPAst left, final ITSPHPAst right) {
+        IVariableSymbol leftSymbol = getSymbolFromVariableOrField(left);
+        if (leftSymbol != null) {
             if (!(leftSymbol instanceof IErroneousVariableSymbol)
                     && areNotErroneousTypes(leftSymbol.getType(), right.getEvalType())) {
-                CastingDto castingDto = overloadResolver.getCastingDto((IVariableSymbol) leftSymbol, right);
+                CastingDto castingDto = overloadResolver.getCastingDto(right, leftSymbol.toTypeWithModifiersDto());
                 if (castingDto != null) {
                     if (castingDto.castingMethods != null) {
                         astHelper.prependCasting(castingDto);
                     }
                     if (castingDto.ambiguousCasts != null) {
                         typeCheckErrorReporter.ambiguousCasts(
-                                operator, left, right, castingDto.ambiguousCasts);
+                                operator, leftSymbol.getType(), right.getEvalType(), castingDto.ambiguousCasts);
                     }
                 } else {
                     typeCheckErrorReporter.wrongAssignment(operator, left, right);
@@ -502,15 +528,15 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
         return !(leftType instanceof IErroneousTypeSymbol) && !(rightType instanceof IErroneousTypeSymbol);
     }
 
-    private ISymbol getSymbolFromVariableOrField(ITSPHPAst left) {
-        ISymbol symbol;
+    private IVariableSymbol getSymbolFromVariableOrField(ITSPHPAst left) {
+        IVariableSymbol symbol;
         switch (left.getType()) {
             case TSPHPDefinitionWalker.VariableId:
-                symbol = left.getSymbol();
+                symbol = (IVariableSymbol) left.getSymbol();
                 break;
             case TSPHPDefinitionWalker.CLASS_MEMBER_ACCESS:
             case TSPHPDefinitionWalker.CLASS_STATIC_ACCESS:
-                symbol = left.getChild(1).getSymbol();
+                symbol = (IVariableSymbol) left.getChild(1).getSymbol();
                 break;
             default:
                 symbol = null;
@@ -518,24 +544,19 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
         return symbol;
     }
 
-    private boolean areNotSameAndNoneIsSubType(ITSPHPAst left, ITSPHPAst right) {
-        IVariableSymbol leftSymbol = getVariableSymbolFromExpression(left);
-        IVariableSymbol rightSymbol = getVariableSymbolFromExpression(right);
-
-        boolean areNotSameAndNoneIsSubType = !overloadResolver.isSameOrParentTypeConsiderNull(rightSymbol, left);
-        if (areNotSameAndNoneIsSubType) {
-            areNotSameAndNoneIsSubType = !overloadResolver.isSameOrParentTypeConsiderNull(leftSymbol, right);
-        }
-        return areNotSameAndNoneIsSubType;
-    }
 
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     @Override
     public void checkIdentity(ITSPHPAst operator, ITSPHPAst left, ITSPHPAst right) {
-        if (areNotErroneousTypes(left.getEvalType(), right.getEvalType()) && areNotSameAndNoneIsSubType(left, right)) {
+
+        ITypeSymbol leftEvalType = left.getEvalType();
+        ITypeSymbol rightEvalType = right.getEvalType();
+        if (areNotErroneousTypes(leftEvalType, rightEvalType)
+                && areNotSameAndNoneIsSubTypeConsiderFalseAndNull(left, right)
+                && !overloadResolver.isFormalCorrespondingFalseableOrNullableType(leftEvalType, rightEvalType)
+                && !overloadResolver.isFormalCorrespondingFalseableOrNullableType(rightEvalType, leftEvalType)) {
             typeCheckErrorReporter.wrongIdentityUsage(operator, left, right);
         }
-
     }
 
     @Override
@@ -565,11 +586,13 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
                 leftSymbol.setType(typeSymbol);
             }
 
-            castingDto = overloadResolver.getCastingDtoAlwaysCasting(leftSymbol, right);
+            castingDto = overloadResolver.getCastingDtoInAlwaysCastingMode(
+                    right, leftSymbol.toTypeWithModifiersDto());
             if (castingDto == null) {
                 typeCheckErrorReporter.wrongCast(operator, left, right);
             } else if (castingDto.ambiguousCasts != null && !castingDto.ambiguousCasts.isEmpty()) {
-                typeCheckErrorReporter.ambiguousCasts(operator, left, right, castingDto.ambiguousCasts);
+                typeCheckErrorReporter.ambiguousCasts(
+                        operator, left.getEvalType(), right.getEvalType(), castingDto.ambiguousCasts);
             }
             operator.setText("casting");
         }
@@ -595,7 +618,8 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
     @Override
     public void checkIf(final ITSPHPAst ifRoot, final ITSPHPAst expression) {
         final ITypeSymbol typeSymbol = typeSystem.getBoolTypeSymbol();
-        checkIsSameOrSubType(expression, typeSymbol, new IErrorReporterCaller()
+        TypeWithModifiersDto dto = new TypeWithModifiersDto(typeSymbol, new ModifierSet());
+        checkIsSameOrSubTypeOrHasImplicitCastConsiderFalseAndNull(expression, dto, new IErrorReporterCaller()
         {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
             @Override
@@ -605,34 +629,36 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
         });
     }
 
-    private void checkIsSameOrSubType(ITSPHPAst expression, ITypeSymbol typeSymbol,
-            IErrorReporterCaller caller) {
-        ITypeSymbol expressionType = expression.getEvalType();
-        if (areNotErroneousTypes(expressionType, typeSymbol)) {
-            int promotionCount = overloadResolver.getPromotionLevelFromToConsiderNull(expressionType, typeSymbol);
-            if (!overloadResolver.isSameOrParentType(promotionCount)) {
+    private boolean checkIsSameOrSubTypeOrHasImplicitCastConsiderFalseAndNull(
+            ITSPHPAst actualParameter, TypeWithModifiersDto formalParameter, IErrorReporterCaller caller) {
+        boolean isSame = true;
+        if (areNotErroneousTypes(actualParameter.getEvalType(), formalParameter.typeSymbol)) {
+            CastingDto castingDto = overloadResolver.getCastingDto(actualParameter, formalParameter);
+            if (castingDto != null) {
+                if (castingDto.castingMethods != null) {
+                    astHelper.prependCasting(castingDto);
+                }
+            } else {
                 caller.callAppropriateMethod();
+                isSame = false;
             }
         }
+        return isSame;
     }
 
     @Override
     public void checkSwitch(final ITSPHPAst switchRoot, final ITSPHPAst expression) {
-        final ITypeSymbol typeSymbol = typeSystem.getStringNullableTypeSymbol();
-        checkIsSameOrSubType(expression, typeSymbol, new IErrorReporterCaller()
-        {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
-            @Override
-            public void callAppropriateMethod() {
-                typeCheckErrorReporter.wrongTypeSwitch(switchRoot, expression, typeSymbol);
-            }
-        });
+        ITypeSymbol evalType = expression.getEvalType();
+        if (!(evalType instanceof IScalarTypeSymbol)) {
+            typeCheckErrorReporter.wrongTypeSwitch(switchRoot, expression, evalType);
+        }
     }
 
     @Override
     public void checkSwitchCase(final ITSPHPAst switchRoot, final ITSPHPAst switchCase) {
         final ITypeSymbol typeSymbol = switchRoot.getEvalType();
-        checkIsSameOrSubType(switchCase, typeSymbol, new IErrorReporterCaller()
+        TypeWithModifiersDto dto = createTypeWithModifiersDto(typeSymbol, switchRoot);
+        checkIsSameOrSubTypeOrHasImplicitCastConsiderFalseAndNull(switchCase, dto, new IErrorReporterCaller()
         {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
             @Override
@@ -642,10 +668,19 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
         });
     }
 
+    private TypeWithModifiersDto createTypeWithModifiersDto(ITypeSymbol typeSymbol, ITSPHPAst typeAst) {
+        IModifierSet modifiers = new ModifierSet();
+        if (typeAst instanceof ISymbolWithModifier) {
+            modifiers = ((ISymbolWithModifier) typeAst).getModifiers();
+        }
+        return new TypeWithModifiersDto(typeSymbol, modifiers);
+    }
+
     @Override
     public void checkFor(final ITSPHPAst forRoot, final ITSPHPAst expression) {
         final ITypeSymbol typeSymbol = typeSystem.getBoolTypeSymbol();
-        checkIsSameOrSubType(expression, typeSymbol, new IErrorReporterCaller()
+        TypeWithModifiersDto dto = new TypeWithModifiersDto(typeSymbol, new ModifierSet());
+        checkIsSameOrSubTypeOrHasImplicitCastConsiderFalseAndNull(expression, dto, new IErrorReporterCaller()
         {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
             @Override
@@ -657,40 +692,47 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
 
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     @Override
-    public void checkForeach(ITSPHPAst foreachRoot, ITSPHPAst array,
-            ITSPHPAst keyVariableId, ITSPHPAst valueVariableId) {
+    public void checkForeach(
+            final ITSPHPAst foreachRoot, final ITSPHPAst array, ITSPHPAst keyVariableId, ITSPHPAst valueVariableId) {
 
         ITypeSymbol keyTypeSymbol = null;
         ITypeSymbol valueTypeSymbol = null;
         ITypeSymbol evalType = array.getEvalType();
         if (!(evalType instanceof IErroneousSymbol)) {
-            IArrayTypeSymbol arrayTypeSymbol = typeSystem.getArrayTypeSymbol();
-            int promotionCount = overloadResolver.getPromotionLevelFromTo(evalType, arrayTypeSymbol);
-            if (overloadResolver.isSameOrParentType(promotionCount)) {
+            final IArrayTypeSymbol arrayTypeSymbol = typeSystem.getArrayTypeSymbol();
+            TypeWithModifiersDto dto = new TypeWithModifiersDto(arrayTypeSymbol, arrayTypeSymbol.getModifiers());
+            boolean isSame = checkIsSameOrSubTypeOrHasImplicitCastConsiderFalseAndNull(array, dto,
+                    new IErrorReporterCaller()
+                    {
+                        @Override
+                        public void callAppropriateMethod() {
+                            typeCheckErrorReporter.wrongTypeForeach(foreachRoot, array, arrayTypeSymbol);
+                        }
+                    });
+            if (isSame) {
                 IArrayTypeSymbol arrayType = (IArrayTypeSymbol) evalType;
                 keyTypeSymbol = arrayType.getKeyTypeSymbol();
                 valueTypeSymbol = arrayType.getValueTypeSymbol();
-            } else {
-                typeCheckErrorReporter.wrongTypeForeach(foreachRoot, array, arrayTypeSymbol);
             }
         }
         if (keyVariableId != null) {
             if (keyTypeSymbol == null) {
                 keyTypeSymbol = typeSystem.getStringTypeSymbol();
             }
-            checkIsSameOrParentType(keyVariableId, keyVariableId, keyTypeSymbol);
+            checkIsSameOrParentType(keyVariableId, keyTypeSymbol);
         }
         if (valueTypeSymbol != null) {
-            checkIsSameOrParentType(valueVariableId, valueVariableId, valueTypeSymbol);
+            checkIsSameOrParentType(valueVariableId, valueTypeSymbol);
         }
     }
 
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
-    private void checkIsSameOrParentType(ITSPHPAst statement, ITSPHPAst expression, ITypeSymbol typeSymbol) {
-        ITypeSymbol expressionType = expression.getEvalType();
-        if (areNotErroneousTypes(expressionType, typeSymbol)) {
-            if (!overloadResolver.isSameOrParentTypeConsiderNull(expressionType, typeSymbol)) {
-                typeCheckErrorReporter.notSameOrParentType(statement, expression, typeSymbol);
+    private void checkIsSameOrParentType(ITSPHPAst actualParameter, ITypeSymbol formalParameter) {
+        ITypeSymbol expressionType = actualParameter.getEvalType();
+        if (areNotErroneousTypes(expressionType, formalParameter)) {
+            int fromFormalToActual = overloadResolver.getPromotionLevelFromTo(formalParameter, expressionType);
+            if (!overloadResolver.isSameOrSubType(fromFormalToActual)) {
+                typeCheckErrorReporter.notSameOrParentType(actualParameter, formalParameter);
             }
         }
     }
@@ -698,7 +740,8 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
     @Override
     public void checkWhile(final ITSPHPAst whileRoot, final ITSPHPAst expression) {
         final ITypeSymbol typeSymbol = typeSystem.getBoolTypeSymbol();
-        checkIsSameOrSubType(expression, typeSymbol, new IErrorReporterCaller()
+        TypeWithModifiersDto dto = new TypeWithModifiersDto(typeSymbol, new ModifierSet());
+        checkIsSameOrSubTypeOrHasImplicitCastConsiderFalseAndNull(expression, dto, new IErrorReporterCaller()
         {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
             @Override
@@ -711,7 +754,8 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
     @Override
     public void checkDoWhile(final ITSPHPAst doWhileRoot, final ITSPHPAst expression) {
         final ITypeSymbol typeSymbol = typeSystem.getBoolTypeSymbol();
-        checkIsSameOrSubType(expression, typeSymbol, new IErrorReporterCaller()
+        TypeWithModifiersDto dto = new TypeWithModifiersDto(typeSymbol, new ModifierSet());
+        checkIsSameOrSubTypeOrHasImplicitCastConsiderFalseAndNull(expression, dto, new IErrorReporterCaller()
         {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
             @Override
@@ -724,7 +768,8 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
     @Override
     public void checkThrow(final ITSPHPAst throwRoot, final ITSPHPAst expression) {
         final ITypeSymbol typeSymbol = typeSystem.getExceptionTypeSymbol();
-        checkIsSameOrSubType(expression, typeSymbol, new IErrorReporterCaller()
+        TypeWithModifiersDto dto = new TypeWithModifiersDto(typeSymbol, new ModifierSet());
+        checkIsSameOrSubTypeOrHasImplicitCastConsiderFalseAndNull(expression, dto, new IErrorReporterCaller()
         {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
             @Override
@@ -735,14 +780,15 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
     }
 
     @Override
-    public void checkCatch(final ITSPHPAst castRoot, final ITSPHPAst variableId) {
+    public void checkCatch(final ITSPHPAst catchRoot, final ITSPHPAst variableId) {
         final ITypeSymbol typeSymbol = typeSystem.getExceptionTypeSymbol();
-        checkIsSameOrSubType(variableId, typeSymbol, new IErrorReporterCaller()
+        TypeWithModifiersDto dto = new TypeWithModifiersDto(typeSymbol, new ModifierSet());
+        checkIsSameOrSubTypeOrHasImplicitCastConsiderFalseAndNull(variableId, dto, new IErrorReporterCaller()
         {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
             @Override
             public void callAppropriateMethod() {
-                typeCheckErrorReporter.wrongTypeCatch(castRoot, variableId, typeSymbol);
+                typeCheckErrorReporter.wrongTypeCatch(catchRoot, variableId, typeSymbol);
             }
         });
     }
@@ -762,13 +808,15 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
                 if (expression == null) {
                     typeCheckErrorReporter.returnValueExpected(returnRoot, typeSymbol);
                 } else {
-                    checkIsSameOrSubType(expression, typeSymbol, new IErrorReporterCaller()
-                    {
-                        @Override
-                        public void callAppropriateMethod() {
-                            typeCheckErrorReporter.wrongTypeReturn(returnRoot, expression, typeSymbol);
-                        }
-                    });
+                    TypeWithModifiersDto dto = methodSymbol.toTypeWithModifiersDto();
+                    checkIsSameOrSubTypeOrHasImplicitCastConsiderFalseAndNull(expression, dto,
+                            new IErrorReporterCaller()
+                            {
+                                @Override
+                                public void callAppropriateMethod() {
+                                    typeCheckErrorReporter.wrongTypeReturn(returnRoot, expression, typeSymbol);
+                                }
+                            });
                 }
             }
         }
@@ -800,19 +848,37 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     @Override
     public void checkClassMemberInitialValue(final ITSPHPAst variableId, final ITSPHPAst expression) {
-        IVariableSymbol symbol = (IVariableSymbol) variableId.getSymbol();
-        if (symbol.isAlwaysCasting()) {
+        IVariableSymbol variableSymbol = (IVariableSymbol) variableId.getSymbol();
+        if (variableSymbol.isAlwaysCasting()) {
             final ITypeSymbol typeSymbol = variableId.getEvalType();
-            checkIsSameOrSubType(expression, typeSymbol, new IErrorReporterCaller()
+            TypeWithModifiersDto dto = variableSymbol.toTypeWithModifiersDto();
+            boolean isSame = checkIsSameOrSubTypeConsiderFalseAndNull(expression, dto, new IErrorReporterCaller()
             {
                 @Override
                 public void callAppropriateMethod() {
-                    typeCheckErrorReporter.wrongClassMemberInitialValue(variableId, expression,
-                            typeSymbol);
+                    typeCheckErrorReporter.wrongClassMemberInitialValue(variableId, expression, typeSymbol);
                 }
             });
+            if (isSame) {
+                checkConstantInitialValue(variableId, expression);
+            }
+        } else {
+            checkConstantInitialValue(variableId, expression);
         }
-        checkConstantInitialValue(variableId, expression);
+    }
+
+    private boolean checkIsSameOrSubTypeConsiderFalseAndNull(
+            ITSPHPAst actualParameter, TypeWithModifiersDto formalParameter, IErrorReporterCaller caller) {
+        boolean isSame = true;
+        ITypeSymbol expressionType = actualParameter.getEvalType();
+        if (areNotErroneousTypes(expressionType, formalParameter.typeSymbol)) {
+            if (!overloadResolver.isSameOrSubTypeConsiderFalseAndNull(
+                    expressionType, actualParameter.getText(), formalParameter)) {
+                caller.callAppropriateMethod();
+                isSame = false;
+            }
+        }
+        return isSame;
     }
 
     private boolean isNotConstantValue(ITSPHPAst expression) {
@@ -845,8 +911,11 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
 
     @Override
     public void checkEcho(final ITSPHPAst expression) {
-        final ITypeSymbol typeSymbol = typeSystem.getStringNullableTypeSymbol();
-        checkIsSameOrSubType(expression, typeSymbol, new IErrorReporterCaller()
+        final ITypeSymbol typeSymbol = typeSystem.getStringTypeSymbol();
+        IModifierSet modifiers = new ModifierSet();
+        modifiers.add(TSPHPTypeCheckWalker.QuestionMark);
+        TypeWithModifiersDto dto = new TypeWithModifiersDto(typeSymbol, modifiers);
+        checkIsSameOrSubTypeOrHasImplicitCastConsiderFalseAndNull(expression, dto, new IErrorReporterCaller()
         {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
             @Override
@@ -915,11 +984,12 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
         ITSPHPAst initValue = typeSymbol.getDefaultValue();
         if (typeSymbol.isNullable()) {
             initValue.setEvalType(typeSystem.getNullTypeSymbol());
+        } else if (typeSymbol.isFalseable()) {
+            initValue.setEvalType(typeSystem.getBoolTypeSymbol());
         } else {
             initValue.setEvalType(typeSymbol);
         }
         variableId.addChild(initValue);
-
     }
 
     @Override
@@ -981,7 +1051,7 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
             wrongOperatorUsageReporter = theWrongOperatorUsageCaller;
         }
     }
-    //CHECKSTYLE:ON:VisibilityModifier|ParameterNumber
+//CHECKSTYLE:ON:VisibilityModifier|ParameterNumber
 
     /**
      * A "delegate" which returns an IErroneousTypeSymbol if it founds one otherwise null.

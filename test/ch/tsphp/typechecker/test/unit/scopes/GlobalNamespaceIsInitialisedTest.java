@@ -6,7 +6,7 @@
 
 package ch.tsphp.typechecker.test.unit.scopes;
 
-import ch.tsphp.common.ISymbol;
+import ch.tsphp.common.symbols.ISymbol;
 import ch.tsphp.typechecker.scopes.GlobalNamespaceScope;
 import ch.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tsphp.typechecker.scopes.IScopeHelper;

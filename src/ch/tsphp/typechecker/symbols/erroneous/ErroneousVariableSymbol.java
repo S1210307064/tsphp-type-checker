@@ -8,8 +8,9 @@ package ch.tsphp.typechecker.symbols.erroneous;
 
 import ch.tsphp.common.ITSPHPAst;
 import ch.tsphp.common.exceptions.TSPHPException;
-
-import java.util.Set;
+import ch.tsphp.common.symbols.modifiers.IModifierSet;
+import ch.tsphp.typechecker.symbols.ModifierSet;
+import ch.tsphp.typechecker.symbols.TypeWithModifiersDto;
 
 public class ErroneousVariableSymbol extends AErroneousSymbol implements IErroneousVariableSymbol
 {
@@ -41,12 +42,12 @@ public class ErroneousVariableSymbol extends AErroneousSymbol implements IErrone
     }
 
     @Override
-    public Set<Integer> getModifiers() {
+    public IModifierSet getModifiers() {
         throw new UnsupportedOperationException(ERROR_MESSAGE);
     }
 
     @Override
-    public void setModifiers(Set<Integer> modifier) {
+    public void setModifiers(IModifierSet modifiers) {
         throw new UnsupportedOperationException(ERROR_MESSAGE);
     }
 
@@ -68,5 +69,20 @@ public class ErroneousVariableSymbol extends AErroneousSymbol implements IErrone
     @Override
     public boolean isPrivate() {
         return false;
+    }
+
+    @Override
+    public boolean isFalseable() {
+        return true;
+    }
+
+    @Override
+    public boolean isNullable() {
+        return true;
+    }
+
+    @Override
+    public TypeWithModifiersDto toTypeWithModifiersDto() {
+        return new TypeWithModifiersDto(getType(), new ModifierSet());
     }
 }

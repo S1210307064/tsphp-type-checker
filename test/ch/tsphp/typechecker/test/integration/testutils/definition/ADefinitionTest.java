@@ -18,6 +18,8 @@ import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
 import ch.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tsphp.typechecker.scopes.IScopeHelper;
 import ch.tsphp.typechecker.scopes.ScopeHelper;
+import ch.tsphp.typechecker.symbols.IModifierHelper;
+import ch.tsphp.typechecker.symbols.ModifierHelper;
 import ch.tsphp.typechecker.test.integration.testutils.ATest;
 import ch.tsphp.typechecker.test.integration.testutils.TestDefinitionPhaseController;
 import ch.tsphp.typechecker.test.integration.testutils.TestScopeFactory;
@@ -35,7 +37,7 @@ public abstract class ADefinitionTest extends ATest
 
     protected String testString;
     protected String errorMessagePrefix;
-    protected TestDefinitionPhaseController definer;
+    protected TestDefinitionPhaseController definitionPhaseController;
     protected TestScopeFactory scopeFactory;
     protected ITSPHPAst ast;
     protected CommonTreeNodeStream commonTreeNodeStream;
@@ -44,6 +46,7 @@ public abstract class ADefinitionTest extends ATest
     protected ErrorReportingTSPHPDefinitionWalker definition;
     protected TestSymbolFactory symbolFactory;
     protected IScopeHelper scopeHelper;
+    protected IModifierHelper modifierHelper;
     protected ITypeSystem typeSystem;
 
 
@@ -64,10 +67,11 @@ public abstract class ADefinitionTest extends ATest
 
         scopeHelper = createScopeHelper(typeCheckErrorReporter);
         scopeFactory = createTestScopeFactory(scopeHelper, typeCheckErrorReporter);
-        symbolFactory = createTestSymbolFactory(scopeHelper);
+        modifierHelper = createModifierHelper();
+        symbolFactory = createTestSymbolFactory(scopeHelper, modifierHelper);
 
-        definer = createTestDefiner(symbolFactory, scopeFactory);
-        typeSystem = createTypeSystem(symbolFactory, definer.getGlobalDefaultNamespace());
+        definitionPhaseController = createTestDefiner(symbolFactory, scopeFactory);
+        typeSystem = createTypeSystem(symbolFactory, definitionPhaseController.getGlobalDefaultNamespace());
     }
 
     protected void verifyParser() {
@@ -83,7 +87,7 @@ public abstract class ADefinitionTest extends ATest
         commonTreeNodeStream = new CommonTreeNodeStream(adaptor, ast);
         commonTreeNodeStream.setTokenStream(parserUnit.tokenStream);
 
-        definition = new ErrorReportingTSPHPDefinitionWalker(commonTreeNodeStream, definer);
+        definition = new ErrorReportingTSPHPDefinitionWalker(commonTreeNodeStream, definitionPhaseController);
         definition.registerErrorLogger(new WriteExceptionToConsole());
         try {
             definition.downup(ast);
@@ -112,8 +116,13 @@ public abstract class ADefinitionTest extends ATest
         return new TestScopeFactory(theScopeHelper, theTypeCheckerErrorReporter);
     }
 
-    protected TestSymbolFactory createTestSymbolFactory(IScopeHelper theScopeHelper) {
-        return new TestSymbolFactory(theScopeHelper);
+    protected IModifierHelper createModifierHelper() {
+        return new ModifierHelper();
+    }
+
+    protected TestSymbolFactory createTestSymbolFactory(
+            IScopeHelper theScopeHelper, IModifierHelper theModifierHelper) {
+        return new TestSymbolFactory(theScopeHelper, theModifierHelper);
     }
 
     protected ITypeSystem createTypeSystem(

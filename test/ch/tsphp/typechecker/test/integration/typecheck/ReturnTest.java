@@ -40,7 +40,7 @@ public class ReturnTest extends AOperatorTypeCheckTest
         collection.add(new Object[]{"class A{function void a(){return;}}", new TypeCheckStruct[]{}});
 
 
-        Object[][] types = TypeHelper.getTypesInclTokenAndDefaultValue();
+        Object[][] types = TypeHelper.getAllTypesInclTokenAndDefaultValue();
 
         for (Object[] type : types) {
             if (type[0].equals("void")) {

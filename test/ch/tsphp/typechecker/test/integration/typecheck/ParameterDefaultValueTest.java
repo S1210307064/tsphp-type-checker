@@ -7,7 +7,7 @@
 package ch.tsphp.typechecker.test.integration.typecheck;
 
 import ch.tsphp.typechecker.test.integration.testutils.typecheck.AOperatorTypeCheckTest;
-import ch.tsphp.typechecker.test.integration.testutils.typecheck.ConstantInitialValueHelper;
+import ch.tsphp.typechecker.test.integration.testutils.typecheck.InitialValueHelper;
 import ch.tsphp.typechecker.test.integration.testutils.typecheck.TypeCheckStruct;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
@@ -34,9 +34,9 @@ public class ParameterDefaultValueTest extends AOperatorTypeCheckTest
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
         List<Object[]> collection = new ArrayList<>();
-        collection.addAll(ConstantInitialValueHelper.testStrings(
+        collection.addAll(InitialValueHelper.testStrings(
                 "function void foo(", "){}", "$a", true, true, 1, 0, 3));
-        collection.addAll(ConstantInitialValueHelper.testStrings(
+        collection.addAll(InitialValueHelper.testStrings(
                 "class A{function void foo(", "){}}", "$a", true, true, 1, 0, 4, 0, 3));
         return collection;
 

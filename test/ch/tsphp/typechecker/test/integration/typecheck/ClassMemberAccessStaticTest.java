@@ -38,9 +38,30 @@ public class ClassMemberAccessStaticTest extends AOperatorTypeCheckTest
 
         Object[][] types = new Object[][]{
                 {"bool", Bool},
+                {"bool!", BoolFalseable},
+                {"bool?", BoolNullable},
+                {"bool!?", BoolFalseableAndNullable},
                 {"int", Int},
+                {"int!", IntFalseable},
+                {"int?", IntNullable},
+                {"int!?", IntFalseableAndNullable},
                 {"float", Float},
-                {"string", String}
+                {"float!", FloatFalseable},
+                {"float?", FloatNullable},
+                {"float!?", FloatFalseableAndNullable},
+                {"string", String},
+                {"string!", StringFalseable},
+                {"string?", StringNullable},
+                {"string!?", StringFalseableAndNullable},
+                {"array", Array},
+                {"array!", ArrayFalseable},
+                {"resource", Resource},
+                {"resource!", ResourceFalseable},
+                {"mixed", Mixed},
+                {"Exception", Exception},
+                {"Exception!", ExceptionFalseable},
+                {"ErrorException", ErrorException},
+                {"ErrorException!", ErrorExceptionFalseable},
         };
 
         for (Object[] type : types) {
@@ -58,13 +79,13 @@ public class ClassMemberAccessStaticTest extends AOperatorTypeCheckTest
                             typeStruct("sMemAccess", (EBuiltInType) type[1], 1, 0, 4, 1, 4, 0, 0)
                     },
                     {
-                            "class A{public static " + type[0] + " $a;} class B extends A{ function void foo()" +
-                                    "{self::$a;}}",
+                            "class A{public static " + type[0] + " $a;} "
+                                    + "class B extends A{ function void foo(){self::$a;}}",
                             typeStruct("sMemAccess", (EBuiltInType) type[1], 1, 1, 4, 0, 4, 0, 0)
                     },
                     {
-                            "class A{public static " + type[0] + " $a;} class B extends A{ function void foo()" +
-                                    "{parent::$a;}}",
+                            "class A{public static " + type[0] + " $a;} "
+                                    + "class B extends A{ function void foo(){parent::$a;}}",
                             typeStruct("sMemAccess", (EBuiltInType) type[1], 1, 1, 4, 0, 4, 0, 0)
                     },
                     {
@@ -91,8 +112,8 @@ public class ClassMemberAccessStaticTest extends AOperatorTypeCheckTest
                             typeStruct("memAccess", (EBuiltInType) type[1], 1, 0, 4, 1, 4, 0, 0)
                     },
                     {
-                            "class A{public static " + type[0] + " $a;} class B extends A{ function void foo()" +
-                                    "{$this->a;}}",
+                            "class A{public static " + type[0] + " $a;} "
+                                    + "class B extends A{ function void foo(){$this->a;}}",
                             typeStruct("memAccess", (EBuiltInType) type[1], 1, 1, 4, 0, 4, 0, 0)
                     }
             }));

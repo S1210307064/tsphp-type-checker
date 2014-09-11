@@ -6,8 +6,8 @@
 
 package ch.tsphp.typechecker.scopes;
 
-import ch.tsphp.common.ISymbol;
 import ch.tsphp.common.ITSPHPAst;
+import ch.tsphp.common.symbols.ISymbol;
 import ch.tsphp.typechecker.symbols.IAliasSymbol;
 
 import java.util.List;

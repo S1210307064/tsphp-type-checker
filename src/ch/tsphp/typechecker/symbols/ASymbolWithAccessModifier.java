@@ -7,34 +7,32 @@
 package ch.tsphp.typechecker.symbols;
 
 import ch.tsphp.common.ITSPHPAst;
-import ch.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
-
-import java.util.Set;
+import ch.tsphp.common.symbols.modifiers.IModifierSet;
 
 public abstract class ASymbolWithAccessModifier extends ASymbolWithModifier implements ISymbolWithAccessModifier
 {
 
-    public ASymbolWithAccessModifier(ITSPHPAst definitionAst, Set<Integer> modifiers, String name) {
+    public ASymbolWithAccessModifier(ITSPHPAst definitionAst, IModifierSet modifiers, String name) {
         super(definitionAst, modifiers, name);
     }
 
     @Override
     public boolean isPublic() {
-        return modifiers.contains(TSPHPDefinitionWalker.Public);
+        return modifiers.isPublic();
     }
 
     @Override
     public boolean isProtected() {
-        return modifiers.contains(TSPHPDefinitionWalker.Protected);
+        return modifiers.isProtected();
     }
 
     @Override
     public boolean isPrivate() {
-        return modifiers.contains(TSPHPDefinitionWalker.Private);
+        return modifiers.isPrivate();
     }
 
     @Override
     public boolean canBeAccessedFrom(int type) {
-        return ModifierHelper.canBeAccessedFrom(modifiers, type);
+        return ch.tsphp.typechecker.utils.ModifierHelper.canBeAccessedFrom(modifiers, type);
     }
 }

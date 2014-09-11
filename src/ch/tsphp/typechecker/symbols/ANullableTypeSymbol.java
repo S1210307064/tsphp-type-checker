@@ -8,7 +8,8 @@ package ch.tsphp.typechecker.symbols;
 
 import ch.tsphp.common.AstHelperRegistry;
 import ch.tsphp.common.ITSPHPAst;
-import ch.tsphp.common.ITypeSymbol;
+import ch.tsphp.common.symbols.ITypeSymbol;
+import ch.tsphp.common.symbols.modifiers.IModifierSet;
 import ch.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 
 import java.util.Set;
@@ -21,20 +22,25 @@ public abstract class ANullableTypeSymbol extends ATypeSymbol
 
     public ANullableTypeSymbol(String name, ITypeSymbol parentTypeSymbol) {
         super(null, name, parentTypeSymbol);
+        //make sure nullable is part of the modifiers
+        addModifier(TSPHPDefinitionWalker.QuestionMark);
     }
 
     public ANullableTypeSymbol(String name, Set<ITypeSymbol> parentTypeSymbols) {
         super(null, name, parentTypeSymbols);
-    }
-
-    @Override
-    @SuppressWarnings("PMD.EmptyMethodInAbstractClassShouldBeAbstract")
-    public boolean isNullable() {
-        return true;
+        //make sure nullable is part of the modifiers
+        addModifier(TSPHPDefinitionWalker.QuestionMark);
     }
 
     @Override
     public ITSPHPAst getDefaultValue() {
         return AstHelperRegistry.get().createAst(TSPHPDefinitionWalker.Null, "null");
+    }
+
+    @Override
+    public void setModifiers(IModifierSet newModifiers) {
+        super.setModifiers(newModifiers);
+        //make sure nullable is part of the modifiers
+        modifiers.add(TSPHPDefinitionWalker.QuestionMark);
     }
 }

@@ -7,7 +7,7 @@
 package ch.tsphp.typechecker.scopes;
 
 import ch.tsphp.common.IScope;
-import ch.tsphp.common.ISymbol;
+import ch.tsphp.common.symbols.ISymbol;
 
 /**
  * Represents a scope which has case insensitive definition rules.

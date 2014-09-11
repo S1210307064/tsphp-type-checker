@@ -44,7 +44,7 @@ public class InstanceofErrorTest extends ATypeCheckErrorTest
         }));
 
 
-        String[][] types = TypeHelper.getTypesInclDefaultValueWithoutExceptions();
+        String[][] types = TypeHelper.getAllTypesInclDefaultValueWithoutExceptions();
         String[][] types2 = new String[][]{{"Exception", "null"}, {"ErrorException", "null"}};
 
         ReferenceErrorDto[] left = new ReferenceErrorDto[]{new ReferenceErrorDto("$a", 2, 1)};

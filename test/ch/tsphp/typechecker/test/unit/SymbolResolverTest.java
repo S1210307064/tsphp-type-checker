@@ -7,9 +7,9 @@
 package ch.tsphp.typechecker.test.unit;
 
 import ch.tsphp.common.ILowerCaseStringMap;
-import ch.tsphp.common.ISymbol;
 import ch.tsphp.common.ITSPHPAst;
 import ch.tsphp.common.LowerCaseStringMap;
+import ch.tsphp.common.symbols.ISymbol;
 import ch.tsphp.typechecker.ISymbolResolver;
 import ch.tsphp.typechecker.SymbolResolver;
 import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;

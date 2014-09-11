@@ -7,11 +7,11 @@
 package ch.tsphp.typechecker.test.integration.definition;
 
 import ch.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
-import ch.tsphp.typechecker.symbols.ModifierHelper;
 import ch.tsphp.typechecker.test.integration.testutils.IAdder;
 import ch.tsphp.typechecker.test.integration.testutils.ParameterListHelper;
 import ch.tsphp.typechecker.test.integration.testutils.TypeHelper;
 import ch.tsphp.typechecker.test.integration.testutils.definition.ADefinitionSymbolTest;
+import ch.tsphp.typechecker.utils.ModifierHelper;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,16 +46,22 @@ public class InterfaceMethodTest extends ADefinitionSymbolTest
     public static Collection<Object[]> testStrings() {
         collection = new ArrayList<>();
 
-        final String methodModifier = ModifierHelper.getModifiers(new TreeSet<>(Arrays.asList(new Integer[]{
+        SortedSet<Integer> modifiers = new TreeSet<>();
+        modifiers.add(TSPHPDefinitionWalker.Abstract);
+        modifiers.add(TSPHPDefinitionWalker.QuestionMark);
+        String abstr = ModifierHelper.getModifiersAsString(modifiers);
+        prefixExpected = "\\a\\.\\a\\.b" + abstr + " ";
+
+        final String methodModifier = ModifierHelper.getModifiersAsString(new TreeSet<>(Arrays.asList(new Integer[]{
                 TSPHPDefinitionWalker.Public,
                 TSPHPDefinitionWalker.Abstract
         })));
 
-        TypeHelper.getAllTypesInclModifier(new IAdder()
+        TypeHelper.addAllTypesInclModifier(new IAdder()
         {
             @Override
             public void add(String type, String typeExpected, SortedSet modifiers) {
-                String typeModifiers = ModifierHelper.getModifiers(modifiers);
+                String typeModifiers = ModifierHelper.getModifiersAsString(modifiers);
                 collection.add(new Object[]{
                         prefix + "function " + type + " get();" + appendix,
                         prefixExpected + "\\a\\.\\a\\.b." + typeExpected

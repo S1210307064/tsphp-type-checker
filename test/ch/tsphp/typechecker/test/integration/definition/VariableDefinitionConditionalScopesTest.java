@@ -6,11 +6,11 @@
 
 package ch.tsphp.typechecker.test.integration.definition;
 
-import ch.tsphp.typechecker.symbols.ModifierHelper;
 import ch.tsphp.typechecker.test.integration.testutils.IAdder;
 import ch.tsphp.typechecker.test.integration.testutils.TypeHelper;
 import ch.tsphp.typechecker.test.integration.testutils.VariableDeclarationListHelper;
 import ch.tsphp.typechecker.test.integration.testutils.definition.ADefinitionSymbolTest;
+import ch.tsphp.typechecker.utils.ModifierHelper;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -86,12 +86,12 @@ public class VariableDefinitionConditionalScopesTest extends ADefinitionSymbolTe
 
 
         //definition in foreach header
-        TypeHelper.getAllTypesInclModifier(
+        TypeHelper.addAllTypesInclModifier(
                 new IAdder()
                 {
                     @Override
                     public void add(String type, String typeExpected, SortedSet<Integer> modifiers) {
-                        String typeModifiers = ModifierHelper.getModifiers(modifiers);
+                        String typeModifiers = ModifierHelper.getModifiersAsString(modifiers);
                         collection.add(new Object[]{
                                 "foreach($a as " + type + " $v);",
                                 defaultNamespace + "cScope." + typeExpected + " " + defaultNamespace + "cScope." +

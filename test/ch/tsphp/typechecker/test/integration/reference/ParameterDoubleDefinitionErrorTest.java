@@ -60,8 +60,6 @@ public class ParameterDoubleDefinitionErrorTest extends AReferenceDefinitionErro
         };
         List<String> types = TypeHelper.getPrimitiveTypes();
         for (String type : types) {
-
-            //And since PHP does not support method overloading, also the parameter do not matter
             collection.add(new Object[]{
                     prefix + type + "\n $a, int\n $a" + appendix,
                     errorDto

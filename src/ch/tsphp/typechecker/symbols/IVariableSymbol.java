@@ -6,6 +6,13 @@
 
 package ch.tsphp.typechecker.symbols;
 
-public interface IVariableSymbol extends ISymbolWithAccessModifier, ICanBeStatic, ICanHaveCastModifier
+import ch.tsphp.common.symbols.modifiers.ICanBeFalseable;
+import ch.tsphp.common.symbols.modifiers.ICanBeNullable;
+import ch.tsphp.common.symbols.modifiers.ICanBeStatic;
+import ch.tsphp.common.symbols.modifiers.ICanHaveCastModifier;
+
+public interface IVariableSymbol extends ISymbolWithAccessModifier, ICanBeStatic, ICanHaveCastModifier,
+        ICanBeFalseable, ICanBeNullable
 {
+    TypeWithModifiersDto toTypeWithModifiersDto();
 }

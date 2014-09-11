@@ -7,24 +7,37 @@
 package ch.tsphp.typechecker.symbols;
 
 import ch.tsphp.common.ITSPHPAst;
-import ch.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
-
-import java.util.Set;
+import ch.tsphp.common.symbols.modifiers.IModifierSet;
 
 public class VariableSymbol extends ASymbolWithAccessModifier implements IVariableSymbol
 {
 
-    public VariableSymbol(ITSPHPAst definitionAst, Set<Integer> modifiers, String name) {
+    public VariableSymbol(ITSPHPAst definitionAst, IModifierSet modifiers, String name) {
         super(definitionAst, modifiers, name);
     }
 
     @Override
     public boolean isStatic() {
-        return modifiers.contains(TSPHPDefinitionWalker.Static);
+        return modifiers.isStatic();
     }
 
     @Override
     public boolean isAlwaysCasting() {
-        return modifiers.contains(TSPHPDefinitionWalker.Cast);
+        return modifiers.isAlwaysCasting();
+    }
+
+    @Override
+    public boolean isFalseable() {
+        return modifiers.isFalseable();
+    }
+
+    @Override
+    public boolean isNullable() {
+        return modifiers.isNullable();
+    }
+
+    @Override
+    public TypeWithModifiersDto toTypeWithModifiersDto() {
+        return new TypeWithModifiersDto(getType(), modifiers);
     }
 }

@@ -9,10 +9,12 @@ package ch.tsphp.typechecker.symbols;
 import ch.tsphp.common.AstHelperRegistry;
 import ch.tsphp.common.ILowerCaseStringMap;
 import ch.tsphp.common.IScope;
-import ch.tsphp.common.ISymbol;
 import ch.tsphp.common.ITSPHPAst;
-import ch.tsphp.common.ITypeSymbol;
 import ch.tsphp.common.LowerCaseStringMap;
+import ch.tsphp.common.symbols.ISymbol;
+import ch.tsphp.common.symbols.ITypeSymbol;
+import ch.tsphp.common.symbols.modifiers.ICanBeAbstract;
+import ch.tsphp.common.symbols.modifiers.IModifierSet;
 import ch.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tsphp.typechecker.scopes.IScopeHelper;
 import ch.tsphp.typechecker.utils.MapHelper;
@@ -36,13 +38,14 @@ public abstract class APolymorphicTypeSymbol extends AScopedSymbol implements IP
     public APolymorphicTypeSymbol(
             IScopeHelper scopeHelper,
             ITSPHPAst definitionAst,
-            Set<Integer> modifiers,
+            IModifierSet modifiers,
             String name,
             IScope enclosingScope,
             ITypeSymbol theParentTypeSymbol) {
         super(scopeHelper, definitionAst, modifiers, name, enclosingScope);
         parentTypeSymbols.add(theParentTypeSymbol);
-        isMixedTheParentTypeSymbol = theParentTypeSymbol.getName().equals("object");
+        isMixedTheParentTypeSymbol = theParentTypeSymbol.getName().equals("mixed");
+        addModifier(TSPHPDefinitionWalker.QuestionMark);
     }
 
     @Override
@@ -128,11 +131,6 @@ public abstract class APolymorphicTypeSymbol extends AScopedSymbol implements IP
     }
 
     @Override
-    public boolean isNullable() {
-        return true;
-    }
-
-    @Override
     public ITSPHPAst getDefaultValue() {
         return AstHelperRegistry.get().createAst(TSPHPDefinitionWalker.Null, "null");
     }
@@ -147,5 +145,22 @@ public abstract class APolymorphicTypeSymbol extends AScopedSymbol implements IP
     public boolean isPartiallyInitialised(ISymbol symbol) {
         //all symbols in a polymorphic type symbol are implicitly initialised
         return false;
+    }
+
+    @Override
+    public boolean isFalseable() {
+        return modifiers.isFalseable();
+    }
+
+    @Override
+    public boolean isNullable() {
+        return modifiers.isNullable();
+    }
+
+    @Override
+    public void setModifiers(IModifierSet newModifiers) {
+        super.setModifiers(newModifiers);
+        //make sure nullable is part of the modifiers
+        modifiers.add(TSPHPDefinitionWalker.QuestionMark);
     }
 }

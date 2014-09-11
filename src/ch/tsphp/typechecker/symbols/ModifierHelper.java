@@ -6,49 +6,26 @@
 
 package ch.tsphp.typechecker.symbols;
 
-import ch.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
+import ch.tsphp.common.ITSPHPAst;
+import ch.tsphp.common.symbols.modifiers.IModifierSet;
 
-import java.util.Arrays;
-import java.util.Set;
-import java.util.SortedSet;
+import java.util.List;
 
-public final class ModifierHelper
+public class ModifierHelper implements IModifierHelper
 {
 
-    private ModifierHelper() {
+    public ModifierHelper() {
     }
 
-    public static String getModifiers(SortedSet modifiers) {
-        String typeModifiers;
-        if (modifiers == null || modifiers.size() == 0) {
-            typeModifiers = "";
-        } else {
-            typeModifiers = Arrays.toString(modifiers.toArray());
-            typeModifiers = "|" + typeModifiers.substring(1, typeModifiers.length() - 1);
-        }
-        return typeModifiers;
-    }
+    public IModifierSet getModifiers(ITSPHPAst modifierAst) {
+        IModifierSet modifiers = new ModifierSet();
 
-    public static boolean canBeAccessedFrom(Set<Integer> modifiers, int type) {
-        boolean canBeAccessed;
-        switch (type) {
-            case TSPHPDefinitionWalker.Public:
-                canBeAccessed = modifiers.contains(TSPHPDefinitionWalker.Public);
-                break;
-            case TSPHPDefinitionWalker.Protected:
-                canBeAccessed = modifiers.contains(TSPHPDefinitionWalker.Public)
-                        || modifiers.contains(TSPHPDefinitionWalker.Protected);
-                break;
-            case TSPHPDefinitionWalker.Private:
-                canBeAccessed = modifiers.contains(TSPHPDefinitionWalker.Public)
-                        || modifiers.contains(TSPHPDefinitionWalker.Protected)
-                        || modifiers.contains(TSPHPDefinitionWalker.Private);
-                break;
-            default:
-                throw new RuntimeException("Wrong type passed: " + type + " should correspond to "
-                        + "TSPHPDefinitionWalker.Public, TSPHPDefinitionWalker.Protected or "
-                        + "TSPHPDefinitionWalker.Private");
+        List<ITSPHPAst> children = modifierAst.getChildren();
+        if (children != null && !children.isEmpty()) {
+            for (ITSPHPAst child : children) {
+                modifiers.add(child.getType());
+            }
         }
-        return canBeAccessed;
+        return modifiers;
     }
 }

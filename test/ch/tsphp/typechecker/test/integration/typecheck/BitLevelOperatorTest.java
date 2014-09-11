@@ -7,6 +7,7 @@
 package ch.tsphp.typechecker.test.integration.typecheck;
 
 import ch.tsphp.typechecker.test.integration.testutils.typecheck.AOperatorTypeCheckTest;
+import ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType;
 import ch.tsphp.typechecker.test.integration.testutils.typecheck.TypeCheckStruct;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
@@ -35,18 +36,58 @@ public class BitLevelOperatorTest extends AOperatorTypeCheckTest
     public static Collection<Object[]> testStrings() {
         List<Object[]> collection = new ArrayList<>();
         String[] arithmeticOperators = new String[]{"|", "&", "^", "<<", ">>"};
-        for (String operator : arithmeticOperators) {
+        Object[][] typesInclReturnType = new Object[][]{{"bool", Int}, {"int", Int}};
+        for (String op : arithmeticOperators) {
             collection.addAll(Arrays.asList(new Object[][]{
-                    {"true " + operator + " false;", new TypeCheckStruct[]{struct(operator, Int, 1, 0, 0)}},
-                    {"true " + operator + " 1;", new TypeCheckStruct[]{struct(operator, Int, 1, 0, 0)}},
-                    {"2 " + operator + " true;", new TypeCheckStruct[]{struct(operator, Int, 1, 0, 0)}},
-                    {"2 " + operator + " 5;", new TypeCheckStruct[]{struct(operator, Int, 1, 0, 0)}}
+                    {"true " + op + " false;", typeStruct(op, Int, 1, 0, 0)},
+                    {"true " + op + " 1;", typeStruct(op, Int, 1, 0, 0)},
+                    {"2 " + op + " true;", typeStruct(op, Int, 1, 0, 0)},
+                    {"2 " + op + " 5;", typeStruct(op, Int, 1, 0, 0)},
             }));
+
+            for (Object[] typeAndReturnType : typesInclReturnType) {
+                String type = (String) typeAndReturnType[0];
+                EBuiltInType rType = (EBuiltInType) typeAndReturnType[1];
+                collection.addAll(Arrays.asList(new Object[][]{
+                        {type + "! $a=false; bool $b=true; $a " + op + " $b;", typeStruct(op, rType, 1, 2, 0)},
+                        {type + "! $a=false; bool! $b=false; $a " + op + " $b;", typeStruct(op, rType, 1, 2, 0)},
+                        {type + "! $a=false; bool? $b=null; $a " + op + " $b;", typeStruct(op, rType, 1, 2, 0)},
+                        {type + "! $a=false; bool!? $b=false; $a " + op + " $b;", typeStruct(op, rType, 1, 2, 0)},
+                        {type + "! $a=false; int $b=1; $a " + op + " $b;", typeStruct(op, rType, 1, 2, 0)},
+                        {type + "! $a=false; int! $b=1; $a " + op + " $b;", typeStruct(op, rType, 1, 2, 0)},
+                        {type + "! $a=false; int? $b=1; $a " + op + " $b;", typeStruct(op, rType, 1, 2, 0)},
+                        {type + "! $a=false; int!? $b=1; $a " + op + " $b;", typeStruct(op, rType, 1, 2, 0)},
+                        {type + "? $a=null; bool $b=true; $a " + op + " $b;", typeStruct(op, rType, 1, 2, 0)},
+                        {type + "? $a=null; bool! $b=false; $a " + op + " $b;", typeStruct(op, rType, 1, 2, 0)},
+                        {type + "? $a=null; bool? $b=null; $a " + op + " $b;", typeStruct(op, rType, 1, 2, 0)},
+                        {type + "? $a=null; bool!? $b=false; $a " + op + " $b;", typeStruct(op, rType, 1, 2, 0)},
+                        {type + "? $a=null; int $b=1; $a " + op + " $b;", typeStruct(op, rType, 1, 2, 0)},
+                        {type + "? $a=null; int! $b=1; $a " + op + " $b;", typeStruct(op, rType, 1, 2, 0)},
+                        {type + "? $a=null; int? $b=1; $a " + op + " $b;", typeStruct(op, rType, 1, 2, 0)},
+                        {type + "? $a=null; int!? $b=1; $a " + op + " $b;", typeStruct(op, rType, 1, 2, 0)},
+                        {type + "!? $a=null; bool $b=true; $a " + op + " $b;", typeStruct(op, rType, 1, 2, 0)},
+                        {type + "!? $a=null; bool! $b=false; $a " + op + " $b;", typeStruct(op, rType, 1, 2, 0)},
+                        {type + "!? $a=null; bool? $b=null; $a " + op + " $b;", typeStruct(op, rType, 1, 2, 0)},
+                        {type + "!? $a=null; bool!? $b=false; $a " + op + " $b;", typeStruct(op, rType, 1, 2, 0)},
+                        {type + "!? $a=null; int $b=1; $a " + op + " $b;", typeStruct(op, rType, 1, 2, 0)},
+                        {type + "!? $a=null; int! $b=1; $a " + op + " $b;", typeStruct(op, rType, 1, 2, 0)},
+                        {type + "!? $a=null; int? $b=1; $a " + op + " $b;", typeStruct(op, rType, 1, 2, 0)},
+                        {type + "!? $a=null; int!? $b=1; $a " + op + " $b;", typeStruct(op, rType, 1, 2, 0)},
+                }));
+            }
         }
         collection.addAll(Arrays.asList(new Object[][]{
-                {"~true;", new TypeCheckStruct[]{struct("~", Int, 1, 0, 0)}},
-                {"~false;", new TypeCheckStruct[]{struct("~", Int, 1, 0, 0)}},
-                {"~23098;", new TypeCheckStruct[]{struct("~", Int, 1, 0, 0)}}
+                {"~true;", typeStruct("~", Int, 1, 0, 0)},
+                {"~false;", typeStruct("~", Int, 1, 0, 0)},
+                {"~23098;", typeStruct("~", Int, 1, 0, 0)},
+                {"bool $a=true; ~$a;", typeStruct("~", Int, 1, 1, 0)},
+                {"bool! $a=true; ~$a;", typeStruct("~", Int, 1, 1, 0)},
+                {"bool? $a=true; ~$a;", typeStruct("~", Int, 1, 1, 0)},
+                {"bool!? $a=true; ~$a;", typeStruct("~", Int, 1, 1, 0)},
+                {"int $a=true; ~$a;", typeStruct("~", Int, 1, 1, 0)},
+                {"int! $a=true; ~$a;", typeStruct("~", Int, 1, 1, 0)},
+                {"int? $a=true; ~$a;", typeStruct("~", Int, 1, 1, 0)},
+                {"int!? $a=true; ~$a;", typeStruct("~", Int, 1, 1, 0)},
         }));
         return collection;
     }

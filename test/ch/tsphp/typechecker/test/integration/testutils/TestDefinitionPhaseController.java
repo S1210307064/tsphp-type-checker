@@ -8,9 +8,9 @@ package ch.tsphp.typechecker.test.integration.testutils;
 
 import ch.tsphp.common.AstHelperRegistry;
 import ch.tsphp.common.IScope;
-import ch.tsphp.common.ISymbol;
 import ch.tsphp.common.ITSPHPAst;
 import ch.tsphp.common.TSPHPAst;
+import ch.tsphp.common.symbols.ISymbol;
 import ch.tsphp.typechecker.DefinitionPhaseController;
 import ch.tsphp.typechecker.IDefinitionPhaseController;
 import ch.tsphp.typechecker.scopes.INamespaceScope;

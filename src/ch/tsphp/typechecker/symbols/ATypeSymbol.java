@@ -6,32 +6,42 @@
 
 package ch.tsphp.typechecker.symbols;
 
-import ch.tsphp.common.ASymbol;
 import ch.tsphp.common.ITSPHPAst;
-import ch.tsphp.common.ITypeSymbol;
+import ch.tsphp.common.symbols.ITypeSymbol;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class ATypeSymbol extends ASymbol implements ITypeSymbol
+public abstract class ATypeSymbol extends ASymbolWithModifier implements ITypeSymbol
 {
 
     private final Set<ITypeSymbol> parentTypeSymbols;
 
+    @SuppressWarnings("checkstyle:parameternumber")
     public ATypeSymbol(final ITSPHPAst theDefinitionAst, final String theName, final ITypeSymbol theParentTypeSymbol) {
-        super(theDefinitionAst, theName);
+        super(theDefinitionAst, new ModifierSet(), theName);
         parentTypeSymbols = new HashSet<>(1);
         parentTypeSymbols.add(theParentTypeSymbol);
-
     }
 
+    @SuppressWarnings("checkstyle:parameternumber")
     public ATypeSymbol(ITSPHPAst theDefinitionAst, String theName, Set<ITypeSymbol> theParentTypeSymbols) {
-        super(theDefinitionAst, theName);
+        super(theDefinitionAst, new ModifierSet(), theName);
         parentTypeSymbols = theParentTypeSymbols;
     }
 
     @Override
     public Set<ITypeSymbol> getParentTypeSymbols() {
         return parentTypeSymbols;
+    }
+
+    @Override
+    public boolean isFalseable() {
+        return modifiers.isFalseable();
+    }
+
+    @Override
+    public boolean isNullable() {
+        return modifiers.isNullable();
     }
 }

@@ -7,18 +7,13 @@
 package ch.tsphp.typechecker.symbols;
 
 import ch.tsphp.common.ITSPHPAst;
-import ch.tsphp.common.ITypeSymbol;
+import ch.tsphp.common.symbols.ITypeSymbol;
 
 public class AliasTypeSymbol extends ATypeSymbol implements IAliasTypeSymbol
 {
 
     public AliasTypeSymbol(ITSPHPAst definitionAst, String name, ITypeSymbol parentTypeSymbol) {
         super(definitionAst, name, parentTypeSymbol);
-    }
-
-    @Override
-    public boolean isNullable() {
-        return true;
     }
 
     @Override

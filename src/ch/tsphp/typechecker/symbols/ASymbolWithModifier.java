@@ -6,25 +6,27 @@
 
 package ch.tsphp.typechecker.symbols;
 
-import ch.tsphp.common.ASymbol;
 import ch.tsphp.common.ITSPHPAst;
+import ch.tsphp.common.symbols.ASymbol;
+import ch.tsphp.common.symbols.ISymbolWithModifier;
+import ch.tsphp.common.symbols.modifiers.IModifierSet;
 
-import java.util.Set;
 import java.util.TreeSet;
 
 public abstract class ASymbolWithModifier extends ASymbol implements ISymbolWithModifier
 {
 
-    protected Set<Integer> modifiers;
+    protected IModifierSet modifiers;
 
-    public ASymbolWithModifier(ITSPHPAst definitionAst, Set<Integer> theModifiers, String name) {
+    public ASymbolWithModifier(ITSPHPAst definitionAst, IModifierSet theModifiers, String name) {
         super(definitionAst, name);
         modifiers = theModifiers;
     }
 
     @Override
     public String toString() {
-        return super.toString() + ModifierHelper.getModifiers(new TreeSet<>(modifiers));
+        return super.toString() + ch.tsphp.typechecker.utils.ModifierHelper.getModifiersAsString(new TreeSet<>
+                (modifiers));
     }
 
     @Override
@@ -38,12 +40,12 @@ public abstract class ASymbolWithModifier extends ASymbol implements ISymbolWith
     }
 
     @Override
-    public Set<Integer> getModifiers() {
+    public IModifierSet getModifiers() {
         return modifiers;
     }
 
     @Override
-    public void setModifiers(Set<Integer> newModifiers) {
+    public void setModifiers(IModifierSet newModifiers) {
         modifiers = newModifiers;
     }
 }

@@ -6,9 +6,11 @@
 
 package ch.tsphp.typechecker.symbols;
 
-import ch.tsphp.common.ISymbol;
 import ch.tsphp.common.ITSPHPAst;
-import ch.tsphp.common.ITypeSymbol;
+import ch.tsphp.common.symbols.ISymbol;
+import ch.tsphp.common.symbols.ISymbolWithModifier;
+import ch.tsphp.common.symbols.ITypeSymbol;
+import ch.tsphp.common.symbols.modifiers.ICanBeAbstract;
 import ch.tsphp.typechecker.scopes.ICaseInsensitiveScope;
 
 import java.util.Set;

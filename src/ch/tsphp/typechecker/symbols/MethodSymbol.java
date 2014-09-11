@@ -7,32 +7,32 @@
 package ch.tsphp.typechecker.symbols;
 
 import ch.tsphp.common.IScope;
-import ch.tsphp.common.ISymbol;
 import ch.tsphp.common.ITSPHPAst;
+import ch.tsphp.common.symbols.ISymbol;
+import ch.tsphp.common.symbols.modifiers.IModifierSet;
 import ch.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tsphp.typechecker.scopes.IScopeHelper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.TreeSet;
 
 public class MethodSymbol extends AScopedSymbol implements IMethodSymbol
 {
 
     private final List<IVariableSymbol> parameters = new ArrayList<>();
-    private final Set<Integer> returnTypeModifier;
+    private final IModifierSet returnTypeModifiers;
 
     @SuppressWarnings("checkstyle:parameternumber")
     public MethodSymbol(
             IScopeHelper scopeHelper,
             ITSPHPAst definitionAst,
-            Set<Integer> methodModifiers,
-            Set<Integer> theReturnTypeModifier,
+            IModifierSet methodModifiers,
+            IModifierSet theReturnTypeModifiers,
             String name,
             IScope enclosingScope) {
         super(scopeHelper, definitionAst, methodModifiers, name, enclosingScope);
-        returnTypeModifier = theReturnTypeModifier;
+        returnTypeModifiers = theReturnTypeModifiers;
     }
 
     @Override
@@ -62,7 +62,7 @@ public class MethodSymbol extends AScopedSymbol implements IMethodSymbol
 
     @Override
     public boolean isAlwaysCasting() {
-        return returnTypeModifier.contains(TSPHPDefinitionWalker.Cast);
+        return returnTypeModifiers.contains(TSPHPDefinitionWalker.Cast);
     }
 
     @Override
@@ -81,13 +81,29 @@ public class MethodSymbol extends AScopedSymbol implements IMethodSymbol
     }
 
     @Override
+    public boolean isFalseable() {
+        return modifiers.contains(TSPHPDefinitionWalker.LogicNot);
+    }
+
+    @Override
+    public boolean isNullable() {
+        return modifiers.contains(TSPHPDefinitionWalker.QuestionMark);
+    }
+
+    @Override
     public boolean canBeAccessedFrom(int type) {
-        return ModifierHelper.canBeAccessedFrom(modifiers, type);
+        return ch.tsphp.typechecker.utils.ModifierHelper.canBeAccessedFrom(modifiers, type);
+    }
+
+    @Override
+    public TypeWithModifiersDto toTypeWithModifiersDto() {
+        return new TypeWithModifiersDto(getType(), returnTypeModifiers);
     }
 
     @Override
     public String toString() {
-        return super.toString() + ModifierHelper.getModifiers(new TreeSet<>(returnTypeModifier));
+        return super.toString() + ch.tsphp.typechecker.utils.ModifierHelper.getModifiersAsString(new TreeSet<>
+                (returnTypeModifiers));
     }
 
     //Warning! start code duplication - same as in GlobalNamespaceScope
@@ -102,5 +118,6 @@ public class MethodSymbol extends AScopedSymbol implements IMethodSymbol
         String symbolName = symbol.getName();
         return initialisedSymbols.containsKey(symbolName) && !initialisedSymbols.get(symbolName);
     }
+
     //Warning! end code duplication - same as in GlobalNamespaceScope
 }

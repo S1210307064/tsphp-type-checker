@@ -6,11 +6,11 @@
 
 package ch.tsphp.typechecker.test.integration.definition;
 
-import ch.tsphp.typechecker.symbols.ModifierHelper;
 import ch.tsphp.typechecker.test.integration.testutils.IAdder;
 import ch.tsphp.typechecker.test.integration.testutils.ParameterListHelper;
 import ch.tsphp.typechecker.test.integration.testutils.TypeHelper;
 import ch.tsphp.typechecker.test.integration.testutils.definition.ADefinitionSymbolTest;
+import ch.tsphp.typechecker.utils.ModifierHelper;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,11 +38,11 @@ public class FunctionTest extends ADefinitionSymbolTest
     public static Collection<Object[]> testStrings() {
         final List<Object[]> collection = new ArrayList<>();
 
-        TypeHelper.getAllTypesInclModifier(new IAdder()
+        TypeHelper.addAllTypesInclModifier(new IAdder()
         {
             @Override
             public void add(String type, String typeExpected, SortedSet modifiers) {
-                String typeModifiers = ModifierHelper.getModifiers(modifiers);
+                String typeModifiers = ModifierHelper.getModifiersAsString(modifiers);
                 collection.add(new Object[]{
                         "function " + type + " get(){}",
                         "\\.\\." + typeExpected + " \\.\\.get()" + typeModifiers

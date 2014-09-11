@@ -6,7 +6,7 @@
 
 package ch.tsphp.typechecker.test.integration.testutils;
 
-import ch.tsphp.common.ISymbol;
+import ch.tsphp.common.symbols.ISymbol;
 
 public interface ICreateSymbolListener
 {

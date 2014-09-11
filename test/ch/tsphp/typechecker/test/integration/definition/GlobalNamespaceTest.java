@@ -39,7 +39,8 @@ public class GlobalNamespaceTest extends ADefinitionTest
 
     @Override
     protected void verifyDefinitions() {
-        ILowerCaseStringMap<IGlobalNamespaceScope> globalNamespaceScopes = definer.getGlobalNamespaceScopes();
+        ILowerCaseStringMap<IGlobalNamespaceScope> globalNamespaceScopes =
+                definitionPhaseController.getGlobalNamespaceScopes();
         assertThat(testString + " failed. size wrong ", globalNamespaceScopes.size(), equalTo(namespaces.length));
 
         for (String namespace : namespaces) {

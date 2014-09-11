@@ -7,9 +7,9 @@
 package ch.tsphp.typechecker;
 
 import ch.tsphp.common.ITSPHPAst;
-import ch.tsphp.common.ITypeSymbol;
+import ch.tsphp.common.symbols.ITypeSymbol;
 import ch.tsphp.typechecker.symbols.IMethodSymbol;
-import ch.tsphp.typechecker.symbols.IVariableSymbol;
+import ch.tsphp.typechecker.symbols.TypeWithModifiersDto;
 
 import java.util.List;
 
@@ -19,27 +19,36 @@ import java.util.List;
 public interface IOverloadResolver
 {
 
-    List<OverloadDto> getApplicableOverloads(List<IMethodSymbol> methods,
-            List<ITSPHPAst> actualParameterTypes);
+    List<OverloadDto> getApplicableOverloads(List<IMethodSymbol> methods, List<ITSPHPAst> actualParameterTypes);
 
-    OverloadDto getMostSpecificApplicableOverload(List<OverloadDto> methods)
-            throws AmbiguousCallException;
+    OverloadDto getMostSpecificApplicableOverload(List<OverloadDto> methods) throws AmbiguousCallException;
 
-    CastingDto getCastingDto(IVariableSymbol formalParameter, ITSPHPAst actualParameter);
+    CastingDto getCastingDto(ITSPHPAst actualParameter, TypeWithModifiersDto formalParameter);
 
-    CastingDto getCastingDtoAlwaysCasting(IVariableSymbol formalParameter, ITSPHPAst actualParameter);
+    CastingDto getCastingDtoInAlwaysCastingMode(ITSPHPAst actualParameter, TypeWithModifiersDto formalParameter);
 
     /**
-     * Return how many promotions have to be applied to the actualType to reach the formalType whereby -1 is returned in
-     * the case where formalType is not the actualType or one of its parent types.
+     * Return how many promotions have to be applied to the actualParameterType to reach formalParameterType
+     * whereby -1 is returned in the case where actualParameterType has not the same type as formalParameterType and
+     * is not a sub-type either.
      */
-    int getPromotionLevelFromTo(ITypeSymbol fromType, ITypeSymbol toType);
+    int getPromotionLevelFromTo(ITypeSymbol actualParameterType, ITypeSymbol formalParameterType);
 
-    int getPromotionLevelFromToConsiderNull(ITypeSymbol actualParameterType, ITypeSymbol formalParameterType);
+    /**
+     * Uses the same logic as getPromotionLevelFromTo but checks first if actualParameter is null or false.
+     * <p/>
+     * If actualParameter is null and formalParameter is nullable then 0 is returned. If actualParameter is false and
+     * the formalParameter is falseable then 0 is returned as well. If actualParameter is null or false and
+     * formalParameter is not nullable, falseable respectively, then -1 is returned.
+     */
+    int getPromotionLevelFromToConsiderFalseAndNull(
+            ITypeSymbol actualParameterType, String actualParameterValue, TypeWithModifiersDto formalParameter);
 
-    boolean isSameOrParentType(int promotionLevel);
+    boolean isSameOrSubType(int promotionLevel);
 
-    boolean isSameOrParentTypeConsiderNull(IVariableSymbol formalType, ITSPHPAst actualType);
+    boolean isSameOrSubTypeConsiderFalseAndNull(
+            ITypeSymbol actualParameterType, String actualParameterValue, TypeWithModifiersDto formalParameter);
 
-    boolean isSameOrParentTypeConsiderNull(ITypeSymbol formalParameterType, ITypeSymbol actualParameterType);
+    boolean isFormalCorrespondingFalseableOrNullableType(
+            ITypeSymbol actualParameterType, ITypeSymbol formalParameterType);
 }

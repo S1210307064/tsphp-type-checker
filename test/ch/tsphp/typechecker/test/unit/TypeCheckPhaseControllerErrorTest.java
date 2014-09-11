@@ -7,7 +7,7 @@
 package ch.tsphp.typechecker.test.unit;
 
 import ch.tsphp.common.ITSPHPAst;
-import ch.tsphp.common.ITypeSymbol;
+import ch.tsphp.common.symbols.ITypeSymbol;
 import ch.tsphp.typechecker.IAccessResolver;
 import ch.tsphp.typechecker.IOverloadResolver;
 import ch.tsphp.typechecker.ISymbolResolver;
@@ -17,10 +17,14 @@ import ch.tsphp.typechecker.TypeCheckPhaseController;
 import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
 import ch.tsphp.typechecker.symbols.ISymbolFactory;
 import ch.tsphp.typechecker.symbols.IVariableSymbol;
+import ch.tsphp.typechecker.symbols.ModifierSet;
+import ch.tsphp.typechecker.symbols.TypeWithModifiersDto;
 import ch.tsphp.typechecker.utils.ITypeCheckerAstHelper;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -50,13 +54,16 @@ public class TypeCheckPhaseControllerErrorTest
     @Test
     public void checkClassMemberInitialValue_CastModifierAndValueHasWrongType_WrongClassMemberInitialValueReported() {
         ITypeSymbol typeSymbol = mock(ITypeSymbol.class);
-        ITSPHPAst variableId = createAst(typeSymbol);
-        IVariableSymbol symbol = mock(IVariableSymbol.class);
-        when(symbol.isAlwaysCasting()).thenReturn(true);
-        when(variableId.getSymbol()).thenReturn(symbol);
         ITypeSymbol wrongTypeSymbol = mock(ITypeSymbol.class);
+        IVariableSymbol variableSymbol = mock(IVariableSymbol.class);
+        when(variableSymbol.isAlwaysCasting()).thenReturn(true);
+        when(variableSymbol.toTypeWithModifiersDto()).thenReturn(new TypeWithModifiersDto(wrongTypeSymbol,
+                new ModifierSet()));
+        ITSPHPAst variableId = createAst(typeSymbol);
+        when(variableId.getSymbol()).thenReturn(variableSymbol);
         ITSPHPAst expression = createAst(wrongTypeSymbol);
-        when(overloadResolver.getPromotionLevelFromToConsiderNull(typeSymbol, wrongTypeSymbol)).thenReturn(-1);
+        when(overloadResolver.getPromotionLevelFromToConsiderFalseAndNull(
+                any(ITypeSymbol.class), anyString(), any(TypeWithModifiersDto.class))).thenReturn(-1);
 
         ITypeCheckPhaseController typeCheckerController = createTypeCheckController();
         typeCheckerController.checkClassMemberInitialValue(variableId, expression);

@@ -8,7 +8,7 @@ package ch.tsphp.typechecker.test.integration.testutils.definition;
 
 import ch.tsphp.common.ILowerCaseStringMap;
 import ch.tsphp.common.IScope;
-import ch.tsphp.common.ISymbol;
+import ch.tsphp.common.symbols.ISymbol;
 import ch.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tsphp.typechecker.test.integration.testutils.ScopeTestStruct;
 import org.junit.Assert;
@@ -37,7 +37,9 @@ public abstract class ADoubleDefinitionTest extends ADefinitionTest
 
     @Override
     protected void verifyDefinitions() {
-        ILowerCaseStringMap<IGlobalNamespaceScope> globalNamespaces = definer.getGlobalNamespaceScopes();
+        ILowerCaseStringMap<IGlobalNamespaceScope> globalNamespaces
+                = definitionPhaseController.getGlobalNamespaceScopes();
+
         IScope globalNamespace = globalNamespaces.get(namespace);
         Assert.assertNotNull(errorMessagePrefix + " failed, global namespace " + namespace + " could not be found.",
                 globalNamespace);

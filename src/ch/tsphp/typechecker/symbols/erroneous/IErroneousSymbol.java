@@ -6,8 +6,8 @@
 
 package ch.tsphp.typechecker.symbols.erroneous;
 
-import ch.tsphp.common.ISymbol;
 import ch.tsphp.common.exceptions.TSPHPException;
+import ch.tsphp.common.symbols.ISymbol;
 
 /**
  * Marker interface for erroneous symbols.

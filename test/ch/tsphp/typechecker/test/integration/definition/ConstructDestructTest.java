@@ -7,9 +7,9 @@
 package ch.tsphp.typechecker.test.integration.definition;
 
 import ch.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
-import ch.tsphp.typechecker.symbols.ModifierHelper;
 import ch.tsphp.typechecker.test.integration.testutils.ParameterListHelper;
 import ch.tsphp.typechecker.test.integration.testutils.definition.ADefinitionSymbolTest;
+import ch.tsphp.typechecker.utils.ModifierHelper;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,7 +28,7 @@ public class ConstructDestructTest extends ADefinitionSymbolTest
 
     private static String prefix = "namespace a{ class b{";
     private static String appendix = "}}";
-    private static String prefixExpected = "\\a\\.\\a\\.b ";
+    private static String prefixExpected = "\\a\\.\\a\\.b|" + TSPHPDefinitionWalker.QuestionMark + " ";
     private static List<Object[]> collection;
 
     public ConstructDestructTest(String testString, String expectedResult) {
@@ -79,13 +79,13 @@ public class ConstructDestructTest extends ADefinitionSymbolTest
             collection.add(new Object[]{
                     prefix + variation[0] + " function __construct(){}" + appendix,
                     prefixExpected + "\\a\\.\\a\\.b.void "
-                            + "\\a\\.\\a\\.b.__construct()" + ModifierHelper.getModifiers((SortedSet<Integer>)
+                            + "\\a\\.\\a\\.b.__construct()" + ModifierHelper.getModifiersAsString((SortedSet<Integer>)
                             variation[1])
             });
             collection.add(new Object[]{
                     prefix + variation[0] + " function __destruct(){}" + appendix,
                     prefixExpected + "\\a\\.\\a\\.b.void "
-                            + "\\a\\.\\a\\.b.__destruct()" + ModifierHelper.getModifiers((SortedSet<Integer>)
+                            + "\\a\\.\\a\\.b.__destruct()" + ModifierHelper.getModifiersAsString((SortedSet<Integer>)
                             variation[1])
             });
         }
@@ -102,23 +102,23 @@ public class ConstructDestructTest extends ADefinitionSymbolTest
             collection.add(new Object[]{
                     prefix + variation[0] + " function __construct();" + appendix,
                     prefixExpected + "\\a\\.\\a\\.b.void "
-                            + "\\a\\.\\a\\.b.__construct()" + ModifierHelper.getModifiers((SortedSet<Integer>)
+                            + "\\a\\.\\a\\.b.__construct()" + ModifierHelper.getModifiersAsString((SortedSet<Integer>)
                             variation[1])
             });
             collection.add(new Object[]{
                     prefix + variation[0] + " function __destruct();" + appendix,
                     prefixExpected + "\\a\\.\\a\\.b.void "
-                            + "\\a\\.\\a\\.b.__destruct()" + ModifierHelper.getModifiers((SortedSet<Integer>)
+                            + "\\a\\.\\a\\.b.__destruct()" + ModifierHelper.getModifiersAsString((SortedSet<Integer>)
                             variation[1])
             });
         }
         collection.add(new Object[]{
                 prefix + "abstract function __construct(); abstract function __destruct();" + appendix,
                 prefixExpected + "\\a\\.\\a\\.b.void "
-                        + "\\a\\.\\a\\.b.__construct()" + ModifierHelper.getModifiers((SortedSet<Integer>)
+                        + "\\a\\.\\a\\.b.__construct()" + ModifierHelper.getModifiersAsString((SortedSet<Integer>)
                         variations[0][1]) + " "
                         + "\\a\\.\\a\\.b.void "
-                        + "\\a\\.\\a\\.b.__destruct()" + ModifierHelper.getModifiers((SortedSet<Integer>)
+                        + "\\a\\.\\a\\.b.__destruct()" + ModifierHelper.getModifiersAsString((SortedSet<Integer>)
                         variations[0][1])
         });
     }

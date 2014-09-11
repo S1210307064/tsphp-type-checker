@@ -7,7 +7,7 @@
 package ch.tsphp.typechecker;
 
 import ch.tsphp.common.IAstHelper;
-import ch.tsphp.common.ITypeSymbol;
+import ch.tsphp.common.symbols.ITypeSymbol;
 import ch.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 
 class ClassInterfaceCastingMethod extends ACastingMethod

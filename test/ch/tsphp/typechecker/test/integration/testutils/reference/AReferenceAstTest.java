@@ -6,8 +6,8 @@
 
 package ch.tsphp.typechecker.test.integration.testutils.reference;
 
-import ch.tsphp.common.ISymbol;
 import ch.tsphp.common.ITSPHPAst;
+import ch.tsphp.common.symbols.ISymbol;
 import ch.tsphp.typechecker.test.integration.testutils.ScopeTestHelper;
 import ch.tsphp.typechecker.test.integration.testutils.ScopeTestStruct;
 import org.junit.Assert;
@@ -31,7 +31,8 @@ public abstract class AReferenceAstTest extends AReferenceTest
 
     public static void verifyReferences(ScopeTestStruct[] testStructs, ITSPHPAst ast, String testString) {
         for (ScopeTestStruct testStruct : testStructs) {
-            ITSPHPAst testCandidate = ScopeTestHelper.getAst(ast, testString, testStruct.astAccessOrder);
+            ITSPHPAst testCandidate = ScopeTestHelper.getAst(ast, testString, testStruct);
+
             Assert.assertNotNull(testString + " failed. testCandidate is null. should be " + testStruct.astText,
                     testCandidate);
             Assert.assertEquals(testString + " failed. wrong ast text,", testStruct.astText,

@@ -35,17 +35,11 @@ public class ReturnErrorTest extends ATypeCheckErrorTest
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
         List<Object[]> collection = new ArrayList<>();
-        collection.add(new Object[]{
-                "int $b=1; \n return $b;",
-                new ReferenceErrorDto[]{new ReferenceErrorDto("return", 2, 1)}
-        });
+        collection.add(new Object[]{"int $b=1; \n return $b;", refErrorDto("return", 2, 1)});
         collection.addAll(getVariations("", ""));
         collection.addAll(getVariations("class A{", "}"));
         //see TSPHP-489 - NullPointerException when function return value void is assigned to a variable
-        collection.add(new Object[]{
-                "function void foo(){} int \n $a = foo();",
-                new ReferenceErrorDto[]{new ReferenceErrorDto("=", 2, 1)}
-        });
+        collection.add(new Object[]{"function void foo(){} int \n $a = foo();", refErrorDto("=", 2, 1)});
         return collection;
     }
 
@@ -53,7 +47,7 @@ public class ReturnErrorTest extends ATypeCheckErrorTest
         List<Object[]> collection = new ArrayList<>();
         ReferenceErrorDto[] errorDto = new ReferenceErrorDto[]{new ReferenceErrorDto("return", 2, 1)};
 
-        String[][] types = TypeHelper.getTypesInclDefaultValue();
+        String[][] types = TypeHelper.getAllTypesInclDefaultValue();
         for (String[] type : types) {
             collection.add(new Object[]{
                     prefix + "function void foo(){" + type[0] + " $b=" + type[1] + ";\n return $b;}" + appendix,
@@ -62,7 +56,7 @@ public class ReturnErrorTest extends ATypeCheckErrorTest
         }
 
         for (int i = 0; i < types.length - 1; ++i) {
-            if (types[i][0].equals("mixed") || types[i][0].equals("Exception")) {
+            if (types[i][0].equals("mixed") || types[i][0].equals("Exception") || types[i][0].equals("Exception!")) {
                 continue;
             }
             collection.add(new Object[]{

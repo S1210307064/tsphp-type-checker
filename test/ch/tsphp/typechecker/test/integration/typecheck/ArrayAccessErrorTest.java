@@ -37,14 +37,25 @@ public class ArrayAccessErrorTest extends ATypeCheckErrorTest
 
         String[][] types = new String[][]{
                 {"bool?", "null"},
+                {"bool!?", "null"},
+                {"int!", "false"},
                 {"int?", "null"},
+                {"int!?", "null"},
+                {"float!", "false"},
+                {"float!?", "null"},
                 {"float?", "null"},
+                {"string!", "false"},
                 {"string?", "null"},
+                {"string!?", "null"},
                 {"array", "null"},
+                {"array!", "null"},
                 {"resource", "null"},
+                {"resource!", "null"},
                 {"mixed", "null"},
                 {"Exception", "null"},
-                {"ErrorException", "null"}
+                {"Exception!", "null"},
+                {"ErrorException", "null"},
+                {"ErrorException!", "null"}
         };
 
         for (String[] type : types) {
@@ -54,3 +65,4 @@ public class ArrayAccessErrorTest extends ATypeCheckErrorTest
         return collection;
     }
 }
+

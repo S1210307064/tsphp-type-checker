@@ -6,9 +6,9 @@
 
 package ch.tsphp.typechecker.symbols;
 
-import ch.tsphp.common.ASymbol;
 import ch.tsphp.common.ILowerCaseStringMap;
 import ch.tsphp.common.ITSPHPAst;
+import ch.tsphp.common.symbols.ASymbol;
 import ch.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 
 public class AliasSymbol extends ASymbol implements IAliasSymbol

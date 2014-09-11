@@ -35,9 +35,9 @@ public class WhileErrorTest extends ATypeCheckErrorTest
     public static Collection<Object[]> testStrings() {
         List<Object[]> collection = new ArrayList<>();
 
-        String[][] types = TypeHelper.getTypesInclDefaultValue();
+        String[][] types = TypeHelper.getAllTypesInclDefaultValue();
         for (String[] type : types) {
-            if (type[0].equals("bool")) {
+            if (type[0].equals("bool") || type[0].equals("bool!")) {
                 continue;
             }
             collection.add(new Object[]{type[0] + " $b=" + type[1] + ";\n while($b);", refErrorDto("while", 2, 1)});

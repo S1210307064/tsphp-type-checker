@@ -7,8 +7,8 @@
 package ch.tsphp.typechecker.test.unit;
 
 import ch.tsphp.common.ITSPHPAst;
-import ch.tsphp.common.ITypeSymbol;
 import ch.tsphp.common.exceptions.TypeCheckerException;
+import ch.tsphp.common.symbols.ITypeSymbol;
 import ch.tsphp.typechecker.IAccessResolver;
 import ch.tsphp.typechecker.IOverloadResolver;
 import ch.tsphp.typechecker.ISymbolResolver;

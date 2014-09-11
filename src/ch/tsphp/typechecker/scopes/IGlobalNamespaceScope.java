@@ -7,7 +7,7 @@
 package ch.tsphp.typechecker.scopes;
 
 import ch.tsphp.common.ITSPHPAst;
-import ch.tsphp.common.ITypeSymbol;
+import ch.tsphp.common.symbols.ITypeSymbol;
 
 /**
  * A global namespace scope contains all corresponding namespaces.

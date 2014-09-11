@@ -6,8 +6,8 @@
 
 package ch.tsphp.typechecker.test.integration.testutils.definition;
 
-import ch.tsphp.common.ISymbol;
 import ch.tsphp.common.ITSPHPAst;
+import ch.tsphp.common.symbols.ISymbol;
 import ch.tsphp.typechecker.test.integration.testutils.ScopeTestHelper;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -33,7 +33,7 @@ public abstract class ADefinitionSymbolTest extends ADefinitionTest
     }
 
     public String getSymbolsAsString() {
-        List<Map.Entry<ISymbol, ITSPHPAst>> symbols = definer.getSymbols();
+        List<Map.Entry<ISymbol, ITSPHPAst>> symbols = definitionPhaseController.getSymbols();
         StringBuilder stringBuilder = new StringBuilder();
         boolean isFirstSymbol = true;
         for (Map.Entry<ISymbol, ITSPHPAst> entry : symbols) {

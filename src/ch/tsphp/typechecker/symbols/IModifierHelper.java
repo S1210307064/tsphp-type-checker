@@ -6,10 +6,10 @@
 
 package ch.tsphp.typechecker.symbols;
 
-/**
- * Represents a symbol which can be final.
- */
-public interface ICanBeFinal
+import ch.tsphp.common.ITSPHPAst;
+import ch.tsphp.common.symbols.modifiers.IModifierSet;
+
+public interface IModifierHelper
 {
-    boolean isFinal();
+    public IModifierSet getModifiers(ITSPHPAst modifierAst);
 }

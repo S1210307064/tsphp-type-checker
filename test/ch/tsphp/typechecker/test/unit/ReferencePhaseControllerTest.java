@@ -9,9 +9,11 @@ package ch.tsphp.typechecker.test.unit;
 import ch.tsphp.common.ITSPHPAst;
 import ch.tsphp.typechecker.IReferencePhaseController;
 import ch.tsphp.typechecker.ISymbolResolver;
+import ch.tsphp.typechecker.ITypeSystem;
 import ch.tsphp.typechecker.ReferencePhaseController;
 import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
 import ch.tsphp.typechecker.scopes.IGlobalNamespaceScope;
+import ch.tsphp.typechecker.symbols.IModifierHelper;
 import ch.tsphp.typechecker.symbols.ISymbolFactory;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,12 +28,16 @@ public class ReferencePhaseControllerTest
     private ISymbolFactory symbolFactory;
     private ISymbolResolver symbolResolver;
     private ITypeCheckerErrorReporter typeCheckerErrorReporter;
+    private ITypeSystem typeSystem;
+    private IModifierHelper modifierHelper;
 
     @Before
     public void setUp() {
         symbolFactory = mock(ISymbolFactory.class);
         symbolResolver = mock(ISymbolResolver.class);
         typeCheckerErrorReporter = mock(ITypeCheckerErrorReporter.class);
+        typeSystem = mock(ITypeSystem.class);
+        modifierHelper = mock(IModifierHelper.class);
     }
 
 
@@ -50,7 +56,12 @@ public class ReferencePhaseControllerTest
 
     protected IReferencePhaseController createReferencePhaseController() {
         return new ReferencePhaseController(
-                symbolFactory, symbolResolver,typeCheckerErrorReporter, mock(IGlobalNamespaceScope.class));
+                symbolFactory,
+                symbolResolver,
+                typeCheckerErrorReporter,
+                typeSystem,
+                modifierHelper,
+                mock(IGlobalNamespaceScope.class));
     }
 
 }

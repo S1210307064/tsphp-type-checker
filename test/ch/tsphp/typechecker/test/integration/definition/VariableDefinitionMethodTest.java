@@ -18,6 +18,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static ch.tsphp.typechecker.antlr.TSPHPDefinitionWalker.Public;
+import static ch.tsphp.typechecker.antlr.TSPHPDefinitionWalker.QuestionMark;
+
 @RunWith(Parameterized.class)
 public class VariableDefinitionMethodTest extends ADefinitionSymbolTest
 {
@@ -39,22 +42,22 @@ public class VariableDefinitionMethodTest extends ADefinitionSymbolTest
 
         collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
                 "class a{ function void foo(){", ";}}",
-                "\\.\\.a "
-                        + defaultNamespace + "a.void " + defaultNamespace + "a.foo()|" + TSPHPDefinitionWalker.Public
+                "\\.\\.a|" + QuestionMark + " "
+                        + defaultNamespace + "a.void " + defaultNamespace + "a.foo()|" + Public
                         + " ",
                 "", defaultNamespace + "a.foo().", null));
 
         collection.addAll(VariableDeclarationListHelper.testStringsDefinitionPhase(
                 "namespace t; class a{ function void foo(){", ";}}",
-                "\\t\\.\\t\\.a \\t\\.\\t\\.a.void \\t\\.\\t\\.a.foo()|" + TSPHPDefinitionWalker.Public + " ", "",
+                "\\t\\.\\t\\.a|" + QuestionMark + " \\t\\.\\t\\.a.void \\t\\.\\t\\.a.foo()|" + Public + " ", "",
                 "\\t\\.\\t\\.a.foo().", null));
 
 
         collection.add(new Object[]{
                 "namespace t\\r; class a{ function void foo(){ int $a=1; bool $b=true,$c=false;}}",
-                "\\t\\r\\.\\t\\r\\.a "
+                "\\t\\r\\.\\t\\r\\.a|" + TSPHPDefinitionWalker.QuestionMark + " "
                         + "\\t\\r\\.\\t\\r\\.a.void "
-                        + "\\t\\r\\.\\t\\r\\.a.foo()|" + TSPHPDefinitionWalker.Public + " "
+                        + "\\t\\r\\.\\t\\r\\.a.foo()|" + Public + " "
                         + "\\t\\r\\.\\t\\r\\.a.foo().int \\t\\r\\.\\t\\r\\.a.foo().$a "
                         + "\\t\\r\\.\\t\\r\\.a.foo().bool \\t\\r\\.\\t\\r\\.a.foo().$b "
                         + "\\t\\r\\.\\t\\r\\.a.foo().bool \\t\\r\\.\\t\\r\\.a.foo().$c"

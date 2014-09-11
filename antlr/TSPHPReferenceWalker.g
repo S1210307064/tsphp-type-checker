@@ -19,7 +19,7 @@ options {
 
 package ch.tsphp.typechecker.antlr;
 
-import ch.tsphp.common.ITypeSymbol;
+import ch.tsphp.common.symbols.ITypeSymbol;
 import ch.tsphp.common.ITSPHPAst;
 import ch.tsphp.common.ITSPHPErrorAst;
 import ch.tsphp.typechecker.IAccessResolver;
@@ -103,7 +103,7 @@ classDefinition
 	;
 
 classExtendsDeclaration[ITSPHPAst identifier]
-	:	^(Extends classInterfaceType)
+	:	^(Extends classInterfaceType[null])
 		{
 			ITypeSymbol typeSymbol = $classInterfaceType.type;
 			if(controller.checkIsClass($classInterfaceType.start, typeSymbol)){
@@ -117,7 +117,7 @@ classExtendsDeclaration[ITSPHPAst identifier]
 
 implementsDeclaration[ITSPHPAst identifier]
 	:	^('implements' 	
-			(classInterfaceType{
+			(classInterfaceType[null]{
 				ITypeSymbol typeSymbol = $classInterfaceType.type;
 				if(controller.checkIsInterface($classInterfaceType.start, typeSymbol)){
 				    ((IClassTypeSymbol)identifier.getSymbol()).addParentTypeSymbol((IInterfaceTypeSymbol)typeSymbol);
@@ -140,7 +140,7 @@ classBodyDefinition
 	;
 
 constDefinitionList
-	:	^(CONSTANT_DECLARATION_LIST ^(TYPE tMod=. scalarTypes[false]) constDeclaration[$scalarTypes.type]+)
+	:	^(CONSTANT_DECLARATION_LIST ^(TYPE tMod=. scalarTypes[tMod]) constDeclaration[$scalarTypes.type]+)
 	;
 
 constDeclaration[ITypeSymbol type]
@@ -187,7 +187,7 @@ arrayKeyValue
 
 staticAccessor
 @after{$start.setEvalType((ITypeSymbol) $start.getSymbol());}
-	:	classInterfaceType
+	:	classInterfaceType[null]
 	|	slf='self'
 		{
 		    IVariableSymbol variableSymbol = controller.resolveThisSelf($slf);
@@ -206,23 +206,10 @@ classMemberDefinition
 	
 variableDeclarationList[boolean isImplicitlyInitialised] 
 	:	^(VARIABLE_DECLARATION_LIST 
-			^(TYPE variableModifier allTypes[$variableModifier.isNullable]) 
+			^(TYPE tMod=. allTypes[$tMod]) 
 			variableDeclaration[$allTypes.type, isImplicitlyInitialised]+ 
 		)
         ;
-
-variableModifier returns[boolean isNullable]
-	:	^(TYPE_MODIFIER 
-			Cast? 
-			nullable=QuestionMark? 
-			(	Static (Private|Protected|Public) 
-			| 	(Private|Protected|Public) Static?
-			)?
-		)
-		{$isNullable = $nullable!=null;}
-		
-	|	TYPE_MODIFIER	
-	;	
         
 variableDeclaration[ITypeSymbol type, boolean isImplicitlyInitialised] returns [IVariableSymbol variableSymbol]
 @init{boolean isInitialised = false;}
@@ -271,7 +258,7 @@ methodDefinition
 
 	:	^(METHOD_DECLARATION 
 			^(METHOD_MODIFIER methodModifier)
-			^(TYPE returnTypeModifier returnTypes[$returnTypeModifier.isNullable]) 
+			^(TYPE rtMod=. returnTypes[$rtMod]) 
 			{shallCheckIfReturns = !($returnTypes.type instanceof IVoidTypeSymbol) && !$methodModifier.isAbstract;}
 			(identifier=Identifier|identifier=Destruct) parameterDeclarationList block[shallCheckIfReturns]
 		)
@@ -310,14 +297,6 @@ methodModifier returns[boolean isAbstract]
 		)
 		{$isAbstract= $abstr != null;}
 	;
-
-returnTypeModifier returns[boolean isNullable]
-	:	^(TYPE_MODIFIER 
-			Cast? 
-			nullable=QuestionMark? 
-		)
-		{$isNullable = $nullable!=null;}
-	;
 	
 functionDefinition
 //Warning! start duplicated code as in functionDeclaration
@@ -328,7 +307,8 @@ functionDefinition
 //Warning! start duplicated code as in functionDeclaration
 	:	^('function'
 			.
-			^(TYPE returnTypeModifier returnTypes[$returnTypeModifier.isNullable]) {shallCheckIfReturns = !($returnTypes.type instanceof IVoidTypeSymbol);}
+			^(TYPE rtMod=. returnTypes[$rtMod])  
+			{shallCheckIfReturns = !($returnTypes.type instanceof IVoidTypeSymbol);}
 			identifier=Identifier parameterDeclarationList block[shallCheckIfReturns]
 		)
 		{
@@ -351,7 +331,7 @@ parameterDeclarationList
 
 parameterDeclaration
 	:	^(PARAMETER_DECLARATION 
-			^(TYPE variableModifier allTypes[$variableModifier.isNullable]) 
+			^(TYPE tMod=. allTypes[$tMod]) 
 			parameterNormalOrOptional[$allTypes.type]
 		)
 		{
@@ -389,7 +369,7 @@ interfaceDefinition
 	;
 interfaceExtendsDeclaration[ITSPHPAst identifier]
 	:	^('extends' 	
-			(allTypes[true]{	
+			(allTypes[null]{	
 				ITypeSymbol typeSymbol = $allTypes.type;
 				if(controller.checkIsInterface($allTypes.start, typeSymbol)){
 				    ((IInterfaceTypeSymbol)identifier.getSymbol()).addParentTypeSymbol((IInterfaceTypeSymbol)typeSymbol);
@@ -549,6 +529,7 @@ tryCatch[boolean shallCheckIfReturns] returns[boolean isReturning]
 		    controller.sendUpInitialisedSymbolsAfterTryCatch($catchBlocks.asts);
 		}
 	;
+	
 catchBlocks[boolean shallCheckIfReturns] returns[boolean isReturning,List<ITSPHPAst> asts]
 //Warning! start duplicated code as in catchBlocks
 @init{
@@ -616,9 +597,9 @@ operator
 		    }
 		}
 	|	^('?' expression expression expression)
-	|	^(CAST ^(TYPE variableModifier allTypes[$variableModifier.isNullable]) expression) 
-	|	^(Instanceof expr=expression (variable|classInterfaceType))  
-	|	^('new' classInterfaceType actualParameters)
+	|	^(CAST ^(TYPE tMod=. allTypes[$tMod]) expression) 
+	|	^(Instanceof expr=expression (variable|classInterfaceType[null]))  
+	|	^('new' classInterfaceType[null] actualParameters)
 	|	^('clone' expression)	
     	;
     	
@@ -712,7 +693,7 @@ methodCallee
 	;
 	
 methodCallStatic
-	:	^(METHOD_CALL_STATIC classInterfaceType Identifier actualParameters)	
+	:	^(METHOD_CALL_STATIC classInterfaceType[null] Identifier actualParameters)	
 	;
 	
 classStaticAccess
@@ -734,12 +715,13 @@ exit
 	|	'exit'
 	;
  	
-returnTypes[boolean isNullable] returns [ITypeSymbol type]
-	:	allTypes[isNullable] {$type = $allTypes.type;}
+returnTypes[ITSPHPAst typeModifier] returns [ITypeSymbol type]
+	:	allTypes[$typeModifier] {$type = $allTypes.type;}
 	|	voidType {$type = $voidType.type;}
 	;
  	
 voidType returns [ITypeSymbol type]
+//Warning! start duplicated code as in scalarTypes, classInterfaceType and arrayOrResourceOrMixed
 @init{
     if(state.backtracking == 1 && $start instanceof ITSPHPErrorAst){
         $type = controller.createErroneousTypeSymbol((ITSPHPErrorAst)$start);
@@ -747,21 +729,23 @@ voidType returns [ITypeSymbol type]
         return retval;
     }
 }
+//Warning! end duplicated code as in scalarTypes, classInterfaceType and arrayOrResourceOrMixed
  	:	'void'
 		{
-			$type = controller.resolvePrimitiveType($start);
+			$type = controller.resolvePrimitiveType($start, null);
 			$start.setSymbol($type);
 		}
  	; 	
  	
-allTypes[boolean isNullable] returns [ITypeSymbol type]
+allTypes[ITSPHPAst typeModifier] returns [ITypeSymbol type]
 
-	:	scalarTypes[isNullable] {$type = $scalarTypes.type;}
-	|	classInterfaceType {$type = $classInterfaceType.type;}
-	|	arrayOrResourceOrMixed {$type = $arrayOrResourceOrMixed.type;}
+	:	scalarTypes[$typeModifier] {$type = $scalarTypes.type;}
+	|	classInterfaceType[$typeModifier] {$type = $classInterfaceType.type;}
+	|	arrayOrResourceOrMixed[$typeModifier] {$type = $arrayOrResourceOrMixed.type;}
 	;
 	
-scalarTypes[boolean isNullable] returns [ITypeSymbol type]
+scalarTypes[ITSPHPAst typeModifier] returns [ITypeSymbol type]
+//Warning! start duplicated code as in voidType, classInterfaceType and arrayOrResourceOrMixed
 @init{
     if(state.backtracking == 1 && $start instanceof ITSPHPErrorAst){
         $type = controller.createErroneousTypeSymbol((ITSPHPErrorAst)$start);
@@ -770,14 +754,14 @@ scalarTypes[boolean isNullable] returns [ITypeSymbol type]
         return retval;
     }
 }
+//Warning! end duplicated code as in voidType, classInterfaceType and arrayOrResourceOrMixed
 	:	(	'bool'
 		|	'int'
 		|	'float'
 		|	'string'
 		)
 		{
-			//const are never nullable -> one can use the const null to represent null
-			$type = controller.resolveScalarType($start, isNullable);
+			$type = controller.resolveScalarType($start, $typeModifier);
 			$start.setSymbol($type);
 		}
 	;
@@ -787,7 +771,8 @@ catch[RecognitionException re]{
     $type = controller.createErroneousTypeSymbol($start, re);
 }
 	
-classInterfaceType returns [ITypeSymbol type]
+classInterfaceType[ITSPHPAst typeModifier] returns [ITypeSymbol type]
+//Warning! start duplicated code as in scalarTypes, voidType and arrayOrResourceOrMixed
 @init{
     if(state.backtracking == 1 && $start instanceof ITSPHPErrorAst){
         $type = controller.createErroneousTypeSymbol((ITSPHPErrorAst)$start);
@@ -796,9 +781,10 @@ classInterfaceType returns [ITypeSymbol type]
         return retval;
     }
 }
+//Warning! end duplicated code as in scalarTypes, voidType and arrayOrResourceOrMixed
 	:	TYPE_NAME
 		{
-			$type = controller.resolveType($start);
+			$type = controller.resolveType($start, $typeModifier);
 			$start.setSymbol($type);
 		}
 	;
@@ -808,7 +794,8 @@ catch[RecognitionException re]{
     $type = controller.createErroneousTypeSymbol($start, re);
 }
 	
-arrayOrResourceOrMixed returns [ITypeSymbol type]
+arrayOrResourceOrMixed[ITSPHPAst typeModifier] returns [ITypeSymbol type]
+//Warning! start duplicated code as in scalarTypes, classInterfaceType and voidType
 @init{
     if(state.backtracking == 1 && $start instanceof ITSPHPErrorAst){
         $type = controller.createErroneousTypeSymbol((ITSPHPErrorAst)$start);
@@ -817,12 +804,13 @@ arrayOrResourceOrMixed returns [ITypeSymbol type]
         return retval;
     }
 }
+//Warning! end duplicated code as in scalarTypes, classInterfaceType and voidType
 	:	(	'array'
 		|	'mixed'
 		|	'resource'
 		)
 		{
-			$type = controller.resolvePrimitiveType($start);
+			$type = controller.resolvePrimitiveType($start, $typeModifier);
 			$start.setSymbol($type);
 		}
 	;

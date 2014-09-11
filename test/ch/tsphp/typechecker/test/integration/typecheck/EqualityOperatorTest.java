@@ -6,6 +6,7 @@
 
 package ch.tsphp.typechecker.test.integration.typecheck;
 
+import ch.tsphp.typechecker.test.integration.testutils.TypeHelper;
 import ch.tsphp.typechecker.test.integration.testutils.typecheck.AOperatorTypeCheckTest;
 import ch.tsphp.typechecker.test.integration.testutils.typecheck.TypeCheckStruct;
 import org.antlr.runtime.RecognitionException;
@@ -34,28 +35,31 @@ public class EqualityOperatorTest extends AOperatorTypeCheckTest
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
         List<Object[]> collection = new ArrayList<>();
+        String[][] typesInclDefaultValue = TypeHelper.getAllTypesInclDefaultValue();
         String[] operators = new String[]{"==", "!="};
         for (String operator : operators) {
             collection.addAll(Arrays.asList(new Object[][]{
+                    {"true " + operator + " true;", new TypeCheckStruct[]{struct(operator, Bool, 1, 0, 0)}},
                     {"true " + operator + " false;", new TypeCheckStruct[]{struct(operator, Bool, 1, 0, 0)}},
-                    {"false " + operator + " 1;", new TypeCheckStruct[]{struct(operator, Bool, 1, 0, 0)}},
-                    {"1 " + operator + " 1;", new TypeCheckStruct[]{struct(operator, Bool, 1, 0, 0)}},
-                    {"1 " + operator + " 1;", new TypeCheckStruct[]{struct(operator, Bool, 1, 0, 0)}},
-                    {"true " + operator + " 1.0;", new TypeCheckStruct[]{struct(operator, Bool, 1, 0, 0)}},
-                    {"1.0 " + operator + " false;", new TypeCheckStruct[]{struct(operator, Bool, 1, 0, 0)}},
-                    {"1 " + operator + " 2.0;", new TypeCheckStruct[]{struct(operator, Bool, 1, 0, 0)}},
-                    {"2.0 " + operator + " 1;", new TypeCheckStruct[]{struct(operator, Bool, 1, 0, 0)}},
-                    {"true " + operator + " 'hello';", new TypeCheckStruct[]{struct(operator, Bool, 1, 0, 0)}},
-                    {"'hello' " + operator + " false;", new TypeCheckStruct[]{struct(operator, Bool, 1, 0, 0)}},
-                    {"1 " + operator + " 'hello';", new TypeCheckStruct[]{struct(operator, Bool, 1, 0, 0)}},
-                    {"'hello' " + operator + " 1;", new TypeCheckStruct[]{struct(operator, Bool, 1, 0, 0)}},
-                    {"4.5 " + operator + " 'hello';", new TypeCheckStruct[]{struct(operator, Bool, 1, 0, 0)}},
-                    {"'hello' " + operator + " .1e1;", new TypeCheckStruct[]{struct(operator, Bool, 1, 0, 0)}},
+                    {"false " + operator + " true;", new TypeCheckStruct[]{struct(operator, Bool, 1, 0, 0)}},
+                    {"false " + operator + " false;", new TypeCheckStruct[]{struct(operator, Bool, 1, 0, 0)}},
+                    {"1 " + operator + " 2;", new TypeCheckStruct[]{struct(operator, Bool, 1, 0, 0)}},
+                    {"2.0 " + operator + " 2.3;", new TypeCheckStruct[]{struct(operator, Bool, 1, 0, 0)}},
+                    {"'hi' " + operator + " 'hello';", new TypeCheckStruct[]{struct(operator, Bool, 1, 0, 0)}},
+                    {"'hi' " + operator + " \"hello\";", new TypeCheckStruct[]{struct(operator, Bool, 1, 0, 0)}},
+                    {"\"hi\" " + operator + " 'hello';", new TypeCheckStruct[]{struct(operator, Bool, 1, 0, 0)}},
+                    {"\"hi\" " + operator + " \"hello\";", new TypeCheckStruct[]{struct(operator, Bool, 1, 0, 0)}},
+                    {"[1,2] " + operator + " [7,8];", new TypeCheckStruct[]{struct(operator, Bool, 1, 0, 0)}},
                     {"[1,2] " + operator + " array(7,8);", new TypeCheckStruct[]{struct(operator, Bool, 1, 0, 0)}},
-                    {
-                            "resource $a=null; resource $b=null; $a " + operator + " $b;",
-                            new TypeCheckStruct[]{struct(operator, Bool, 1, 2, 0)}
-                    },}));
+                    {"array(1,2) " + operator + " [7,8];", new TypeCheckStruct[]{struct(operator, Bool, 1, 0, 0)}},
+                    {"array(1,2) " + operator + " array(7,8);", new TypeCheckStruct[]{struct(operator, Bool, 1, 0, 0)}},
+            }));
+            for (String[] type : typesInclDefaultValue) {
+                collection.add(new Object[]{
+                        type[0] + " $a=" + type[1] + ";" + type[0] + " $b=" + type[1] + "; $a " + operator + " $b;",
+                        typeStruct(operator, Bool, 1, 2, 0)
+                });
+            }
         }
         return collection;
     }

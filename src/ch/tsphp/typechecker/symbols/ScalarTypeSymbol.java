@@ -8,7 +8,7 @@ package ch.tsphp.typechecker.symbols;
 
 import ch.tsphp.common.AstHelperRegistry;
 import ch.tsphp.common.ITSPHPAst;
-import ch.tsphp.common.ITypeSymbol;
+import ch.tsphp.common.symbols.ITypeSymbol;
 
 import java.util.Set;
 
@@ -20,7 +20,7 @@ public class ScalarTypeSymbol extends ATypeSymbol implements IScalarTypeSymbol
 
     private int tokenTypeForCasting;
     private int defaultValueTokenType;
-    private boolean isNullable;
+
     private String defaultValue;
 
     @SuppressWarnings("checkstyle:parameternumber")
@@ -28,31 +28,16 @@ public class ScalarTypeSymbol extends ATypeSymbol implements IScalarTypeSymbol
             String name,
             Set<ITypeSymbol> parentTypeSymbol,
             int theTokenTypeForCasting,
-            boolean isItNullable,
             int theDefaultValueTokenType,
             String theDefaultValue) {
 
         super(null, name, parentTypeSymbol);
-        init(theTokenTypeForCasting, isItNullable, theDefaultValueTokenType, theDefaultValue);
+        init(theTokenTypeForCasting, theDefaultValueTokenType, theDefaultValue);
     }
 
-    @SuppressWarnings("checkstyle:parameternumber")
-    public ScalarTypeSymbol(
-            String name,
-            ITypeSymbol parentTypeSymbol,
-            int theTokenTypeForCasting,
-            boolean isItNullable,
-            int theDefaultValueTokenType,
-            String theDefaultValue) {
-
-        super(null, name, parentTypeSymbol);
-        init(theTokenTypeForCasting, isItNullable, theDefaultValueTokenType, theDefaultValue);
-    }
-
-    private void init(int theTokenTypeForCasting, boolean isItNullable,
+    private void init(int theTokenTypeForCasting,
             int theDefaultValueTokenType, String theDefaultValue) {
         tokenTypeForCasting = theTokenTypeForCasting;
-        isNullable = isItNullable;
         defaultValueTokenType = theDefaultValueTokenType;
         defaultValue = theDefaultValue;
     }
@@ -63,8 +48,13 @@ public class ScalarTypeSymbol extends ATypeSymbol implements IScalarTypeSymbol
     }
 
     @Override
-    public boolean isNullable() {
-        return isNullable;
+    public int getDefaultValueTokenType() {
+        return defaultValueTokenType;
+    }
+
+    @Override
+    public String getDefaultValueAsString() {
+        return defaultValue;
     }
 
     @Override

@@ -7,7 +7,7 @@
 package ch.tsphp.typechecker.scopes;
 
 import ch.tsphp.common.IScope;
-import ch.tsphp.common.ISymbol;
+import ch.tsphp.common.symbols.ISymbol;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;

@@ -7,10 +7,10 @@
 package ch.tsphp.typechecker.symbols.erroneous;
 
 import ch.tsphp.common.AstHelperRegistry;
-import ch.tsphp.common.ISymbol;
 import ch.tsphp.common.ITSPHPAst;
-import ch.tsphp.common.ITypeSymbol;
 import ch.tsphp.common.exceptions.TSPHPException;
+import ch.tsphp.common.symbols.ISymbol;
+import ch.tsphp.common.symbols.ITypeSymbol;
 import ch.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tsphp.typechecker.symbols.IClassTypeSymbol;
 import ch.tsphp.typechecker.symbols.IMethodSymbol;
@@ -77,11 +77,6 @@ public class ErroneousTypeSymbol extends AErroneousScopedSymbol implements IErro
     }
 
     @Override
-    public boolean isNullable() {
-        return true;
-    }
-
-    @Override
     public IClassTypeSymbol getParent() {
         return this;
     }
@@ -102,7 +97,19 @@ public class ErroneousTypeSymbol extends AErroneousScopedSymbol implements IErro
     }
 
     @Override
+    public boolean isFalseable() {
+        return true;
+    }
+
+    @Override
+    public boolean isNullable() {
+        return true;
+    }
+
+    @Override
     public ITSPHPAst getDefaultValue() {
         return AstHelperRegistry.get().createAst(TSPHPDefinitionWalker.Null, "null");
     }
+
+
 }

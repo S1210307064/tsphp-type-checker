@@ -32,18 +32,21 @@ public class IfTest extends AOperatorTypeCheckTest
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
         return Arrays.asList(new Object[][]{
-                {"if(true);", new TypeCheckStruct[]{struct("true", Bool, 1, 0, 0)}},
-                {"if(false);", new TypeCheckStruct[]{struct("false", Bool, 1, 0, 0)}},
+                {"if(true);", typeStruct("true", Bool, 1, 0, 0)},
+                {"if(false);", typeStruct("false", Bool, 1, 0, 0)},
                 {"if(true);else if(false);", new TypeCheckStruct[]{
                         struct("true", Bool, 1, 0, 0),
                         struct("false", Bool, 1, 0, 2, 0, 0)
-                }
-                },
+                }},
                 {"if(false);else if(true);", new TypeCheckStruct[]{
                         struct("false", Bool, 1, 0, 0),
                         struct("true", Bool, 1, 0, 2, 0, 0)
-                }
-                }
+                }},
+                {"bool $b = true; if($b);", typeStruct("$b", Bool, 1, 1, 0)},
+                {"bool $bT = true; bool $bF = false; if($bT);else if($bF);", new TypeCheckStruct[]{
+                        struct("$bT", Bool, 1, 2, 0),
+                        struct("$bF", Bool, 1, 2, 2, 0, 0)
+                }},
         });
     }
 }

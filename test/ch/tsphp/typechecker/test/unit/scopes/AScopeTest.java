@@ -7,8 +7,8 @@
 package ch.tsphp.typechecker.test.unit.scopes;
 
 import ch.tsphp.common.IScope;
-import ch.tsphp.common.ISymbol;
 import ch.tsphp.common.ITSPHPAst;
+import ch.tsphp.common.symbols.ISymbol;
 import ch.tsphp.typechecker.scopes.AScope;
 import ch.tsphp.typechecker.scopes.IScopeHelper;
 import org.junit.Before;

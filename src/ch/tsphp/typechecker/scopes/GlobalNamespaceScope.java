@@ -7,10 +7,10 @@
 package ch.tsphp.typechecker.scopes;
 
 import ch.tsphp.common.ILowerCaseStringMap;
-import ch.tsphp.common.ISymbol;
 import ch.tsphp.common.ITSPHPAst;
-import ch.tsphp.common.ITypeSymbol;
 import ch.tsphp.common.LowerCaseStringMap;
+import ch.tsphp.common.symbols.ISymbol;
+import ch.tsphp.common.symbols.ITypeSymbol;
 import ch.tsphp.typechecker.utils.MapHelper;
 
 import java.util.List;

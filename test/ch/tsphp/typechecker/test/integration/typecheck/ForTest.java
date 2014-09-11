@@ -32,9 +32,10 @@ public class ForTest extends AOperatorTypeCheckTest
     @Parameterized.Parameters
     public static Collection<Object[]> testStrings() {
         return Arrays.asList(new Object[][]{
-                {"for(int $i=0;$i < 2;++$i);", new TypeCheckStruct[]{struct("<", Bool, 1, 0, 1, 0)}},
-                {"for(int $i=0;$i, $i < 2;++$i);", new TypeCheckStruct[]{struct("<", Bool, 1, 0, 1, 1)}},
-                {"for(int $i=0;$i, 1+1, true;++$i);", new TypeCheckStruct[]{struct("true", Bool, 1, 0, 1, 2)}},
+                {"for(int $i=0;$i < 2;++$i);", typeStruct("<", Bool, 1, 0, 1, 0)},
+                {"for(int $i=0;$i, $i < 2;++$i);", typeStruct("<", Bool, 1, 0, 1, 1)},
+                {"for(int $i=0;$i, 1+1, true; ++$i);", typeStruct("true", Bool, 1, 0, 1, 2)},
+                {"bool $b=true; for(int $i=0;$i, $b; ++$i);", typeStruct("$b", Bool, 1, 1, 1, 1)},
         });
     }
 }

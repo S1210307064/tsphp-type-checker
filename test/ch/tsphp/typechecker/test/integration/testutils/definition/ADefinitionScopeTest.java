@@ -31,7 +31,7 @@ public abstract class ADefinitionScopeTest extends ADefinitionTest
 
     public static void verifyDefinitions(ScopeTestStruct[] testStructs, ITSPHPAst ast, String testString) {
         for (ScopeTestStruct testStruct : testStructs) {
-            ITSPHPAst testCandidate = ScopeTestHelper.getAst(ast, testString, testStruct.astAccessOrder);
+            ITSPHPAst testCandidate = ScopeTestHelper.getAst(ast, testString, testStruct);
             Assert.assertNotNull(testString + " failed. testCandidate is null. should be " + testStruct.astText,
                     testCandidate);
             Assert.assertEquals(testString + " failed. wrong ast text,", testStruct.astText,

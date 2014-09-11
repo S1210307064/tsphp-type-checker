@@ -6,18 +6,17 @@
 
 package ch.tsphp.typechecker.test.integration.testutils.typecheck;
 
+import ch.tsphp.typechecker.test.integration.testutils.ScopeTestStruct;
+
 import java.util.List;
 
-public class TypeCheckStruct
+public class TypeCheckStruct extends ScopeTestStruct
 {
 
-    public String astText;
     public EBuiltInType evalType;
-    public List<Integer> accessOrderToNode;
 
     public TypeCheckStruct(String theAstText, EBuiltInType theEvalType, List<Integer> theAccessOrderToNode) {
-        astText = theAstText;
-        accessOrderToNode = theAccessOrderToNode;
+        super(theAstText, "", theAccessOrderToNode);
         evalType = theEvalType;
     }
 }

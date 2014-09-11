@@ -7,7 +7,7 @@
 package ch.tsphp.typechecker.test.integration.testutils;
 
 import ch.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
-import ch.tsphp.typechecker.symbols.ModifierHelper;
+import ch.tsphp.typechecker.utils.ModifierHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,13 +40,13 @@ public class ParameterListHelper
 
         //check all types
         final List<Object[]> collection = new ArrayList<>();
-        TypeHelper.getAllTypesInclModifier(new IAdder()
+        TypeHelper.addAllTypesInclModifier(new IAdder()
         {
             @Override
             public void add(String type, String typeExpected, SortedSet<Integer> modifiers) {
                 String typeExpected2 = isDefinitionPhase ? "" : typeExpected;
 
-                String typeModifiers = ModifierHelper.getModifiers(modifiers);
+                String typeModifiers = ModifierHelper.getModifiersAsString(modifiers);
                 collection.add(new Object[]{
                         prefix + type + "$a" + appendix,
                         prefixExpected + scopeName + typeExpected + " "
@@ -82,7 +82,7 @@ public class ParameterListHelper
         collection.addAll(getVariations("float?", "float", "|" + qMark));
 
         //cast and ? mixed
-        String typeModifierExpected = ModifierHelper.getModifiers(
+        String typeModifierExpected = ModifierHelper.getModifiersAsString(
                 new TreeSet<>(Arrays.asList(new Integer[]{cast, qMark})));
         collection.addAll(getVariations("cast string?", "string", typeModifierExpected));
 
@@ -169,7 +169,7 @@ public class ParameterListHelper
         String typeExpected = isDefinitionPhase ? "" : "int";
         int qMark = TSPHPDefinitionWalker.QuestionMark;
         int cast = TSPHPDefinitionWalker.Cast;
-        String typeModifiersCastAndNullable = ModifierHelper.getModifiers(
+        String typeModifiersCastAndNullable = ModifierHelper.getModifiersAsString(
                 new TreeSet<>(Arrays.asList(new Integer[]{cast, qMark})));
 
         String a = prefixExpected + scopeName + "int " + scopeName + "$a" + typeExpected;

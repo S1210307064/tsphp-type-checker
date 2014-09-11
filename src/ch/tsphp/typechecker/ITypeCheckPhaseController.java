@@ -7,7 +7,7 @@
 package ch.tsphp.typechecker;
 
 import ch.tsphp.common.ITSPHPAst;
-import ch.tsphp.common.ITypeSymbol;
+import ch.tsphp.common.symbols.ITypeSymbol;
 import ch.tsphp.typechecker.symbols.IMethodSymbol;
 import ch.tsphp.typechecker.symbols.erroneous.IErroneousTypeSymbol;
 
@@ -57,7 +57,7 @@ public interface ITypeCheckPhaseController
 
     void checkThrow(ITSPHPAst throwRoot, ITSPHPAst expression);
 
-    void checkCatch(ITSPHPAst castRoot, ITSPHPAst variableId);
+    void checkCatch(ITSPHPAst catchRoot, ITSPHPAst variableId);
 
     void checkReturn(ITSPHPAst returnRoot, ITSPHPAst expression);
 
