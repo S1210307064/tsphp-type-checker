@@ -17,7 +17,7 @@ import ch.tsphp.typechecker.symbols.IVariableSymbol;
 /**
  * Responsible to resolve global symbols.
  * <p/>
- * That means, it does not resolve class members but symbols such as namespaces, constants, classes etc.
+ * That means, it does not resolve fields or methods but symbols such as namespaces, constants, classes etc.
  */
 public interface ISymbolResolver
 {

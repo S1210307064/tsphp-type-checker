@@ -53,7 +53,7 @@ public interface ITypeCheckerErrorReporter extends ch.tsphp.common.IErrorReporte
 
     DefinitionException methodNotDefined(ITSPHPAst callee, ITSPHPAst id);
 
-    DefinitionException memberNotDefined(ITSPHPAst accessor, ITSPHPAst id);
+    DefinitionException fieldNotDefined(ITSPHPAst accessor, ITSPHPAst id);
 
     DefinitionException variableDefinedInOtherConditionalScope(ITSPHPAst definitionAst, ITSPHPAst variableId);
 
@@ -171,7 +171,7 @@ public interface ITypeCheckerErrorReporter extends ch.tsphp.common.IErrorReporte
 
     ReferenceException onlyConstantValue(ITSPHPAst variableId, ITSPHPAst expression);
 
-    ReferenceException wrongClassMemberInitialValue(ITSPHPAst variableId, ITSPHPAst expression, ITypeSymbol evalType);
+    ReferenceException wrongFieldInitialValue(ITSPHPAst variableId, ITSPHPAst expression, ITypeSymbol evalType);
 
     ReferenceException wrongTypeClone(ITSPHPAst clone, ITSPHPAst expression);
 
@@ -179,12 +179,12 @@ public interface ITypeCheckerErrorReporter extends ch.tsphp.common.IErrorReporte
 
     ReferenceException wrongTypeInstanceof(ITSPHPAst expression);
 
-    ReferenceException wrongTypeClassMemberAccess(ITSPHPAst expression);
+    ReferenceException wrongTypeFieldAccess(ITSPHPAst expression);
 
-    ReferenceException visibilityViolationClassMemberAccess(ITSPHPAst identifier,
+    ReferenceException visibilityViolationFieldAccess(ITSPHPAst identifier,
             ISymbolWithAccessModifier symbol, int accessedFrom);
 
-    ReferenceException visibilityViolationStaticClassMemberAccess(ITSPHPAst identifier,
+    ReferenceException visibilityViolationStaticFieldAccess(ITSPHPAst identifier,
             ISymbolWithAccessModifier symbol, int accessedFrom);
 
     ReferenceException visibilityViolationClassConstantAccess(ITSPHPAst identifier,

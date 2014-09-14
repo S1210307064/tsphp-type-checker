@@ -17,10 +17,10 @@ import java.util.Arrays;
 import java.util.Collection;
 
 @RunWith(Parameterized.class)
-public class ClassMemberDefaultValueTest extends AOperatorTypeCheckTest
+public class FieldDefaultValueTest extends AOperatorTypeCheckTest
 {
 
-    public ClassMemberDefaultValueTest(String testString, TypeCheckStruct[] struct) {
+    public FieldDefaultValueTest(String testString, TypeCheckStruct[] struct) {
         super(testString, struct);
     }
 

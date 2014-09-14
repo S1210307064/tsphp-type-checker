@@ -52,7 +52,7 @@ public class TypeCheckPhaseControllerErrorTest
 
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     @Test
-    public void checkClassMemberInitialValue_CastModifierAndValueHasWrongType_WrongClassMemberInitialValueReported() {
+    public void checkFieldInitialValue_CastModifierAndValueHasWrongType_WrongFieldInitialValueReported() {
         ITypeSymbol typeSymbol = mock(ITypeSymbol.class);
         ITypeSymbol wrongTypeSymbol = mock(ITypeSymbol.class);
         IVariableSymbol variableSymbol = mock(IVariableSymbol.class);
@@ -66,9 +66,9 @@ public class TypeCheckPhaseControllerErrorTest
                 any(ITypeSymbol.class), anyString(), any(TypeWithModifiersDto.class))).thenReturn(-1);
 
         ITypeCheckPhaseController typeCheckerController = createTypeCheckController();
-        typeCheckerController.checkClassMemberInitialValue(variableId, expression);
+        typeCheckerController.checkFieldInitialValue(variableId, expression);
 
-        verify(typeCheckerErrorReporter).wrongClassMemberInitialValue(variableId, expression, typeSymbol);
+        verify(typeCheckerErrorReporter).wrongFieldInitialValue(variableId, expression, typeSymbol);
     }
 
     private ITSPHPAst createAst(ITypeSymbol typeSymbol) {

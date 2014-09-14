@@ -20,10 +20,10 @@ import java.util.Collection;
 import java.util.List;
 
 @RunWith(Parameterized.class)
-public class ClassMemberAccessStaticTest extends AOperatorTypeCheckTest
+public class FieldAccessStaticTest extends AOperatorTypeCheckTest
 {
 
-    public ClassMemberAccessStaticTest(String testString, TypeCheckStruct[] struct) {
+    public FieldAccessStaticTest(String testString, TypeCheckStruct[] struct) {
         super(testString, struct);
     }
 
@@ -106,15 +106,15 @@ public class ClassMemberAccessStaticTest extends AOperatorTypeCheckTest
                             "class A{private static " + type[0] + " $a; function void foo(){self::$a;}}",
                             typeStruct("sMemAccess", (EBuiltInType) type[1], 1, 0, 4, 1, 4, 0, 0)
                     },
-                    //can still access static class members with $this
+                    //can still access static fields with $this
                     {
                             "class A{public static " + type[0] + " $a; function void foo(){$this->a;}}",
-                            typeStruct("memAccess", (EBuiltInType) type[1], 1, 0, 4, 1, 4, 0, 0)
+                            typeStruct("fieAccess", (EBuiltInType) type[1], 1, 0, 4, 1, 4, 0, 0)
                     },
                     {
                             "class A{public static " + type[0] + " $a;} "
                                     + "class B extends A{ function void foo(){$this->a;}}",
-                            typeStruct("memAccess", (EBuiltInType) type[1], 1, 1, 4, 0, 4, 0, 0)
+                            typeStruct("fieAccess", (EBuiltInType) type[1], 1, 1, 4, 0, 4, 0, 0)
                     }
             }));
         }

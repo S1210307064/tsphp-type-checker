@@ -27,10 +27,10 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 @RunWith(Parameterized.class)
-public class ClassMemberInitialValueSingleOnlyErrorTest extends ATypeCheckErrorTest
+public class FieldInitialValueSingleOnlyErrorTest extends ATypeCheckErrorTest
 {
 
-    public ClassMemberInitialValueSingleOnlyErrorTest(String testString,
+    public FieldInitialValueSingleOnlyErrorTest(String testString,
             ReferenceErrorDto[] expectedLinesAndPositions) {
         super(testString, expectedLinesAndPositions);
     }

@@ -534,7 +534,7 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
             case TSPHPDefinitionWalker.VariableId:
                 symbol = (IVariableSymbol) left.getSymbol();
                 break;
-            case TSPHPDefinitionWalker.CLASS_MEMBER_ACCESS:
+            case TSPHPDefinitionWalker.FIELD_ACCESS:
             case TSPHPDefinitionWalker.CLASS_STATIC_ACCESS:
                 symbol = (IVariableSymbol) left.getChild(1).getSymbol();
                 break;
@@ -847,7 +847,7 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
 
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     @Override
-    public void checkClassMemberInitialValue(final ITSPHPAst variableId, final ITSPHPAst expression) {
+    public void checkFieldInitialValue(final ITSPHPAst variableId, final ITSPHPAst expression) {
         IVariableSymbol variableSymbol = (IVariableSymbol) variableId.getSymbol();
         if (variableSymbol.isAlwaysCasting()) {
             final ITypeSymbol typeSymbol = variableId.getEvalType();
@@ -856,7 +856,7 @@ public class TypeCheckPhaseController implements ITypeCheckPhaseController
             {
                 @Override
                 public void callAppropriateMethod() {
-                    typeCheckErrorReporter.wrongClassMemberInitialValue(variableId, expression, typeSymbol);
+                    typeCheckErrorReporter.wrongFieldInitialValue(variableId, expression, typeSymbol);
                 }
             });
             if (isSame) {

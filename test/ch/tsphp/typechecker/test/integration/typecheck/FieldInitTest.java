@@ -17,10 +17,10 @@ import org.junit.runners.Parameterized;
 import java.util.Collection;
 
 @RunWith(Parameterized.class)
-public class ClassMemberInitTest extends AOperatorTypeCheckTest
+public class FieldInitTest extends AOperatorTypeCheckTest
 {
 
-    public ClassMemberInitTest(String testString, TypeCheckStruct[] struct) {
+    public FieldInitTest(String testString, TypeCheckStruct[] struct) {
         super(testString, struct);
     }
 

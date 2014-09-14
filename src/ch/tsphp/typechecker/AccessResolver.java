@@ -31,7 +31,7 @@ public class AccessResolver implements IAccessResolver
 
     @Override
     public IVariableSymbol resolveClassConstantAccess(ITSPHPAst accessor, ITSPHPAst identifier) {
-        return resolveStaticClassMemberOrClassConstant(accessor, identifier, new IViolationCaller()
+        return resolveStaticFieldOrClassConstant(accessor, identifier, new IViolationCaller()
         {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
             @Override
@@ -43,13 +43,13 @@ public class AccessResolver implements IAccessResolver
     }
 
     @Override
-    public IVariableSymbol resolveStaticMemberAccess(ITSPHPAst accessor, ITSPHPAst identifier) {
-        return resolveStaticClassMemberOrClassConstant(accessor, identifier, new IViolationCaller()
+    public IVariableSymbol resolveStaticFieldAccess(ITSPHPAst accessor, ITSPHPAst identifier) {
+        return resolveStaticFieldOrClassConstant(accessor, identifier, new IViolationCaller()
         {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
             @Override
             public void callAppropriateMethod(ITSPHPAst identifier, ISymbolWithAccessModifier symbol, int accessFrom) {
-                typeCheckErrorReporter.visibilityViolationStaticClassMemberAccess(
+                typeCheckErrorReporter.visibilityViolationStaticFieldAccess(
                         identifier, symbol, accessFrom);
             }
         });
@@ -57,7 +57,7 @@ public class AccessResolver implements IAccessResolver
 
 
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
-    private IVariableSymbol resolveStaticClassMemberOrClassConstant(ITSPHPAst accessor, ITSPHPAst id,
+    private IVariableSymbol resolveStaticFieldOrClassConstant(ITSPHPAst accessor, ITSPHPAst id,
             IViolationCaller caller) {
         IVariableSymbol variableSymbol = checkAccessorAndResolveAccess(accessor, id, caller);
         if (!variableSymbol.isStatic()) {
@@ -67,7 +67,7 @@ public class AccessResolver implements IAccessResolver
     }
 
     @Override
-    public IVariableSymbol resolveClassMemberAccess(ITSPHPAst expression, ITSPHPAst identifier) {
+    public IVariableSymbol resolveFieldAccess(ITSPHPAst expression, ITSPHPAst identifier) {
         String variableName = identifier.getText();
         identifier.setText("$" + variableName);
         IViolationCaller visibilityViolationCaller = new IViolationCaller()
@@ -75,7 +75,7 @@ public class AccessResolver implements IAccessResolver
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
             @Override
             public void callAppropriateMethod(ITSPHPAst identifier, ISymbolWithAccessModifier symbol, int accessFrom) {
-                typeCheckErrorReporter.visibilityViolationClassMemberAccess(
+                typeCheckErrorReporter.visibilityViolationFieldAccess(
                         identifier, symbol, accessFrom);
             }
         };
@@ -97,7 +97,7 @@ public class AccessResolver implements IAccessResolver
                         (IPolymorphicTypeSymbol) evalType, accessor, identifier, visibilityViolationCaller);
             } else {
                 ReferenceException exception =
-                        typeCheckErrorReporter.wrongTypeClassMemberAccess(identifier);
+                        typeCheckErrorReporter.wrongTypeFieldAccess(identifier);
                 variableSymbol = symbolFactory.createErroneousVariableSymbol(identifier, exception);
                 variableSymbol.setType(symbolFactory.createErroneousTypeSymbol(identifier, exception));
             }
@@ -117,7 +117,7 @@ public class AccessResolver implements IAccessResolver
         if (symbol != null) {
             checkVisibility(symbol, polymorphicTypeSymbol, visibilityViolationCaller, accessor, identifier);
         } else {
-            DefinitionException exception = typeCheckErrorReporter.memberNotDefined(accessor, identifier);
+            DefinitionException exception = typeCheckErrorReporter.fieldNotDefined(accessor, identifier);
             symbol = symbolFactory.createErroneousVariableSymbol(identifier, exception);
         }
         return symbol;

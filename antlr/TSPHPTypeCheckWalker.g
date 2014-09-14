@@ -88,7 +88,7 @@ expressionRoot
  	|	^(nil=While expr=expression .)
  		{controller.checkWhile($nil, $expr.start);}
 
- 	|	^(nil=Do instr=. expr=expression)
+ 	|	^(nil=Do . expr=expression)
 	 	{controller.checkDoWhile($nil, $expr.start);}
 
 	|	^(nil=For . ^(EXPRESSION_LIST expr=expression+) . .)
@@ -158,14 +158,14 @@ variableInit
 			(	(	^(variableId=VariableId expression)
 					{
 			   		    $variableId.setEvalType($variableId.getSymbol().getType());
-					    if($list.getParent().getType() != CLASS_MEMBER){
+					    if($list.getParent().getType() != FIELD){
 					         controller.checkInitialValue($variableId, $expression.start);
 					    } else {
-					        controller.checkClassMemberInitialValue($variableId, $expression.start);
+					        controller.checkFieldInitialValue($variableId, $expression.start);
 					    }
 					}
 				|	variableId=VariableId
-					{if($list.getParent().getType() == CLASS_MEMBER) controller.addDefaultValue($variableId);}
+					{if($list.getParent().getType() == FIELD) controller.addDefaultValue($variableId);}
 				)
 			)+
 		)
@@ -386,9 +386,9 @@ specialOperators returns [ITypeSymbol type]
 	;
 
 postFixOperators returns [ITypeSymbol type]
-	:	^(CLASS_MEMBER_ACCESS accessor=expression Identifier)
+	:	^(FIELD_ACCESS accessor=expression Identifier)
 		{
-		    IVariableSymbol variableSymbol = accessResolver.resolveClassMemberAccess($accessor.start, $Identifier);
+		    IVariableSymbol variableSymbol = accessResolver.resolveFieldAccess($accessor.start, $Identifier);
 		    $Identifier.setSymbol(variableSymbol);
 		    $type = variableSymbol.getType();
 		}	

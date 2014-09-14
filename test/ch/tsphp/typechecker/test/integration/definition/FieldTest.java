@@ -24,10 +24,10 @@ import java.util.TreeSet;
 import static ch.tsphp.typechecker.antlr.TSPHPDefinitionWalker.QuestionMark;
 
 @RunWith(Parameterized.class)
-public class ClassMemberTest extends ADefinitionSymbolTest
+public class FieldTest extends ADefinitionSymbolTest
 {
 
-    public ClassMemberTest(String testString, String expectedResult) {
+    public FieldTest(String testString, String expectedResult) {
         super(testString, expectedResult);
     }
 

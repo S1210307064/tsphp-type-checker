@@ -17,10 +17,10 @@ import java.util.Arrays;
 import java.util.Collection;
 
 @RunWith(Parameterized.class)
-public class ClassMemberAccessErrorTest extends ATypeCheckErrorTest
+public class FieldAccessErrorTest extends ATypeCheckErrorTest
 {
 
-    public ClassMemberAccessErrorTest(String testString, ReferenceErrorDto[] expectedLinesAndPositions) {
+    public FieldAccessErrorTest(String testString, ReferenceErrorDto[] expectedLinesAndPositions) {
         super(testString, expectedLinesAndPositions);
     }
 

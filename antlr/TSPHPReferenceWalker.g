@@ -134,7 +134,7 @@ classBody
 	
 classBodyDefinition
 	:	constDefinitionList
-	|	classMemberDefinition
+	|	fieldDefinition
 	|	constructDefinition
 	|	methodDefinition
 	;
@@ -200,8 +200,8 @@ staticAccessor
 		}	
 	;
 	
-classMemberDefinition
-	:	^(CLASS_MEMBER variableDeclarationList[true])
+fieldDefinition
+	:	^(FIELD variableDeclarationList[true])
 	;
 	
 variableDeclarationList[boolean isImplicitlyInitialised] 
@@ -626,7 +626,7 @@ binaryOperatorExcludingAssign
 	|	'^' 
 	|	'&' 
 	
-	|	'==' 			
+	|	'==' 
 	|	'!=' 
 	|	'==='
 	|	'!=='
@@ -698,15 +698,15 @@ methodCallStatic
 	
 classStaticAccess
 	:	^(CLASS_STATIC_ACCESS accessor=staticAccessor identifier=CLASS_STATIC_ACCESS_VARIABLE_ID)
-		{$identifier.setSymbol(accessResolver.resolveStaticMemberAccess($accessor.start, $identifier));}
+		{$identifier.setSymbol(accessResolver.resolveStaticFieldAccess($accessor.start, $identifier));}
 	;		
 
 postFixExpression
 // postFixExpression are resolved in the type checking phase
 // due to the fact that method/function calls are resolved during the type check phase
 // This rules are needed to resolve variables/function calls etc. in expression and actualParameters
-	:	^(CLASS_MEMBER_ACCESS expression Identifier) 			
-	|	^(ARRAY_ACCESS expression expression)		
+	:	^(FIELD_ACCESS expression Identifier) 
+	|	^(ARRAY_ACCESS expression expression)
 	|	^(METHOD_CALL_POSTFIX expression Identifier actualParameters)
 	;
 

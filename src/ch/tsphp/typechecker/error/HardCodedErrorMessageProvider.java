@@ -35,7 +35,7 @@ public class HardCodedErrorMessageProvider extends AErrorMessageProvider
                         + "on line %line%|%pos%"
         );
         definitionErrors.put("methodNotDefined", "Line %lineN%|%posN% - method %idN% is not defined in %id%");
-        definitionErrors.put("memberNotDefined", "Line %lineN%|%posN% - class member %idN% is not defined in %id%");
+        definitionErrors.put("fieldNotDefined", "Line %lineN%|%posN% - field %idN% is not defined in %id%");
 
         definitionErrors.put("variableDefinedInOtherConditionalScope", "Line %lineN%|%posN% - variable %idN% is "
                 + "defined in another conditional scope which is not an outer scope of the current conditional scope.\n"
@@ -170,21 +170,21 @@ public class HardCodedErrorMessageProvider extends AErrorMessageProvider
         typeCheckErrors.put("onlyConstantValue", "Line %line%|%pos% - only a constant value of type %tExp% is allowed "
                 + "at this point. Non constant value of type %tFound% found.");
 
-        typeCheckErrors.put("wrongClassMemberInitialValue", "Line %line%|%pos% - class member %id% was initialised "
+        typeCheckErrors.put("wrongFieldInitialValue", "Line %line%|%pos% - field %id% was initialised "
                 + " with a wrong type. Type %tExp% or a sub-type expected but %tFound% found.\n"
-                + "Please notice that a cast modifier has no effects on the initialisation of a class member.");
+                + "Please notice that a cast modifier has no effects on the initialisation of a field.");
 
         typeCheckErrors.put("wrongTypeMethodCall", "Line %line%|%pos% - the callee evaluates to "
-                + "a wrong type. Class-/Interface-type expected but %tFound% found.");
+                + "a wrong type. Class-/interface-type expected but %tFound% found.");
 
         typeCheckErrors.put("wrongTypeClone", "Line %line%|%pos% - the clone statement evaluates to "
-                + "a wrong type. Class-/Interface-type expected but %tFound% found.");
+                + "a wrong type. Class-/interface-type expected but %tFound% found.");
 
         typeCheckErrors.put("wrongTypeInstanceof", "Line %line%|%pos% - %id% evaluates to "
-                + "a wrong type. The instanceof operator expects a class-/Interface-type but %tFound% found.");
+                + "a wrong type. The instanceof operator expects a class-/interface-type but %tFound% found.");
 
-        typeCheckErrors.put("wrongTypeClassMemberAccess", "Line %line%|%pos% - %id% evaluates to "
-                + "a wrong type. Can only retrieve class members from class-types but %tFound% found.");
+        typeCheckErrors.put("wrongTypeFieldAccess", "Line %line%|%pos% - %id% evaluates to "
+                + "a wrong type. Can only retrieve fields from class-/interface-types but %tFound% found.");
     }
 
     @Override
@@ -211,11 +211,11 @@ public class HardCodedErrorMessageProvider extends AErrorMessageProvider
     @Override
     protected void loadVisibilityViolationErrorMessages() {
         visibilityViolationErrors = new HashMap<>();
-        visibilityViolationErrors.put("classMemberAccess", "Line %line%|%pos% - cannot access the class member %id%.\n"
+        visibilityViolationErrors.put("fieldAccess", "Line %line%|%pos% - cannot access the field %id%.\n"
                 + "%id%'s visibility is %vis% and it would need at least %access% access in order that you can "
                 + "access it from this location.");
-        visibilityViolationErrors.put("staticClassMemberAccess", "Line %line%|%pos% - cannot access the static class "
-                + "member %id%.\n"
+        visibilityViolationErrors.put("staticFieldAccess", "Line %line%|%pos% - cannot access the static field "
+                + "%id%.\n"
                 + "%id%'s visibility is %vis% and it would need at least %access% access in order that you can "
                 + "access it from this location.");
         visibilityViolationErrors.put("classConstantAccess", "Line %line%|%pos% - cannot access the class "

@@ -18,9 +18,9 @@ public interface IAccessResolver
 {
     IVariableSymbol resolveClassConstantAccess(ITSPHPAst accessor, ITSPHPAst id);
 
-    IVariableSymbol resolveStaticMemberAccess(ITSPHPAst accessor, ITSPHPAst id);
+    IVariableSymbol resolveStaticFieldAccess(ITSPHPAst accessor, ITSPHPAst id);
 
-    IVariableSymbol resolveClassMemberAccess(ITSPHPAst expression, ITSPHPAst identifier);
+    IVariableSymbol resolveFieldAccess(ITSPHPAst expression, ITSPHPAst identifier);
 
     void checkVisibility(ISymbolWithAccessModifier methodSymbol, IPolymorphicTypeSymbol polymorphicTypeSymbol,
             IViolationCaller visibilityViolationCaller, ITSPHPAst calleeOrAccessor, ITSPHPAst identifier);

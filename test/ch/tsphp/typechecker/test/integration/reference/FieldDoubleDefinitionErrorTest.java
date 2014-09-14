@@ -18,10 +18,10 @@ import java.util.Collection;
 import java.util.List;
 
 @RunWith(Parameterized.class)
-public class ClassMemberDoubleDefinitionErrorTest extends AReferenceDefinitionErrorTest
+public class FieldDoubleDefinitionErrorTest extends AReferenceDefinitionErrorTest
 {
 
-    public ClassMemberDoubleDefinitionErrorTest(String testString, DefinitionErrorDto[] expectedLinesAndPositions) {
+    public FieldDoubleDefinitionErrorTest(String testString, DefinitionErrorDto[] expectedLinesAndPositions) {
         super(testString, expectedLinesAndPositions);
     }
 

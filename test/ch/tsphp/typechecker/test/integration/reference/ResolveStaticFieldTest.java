@@ -17,10 +17,10 @@ import java.util.Arrays;
 import java.util.Collection;
 
 @RunWith(Parameterized.class)
-public class ResolveStaticClassMemberTest extends AReferenceAstTest
+public class ResolveStaticFieldTest extends AReferenceAstTest
 {
 
-    public ResolveStaticClassMemberTest(String testString, ScopeTestStruct[] testStructs) {
+    public ResolveStaticFieldTest(String testString, ScopeTestStruct[] testStructs) {
         super(testString, testStructs);
     }
 

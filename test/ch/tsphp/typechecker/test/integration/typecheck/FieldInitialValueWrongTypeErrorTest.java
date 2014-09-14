@@ -26,10 +26,10 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 @RunWith(Parameterized.class)
-public class ClassMemberInitialValueWrongTypeErrorTest extends ATypeCheckErrorTest
+public class FieldInitialValueWrongTypeErrorTest extends ATypeCheckErrorTest
 {
 
-    public ClassMemberInitialValueWrongTypeErrorTest(String testString, ReferenceErrorDto[] expectedLinesAndPositions) {
+    public FieldInitialValueWrongTypeErrorTest(String testString, ReferenceErrorDto[] expectedLinesAndPositions) {
         super(testString, expectedLinesAndPositions);
     }
 
@@ -38,7 +38,7 @@ public class ClassMemberInitialValueWrongTypeErrorTest extends ATypeCheckErrorTe
     public void test() throws RecognitionException {
         check();
         try {
-            verify(typeCheckErrorReporter).wrongClassMemberInitialValue(
+            verify(typeCheckErrorReporter).wrongFieldInitialValue(
                     any(ITSPHPAst.class), any(ITSPHPAst.class), any(ITypeSymbol.class));
         } catch (MockitoAssertionError e) {
             System.err.println(testString + " failed.");

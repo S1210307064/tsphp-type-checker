@@ -67,7 +67,7 @@ public class NotCorrectStartNodeTypeTest extends AReferenceWalkerTest
                 {"caseLabels", Try},
                 {"classBody", Try},
                 {"classBodyDefinition", Try},
-                {"classMemberDefinition", Try},
+                {"fieldDefinition", Try},
                 {"classStaticAccess", Try},
                 {"compilationUnit", Try},
                 {"constDefinitionList", Try},

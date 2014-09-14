@@ -17,10 +17,10 @@ import java.util.Arrays;
 import java.util.Collection;
 
 @RunWith(Parameterized.class)
-public class ClassMemberAccessDefinitionErrorTest extends ATypeCheckDefinitionErrorTest
+public class FieldAccessDefinitionErrorTest extends ATypeCheckDefinitionErrorTest
 {
 
-    public ClassMemberAccessDefinitionErrorTest(String testString, DefinitionErrorDto[] expectedLinesAndPositions) {
+    public FieldAccessDefinitionErrorTest(String testString, DefinitionErrorDto[] expectedLinesAndPositions) {
         super(testString, expectedLinesAndPositions);
     }
 

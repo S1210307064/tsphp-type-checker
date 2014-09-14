@@ -37,7 +37,6 @@ import static ch.tsphp.typechecker.antlr.TSPHPReferenceWalker.BitwiseXorAssign;
 import static ch.tsphp.typechecker.antlr.TSPHPReferenceWalker.Bool;
 import static ch.tsphp.typechecker.antlr.TSPHPReferenceWalker.CAST;
 import static ch.tsphp.typechecker.antlr.TSPHPReferenceWalker.CAST_ASSIGN;
-import static ch.tsphp.typechecker.antlr.TSPHPReferenceWalker.CLASS_MEMBER_ACCESS;
 import static ch.tsphp.typechecker.antlr.TSPHPReferenceWalker.CONSTANT;
 import static ch.tsphp.typechecker.antlr.TSPHPReferenceWalker.Clone;
 import static ch.tsphp.typechecker.antlr.TSPHPReferenceWalker.DOWN;
@@ -46,6 +45,7 @@ import static ch.tsphp.typechecker.antlr.TSPHPReferenceWalker.DivideAssign;
 import static ch.tsphp.typechecker.antlr.TSPHPReferenceWalker.EOF;
 import static ch.tsphp.typechecker.antlr.TSPHPReferenceWalker.Equal;
 import static ch.tsphp.typechecker.antlr.TSPHPReferenceWalker.Exit;
+import static ch.tsphp.typechecker.antlr.TSPHPReferenceWalker.FIELD_ACCESS;
 import static ch.tsphp.typechecker.antlr.TSPHPReferenceWalker.FUNCTION_CALL;
 import static ch.tsphp.typechecker.antlr.TSPHPReferenceWalker.Float;
 import static ch.tsphp.typechecker.antlr.TSPHPReferenceWalker.GreaterEqualThan;
@@ -137,7 +137,7 @@ public class ArrayKeyValueBranchesTest
                 entry("Bool", Bool),
                 entry("CAST", CAST, DOWN, TYPE, DOWN, TYPE_MODIFIER, TypeInt, UP, String, UP),
                 entry("CAST_ASSIGN", CAST_ASSIGN, DOWN, VariableId, Int, UP),
-                entry("CLASS_MEMBER_ACCESS", CLASS_MEMBER_ACCESS, DOWN, VariableId, Identifier, UP),
+                entry("FIELD_ACCESS", FIELD_ACCESS, DOWN, VariableId, Identifier, UP),
                 entry("CONSTANT", CONSTANT),
                 entry("Clone", Clone, DOWN, VariableId, UP),
                 entry("Divide", Divide, DOWN, Int, Int, UP),

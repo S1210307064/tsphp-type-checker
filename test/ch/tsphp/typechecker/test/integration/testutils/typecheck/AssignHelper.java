@@ -741,7 +741,7 @@ public class AssignHelper
                 //TODO rstoll TSPHP-291 Generics - if TSPHP has implemented a mechanism for covariant generics, then
                 //this assignment would work if falseable types were implemented by such an internal class
                 //{"Exception!", ExceptionFalseable, "null"},
-                {"ErrorException!", ErrorExceptionFalseable, "null"}
+                {"ErrorException!", ErrorExceptionFalseable, "null"},
         };
         addVariations(noCastNeededTypes, castTypes, "ErrorException", ErrorException);
 
@@ -750,11 +750,11 @@ public class AssignHelper
                 {"ErrorException!", ErrorExceptionFalseable, "null"}
         };
         castTypes = new Object[][]{
+                {"mixed", Mixed, "false"},
                 //TODO rstoll TSPHP-291 Generics - if TSPHP has implemented a mechanism for covariant generics, then
                 //this assignment would work if falseable types were implemented by such an internal class
                 //{"Exception", Exception, "null"},
                 //{"Exception!", ExceptionFalseable, "null"},
-                {"mixed", Mixed, "false"},
         };
         addVariations(noCastNeededTypes, castTypes, "ErrorException!", ErrorExceptionFalseable);
     }

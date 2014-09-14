@@ -65,7 +65,7 @@ public interface ITypeCheckPhaseController
 
     void checkConstantInitialValue(ITSPHPAst variableId, ITSPHPAst expression);
 
-    void checkClassMemberInitialValue(ITSPHPAst variableId, ITSPHPAst expression);
+    void checkFieldInitialValue(ITSPHPAst variableId, ITSPHPAst expression);
 
     void checkEcho(ITSPHPAst expression);
 

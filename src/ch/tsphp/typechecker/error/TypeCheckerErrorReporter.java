@@ -112,8 +112,8 @@ public class TypeCheckerErrorReporter implements ITypeCheckerErrorReporter
     }
 
     @Override
-    public DefinitionException memberNotDefined(ITSPHPAst accessor, ITSPHPAst id) {
-        return addAndGetDefinitionException("memberNotDefined", accessor.getEvalType().getDefinitionAst(), id);
+    public DefinitionException fieldNotDefined(ITSPHPAst accessor, ITSPHPAst id) {
+        return addAndGetDefinitionException("fieldNotDefined", accessor.getEvalType().getDefinitionAst(), id);
     }
 
     @Override
@@ -598,9 +598,9 @@ public class TypeCheckerErrorReporter implements ITypeCheckerErrorReporter
     }
 
     @Override
-    public ReferenceException wrongClassMemberInitialValue(ITSPHPAst variableId, ITSPHPAst expression,
+    public ReferenceException wrongFieldInitialValue(ITSPHPAst variableId, ITSPHPAst expression,
             ITypeSymbol evalType) {
-        return addAndGetStatementTypeCheckError("wrongClassMemberInitialValue", variableId, expression, evalType);
+        return addAndGetStatementTypeCheckError("wrongFieldInitialValue", variableId, expression, evalType);
     }
 
     private ReferenceException addAndGetStatementTypeCheckError(String key, ITSPHPAst statement,
@@ -630,8 +630,8 @@ public class TypeCheckerErrorReporter implements ITypeCheckerErrorReporter
     }
 
     @Override
-    public ReferenceException wrongTypeClassMemberAccess(ITSPHPAst expression) {
-        return addAndGetClassInterfaceExpectedError("wrongTypeClassMemberAccess", expression, expression.getEvalType());
+    public ReferenceException wrongTypeFieldAccess(ITSPHPAst expression) {
+        return addAndGetClassInterfaceExpectedError("wrongTypeFieldAccess", expression, expression.getEvalType());
     }
 
     private ReferenceException addAndGetClassInterfaceExpectedError(String key, ITSPHPAst operator,
@@ -645,16 +645,16 @@ public class TypeCheckerErrorReporter implements ITypeCheckerErrorReporter
     }
 
     @Override
-    public ReferenceException visibilityViolationClassMemberAccess(ITSPHPAst identifier,
+    public ReferenceException visibilityViolationFieldAccess(ITSPHPAst identifier,
             ISymbolWithAccessModifier symbol, int accessedFrom) {
 
-        return addAndGetVisibilityViolatedError("classMemberAccess", identifier, symbol, accessedFrom);
+        return addAndGetVisibilityViolatedError("fieldAccess", identifier, symbol, accessedFrom);
     }
 
     @Override
-    public ReferenceException visibilityViolationStaticClassMemberAccess(ITSPHPAst identifier,
+    public ReferenceException visibilityViolationStaticFieldAccess(ITSPHPAst identifier,
             ISymbolWithAccessModifier symbol, int accessedFrom) {
-        return addAndGetVisibilityViolatedError("staticClassMemberAccess", identifier, symbol, accessedFrom);
+        return addAndGetVisibilityViolatedError("staticFieldAccess", identifier, symbol, accessedFrom);
     }
 
     @Override

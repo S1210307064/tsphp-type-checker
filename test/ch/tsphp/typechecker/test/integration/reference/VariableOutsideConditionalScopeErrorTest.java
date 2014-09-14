@@ -66,7 +66,7 @@ public class VariableOutsideConditionalScopeErrorTest extends AReferenceDefiniti
         List<Object[]> collection = new ArrayList<>();
         collection.addAll(getVariations(prefix, appendix, "int\n $a=1;", "\n $a;"));
 
-        //ensure check is also done when accessing a member
+        //ensure check is also done when accessing a field
         collection.addAll(getVariations(
                 "namespace z{class Z{public int $foo;}}" + prefix, appendix, "\\z\\Z \n $a=null;", "\n $a->foo;"));
 
