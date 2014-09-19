@@ -1,4 +1,4 @@
-# TSPHP-typechecker
+# TSPHP-type-checker
 
 This repository contains the type checker component of the [Type-Safe PHP compiler](https://github.com/tsphp/tsphp "TSPHP compiler").  
 It augments the AST with type information and ensures that your TSPHP code has a valid semantic and is type-safe.
