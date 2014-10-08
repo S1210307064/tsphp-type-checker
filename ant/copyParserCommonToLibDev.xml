@@ -4,9 +4,9 @@
   root folder or visit the project's website http://tsphp.ch/wiki/display/TSPHP/License
   -->
 
-<project name="copyParser" basedir="../">
+<project name="copyParserCommonToLibDev" basedir="../">
 
-    <import file="${basedir}/ant/build-common.xml" as="common"/>
+<import file="${basedir}/ant/build-common.xml" as="common"/>
 
     <property name="parser-common.jar" location="${basedir}/../tsphp-parser-common/build/lib"/>
 

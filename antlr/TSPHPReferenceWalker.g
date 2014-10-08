@@ -6,8 +6,8 @@
 
 tree grammar TSPHPReferenceWalker;
 options {
-	tokenVocab = TSPHP;
-	ASTLabelType = ITSPHPAst;
+    tokenVocab = TSPHP;
+    ASTLabelType = ITSPHPAst;
 }
 
 @header{
@@ -48,411 +48,413 @@ public TSPHPReferenceWalker(TreeNodeStream input, IReferencePhaseController theC
 }
 
 compilationUnit
-	:	namespace+	
-	;
-	
+    :   namespace+
+    ;
+    
 namespace
-	:	^(Namespace . n=namespaceBody)
-	;	
+    :   ^(Namespace . n=namespaceBody)
+    ;    
 
 namespaceBody
-	:	^(NAMESPACE_BODY statement*)
-	|	NAMESPACE_BODY	
-	;
+    :   ^(NAMESPACE_BODY statement*)
+    |   NAMESPACE_BODY
+    ;
 
 statement
-	:	useDefinitionList
-	|	definition
-	|	instruction[false]
-	;
-	
+    :   useDefinitionList
+    |   definition
+    |   instruction[false]
+    ;
+    
 useDefinitionList
-	:	^(Use	useDeclaration+)
-	;
-	
+    :   ^(Use    useDeclaration+)
+    ;
+    
 useDeclaration
-	:	^(USE_DECLARATION typeName=TYPE_NAME alias=Identifier)
-		{
-			ITypeSymbol typeSymbol = controller.resolveUseType($typeName, $alias);
-			$typeName.setSymbol(typeSymbol);
-			$alias.getSymbol().setType(typeSymbol);
-			
-			INamespaceScope namespaceScope = (INamespaceScope) $alias.getScope();
-			namespaceScope.useDefinitionCheck((IAliasSymbol) $alias.getSymbol());
-		}
-	;
+    :   ^(USE_DECLARATION typeName=TYPE_NAME alias=Identifier)
+        {
+            ITypeSymbol typeSymbol = controller.resolveUseType($typeName, $alias);
+            $typeName.setSymbol(typeSymbol);
+            $alias.getSymbol().setType(typeSymbol);
+            
+            INamespaceScope namespaceScope = (INamespaceScope) $alias.getScope();
+            namespaceScope.useDefinitionCheck((IAliasSymbol) $alias.getSymbol());
+        }
+    ;
 
 definition
-	:	classDefinition
-	|	interfaceDefinition
-	|	functionDefinition
-	|	constDefinitionList
-	;
-	
+    :   classDefinition
+    |   interfaceDefinition
+    |   functionDefinition
+    |   constDefinitionList
+    ;
+    
 classDefinition
-	:	^(Class 
-			cMod=. 
-			identifier=Identifier 
-			classExtendsDeclaration[$identifier] 
-			implementsDeclaration[identifier] 
-			classBody) 
-		{
-			INamespaceScope namespaceScope = (INamespaceScope) $identifier.getScope();
-			namespaceScope.doubleDefinitionCheckCaseInsensitive($identifier.getSymbol());
-		}
-	;
+    :   ^(Class
+            cMod=.
+            identifier=Identifier 
+            classExtendsDeclaration[$identifier] 
+            implementsDeclaration[identifier] 
+            classBody) 
+        {
+            INamespaceScope namespaceScope = (INamespaceScope) $identifier.getScope();
+            namespaceScope.doubleDefinitionCheckCaseInsensitive($identifier.getSymbol());
+        }
+    ;
 
 classExtendsDeclaration[ITSPHPAst identifier]
-	:	^(Extends classInterfaceType[null])
-		{
-			ITypeSymbol typeSymbol = $classInterfaceType.type;
-			if(controller.checkIsClass($classInterfaceType.start, typeSymbol)){
-			    IClassTypeSymbol classTypeSymbol = (IClassTypeSymbol) identifier.getSymbol();
-			    classTypeSymbol.setParent((IClassTypeSymbol)typeSymbol);
-			    classTypeSymbol.addParentTypeSymbol((IClassTypeSymbol)typeSymbol);
-			}
-		} 
-	|	'extends'
-	;
+    :   ^(Extends classInterfaceType[null])
+        {
+            ITypeSymbol typeSymbol = $classInterfaceType.type;
+            if(controller.checkIsClass($classInterfaceType.start, typeSymbol)){
+                IClassTypeSymbol classTypeSymbol = (IClassTypeSymbol) identifier.getSymbol();
+                classTypeSymbol.setParent((IClassTypeSymbol)typeSymbol);
+                classTypeSymbol.addParentTypeSymbol((IClassTypeSymbol)typeSymbol);
+            }
+        } 
+    |   'extends'
+    ;
 
 implementsDeclaration[ITSPHPAst identifier]
-	:	^('implements' 	
-			(classInterfaceType[null]{
-				ITypeSymbol typeSymbol = $classInterfaceType.type;
-				if(controller.checkIsInterface($classInterfaceType.start, typeSymbol)){
-				    ((IClassTypeSymbol)identifier.getSymbol()).addParentTypeSymbol((IInterfaceTypeSymbol)typeSymbol);
-				}
-			})+
-		)
-	|	'implements'
-	;
-	
+    :   ^('implements'
+            (classInterfaceType[null]{
+                ITypeSymbol typeSymbol = $classInterfaceType.type;
+                if(controller.checkIsInterface($classInterfaceType.start, typeSymbol)){
+                    ((IClassTypeSymbol)identifier.getSymbol()).addParentTypeSymbol((IInterfaceTypeSymbol)typeSymbol);
+                }
+            })+
+        )
+    |   'implements'
+    ;
+    
 classBody
-	:	^(CLASS_BODY classBodyDefinition*)
-	|	CLASS_BODY
-	;
-	
+    :   ^(CLASS_BODY classBodyDefinition*)
+    |   CLASS_BODY
+    ;
+    
 classBodyDefinition
-	:	constDefinitionList
-	|	fieldDefinition
-	|	constructDefinition
-	|	methodDefinition
-	;
+    :   constDefinitionList
+    |   fieldDefinition
+    |   constructDefinition
+    |   methodDefinition
+    ;
 
 constDefinitionList
-	:	^(CONSTANT_DECLARATION_LIST ^(TYPE tMod=. scalarTypes[tMod]) constDeclaration[$scalarTypes.type]+)
-	;
+    :   ^(CONSTANT_DECLARATION_LIST ^(TYPE tMod=. scalarTypes[tMod]) constDeclaration[$scalarTypes.type]+)
+    ;
 
 constDeclaration[ITypeSymbol type]
-	:	^(identifier=Identifier unaryPrimitiveAtom)
-		{
-			IVariableSymbol variableSymbol = (IVariableSymbol) $identifier.getSymbol();
-			variableSymbol.setType(type); 
-			$identifier.getScope().doubleDefinitionCheck(variableSymbol); 
-		}
-	;
+    :   ^(identifier=Identifier unaryPrimitiveAtom)
+        {
+            IVariableSymbol variableSymbol = (IVariableSymbol) $identifier.getSymbol();
+            variableSymbol.setType(type); 
+            $identifier.getScope().doubleDefinitionCheck(variableSymbol); 
+        }
+    ;
 
 unaryPrimitiveAtom
-	:	primitiveAtomWithConstant
-	|	^(	(	unary=UNARY_MINUS
-			|	unary=UNARY_PLUS
-			) primitiveAtomWithConstant
-		)
-	; 
+    :   primitiveAtomWithConstant
+    |   ^(  (    unary=UNARY_MINUS
+            |    unary=UNARY_PLUS
+            ) primitiveAtomWithConstant
+        )
+    ; 
 
 primitiveAtomWithConstant
-	:	Bool
-	|	Int
-	|	Float
-	|	String
-	|	Null
-	|	array
-	|	cnst=CONSTANT
-		{
-			IVariableSymbol variableSymbol = controller.resolveConstant($cnst);
-			$cnst.setSymbol(variableSymbol);
-			controller.checkIsNotForwardReference($cnst);
-		}
-	|	^(CLASS_STATIC_ACCESS accessor=staticAccessor identifier=CONSTANT)
-		{$identifier.setSymbol(accessResolver.resolveClassConstantAccess($accessor.start, $identifier));}
-	;
-	
-array	:	^(TypeArray arrayKeyValue*)
-	;
+    :   Bool
+    |   Int
+    |   Float
+    |   String
+    |   Null
+    |   array
+    |   cnst=CONSTANT
+        {
+            IVariableSymbol variableSymbol = controller.resolveConstant($cnst);
+            $cnst.setSymbol(variableSymbol);
+            controller.checkIsNotForwardReference($cnst);
+        }
+    |   ^(CLASS_STATIC_ACCESS accessor=staticAccessor identifier=CONSTANT)
+        {$identifier.setSymbol(accessResolver.resolveClassConstantAccess($accessor.start, $identifier));}
+    ;
+    
+array
+    :   ^(TypeArray arrayKeyValue*)
+    ;
 
 arrayKeyValue
-	:	^('=>' expression expression)
-	|	value=expression
-	;
+    :   ^('=>' expression expression)
+    |   value=expression
+    ;
 
 staticAccessor
 @after{$start.setEvalType((ITypeSymbol) $start.getSymbol());}
-	:	classInterfaceType[null]
-	|	slf='self'
-		{
-		    IVariableSymbol variableSymbol = controller.resolveThisSelf($slf);
-		    $slf.setSymbol(variableSymbol.getType());
-		}
-	|	par='parent'
-		{
-		    IVariableSymbol variableSymbol = controller.resolveParent($par);
-		    $par.setSymbol(variableSymbol.getType());
-		}	
-	;
-	
+    :   classInterfaceType[null]
+    |   slf='self'
+        {
+            IVariableSymbol variableSymbol = controller.resolveThisSelf($slf);
+            $slf.setSymbol(variableSymbol.getType());
+        }
+    |   par='parent'
+        {
+            IVariableSymbol variableSymbol = controller.resolveParent($par);
+            $par.setSymbol(variableSymbol.getType());
+        }    
+    ;
+    
 fieldDefinition
-	:	^(FIELD variableDeclarationList[true])
-	;
-	
+    :   ^(FIELD variableDeclarationList[true])
+    ;
+    
 variableDeclarationList[boolean isImplicitlyInitialised] 
-	:	^(VARIABLE_DECLARATION_LIST 
-			^(TYPE tMod=. allTypes[$tMod]) 
-			variableDeclaration[$allTypes.type, isImplicitlyInitialised]+ 
-		)
-        ;
+    :   ^(VARIABLE_DECLARATION_LIST
+            ^(TYPE tMod=. allTypes[$tMod]) 
+            variableDeclaration[$allTypes.type, isImplicitlyInitialised]+ 
+        )
+    ;
         
 variableDeclaration[ITypeSymbol type, boolean isImplicitlyInitialised] returns [IVariableSymbol variableSymbol]
 @init{boolean isInitialised = false;}
-	:	(	^(variableId=VariableId expression) {isInitialised = true;}
-		|	variableId=VariableId
-		)
-		{ 
-			//Warning! start duplicated code as in parameterNormalOrOptional
-			$variableSymbol = (IVariableSymbol) $variableId.getSymbol();
-			$variableSymbol.setType(type); 
-			$variableId.getScope().doubleDefinitionCheck($variableId.getSymbol());
-			//Warning! end duplicated code as in parameterNormalOrOptional
-			if(isInitialised || isImplicitlyInitialised){
-			    $variableId.getScope().addToInitialisedSymbols($variableSymbol, true);
-			}
-		}
-	;
-	
+    :   (   ^(variableId=VariableId expression) {isInitialised = true;}
+        |   variableId=VariableId
+        )
+        { 
+            //Warning! start duplicated code as in parameterNormalOrOptional
+            $variableSymbol = (IVariableSymbol) $variableId.getSymbol();
+            $variableSymbol.setType(type); 
+            $variableId.getScope().doubleDefinitionCheck($variableId.getSymbol());
+            //Warning! end duplicated code as in parameterNormalOrOptional
+            if(isInitialised || isImplicitlyInitialised){
+                $variableId.getScope().addToInitialisedSymbols($variableSymbol, true);
+            }
+        }
+    ;
+    
 accessModifier
-	:	Private
-	|	Protected
-	|	Public
-	;
+    :   Private
+    |   Protected
+    |   Public
+    ;
 
 constructDefinition
-	:	^(identifier='__construct' 
-			.
-			^(TYPE rtMod=. voidType) 
-			parameterDeclarationList block[false]
-		)
-		{
-			IMethodSymbol methodSymbol = (IMethodSymbol) $identifier.getSymbol();
-			methodSymbol.setType($voidType.type); 
-			ICaseInsensitiveScope scope = (ICaseInsensitiveScope) $identifier.getScope();
-			scope.doubleDefinitionCheckCaseInsensitive(methodSymbol);
-		}
-	;
-		
+    :   ^(identifier='__construct'
+            .
+            ^(TYPE rtMod=. voidType) 
+            parameterDeclarationList block[false]
+        )
+        {
+            IMethodSymbol methodSymbol = (IMethodSymbol) $identifier.getSymbol();
+            methodSymbol.setType($voidType.type); 
+            ICaseInsensitiveScope scope = (ICaseInsensitiveScope) $identifier.getScope();
+            scope.doubleDefinitionCheckCaseInsensitive(methodSymbol);
+        }
+    ;
+        
 methodDefinition
 //Warning! start duplicated code as in functionDeclaration
-	@init{
-	    hasAtLeastOneReturnOrThrow = false;
-	    boolean shallCheckIfReturns = false;
-	}
+    @init{
+        hasAtLeastOneReturnOrThrow = false;
+        boolean shallCheckIfReturns = false;
+    }
 //Warning! end duplicated code as in functionDeclaration
 
-	:	^(METHOD_DECLARATION 
-			^(METHOD_MODIFIER methodModifier)
-			^(TYPE rtMod=. returnTypes[$rtMod]) 
-			{shallCheckIfReturns = !($returnTypes.type instanceof IVoidTypeSymbol) && !$methodModifier.isAbstract;}
-			(identifier=Identifier|identifier=Destruct) parameterDeclarationList block[shallCheckIfReturns]
-		)
-		{
-		//Warning! start duplicated code as in functionDeclaration
-			IMethodSymbol methodSymbol = (IMethodSymbol) $identifier.getSymbol();
-			methodSymbol.setType($returnTypes.type); 
-			ICaseInsensitiveScope scope = (ICaseInsensitiveScope) $identifier.getScope();
-			scope.doubleDefinitionCheckCaseInsensitive(methodSymbol);
-			if(shallCheckIfReturns){
-		//Warning! end duplicated code as in functionDeclaration
-			    controller.checkReturnsFromMethod($block.isReturning, hasAtLeastOneReturnOrThrow, $identifier);
-			}
-		}
+    :   ^(METHOD_DECLARATION
+            ^(METHOD_MODIFIER methodModifier)
+            ^(TYPE rtMod=. returnTypes[$rtMod]) 
+            {shallCheckIfReturns = !($returnTypes.type instanceof IVoidTypeSymbol) && !$methodModifier.isAbstract;}
+            (identifier=Identifier|identifier=Destruct) parameterDeclarationList block[shallCheckIfReturns]
+        )
+        {
+        //Warning! start duplicated code as in functionDeclaration
+            IMethodSymbol methodSymbol = (IMethodSymbol) $identifier.getSymbol();
+            methodSymbol.setType($returnTypes.type); 
+            ICaseInsensitiveScope scope = (ICaseInsensitiveScope) $identifier.getScope();
+            scope.doubleDefinitionCheckCaseInsensitive(methodSymbol);
+            if(shallCheckIfReturns){
+        //Warning! end duplicated code as in functionDeclaration
+                controller.checkReturnsFromMethod($block.isReturning, hasAtLeastOneReturnOrThrow, $identifier);
+            }
+        }
 
-	;
+    ;
 
 methodModifier returns[boolean isAbstract]
-	:	(	Static	Final		accessModifier
-		|	Static	accessModifier	Final
-		|	Static	accessModifier
-		
-		|	Final	Static	 	accessModifier
-		|	Final	accessModifier 	Static	 
-		|	Final	accessModifier
-		
-		
-		|	accessModifier Final 	Static	
-		|	accessModifier Static	Final
-		|	accessModifier Static	
-		|	accessModifier Final
-		|	accessModifier
-		
-		|	abstr=Abstract accessModifier
-		|	accessModifier abstr=Abstract
-		)
-		{$isAbstract= $abstr != null;}
-	;
-	
+    :   (   Static  Final           accessModifier
+        |   Static  accessModifier  Final
+        |   Static  accessModifier
+
+        |   Final   Static          accessModifier
+        |   Final   accessModifier  Static
+        |   Final   accessModifier
+        
+        
+        |   accessModifier  Final   Static
+        |   accessModifier  Static  Final
+        |   accessModifier  Static
+        |   accessModifier  Final
+        |   accessModifier
+        
+        |    abstr=Abstract accessModifier
+        |    accessModifier abstr=Abstract
+        )
+        {$isAbstract= $abstr != null;}
+    ;
+    
 functionDefinition
 //Warning! start duplicated code as in functionDeclaration
-	@init{
-	    hasAtLeastOneReturnOrThrow = false;
-	    boolean shallCheckIfReturns = false;
-	}
+    @init{
+        hasAtLeastOneReturnOrThrow = false;
+        boolean shallCheckIfReturns = false;
+    }
 //Warning! start duplicated code as in functionDeclaration
-	:	^('function'
-			.
-			^(TYPE rtMod=. returnTypes[$rtMod])  
-			{shallCheckIfReturns = !($returnTypes.type instanceof IVoidTypeSymbol);}
-			identifier=Identifier parameterDeclarationList block[shallCheckIfReturns]
-		)
-		{
-		//Warning! start duplicated code as in functionDeclaration
-			IMethodSymbol methodSymbol = (IMethodSymbol) $identifier.getSymbol();
-			methodSymbol.setType($returnTypes.type); 
-			ICaseInsensitiveScope scope = (ICaseInsensitiveScope) $identifier.getScope();
-			scope.doubleDefinitionCheckCaseInsensitive(methodSymbol);
-			if(shallCheckIfReturns){
-		//Warning! end duplicated code as in functionDeclaration
-			    controller.checkReturnsFromFunction($block.isReturning, hasAtLeastOneReturnOrThrow, $identifier);
-			}
-		}
-	;
+    :   ^('function'
+            .
+            ^(TYPE rtMod=. returnTypes[$rtMod])  
+            {shallCheckIfReturns = !($returnTypes.type instanceof IVoidTypeSymbol);}
+            identifier=Identifier parameterDeclarationList block[shallCheckIfReturns]
+        )
+        {
+        //Warning! start duplicated code as in functionDeclaration
+            IMethodSymbol methodSymbol = (IMethodSymbol) $identifier.getSymbol();
+            methodSymbol.setType($returnTypes.type); 
+            ICaseInsensitiveScope scope = (ICaseInsensitiveScope) $identifier.getScope();
+            scope.doubleDefinitionCheckCaseInsensitive(methodSymbol);
+            if(shallCheckIfReturns){
+        //Warning! end duplicated code as in functionDeclaration
+                controller.checkReturnsFromFunction($block.isReturning, hasAtLeastOneReturnOrThrow, $identifier);
+            }
+        }
+    ;
 
 parameterDeclarationList
-	:	^(PARAMETER_LIST parameterDeclaration+)
-	|	PARAMETER_LIST
-	;
+    :   ^(PARAMETER_LIST parameterDeclaration+)
+    |   PARAMETER_LIST
+    ;
 
 parameterDeclaration
-	:	^(PARAMETER_DECLARATION 
-			^(TYPE tMod=. allTypes[$tMod]) 
-			parameterNormalOrOptional[$allTypes.type]
-		)
-		{
-		    IVariableSymbol parameter = $parameterNormalOrOptional.variableSymbol;
-		    IMethodSymbol methodSymbol = (IMethodSymbol) parameter.getDefinitionScope();
-		    methodSymbol.addParameter(parameter);
-		}
-	;
+    :   ^(PARAMETER_DECLARATION
+            ^(TYPE tMod=. allTypes[$tMod]) 
+            parameterNormalOrOptional[$allTypes.type]
+        )
+        {
+            IVariableSymbol parameter = $parameterNormalOrOptional.variableSymbol;
+            IMethodSymbol methodSymbol = (IMethodSymbol) parameter.getDefinitionScope();
+            methodSymbol.addParameter(parameter);
+        }
+    ;
 
 parameterNormalOrOptional[ITypeSymbol type] returns [IVariableSymbol variableSymbol]
-	:	(	variableId=VariableId
-		|	^(variableId=VariableId unaryPrimitiveAtom)
-		)
-		{ 
-			//Warning! start duplicated code as in variableDeclaration
-			$variableSymbol = (IVariableSymbol) $variableId.getSymbol();
-			$variableSymbol.setType(type); 
-			$variableId.getScope().doubleDefinitionCheck($variableId.getSymbol());
-			//Warning! end duplicated code as in variableDeclaration
-			$variableId.getScope().addToInitialisedSymbols($variableSymbol, true);
-		} 
-	;
-	
+    :   (    variableId=VariableId
+        |    ^(variableId=VariableId unaryPrimitiveAtom)
+        )
+        { 
+            //Warning! start duplicated code as in variableDeclaration
+            $variableSymbol = (IVariableSymbol) $variableId.getSymbol();
+            $variableSymbol.setType(type); 
+            $variableId.getScope().doubleDefinitionCheck($variableId.getSymbol());
+            //Warning! end duplicated code as in variableDeclaration
+            $variableId.getScope().addToInitialisedSymbols($variableSymbol, true);
+        } 
+    ;
+    
 block[boolean shallCheckIfReturns] returns[boolean isReturning]
-	:	^(BLOCK instructions[$shallCheckIfReturns]) {$isReturning = $instructions.isReturning;}
-	|	BLOCK {$isReturning = false;}
-	;
+    :   ^(BLOCK instructions[$shallCheckIfReturns]) {$isReturning = $instructions.isReturning;}
+    |   BLOCK {$isReturning = false;}
+    ;
 
 interfaceDefinition
-	:	^('interface' iMod=. identifier=Identifier extIds=interfaceExtendsDeclaration[$identifier] interfaceBody)
-		{
-			INamespaceScope namespaceScope = (INamespaceScope) $identifier.getScope();
-			namespaceScope.doubleDefinitionCheckCaseInsensitive($identifier.getSymbol());
-		}
-	;
+    :   ^('interface' iMod=. identifier=Identifier extIds=interfaceExtendsDeclaration[$identifier] interfaceBody)
+        {
+            INamespaceScope namespaceScope = (INamespaceScope) $identifier.getScope();
+            namespaceScope.doubleDefinitionCheckCaseInsensitive($identifier.getSymbol());
+        }
+    ;
 interfaceExtendsDeclaration[ITSPHPAst identifier]
-	:	^('extends' 	
-			(allTypes[null]{	
-				ITypeSymbol typeSymbol = $allTypes.type;
-				if(controller.checkIsInterface($allTypes.start, typeSymbol)){
-				    ((IInterfaceTypeSymbol)identifier.getSymbol()).addParentTypeSymbol((IInterfaceTypeSymbol)typeSymbol);
-				}
-			})+
-		) 
-	|	'extends'
-	;
-	
+    :   ^('extends'
+            (allTypes[null]{
+                ITypeSymbol typeSymbol = $allTypes.type;
+                if(controller.checkIsInterface($allTypes.start, typeSymbol)){
+                    ((IInterfaceTypeSymbol)identifier.getSymbol()).addParentTypeSymbol((IInterfaceTypeSymbol)typeSymbol);
+                }
+            })+
+        ) 
+    |   'extends'
+    ;
+    
 interfaceBody
-	:	^(INTERFACE_BODY interfaceBodyDefinition*)
-	|	INTERFACE_BODY
-	;
-	
+    :   ^(INTERFACE_BODY interfaceBodyDefinition*)
+    |   INTERFACE_BODY
+    ;
+    
 interfaceBodyDefinition
-	:	constDefinitionList
-	|	methodDefinition
-	|	constructDefinition
-	;	
+    :   constDefinitionList
+    |   methodDefinition
+    |   constructDefinition
+    ;    
 
 instructions[boolean shallCheckIfReturns] returns[boolean isReturning]
 @init{boolean isBreaking = false;}
-	:	(	instruction[$shallCheckIfReturns]
-			{
-			    if(shallCheckIfReturns){
-			        $isReturning = $isReturning || (!isBreaking && $instruction.isReturning);
-			        isBreaking = $instruction.isBreaking;
-			    }
-			}
-		)+
-	;
+    :   (   instruction[$shallCheckIfReturns]
+            {
+                if(shallCheckIfReturns){
+                    $isReturning = $isReturning || (!isBreaking && $instruction.isReturning);
+                    isBreaking = $instruction.isBreaking;
+                }
+            }
+        )+
+    ;
 
 instruction[boolean shallCheckIfReturns] returns[boolean isReturning, boolean isBreaking]
-	// those statement which do not have an isReturning block can never return. 
-	// Yet, it might be that they contain a return or throw statement and thus hasAtLeastOneReturnOrThrow has been set to true
-	:	variableDeclarationList[false] 		
-	|	ifCondition[$shallCheckIfReturns]	{$isReturning = $ifCondition.isReturning;}
-	|	switchCondition[$shallCheckIfReturns]	{$isReturning = $switchCondition.isReturning;}
-	|	forLoop					
-	|	foreachLoop
-	|	whileLoop
-	|	doWhileLoop[$shallCheckIfReturns]	{$isReturning = $doWhileLoop.isReturning;}
-	|	tryCatch[$shallCheckIfReturns]		{$isReturning = $tryCatch.isReturning;}
-	|	^(EXPRESSION expression?)
-	|	^('return' expression?) 		{$isReturning = true; hasAtLeastOneReturnOrThrow = true;}
-	|	^('throw' expression)			{$isReturning = true; hasAtLeastOneReturnOrThrow = true;}
-	|	^('echo' expression+)
-	|	breakContinue				{$isBreaking = true;}
-	;
-	
+    // those statement which do not have an isReturning block can never return. 
+    // Yet, it might be that they contain a return or throw statement and thus
+    // hasAtLeastOneReturnOrThrow has been set to true
+    :   variableDeclarationList[false]
+    |   ifCondition[$shallCheckIfReturns]       {$isReturning = $ifCondition.isReturning;}
+    |   switchCondition[$shallCheckIfReturns]   {$isReturning = $switchCondition.isReturning;}
+    |   forLoop
+    |   foreachLoop
+    |   whileLoop
+    |   doWhileLoop[$shallCheckIfReturns]       {$isReturning = $doWhileLoop.isReturning;}
+    |   tryCatch[$shallCheckIfReturns]          {$isReturning = $tryCatch.isReturning;}
+    |   ^(EXPRESSION expression?)
+    |   ^('return' expression?)                 {$isReturning = true; hasAtLeastOneReturnOrThrow = true;}
+    |   ^('throw' expression)                   {$isReturning = true; hasAtLeastOneReturnOrThrow = true;}
+    |   ^('echo' expression+)
+    |   breakContinue                           {$isBreaking = true;}
+    ;
+    
 ifCondition[boolean shallCheckIfReturns] returns[boolean isReturning]
-	:	^('if' 
-			expression 
-			ifBlock=blockConditional[$shallCheckIfReturns]
-			(elseBlock=blockConditional[$shallCheckIfReturns])?
-		)
-		{
-		    $isReturning = shallCheckIfReturns && $ifBlock.isReturning && $elseBlock.isReturning;
-		    controller.sendUpInitialisedSymbolsAfterIf($ifBlock.ast, $elseBlock.ast);
-		}
-	;
+    :   ^('if'
+            expression 
+            ifBlock=blockConditional[$shallCheckIfReturns]
+            (elseBlock=blockConditional[$shallCheckIfReturns])?
+        )
+        {
+            $isReturning = shallCheckIfReturns && $ifBlock.isReturning && $elseBlock.isReturning;
+            controller.sendUpInitialisedSymbolsAfterIf($ifBlock.ast, $elseBlock.ast);
+        }
+    ;
 
 blockConditional[boolean shallCheckIfReturns] returns[boolean isReturning, ITSPHPAst ast]
-	:	^(BLOCK_CONDITIONAL instructions[$shallCheckIfReturns]) 
-		{
-		    $isReturning = $instructions.isReturning; 
-		    $ast = $BLOCK_CONDITIONAL;
-		}
-		
-	|	BLOCK_CONDITIONAL 
-		{
-		    $isReturning = false; 
-		    $ast = $BLOCK_CONDITIONAL;
-		}
-	;
-	
+    :   ^(BLOCK_CONDITIONAL instructions[$shallCheckIfReturns])
+        {
+            $isReturning = $instructions.isReturning; 
+            $ast = $BLOCK_CONDITIONAL;
+        }
+        
+    |   BLOCK_CONDITIONAL
+        {
+            $isReturning = false; 
+            $ast = $BLOCK_CONDITIONAL;
+        }
+    ;
+    
 switchCondition[boolean shallCheckIfReturns] returns[boolean isReturning]
-	:	^('switch' expression switchContents[$shallCheckIfReturns]?) 
-		{
-		    $isReturning = $switchContents.hasDefault && $switchContents.isReturning;
-		}
-	;
-	
+    :   ^('switch' expression switchContents[$shallCheckIfReturns]?)
+        {
+            $isReturning = $switchContents.hasDefault && $switchContents.isReturning;
+        }
+    ;
+    
 switchContents[boolean shallCheckIfReturns] returns[boolean isReturning, boolean hasDefault]
 //Warning! start duplicated code as in catchBlocks
 @init{
@@ -460,76 +462,76 @@ switchContents[boolean shallCheckIfReturns] returns[boolean isReturning, boolean
     List<ITSPHPAst> asts = new ArrayList<>();
 }
 //Warning! start duplicated code as in catchBlocks
-	:	(	^(SWITCH_CASES caseLabels) blockConditional[$shallCheckIfReturns]
-			{
-			    if(shallCheckIfReturns){
-			    	$hasDefault = $hasDefault || $caseLabels.hasDefault;
-			    	$isReturning = $blockConditional.isReturning && ($isReturning || isFirst);		
-			    	isFirst = false;    	
-			    }
-			    asts.add($blockConditional.ast);
-			}
-		)+
-		{controller.sendUpInitialisedSymbolsAfterSwitch(asts, $hasDefault);}
-	;
+    :   (   ^(SWITCH_CASES caseLabels) blockConditional[$shallCheckIfReturns]
+            {
+                if(shallCheckIfReturns){
+                    $hasDefault = $hasDefault || $caseLabels.hasDefault;
+                    $isReturning = $blockConditional.isReturning && ($isReturning || isFirst);        
+                    isFirst = false;        
+                }
+                asts.add($blockConditional.ast);
+            }
+        )+
+        {controller.sendUpInitialisedSymbolsAfterSwitch(asts, $hasDefault);}
+    ;
 
 caseLabels returns[boolean hasDefault]
-	: 	(	expression 	
-		|	Default	{$hasDefault=true;}
-		)+
-	;
-	
+    :   (   expression
+        |   Default {$hasDefault=true;}
+        )+
+    ;
+    
 forLoop
-	:	^('for' 
-			(init=variableDeclarationList[false]|init=expressionList)
-			expressionList 
-			expressionList
-			blockConditional[false]
-		)
-		{controller.sendUpInitialisedSymbols($blockConditional.ast);}
-	;
+    :   ^('for'
+            (init=variableDeclarationList[false]|init=expressionList)
+            expressionList 
+            expressionList
+            blockConditional[false]
+        )
+        {controller.sendUpInitialisedSymbols($blockConditional.ast);}
+    ;
 
 expressionList
-	:	^(EXPRESSION_LIST expression*)
-	|	EXPRESSION_LIST
-	;
+    :   ^(EXPRESSION_LIST expression*)
+    |   EXPRESSION_LIST
+    ;
 
 foreachLoop
-	:
-		^(foreach='foreach' 
-			expression 
-			variableDeclarationList[true]
-			// corresponding to the parser the first variableDeclarationList (the key) should be optional
-			// however, it does not matter here since both are just variable declarations
-			variableDeclarationList[true]? 
-			blockConditional[false]
-		)     		
-		{
-		    controller.sendUpInitialisedSymbols($blockConditional.ast);
-  		    controller.sendUpInitialisedSymbols($foreach);
-		}
-	;
+    :
+        ^(foreach='foreach' 
+            expression 
+            variableDeclarationList[true]
+            // corresponding to the parser the first variableDeclarationList (the key) should be optional
+            // however, it does not matter here since both are just variable declarations
+            variableDeclarationList[true]? 
+            blockConditional[false]
+        )             
+        {
+            controller.sendUpInitialisedSymbols($blockConditional.ast);
+              controller.sendUpInitialisedSymbols($foreach);
+        }
+    ;
 
 whileLoop
-	:	^('while' expression blockConditional[false])
-		{controller.sendUpInitialisedSymbols($blockConditional.ast);}
-	;
+    :   ^('while' expression blockConditional[false])
+        {controller.sendUpInitialisedSymbols($blockConditional.ast);}
+    ;
 
 
 doWhileLoop[boolean shallCheckIfReturns] returns[boolean isReturning]
-	:	^('do' block[$shallCheckIfReturns] expression)
-		{$isReturning = $block.isReturning;}
-	;
+    :   ^('do' block[$shallCheckIfReturns] expression)
+        {$isReturning = $block.isReturning;}
+    ;
 
 tryCatch[boolean shallCheckIfReturns] returns[boolean isReturning]
-	:	^('try' blockConditional[$shallCheckIfReturns] catchBlocks[$shallCheckIfReturns]) 
-		{
-		    $isReturning = shallCheckIfReturns && $blockConditional.isReturning && $catchBlocks.isReturning;
-		    $catchBlocks.asts.add($blockConditional.ast);
-		    controller.sendUpInitialisedSymbolsAfterTryCatch($catchBlocks.asts);
-		}
-	;
-	
+    :   ^('try' blockConditional[$shallCheckIfReturns] catchBlocks[$shallCheckIfReturns])
+        {
+            $isReturning = shallCheckIfReturns && $blockConditional.isReturning && $catchBlocks.isReturning;
+            $catchBlocks.asts.add($blockConditional.ast);
+            controller.sendUpInitialisedSymbolsAfterTryCatch($catchBlocks.asts);
+        }
+    ;
+    
 catchBlocks[boolean shallCheckIfReturns] returns[boolean isReturning,List<ITSPHPAst> asts]
 //Warning! start duplicated code as in catchBlocks
 @init{
@@ -537,189 +539,187 @@ catchBlocks[boolean shallCheckIfReturns] returns[boolean isReturning,List<ITSPHP
     $asts = new ArrayList<>();
 }
 //Warning! start duplicated code as in catchBlocks
-	:	(	^('catch' variableDeclarationList[true] blockConditional[$shallCheckIfReturns])
-			{
-			    if(shallCheckIfReturns){
-			        $isReturning = $blockConditional.isReturning && ($isReturning || isFirst);
-			        isFirst = false;
-			    }
-			    $asts.add($blockConditional.ast);
-			}
-		)+ 
-	;
-	
+    :   (   ^('catch' variableDeclarationList[true] blockConditional[$shallCheckIfReturns])
+            {
+                if(shallCheckIfReturns){
+                    $isReturning = $blockConditional.isReturning && ($isReturning || isFirst);
+                    isFirst = false;
+                }
+                $asts.add($blockConditional.ast);
+            }
+        )+ 
+    ;
+    
 breakContinue
-	:	(	nil=Break
-		|	^(nil=Break level=Int)
-		|	nil=Continue
-		|	^(nil=Continue level=Int)
-		)
-		{controller.checkBreakContinueLevel($nil, $level);}
-	;
-	
+    :   (    nil=Break
+        |    ^(nil=Break level=Int)
+        |    nil=Continue
+        |    ^(nil=Continue level=Int)
+        )
+        {controller.checkBreakContinueLevel($nil, $level);}
+    ;
+    
 expression
-	:   	atom	
-	|	operator
- 	|	functionCall
-	|	methodCall 		
-	|	methodCallStatic 	
-	|	classStaticAccess
-	|	postFixExpression
-	|	exit
-    	;
-    	
-atom	:	primitiveAtomWithConstant
-	|	variable
-	|	thisVariable
-	;
+    :   atom
+    |   operator
+    |   functionCall
+    |   methodCall
+    |   methodCallStatic
+    |   classStaticAccess
+    |   postFixExpression
+    |   exit
+    ;
+        
+atom
+    :   primitiveAtomWithConstant
+    |   variable
+    |   thisVariable
+    ;
 
-variable	
-	: 	varId=VariableId
-		{
-      			$varId.setSymbol(controller.resolveVariable($varId));
-      			controller.checkVariableIsOkToUse($varId);
-      		}
-	;
-	
+variable    
+    :   varId=VariableId
+        {
+            $varId.setSymbol(controller.resolveVariable($varId));
+            controller.checkVariableIsOkToUse($varId);
+        }
+    ;
+    
 thisVariable
-	:	t='$this'	
-		{$t.setSymbol(controller.resolveThisSelf($t));}
-	;
+    :   t='$this'
+        {$t.setSymbol(controller.resolveThisSelf($t));}
+    ;
 
 operator
- 	:	^(unaryOperator expression)
-	|	^(binaryOperatorExcludingAssign expression expression)
-	|	^(assignOperator varId=expression expression)
-		{
-		    ITSPHPAst variableId = $varId.start;
-		    if(variableId.getType()==VariableId){
-		        variableId.getScope().addToInitialisedSymbols(variableId.getSymbol(), true);
-		    }
-		}
-	|	^('?' expression expression expression)
-	|	^(CAST ^(TYPE tMod=. allTypes[$tMod]) expression) 
-	|	^(Instanceof expr=expression (variable|classInterfaceType[null]))  
-	|	^('new' classInterfaceType[null] actualParameters)
-	|	^('clone' expression)	
-    	;
-    	
+    :   ^(unaryOperator expression)
+    |   ^(binaryOperatorExcludingAssign expression expression)
+    |   ^(assignOperator varId=expression expression)
+        {
+            ITSPHPAst variableId = $varId.start;
+            if(variableId.getType()==VariableId){
+                variableId.getScope().addToInitialisedSymbols(variableId.getSymbol(), true);
+            }
+        }
+    |   ^('?' expression expression expression)
+    |   ^(CAST ^(TYPE tMod=. allTypes[$tMod]) expression)
+    |   ^(Instanceof expr=expression (variable|classInterfaceType[null]))
+    |   ^('new' classInterfaceType[null] actualParameters)
+    |   ^('clone' expression)
+    ;
+        
 unaryOperator
-	:	PRE_INCREMENT
-    	|	PRE_DECREMENT
-    	|	'@'
-    	|	'~'
-    	|	'!'
-    	|	UNARY_MINUS
-    	|	UNARY_PLUS
-    	|	POST_INCREMENT
-    	|	POST_DECREMENT
-	;
-	
+    :   PRE_INCREMENT
+    |   PRE_DECREMENT
+    |   '@'
+    |   '~'
+    |   '!'
+    |   UNARY_MINUS
+    |   UNARY_PLUS
+    |   POST_INCREMENT
+    |   POST_DECREMENT
+    ;
+    
 binaryOperatorExcludingAssign
-	:	'or' 
-	|	'xor' 
-	|	'and' 
-	
-	|	'||' 
-	|	'&&' 
-	|	'|' 
-	|	'^' 
-	|	'&' 
-	
-	|	'==' 
-	|	'!=' 
-	|	'==='
-	|	'!=='
-	
-	|	'<' 
-	|	'<=' 
-	|	'>' 
-	|	'>=' 
-	
-	|	'<<' 
-	|	'>>' 
-	
-	|	'+' 
-	|	'-' 
-	|	'.' 
-	
-	|	'*' 
-	|	'/' 
-	|	'%' 
-	;
-	
+    :   'or'
+    |   'xor'
+    |   'and'
+    
+    |   '||'
+    |   '&&'
+    |   '|'
+    |   '^'
+    |   '&'
+    
+    |   '=='
+    |   '!='
+    |   '==='
+    |   '!=='
+    
+    |   '<'
+    |   '<='
+    |   '>'
+    |   '>='
+    
+    |   '<<'
+    |   '>>'
+    
+    |   '+'
+    |   '-'
+    |   '.'
+    
+    |   '*'
+    |   '/'
+    |   '%'
+    ;
+    
 assignOperator
-	:	(	'=' 
-		|	'+='
-		|	'-='
-		|	'*='
-		|	'/='
-		|	'&='
-		|	'|='
-		|	'^='
-		|	'%='
-		|	'.='
-		|	'<<=' 
-		|	'>>=' 
-		|	CAST_ASSIGN	
-		)
-		{
-		}
-	;
+    :   (   '='
+        |   '+='
+        |   '-='
+        |   '*='
+        |   '/='
+        |   '&='
+        |   '|='
+        |   '^='
+        |   '%='
+        |   '.='
+        |   '<<='
+        |   '>>='
+        |   CAST_ASSIGN
+        )
+    ;
 
 actualParameters
-	:	^(ACTUAL_PARAMETERS expression+)
-	|	ACTUAL_PARAMETERS
-	;
-	
+    :   ^(ACTUAL_PARAMETERS expression+)
+    |   ACTUAL_PARAMETERS
+    ;
+    
 functionCall
-	    	// function call has no callee and is therefor not resolved in this phase. 
-	    	// resolving occurs in the type checking phase where overloads are taken into account
-	:	^(FUNCTION_CALL	identifier=TYPE_NAME actualParameters)
-	;
-	
+        // function call has no callee and is therefor not resolved in this phase.
+        // resolving occurs in the type checking phase where overloads are taken into account
+    :   ^(FUNCTION_CALL    identifier=TYPE_NAME actualParameters)
+    ;
+    
 methodCall
-	:	^(METHOD_CALL methodCallee Identifier actualParameters
-		)	
-	;
-	
+    :   ^(METHOD_CALL methodCallee Identifier actualParameters)
+    ;
+    
 methodCallee
-	:	thisVariable
-	|	variable
-	|	slf='self'
-		{$slf.setSymbol(controller.resolveThisSelf($slf));}
-	|	par='parent'
-		{$par.setSymbol(controller.resolveParent($par));}	
-	;
-	
+    :   thisVariable
+    |   variable
+    |   slf='self'
+        {$slf.setSymbol(controller.resolveThisSelf($slf));}
+    |   par='parent'
+        {$par.setSymbol(controller.resolveParent($par));}    
+    ;
+    
 methodCallStatic
-	:	^(METHOD_CALL_STATIC classInterfaceType[null] Identifier actualParameters)	
-	;
-	
+    :   ^(METHOD_CALL_STATIC classInterfaceType[null] Identifier actualParameters)
+    ;
+    
 classStaticAccess
-	:	^(CLASS_STATIC_ACCESS accessor=staticAccessor identifier=CLASS_STATIC_ACCESS_VARIABLE_ID)
-		{$identifier.setSymbol(accessResolver.resolveStaticFieldAccess($accessor.start, $identifier));}
-	;		
+    :   ^(CLASS_STATIC_ACCESS accessor=staticAccessor identifier=CLASS_STATIC_ACCESS_VARIABLE_ID)
+        {$identifier.setSymbol(accessResolver.resolveStaticFieldAccess($accessor.start, $identifier));}
+    ;        
 
 postFixExpression
 // postFixExpression are resolved in the type checking phase
 // due to the fact that method/function calls are resolved during the type check phase
 // This rules are needed to resolve variables/function calls etc. in expression and actualParameters
-	:	^(FIELD_ACCESS expression Identifier) 
-	|	^(ARRAY_ACCESS expression expression)
-	|	^(METHOD_CALL_POSTFIX expression Identifier actualParameters)
-	;
+    :   ^(FIELD_ACCESS expression Identifier)
+    |   ^(ARRAY_ACCESS expression expression)
+    |   ^(METHOD_CALL_POSTFIX expression Identifier actualParameters)
+    ;
 
 exit
-	:	^('exit' expression)
-	|	'exit'
-	;
- 	
+    :   ^('exit' expression)
+    |   'exit'
+    ;
+     
 returnTypes[ITSPHPAst typeModifier] returns [ITypeSymbol type]
-	:	allTypes[$typeModifier] {$type = $allTypes.type;}
-	|	voidType {$type = $voidType.type;}
-	;
- 	
+    :   allTypes[$typeModifier] {$type = $allTypes.type;}
+    |   voidType {$type = $voidType.type;}
+    ;
+     
 voidType returns [ITypeSymbol type]
 //Warning! start duplicated code as in scalarTypes, classInterfaceType and arrayOrResourceOrMixed
 @init{
@@ -730,20 +730,19 @@ voidType returns [ITypeSymbol type]
     }
 }
 //Warning! end duplicated code as in scalarTypes, classInterfaceType and arrayOrResourceOrMixed
- 	:	'void'
-		{
-			$type = controller.resolvePrimitiveType($start, null);
-			$start.setSymbol($type);
-		}
- 	; 	
- 	
+    :   'void'
+        {
+            $type = controller.resolvePrimitiveType($start, null);
+            $start.setSymbol($type);
+        }
+    ;
+     
 allTypes[ITSPHPAst typeModifier] returns [ITypeSymbol type]
-
-	:	scalarTypes[$typeModifier] {$type = $scalarTypes.type;}
-	|	classInterfaceType[$typeModifier] {$type = $classInterfaceType.type;}
-	|	arrayOrResourceOrMixed[$typeModifier] {$type = $arrayOrResourceOrMixed.type;}
-	;
-	
+    :   scalarTypes[$typeModifier] {$type = $scalarTypes.type;}
+    |   classInterfaceType[$typeModifier] {$type = $classInterfaceType.type;}
+    |   arrayOrResourceOrMixed[$typeModifier] {$type = $arrayOrResourceOrMixed.type;}
+    ;
+    
 scalarTypes[ITSPHPAst typeModifier] returns [ITypeSymbol type]
 //Warning! start duplicated code as in voidType, classInterfaceType and arrayOrResourceOrMixed
 @init{
@@ -755,22 +754,22 @@ scalarTypes[ITSPHPAst typeModifier] returns [ITypeSymbol type]
     }
 }
 //Warning! end duplicated code as in voidType, classInterfaceType and arrayOrResourceOrMixed
-	:	(	'bool'
-		|	'int'
-		|	'float'
-		|	'string'
-		)
-		{
-			$type = controller.resolveScalarType($start, $typeModifier);
-			$start.setSymbol($type);
-		}
-	;
+    :   (   'bool'
+        |   'int'
+        |   'float'
+        |   'string'
+        )
+        {
+            $type = controller.resolveScalarType($start, $typeModifier);
+            $start.setSymbol($type);
+        }
+    ;
 catch[RecognitionException re]{
     reportError(re);
     recover(input,re);
     $type = controller.createErroneousTypeSymbol($start, re);
 }
-	
+    
 classInterfaceType[ITSPHPAst typeModifier] returns [ITypeSymbol type]
 //Warning! start duplicated code as in scalarTypes, voidType and arrayOrResourceOrMixed
 @init{
@@ -782,18 +781,18 @@ classInterfaceType[ITSPHPAst typeModifier] returns [ITypeSymbol type]
     }
 }
 //Warning! end duplicated code as in scalarTypes, voidType and arrayOrResourceOrMixed
-	:	TYPE_NAME
-		{
-			$type = controller.resolveType($start, $typeModifier);
-			$start.setSymbol($type);
-		}
-	;
+    :   TYPE_NAME
+        {
+            $type = controller.resolveType($start, $typeModifier);
+            $start.setSymbol($type);
+        }
+    ;
 catch[RecognitionException re]{
     reportError(re);
     recover(input,re);
     $type = controller.createErroneousTypeSymbol($start, re);
 }
-	
+    
 arrayOrResourceOrMixed[ITSPHPAst typeModifier] returns [ITypeSymbol type]
 //Warning! start duplicated code as in scalarTypes, classInterfaceType and voidType
 @init{
@@ -805,15 +804,15 @@ arrayOrResourceOrMixed[ITSPHPAst typeModifier] returns [ITypeSymbol type]
     }
 }
 //Warning! end duplicated code as in scalarTypes, classInterfaceType and voidType
-	:	(	'array'
-		|	'mixed'
-		|	'resource'
-		)
-		{
-			$type = controller.resolvePrimitiveType($start, $typeModifier);
-			$start.setSymbol($type);
-		}
-	;
+    :   (   'array'
+        |   'mixed'
+        |   'resource'
+        )
+        {
+            $type = controller.resolvePrimitiveType($start, $typeModifier);
+            $start.setSymbol($type);
+        }
+    ;
 catch[RecognitionException re]{
     reportError(re);
     recover(input,re);
