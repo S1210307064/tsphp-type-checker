@@ -282,7 +282,6 @@ Following adoptions are applied to the original file from checkstyle:
             <property name="severity" value="warning"/>
         </module>
 
-
         <!-- Checks for Naming Conventions.                  -->
         <!-- See http://checkstyle.sf.net/config_naming.html -->
         <module name="ConstantName"/>
