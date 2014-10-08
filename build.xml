@@ -12,7 +12,7 @@
     <import file="${basedir}/ant/copyParserCommonToLibDev.xml" as="cp"/>
     <import file="${basedir}/ant/copyParser.xml" as="cp"/>
     <import file="${basedir}/ant/copyAntlr.xml" as="cp"/>
-    <import file="${basedir}/ant/copyQA.xml" as="cp"/>
+    <import file="${basedir}/ant/copyQA.xml" as="copy"/>
 
     <property file="${basedir}/ant/antlr.properties"/>
 
