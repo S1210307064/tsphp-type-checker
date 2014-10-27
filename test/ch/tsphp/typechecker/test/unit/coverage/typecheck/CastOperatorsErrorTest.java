@@ -42,7 +42,7 @@ public class CastOperatorsErrorTest extends ATypeCheckWalkerTest
     }
 
     @Test
-    public void NotACastOperatorAndBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
+    public void NotACastOperatorAndBacktrackingEnabled_StateFailedIsTrue() throws RecognitionException {
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPTypeCheckWalker walker = createWalker(ast);
@@ -54,7 +54,7 @@ public class CastOperatorsErrorTest extends ATypeCheckWalkerTest
     }
 
     @Test
-    public void TernaryWithErroneousConditionAndBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
+    public void TernaryWithErroneousConditionAndBacktrackingEnabled_StateFailedIsTrue() throws RecognitionException {
         ITSPHPAst ast = createAst(QuestionMark);
         ast.addChild(createAst(Plus));
 
@@ -67,7 +67,7 @@ public class CastOperatorsErrorTest extends ATypeCheckWalkerTest
     }
 
     @Test
-    public void TernaryWithErroneousTrueCaseAndBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
+    public void TernaryWithErroneousTrueCaseAndBacktrackingEnabled_StateFailedIsTrue() throws RecognitionException {
         ITSPHPAst ast = createAst(QuestionMark);
         ast.addChild(createVariable());
         ast.addChild(createAst(Plus));
@@ -81,7 +81,7 @@ public class CastOperatorsErrorTest extends ATypeCheckWalkerTest
     }
 
     @Test
-    public void TernaryWithErroneousFalseCaseAndBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
+    public void TernaryWithErroneousFalseCaseAndBacktrackingEnabled_StateFailedIsTrue() throws RecognitionException {
         ITSPHPAst ast = createAst(QuestionMark);
         ast.addChild(createVariable());
         ast.addChild(createVariable());
@@ -96,7 +96,7 @@ public class CastOperatorsErrorTest extends ATypeCheckWalkerTest
     }
 
     @Test
-    public void InstanceOfWithErroneousExpressionAndBacktrackingEnabled_stateFailedIsTrue() throws
+    public void InstanceOfWithErroneousExpressionAndBacktrackingEnabled_StateFailedIsTrue() throws
             RecognitionException {
         ITSPHPAst ast = createAst(Instanceof);
         ast.addChild(createAst(Plus));
@@ -124,7 +124,7 @@ public class CastOperatorsErrorTest extends ATypeCheckWalkerTest
     }
 
     @Test
-    public void InstanceOfWithWrongIdentifierAndBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
+    public void InstanceOfWithWrongIdentifierAndBacktrackingEnabled_StateFailedIsTrue() throws RecognitionException {
         ITSPHPAst ast = createAst(Instanceof);
         ast.addChild(createVariable());
         ast.addChild(createAst(Try));
@@ -138,7 +138,7 @@ public class CastOperatorsErrorTest extends ATypeCheckWalkerTest
     }
 
     @Test
-    public void NewWithWrongIdentifierAndBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
+    public void NewWithWrongIdentifierAndBacktrackingEnabled_StateFailedIsTrue() throws RecognitionException {
         ITSPHPAst ast = createAst(New);
         ast.addChild(createAst(Try));
 
@@ -151,7 +151,7 @@ public class CastOperatorsErrorTest extends ATypeCheckWalkerTest
     }
 
     @Test
-    public void CloneWithErroneousExpressionAndBacktrackingEnabled_stateFailedIsTrue() throws
+    public void CloneWithErroneousExpressionAndBacktrackingEnabled_StateFailedIsTrue() throws
             RecognitionException {
         ITSPHPAst ast = createAst(Clone);
         ast.addChild(createAst(Plus));

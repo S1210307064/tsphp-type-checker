@@ -35,7 +35,6 @@ public class DefinitionPhaseController implements IDefinitionPhaseController
         symbolFactory = aSymbolFactory;
         scopeFactory = aScopeFactory;
         globalDefaultNamespace = getOrCreateGlobalNamespace("\\");
-
     }
 
     @Override

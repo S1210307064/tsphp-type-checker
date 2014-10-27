@@ -56,7 +56,7 @@ public class NotCorrectStartNodeTypeTest extends ADefinitionWalkerTest
     }
 
     @Test
-    public void withBacktracking_stateFailedIsTrue()
+    public void withBacktracking_StateFailedIsTrue()
             throws RecognitionException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         ITSPHPAst ast = createAst(tokenType);
 
@@ -73,11 +73,11 @@ public class NotCorrectStartNodeTypeTest extends ADefinitionWalkerTest
     public static Collection<Object[]> testStrings() {
         return Arrays.asList(new Object[][]{
                 {"allTypesWithoutMixedAndResource", Try},
-                {"atom", Try},
                 {"blockConditional", Try},
                 {"bottomup", Try},
                 {"classDefinition", Try},
-                {"constant", Try},
+                //requires parameters
+//                {"constantDeclaration", Try},
                 {"constantDefinitionList", Try},
                 {"constructDefinition", Try},
                 {"exitNamespace", Try},
@@ -85,6 +85,7 @@ public class NotCorrectStartNodeTypeTest extends ADefinitionWalkerTest
                 {"foreachLoop", Try},
                 {"interfaceDefinition", Try},
                 {"methodFunctionCall", Try},
+                {"methodFunctionDefinition", Try},
                 {"namespaceDefinition", Try},
                 {"parameterDeclaration", Try},
                 {"parameterDeclarationList", Try},
@@ -92,6 +93,8 @@ public class NotCorrectStartNodeTypeTest extends ADefinitionWalkerTest
                 {"topdown", Try},
                 {"useDeclaration", Try},
                 {"useDefinitionList", Try},
+                //requires parameters
+//                {"variableDeclaration", Try},
                 {"variableDeclarationList", Try},
         });
     }

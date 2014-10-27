@@ -19,10 +19,10 @@ import java.util.Collection;
 import java.util.List;
 
 @RunWith(Parameterized.class)
-public class AtomConstantTest extends ADefinitionScopeTest
+public class ExpressionTest extends ADefinitionScopeTest
 {
 
-    public AtomConstantTest(String testString, ScopeTestStruct[] theTestStructs) {
+    public ExpressionTest(String testString, ScopeTestStruct[] theTestStructs) {
         super(testString, theTestStructs);
     }
 
@@ -40,8 +40,8 @@ public class AtomConstantTest extends ADefinitionScopeTest
         collection.addAll(ScopeTestHelper.testStrings("namespace a\\b{", "}", "\\a\\b\\.\\a\\b\\", new Integer[]{1}));
 
         //nBody function block
-        collection.addAll(ScopeTestHelper.testStrings("function void foo(){", "}", "\\.\\.foo()", new Integer[]{1, 0,
-                4}));
+        collection.addAll(ScopeTestHelper.testStrings("function void foo(){", "}", "\\.\\.foo()",
+                new Integer[]{1, 0, 4}));
 
         //nBody class classBody mDecl block
         collection.addAll(ScopeTestHelper.testStrings("class a{ function void foo(){", "}}",

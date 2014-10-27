@@ -53,11 +53,10 @@ topdown
     
         //symbols
     |   constantDefinitionList
-    |   parameterDeclarationList
     |   variableDeclarationList
+    |   parameterDeclarationList
     |   methodFunctionCall
-    |   atom
-    |   constant
+    |   expression
     |   returnBreakContinue
     ;
 
@@ -94,7 +93,7 @@ namespaceDefinition
     ;
 
 useDefinitionList
-    :   ^('use'    useDeclaration+)
+    :   ^('use' useDeclaration+)
     ;
     
 useDeclaration
@@ -121,9 +120,9 @@ methodFunctionDefinition
     :   ^(  (   METHOD_DECLARATION
             |   Function
             )
-            mMod=. ^(TYPE rtMod=. returnType=.) identifier=. . .
+            mMod=. ^(TYPE rtMod=. returnType=.) Identifier . .
         )
-        {currentScope = definer.defineMethod(currentScope,$mMod, $rtMod, $returnType, $identifier); }
+        {currentScope = definer.defineMethod(currentScope,$mMod, $rtMod, $returnType, $Identifier); }
     ;
     
 blockConditional
@@ -177,26 +176,26 @@ variableDeclaration[ITSPHPAst tMod, ITSPHPAst type]
     ;
     
 methodFunctionCall
-    :   (   ^(METHOD_CALL callee=. identifier=Identifier .)
-            {$callee.setScope(currentScope);}
-        |   ^(METHOD_CALL_STATIC callee=. identifier=Identifier .)
-            {$callee.setScope(currentScope);}
-        |   ^(METHOD_CALL_POSTFIX identifier=Identifier .)
-        |   ^(FUNCTION_CALL identifier=TYPE_NAME .)
-            {$identifier.setScope(currentScope);}
-        )
+    :   ^(METHOD_CALL callee=. identifier=Identifier .)
+        {$callee.setScope(currentScope);}
+    |   ^(METHOD_CALL_STATIC callee=. identifier=Identifier .)
+        {$callee.setScope(currentScope);}
+    |   ^(METHOD_CALL_POSTFIX identifier=Identifier .)
+    |   ^(FUNCTION_CALL identifier=TYPE_NAME .)
+        {$identifier.setScope(currentScope);}
     ;
 
-atom    
-    :   (   identifier='$this'
+expression    
+    :   (   identifier=CONSTANT
         |   identifier=VariableId
-        |    identifier='parent'
-        |    identifier='self'
+        |   identifier='$this'
+        |   identifier='parent'
+        |   identifier='self'
             //self and parent are already covered above
-        |    ^(CLASS_STATIC_ACCESS identifier=(TYPE_NAME|'self'|'parent') .)
-        |    ^(CAST ^(TYPE . type=allTypesWithoutMixedAndResource) .) {$identifier=$type.start;}
-        |    ^('instanceof' . (identifier=VariableId | identifier=TYPE_NAME))
-        |    ^('new' identifier=TYPE_NAME .)
+        |   ^(CLASS_STATIC_ACCESS identifier=(TYPE_NAME|'self'|'parent') .)
+        |   ^(CAST ^(TYPE . type=allTypesWithoutMixedAndResource) .) {$identifier=$type.start;}
+        |   ^('instanceof' . (identifier=VariableId | identifier=TYPE_NAME))
+        |   ^('new' identifier=TYPE_NAME .)
         )
         {$identifier.setScope(currentScope);}
     ;
@@ -210,16 +209,11 @@ allTypesWithoutMixedAndResource
     |   TYPE_NAME
     ;
 
-
-constant
-    :   cst=CONSTANT
-        {$cst.setScope(currentScope);}
-    ;
-
 returnBreakContinue
     :   (   Return
         |   Break
         |   Continue
         )
+        //will be used later to determine whether such a statement is outside a function, loop respectively.
         {$start.setScope(currentScope);}
     ;

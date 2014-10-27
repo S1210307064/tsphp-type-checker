@@ -22,7 +22,7 @@ public class ExpressionErrorTest extends ATypeCheckWalkerTest
 {
 
     @Test
-    public void AtWithErroneousExpressionAndBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
+    public void AtWithErroneousExpressionAndBacktrackingEnabled_StateFailedIsTrue() throws RecognitionException {
         ITSPHPAst ast = createAst(At);
         ast.addChild(createAst(Plus));
 

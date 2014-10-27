@@ -33,7 +33,7 @@ public class VariableInitErrorTest extends ATypeCheckWalkerTest
 {
 
     @Test
-    public void NotCorrectStartNodeAndBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
+    public void NotCorrectStartNodeAndBacktrackingEnabled_StateFailedIsTrue() throws RecognitionException {
         ITSPHPAst parent = createAst(EXPRESSION);
         ITSPHPAst ast = createAst(Try);
         parent.addChild(ast);
@@ -47,7 +47,7 @@ public class VariableInitErrorTest extends ATypeCheckWalkerTest
     }
 
     @Test
-    public void EmptyVariableDeclarationListAndBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
+    public void EmptyVariableDeclarationListAndBacktrackingEnabled_StateFailedIsTrue() throws RecognitionException {
         ITSPHPAst parent = createAst(EXPRESSION);
         ITSPHPAst ast = createAst(VARIABLE_DECLARATION_LIST);
         parent.addChild(ast);
@@ -78,7 +78,7 @@ public class VariableInitErrorTest extends ATypeCheckWalkerTest
     }
 
     @Test
-    public void ErroneousVariableDeclarationAndBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
+    public void ErroneousVariableDeclarationAndBacktrackingEnabled_StateFailedIsTrue() throws RecognitionException {
         ITSPHPAst parent = createAst(EXPRESSION);
         ITSPHPAst ast = createAst(VARIABLE_DECLARATION_LIST);
         parent.addChild(ast);
@@ -95,7 +95,7 @@ public class VariableInitErrorTest extends ATypeCheckWalkerTest
     }
 
     @Test
-    public void ErroneousVariableInitialisationAndBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
+    public void ErroneousVariableInitialisationAndBacktrackingEnabled_StateFailedIsTrue() throws RecognitionException {
         ITSPHPAst parent = createAst(EXPRESSION);
         ITSPHPAst ast = createAst(VARIABLE_DECLARATION_LIST);
         parent.addChild(ast);
@@ -127,7 +127,7 @@ public class VariableInitErrorTest extends ATypeCheckWalkerTest
     }
 
     @Test
-    public void ErroneousVariableListAndBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
+    public void ErroneousVariableListAndBacktrackingEnabled_StateFailedIsTrue() throws RecognitionException {
         ITSPHPAst parent = createAst(EXPRESSION);
         ITSPHPAst ast = createAst(VARIABLE_DECLARATION_LIST);
         parent.addChild(ast);

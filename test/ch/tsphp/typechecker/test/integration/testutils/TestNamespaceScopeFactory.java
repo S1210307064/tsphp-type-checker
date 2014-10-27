@@ -6,6 +6,7 @@
 
 package ch.tsphp.typechecker.test.integration.testutils;
 
+import ch.tsphp.common.IScope;
 import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
 import ch.tsphp.typechecker.scopes.IGlobalNamespaceScope;
 import ch.tsphp.typechecker.scopes.INamespaceScope;
@@ -15,12 +16,12 @@ import ch.tsphp.typechecker.scopes.ScopeFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TestScopeFactory extends ScopeFactory
+public class TestNamespaceScopeFactory extends ScopeFactory
 {
+    public List<IScope> scopes = new ArrayList<>();
 
-    public List<INamespaceScope> scopes = new ArrayList<>();
-
-    public TestScopeFactory(IScopeHelper theScopeHelper, ITypeCheckerErrorReporter theTypeCheckerErrorReporter) {
+    public TestNamespaceScopeFactory(IScopeHelper theScopeHelper,
+            ITypeCheckerErrorReporter theTypeCheckerErrorReporter) {
         super(theScopeHelper, theTypeCheckerErrorReporter);
     }
 

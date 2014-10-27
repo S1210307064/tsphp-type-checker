@@ -88,26 +88,26 @@ public class TypeHelper
 
         for (String type : types) {
             adder.add(type, type, new TreeSet<Integer>());
-            adder.add("cast " + type, type, new TreeSet<>(Arrays.asList(new Integer[]{cast})));
-            adder.add(type + "?", type, new TreeSet<>(Arrays.asList(new Integer[]{questionMark})));
             adder.add(type + "!", type, new TreeSet<>(Arrays.asList(new Integer[]{logicNot})));
-            adder.add("cast " + type + "?", type, new TreeSet<>(Arrays.asList(new Integer[]{cast, questionMark})));
-            adder.add("cast " + type + "!", type, new TreeSet<>(Arrays.asList(new Integer[]{cast, logicNot})));
+            adder.add(type + "?", type, new TreeSet<>(Arrays.asList(new Integer[]{questionMark})));
             adder.add(type + "!?", type, new TreeSet<>(Arrays.asList(new Integer[]{questionMark, logicNot})));
+            adder.add("cast " + type, type, new TreeSet<>(Arrays.asList(new Integer[]{cast})));
+            adder.add("cast " + type + "!", type, new TreeSet<>(Arrays.asList(new Integer[]{cast, logicNot})));
+            adder.add("cast " + type + "?", type, new TreeSet<>(Arrays.asList(new Integer[]{cast, questionMark})));
             adder.add("cast " + type + "!?", type,
                     new TreeSet<>(Arrays.asList(new Integer[]{cast, questionMark, logicNot})));
         }
 
         adder.add("array", "array", new TreeSet<Integer>());
-        adder.add("cast array", "array", new TreeSet<>(Arrays.asList(new Integer[]{cast})));
         adder.add("array!", "array", new TreeSet<>(Arrays.asList(new Integer[]{logicNot})));
+        adder.add("cast array", "array", new TreeSet<>(Arrays.asList(new Integer[]{cast})));
         adder.add("cast array!", "array", new TreeSet<>(Arrays.asList(new Integer[]{cast, logicNot})));
 
         types = getClassInterfaceTypes();
         for (String type : types) {
             adder.add(type, type, new TreeSet<Integer>());
-            adder.add("cast " + type, type, new TreeSet<>(Arrays.asList(new Integer[]{cast})));
             adder.add(type + "!", type, new TreeSet<>(Arrays.asList(new Integer[]{logicNot})));
+            adder.add("cast " + type, type, new TreeSet<>(Arrays.asList(new Integer[]{cast})));
             adder.add("cast " + type + "!", type, new TreeSet<>(Arrays.asList(new Integer[]{cast, logicNot})));
         }
         adder.add("resource", "resource", new TreeSet<Integer>());

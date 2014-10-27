@@ -58,7 +58,7 @@ public class NotCorrectStartNodeTypeTest extends ATypeCheckWalkerTest
     }
 
     @Test
-    public void withBacktracking_stateFailedIsTrue()
+    public void withBacktracking_StateFailedIsTrue()
             throws RecognitionException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         ITSPHPAst ast = createAst(tokenType);
 

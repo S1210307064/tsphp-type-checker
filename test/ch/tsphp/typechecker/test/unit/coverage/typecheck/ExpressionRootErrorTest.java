@@ -33,7 +33,7 @@ import static org.mockito.Mockito.verify;
 public class ExpressionRootErrorTest extends ATypeCheckWalkerTest
 {
     @Test
-    public void ExpressionWithErrorAndBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
+    public void ExpressionWithErrorAndBacktrackingEnabled_StateFailedIsTrue() throws RecognitionException {
         ITSPHPAst ast = createAst(EXPRESSION);
         ast.addChild(createAst(Try));
 
@@ -46,7 +46,7 @@ public class ExpressionRootErrorTest extends ATypeCheckWalkerTest
     }
 
     @Test
-    public void ReturnWithErrorAndBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
+    public void ReturnWithErrorAndBacktrackingEnabled_StateFailedIsTrue() throws RecognitionException {
         ITSPHPAst ast = createAst(Return);
         ast.addChild(createAst(Try));
 
@@ -59,7 +59,7 @@ public class ExpressionRootErrorTest extends ATypeCheckWalkerTest
     }
 
     @Test
-    public void ReturnWithErroneousExpressionAndBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
+    public void ReturnWithErroneousExpressionAndBacktrackingEnabled_StateFailedIsTrue() throws RecognitionException {
         ITSPHPAst ast = createAst(Return);
         ast.addChild(createAst(Plus));
 
@@ -72,7 +72,7 @@ public class ExpressionRootErrorTest extends ATypeCheckWalkerTest
     }
 
     @Test
-    public void ThrowWithErroneousExpressionAndBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
+    public void ThrowWithErroneousExpressionAndBacktrackingEnabled_StateFailedIsTrue() throws RecognitionException {
         ITSPHPAst ast = createAst(Throw);
         ast.addChild(createAst(Plus));
 
@@ -85,7 +85,7 @@ public class ExpressionRootErrorTest extends ATypeCheckWalkerTest
     }
 
     @Test
-    public void IfWithErroneousExpressionAndBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
+    public void IfWithErroneousExpressionAndBacktrackingEnabled_StateFailedIsTrue() throws RecognitionException {
         ITSPHPAst ast = createAst(Throw);
         ast.addChild(createAst(Plus));
 
@@ -98,7 +98,7 @@ public class ExpressionRootErrorTest extends ATypeCheckWalkerTest
     }
 
     @Test
-    public void WhileWithErroneousExpressionAndBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
+    public void WhileWithErroneousExpressionAndBacktrackingEnabled_StateFailedIsTrue() throws RecognitionException {
         ITSPHPAst ast = createAst(While);
         ast.addChild(createAst(Plus));
 
@@ -111,7 +111,7 @@ public class ExpressionRootErrorTest extends ATypeCheckWalkerTest
     }
 
     @Test
-    public void DoWithErroneousExpressionAndBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
+    public void DoWithErroneousExpressionAndBacktrackingEnabled_StateFailedIsTrue() throws RecognitionException {
         ITSPHPAst ast = createAst(Do);
         ast.addChild(createAst(EXPRESSION));
         ast.addChild(createAst(Plus));
@@ -125,7 +125,7 @@ public class ExpressionRootErrorTest extends ATypeCheckWalkerTest
     }
 
     @Test
-    public void ForWithoutConditionAndBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
+    public void ForWithoutConditionAndBacktrackingEnabled_StateFailedIsTrue() throws RecognitionException {
         ITSPHPAst ast = createAst(For);
         ast.addChild(createAst(VariableId));
         ast.addChild(createAst(Plus));
@@ -139,7 +139,7 @@ public class ExpressionRootErrorTest extends ATypeCheckWalkerTest
     }
 
     @Test
-    public void ForWithEmptyConditionAndBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
+    public void ForWithEmptyConditionAndBacktrackingEnabled_StateFailedIsTrue() throws RecognitionException {
         ITSPHPAst ast = createAst(For);
         ast.addChild(createAst(VariableId));
         ITSPHPAst exprList = createAst(EXPRESSION_LIST);
@@ -154,7 +154,7 @@ public class ExpressionRootErrorTest extends ATypeCheckWalkerTest
     }
 
     @Test
-    public void ForWithErroneousConditionAndBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
+    public void ForWithErroneousConditionAndBacktrackingEnabled_StateFailedIsTrue() throws RecognitionException {
         ITSPHPAst ast = createAst(For);
         ast.addChild(createAst(VariableId));
         ITSPHPAst exprList = createAst(EXPRESSION_LIST);
@@ -185,7 +185,7 @@ public class ExpressionRootErrorTest extends ATypeCheckWalkerTest
     }
 
     @Test
-    public void ForWithErroneousExpressionListAndBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
+    public void ForWithErroneousExpressionListAndBacktrackingEnabled_StateFailedIsTrue() throws RecognitionException {
         ITSPHPAst ast = createAst(For);
         ast.addChild(createAst(VariableId));
         ITSPHPAst exprList = createAst(EXPRESSION_LIST);

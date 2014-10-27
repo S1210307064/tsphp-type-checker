@@ -124,6 +124,11 @@ public class NamespaceScope implements INamespaceScope
     }
 
 
+    @SuppressWarnings("unchecked")
+    private <TCastTo> TCastTo unsafeCast(Object o) {
+        return (TCastTo) o;
+    }
+
     @Override
     public void addToInitialisedSymbols(ISymbol symbol, boolean isFullyInitialised) {
         globalNamespaceScope.addToInitialisedSymbols(symbol, isFullyInitialised);
@@ -142,11 +147,6 @@ public class NamespaceScope implements INamespaceScope
     @Override
     public boolean isPartiallyInitialised(ISymbol symbol) {
         return globalNamespaceScope.isPartiallyInitialised(symbol);
-    }
-
-    @SuppressWarnings("unchecked")
-    private <TCastTo> TCastTo unsafeCast(Object o) {
-        return (TCastTo) o;
     }
 
     @Override

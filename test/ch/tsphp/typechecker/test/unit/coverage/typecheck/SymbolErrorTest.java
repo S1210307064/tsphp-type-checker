@@ -30,7 +30,7 @@ public class SymbolErrorTest extends ATypeCheckWalkerTest
 {
 
     @Test
-    public void FunctionCallWithWrongIdentifierAndBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
+    public void FunctionCallWithWrongIdentifierAndBacktrackingEnabled_StateFailedIsTrue() throws RecognitionException {
         ITSPHPAst ast = createAst(FUNCTION_CALL);
         ast.addChild(createAst(Try));
 
@@ -43,7 +43,7 @@ public class SymbolErrorTest extends ATypeCheckWalkerTest
     }
 
     @Test
-    public void MethodCallWithWrongIdentifierAndBacktrackingEnabled_stateFailedIsTrue() throws RecognitionException {
+    public void MethodCallWithWrongIdentifierAndBacktrackingEnabled_StateFailedIsTrue() throws RecognitionException {
         ITSPHPAst ast = createAst(METHOD_CALL);
         ast.addChild(createAst(VariableId));
         ast.addChild(createAst(Try));
@@ -57,7 +57,7 @@ public class SymbolErrorTest extends ATypeCheckWalkerTest
     }
 
     @Test
-    public void StaticMethodCallWithWrongCalleeIdentifierAndBacktrackingEnabled_stateFailedIsTrue()
+    public void StaticMethodCallWithWrongCalleeIdentifierAndBacktrackingEnabled_StateFailedIsTrue()
             throws RecognitionException {
         ITSPHPAst ast = createAst(METHOD_CALL_STATIC);
         ast.addChild(createAst(Try));
@@ -71,7 +71,7 @@ public class SymbolErrorTest extends ATypeCheckWalkerTest
     }
 
     @Test
-    public void StaticMethodCallWithWrongIdentifierAndBacktrackingEnabled_stateFailedIsTrue()
+    public void StaticMethodCallWithWrongIdentifierAndBacktrackingEnabled_StateFailedIsTrue()
             throws RecognitionException {
         ITSPHPAst ast = createAst(METHOD_CALL_STATIC);
         ast.addChild(createAst(TYPE_NAME));
@@ -101,7 +101,7 @@ public class SymbolErrorTest extends ATypeCheckWalkerTest
     }
 
     @Test
-    public void StaticClassAccessWithWrongIdentifierAndBacktrackingEnabled_stateFailedIsTrue()
+    public void StaticClassAccessWithWrongIdentifierAndBacktrackingEnabled_StateFailedIsTrue()
             throws RecognitionException {
         ITSPHPAst ast = createAst(CLASS_STATIC_ACCESS);
         ast.addChild(createAst(TYPE_NAME));

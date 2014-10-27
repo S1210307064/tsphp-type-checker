@@ -99,12 +99,13 @@ public class TypeSystem implements ITypeSystem
 
     private final ISymbolFactory symbolFactory;
     private final IAstHelper astHelper;
-    //
+    private final IGlobalNamespaceScope globalDefaultNamespace;
+
     private final Map<Integer, List<IMethodSymbol>> unaryOperators = new HashMap<>();
     private final Map<Integer, List<IMethodSymbol>> binaryOperators = new HashMap<>();
     private final Map<ITypeSymbol, Map<ITypeSymbol, ICastingMethod>> implicitCastings = new HashMap<>();
     private final Map<ITypeSymbol, Map<ITypeSymbol, ICastingMethod>> explicitCastings = new HashMap<>();
-    //
+
     private INullTypeSymbol nullTypeSymbol;
     private IScalarTypeSymbol boolTypeSymbol;
     private IScalarTypeSymbol boolFalseableTypeSymbol;
@@ -129,7 +130,6 @@ public class TypeSystem implements ITypeSystem
     private IPseudoTypeSymbol mixedTypeSymbol;
     private IClassTypeSymbol exceptionTypeSymbol;
 
-    private final IGlobalNamespaceScope globalDefaultNamespace;
     private IVoidTypeSymbol voidTypeSymbol;
 
     public TypeSystem(ISymbolFactory theSymbolFactory, IAstHelper theAstHelper,

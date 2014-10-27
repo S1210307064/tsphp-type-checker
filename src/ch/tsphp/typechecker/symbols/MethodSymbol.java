@@ -10,7 +10,6 @@ import ch.tsphp.common.IScope;
 import ch.tsphp.common.ITSPHPAst;
 import ch.tsphp.common.symbols.ISymbol;
 import ch.tsphp.common.symbols.modifiers.IModifierSet;
-import ch.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tsphp.typechecker.scopes.IScopeHelper;
 
 import java.util.ArrayList;
@@ -47,47 +46,47 @@ public class MethodSymbol extends AScopedSymbol implements IMethodSymbol
 
     @Override
     public boolean isStatic() {
-        return modifiers.contains(TSPHPDefinitionWalker.Static);
+        return modifiers.isStatic();
     }
 
     @Override
     public boolean isFinal() {
-        return modifiers.contains(TSPHPDefinitionWalker.Final);
+        return modifiers.isFinal();
     }
 
     @Override
     public boolean isAbstract() {
-        return modifiers.contains(TSPHPDefinitionWalker.Abstract);
+        return modifiers.isAbstract();
     }
 
     @Override
     public boolean isAlwaysCasting() {
-        return returnTypeModifiers.contains(TSPHPDefinitionWalker.Cast);
+        return returnTypeModifiers.isAlwaysCasting();
     }
 
     @Override
     public boolean isPublic() {
-        return modifiers.contains(TSPHPDefinitionWalker.Public);
+        return modifiers.isPublic();
     }
 
     @Override
     public boolean isProtected() {
-        return modifiers.contains(TSPHPDefinitionWalker.Protected);
+        return modifiers.isProtected();
     }
 
     @Override
     public boolean isPrivate() {
-        return modifiers.contains(TSPHPDefinitionWalker.Private);
+        return modifiers.isPrivate();
     }
 
     @Override
     public boolean isFalseable() {
-        return modifiers.contains(TSPHPDefinitionWalker.LogicNot);
+        return returnTypeModifiers.isFalseable();
     }
 
     @Override
     public boolean isNullable() {
-        return modifiers.contains(TSPHPDefinitionWalker.QuestionMark);
+        return returnTypeModifiers.isNullable();
     }
 
     @Override

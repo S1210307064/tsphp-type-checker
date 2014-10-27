@@ -47,6 +47,22 @@ public class ScopeTestHelper
                     fullScopeName, accessToScope));
             collection.addAll(getAccessVariations(prefix, appendix, variableId[0], variableId[1],
                     fullScopeName, accessToScope));
+
+        }
+
+        variableIds = new String[][]{
+                {"$b", "$b"},
+                //TODO rstoll TSPHP-891 instanceof $this/self/parent should be allowed
+//                {"$this", "$this"},
+//                {"self", "self"},
+//                {"parent", "parent"}
+        };
+        for (String[] variableId : variableIds) {
+            collection.add(new Object[]{prefix + "$a instanceof " + variableId[0] + ";" + appendix,
+                    new ScopeTestStruct[]{new ScopeTestStruct(
+                            variableId[1], fullScopeName, getAstAccessOrder(accessToScope, new Integer[]{}, 0, 0, 1)
+                    )}
+            });
         }
 
         variableIds = new String[][]{
@@ -204,7 +220,7 @@ public class ScopeTestHelper
         });
     }
 
-    private static List<Integer> getAstAccessOrder(Integer[] accessToScope, Integer[] stepIn,
+    public static List<Integer> getAstAccessOrder(Integer[] accessToScope, Integer[] stepIn,
             Integer... accessToTestCandidate) {
         List<Integer> accessOrder = new ArrayList<>();
         accessOrder.addAll(Arrays.asList(accessToScope));

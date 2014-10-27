@@ -22,7 +22,7 @@ import ch.tsphp.typechecker.symbols.IModifierHelper;
 import ch.tsphp.typechecker.symbols.ModifierHelper;
 import ch.tsphp.typechecker.test.integration.testutils.ATest;
 import ch.tsphp.typechecker.test.integration.testutils.TestDefinitionPhaseController;
-import ch.tsphp.typechecker.test.integration.testutils.TestScopeFactory;
+import ch.tsphp.typechecker.test.integration.testutils.TestNamespaceScopeFactory;
 import ch.tsphp.typechecker.test.integration.testutils.TestSymbolFactory;
 import ch.tsphp.typechecker.test.integration.testutils.WriteExceptionToConsole;
 import org.antlr.runtime.tree.CommonTreeNodeStream;
@@ -38,7 +38,7 @@ public abstract class ADefinitionTest extends ATest
     protected String testString;
     protected String errorMessagePrefix;
     protected TestDefinitionPhaseController definitionPhaseController;
-    protected TestScopeFactory scopeFactory;
+    protected TestNamespaceScopeFactory scopeFactory;
     protected ITSPHPAst ast;
     protected CommonTreeNodeStream commonTreeNodeStream;
     protected ITSPHPAstAdaptor adaptor;
@@ -111,9 +111,9 @@ public abstract class ADefinitionTest extends ATest
         return new TSPHPAstAdaptor();
     }
 
-    protected TestScopeFactory createTestScopeFactory(
+    protected TestNamespaceScopeFactory createTestScopeFactory(
             IScopeHelper theScopeHelper, ITypeCheckerErrorReporter theTypeCheckerErrorReporter) {
-        return new TestScopeFactory(theScopeHelper, theTypeCheckerErrorReporter);
+        return new TestNamespaceScopeFactory(theScopeHelper, theTypeCheckerErrorReporter);
     }
 
     protected IModifierHelper createModifierHelper() {
@@ -131,7 +131,7 @@ public abstract class ADefinitionTest extends ATest
     }
 
     protected TestDefinitionPhaseController createTestDefiner(TestSymbolFactory theSymbolFactory,
-            TestScopeFactory theScopeFactory) {
+            TestNamespaceScopeFactory theScopeFactory) {
         return new TestDefinitionPhaseController(theSymbolFactory, theScopeFactory);
     }
 }
