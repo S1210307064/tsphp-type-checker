@@ -7,7 +7,7 @@
 package ch.tsphp.typechecker.test.integration.typecheck;
 
 import ch.tsphp.typechecker.test.integration.testutils.TypeHelper;
-import ch.tsphp.typechecker.test.integration.testutils.reference.ReferenceScopeTestStruct;
+import ch.tsphp.typechecker.test.integration.testutils.reference.TypeScopeTestStruct;
 import ch.tsphp.typechecker.test.integration.testutils.typecheck.AReferenceScopeTypeCheckTest;
 import ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType;
 import ch.tsphp.typechecker.test.integration.testutils.typecheck.TypeCheckStruct;
@@ -26,7 +26,7 @@ public class FunctionCallTest extends AReferenceScopeTypeCheckTest
 {
 
     public FunctionCallTest(String testString,
-            ReferenceScopeTestStruct[] scopeTestStructs, TypeCheckStruct[] typeCheckStructs) {
+            TypeScopeTestStruct[] scopeTestStructs, TypeCheckStruct[] typeCheckStructs) {
         super(testString, scopeTestStructs, typeCheckStructs);
     }
 
@@ -138,14 +138,14 @@ public class FunctionCallTest extends AReferenceScopeTypeCheckTest
         return collection;
     }
 
-    private static ReferenceScopeTestStruct[] scopeStructDefault(String type, String prefix, Integer... accessToScope) {
+    private static TypeScopeTestStruct[] scopeStructDefault(String type, String prefix, Integer... accessToScope) {
         return scopeStruct(type, prefix, "\\.\\.", accessToScope);
     }
 
-    private static ReferenceScopeTestStruct[] scopeStruct(String type, String prefix, String scope,
+    private static TypeScopeTestStruct[] scopeStruct(String type, String prefix, String scope,
             Integer... accessToScope) {
-        return new ReferenceScopeTestStruct[]{
-                new ReferenceScopeTestStruct(prefix + "foo()", scope, Arrays.asList(accessToScope), type, "\\.")
+        return new TypeScopeTestStruct[]{
+                new TypeScopeTestStruct(prefix + "foo()", scope, Arrays.asList(accessToScope), type, "\\.")
         };
     }
 }

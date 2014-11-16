@@ -10,13 +10,13 @@ import ch.tsphp.typechecker.test.integration.testutils.ScopeTestStruct;
 
 import java.util.List;
 
-public class ReferenceScopeTestStruct extends ScopeTestStruct
+public class TypeScopeTestStruct extends ScopeTestStruct
 {
 
     public String typeText;
     public String typeScope;
 
-    public ReferenceScopeTestStruct(String theAstText, String theAstScope, List<Integer> theAstAccessOrder,
+    public TypeScopeTestStruct(String theAstText, String theAstScope, List<Integer> theAstAccessOrder,
             String theTypeText, String theTypeScope) {
         super(theAstText, theAstScope, theAstAccessOrder);
         typeText = theTypeText;

@@ -7,7 +7,7 @@
 package ch.tsphp.typechecker.test.integration.reference;
 
 import ch.tsphp.typechecker.test.integration.testutils.ScopeTestStruct;
-import ch.tsphp.typechecker.test.integration.testutils.reference.AReferenceAstTest;
+import ch.tsphp.typechecker.test.integration.testutils.reference.AReferenceScopeTest;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,7 +17,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 @RunWith(Parameterized.class)
-public class ResolveNewTest extends AReferenceAstTest
+public class ResolveNewTest extends AReferenceScopeTest
 {
 
     public ResolveNewTest(String testString, ScopeTestStruct[] testStructs) {

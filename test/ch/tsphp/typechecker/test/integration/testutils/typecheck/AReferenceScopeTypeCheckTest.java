@@ -6,17 +6,17 @@
 
 package ch.tsphp.typechecker.test.integration.testutils.typecheck;
 
-import ch.tsphp.typechecker.test.integration.testutils.reference.AReferenceScopeTest;
-import ch.tsphp.typechecker.test.integration.testutils.reference.ReferenceScopeTestStruct;
+import ch.tsphp.typechecker.test.integration.testutils.reference.AReferenceTypeScopeTest;
+import ch.tsphp.typechecker.test.integration.testutils.reference.TypeScopeTestStruct;
 import org.junit.Ignore;
 
 @Ignore
 public abstract class AReferenceScopeTypeCheckTest extends AOperatorTypeCheckTest
 {
 
-    protected ReferenceScopeTestStruct[] scopeTestStructs;
+    protected TypeScopeTestStruct[] scopeTestStructs;
 
-    public AReferenceScopeTypeCheckTest(String testString, ReferenceScopeTestStruct[] theScopeTestStructs,
+    public AReferenceScopeTypeCheckTest(String testString, TypeScopeTestStruct[] theScopeTestStructs,
             TypeCheckStruct[] typeCheckStructs) {
         super(testString, typeCheckStructs);
         scopeTestStructs = theScopeTestStructs;
@@ -25,6 +25,6 @@ public abstract class AReferenceScopeTypeCheckTest extends AOperatorTypeCheckTes
     @Override
     protected void verifyTypeCheck() {
         super.verifyTypeCheck();
-        AReferenceScopeTest.verifyReferences(scopeTestStructs, ast, testString);
+        AReferenceTypeScopeTest.verifyReferences(scopeTestStructs, ast, testString);
     }
 }

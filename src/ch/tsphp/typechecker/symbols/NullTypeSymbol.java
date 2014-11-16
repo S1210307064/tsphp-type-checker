@@ -17,3 +17,4 @@ public class NullTypeSymbol extends ANullableTypeSymbol implements INullTypeSymb
         super("null", new HashSet<ITypeSymbol>());
     }
 }
+

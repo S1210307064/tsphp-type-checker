@@ -6,8 +6,8 @@
 
 package ch.tsphp.typechecker.test.integration.reference;
 
-import ch.tsphp.typechecker.test.integration.testutils.reference.AReferenceScopeTest;
-import ch.tsphp.typechecker.test.integration.testutils.reference.ReferenceScopeTestStruct;
+import ch.tsphp.typechecker.test.integration.testutils.reference.AReferenceTypeScopeTest;
+import ch.tsphp.typechecker.test.integration.testutils.reference.TypeScopeTestStruct;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,10 +17,10 @@ import java.util.Arrays;
 import java.util.Collection;
 
 @RunWith(Parameterized.class)
-public class ResolveConstantTest extends AReferenceScopeTest
+public class ResolveConstantTest extends AReferenceTypeScopeTest
 {
 
-    public ResolveConstantTest(String testString, ReferenceScopeTestStruct[] testStructs) {
+    public ResolveConstantTest(String testString, TypeScopeTestStruct[] testStructs) {
         super(testString, testStructs);
     }
 
@@ -58,17 +58,17 @@ public class ResolveConstantTest extends AReferenceScopeTest
                 //in expression (ok a; is also an expression but at the top of the AST)
                 {
                         "const int a=1; !(1+a-a/a*a && a) || a;",
-                        new ReferenceScopeTestStruct[]{
-                                new ReferenceScopeTestStruct("a#", "\\.\\.", Arrays.asList(1, 1, 0, 1), "int", "\\."),
-                                new ReferenceScopeTestStruct(
+                        new TypeScopeTestStruct[]{
+                                new TypeScopeTestStruct("a#", "\\.\\.", Arrays.asList(1, 1, 0, 1), "int", "\\."),
+                                new TypeScopeTestStruct(
                                         "a#", "\\.\\.", Arrays.asList(1, 1, 0, 0, 0, 1), "int", "\\."),
-                                new ReferenceScopeTestStruct(
+                                new TypeScopeTestStruct(
                                         "a#", "\\.\\.", Arrays.asList(1, 1, 0, 0, 0, 0, 0, 1), "int", "\\."),
-                                new ReferenceScopeTestStruct(
+                                new TypeScopeTestStruct(
                                         "a#", "\\.\\.", Arrays.asList(1, 1, 0, 0, 0, 0, 1, 1), "int", "\\."),
-                                new ReferenceScopeTestStruct(
+                                new TypeScopeTestStruct(
                                         "a#", "\\.\\.", Arrays.asList(1, 1, 0, 0, 0, 0, 1, 0, 0), "int", "\\."),
-                                new ReferenceScopeTestStruct(
+                                new TypeScopeTestStruct(
                                         "a#", "\\.\\.", Arrays.asList(1, 1, 0, 0, 0, 0, 1, 0, 1), "int", "\\.")
                         }
                 },
@@ -123,13 +123,13 @@ public class ResolveConstantTest extends AReferenceScopeTest
         });
     }
 
-    private static ReferenceScopeTestStruct[] structDefault(String prefix, Integer... accessToScope) {
+    private static TypeScopeTestStruct[] structDefault(String prefix, Integer... accessToScope) {
         return struct(prefix, "\\.\\.", accessToScope);
     }
 
-    private static ReferenceScopeTestStruct[] struct(String prefix, String scope, Integer... accessToScope) {
-        return new ReferenceScopeTestStruct[]{
-                new ReferenceScopeTestStruct(prefix + "a#", scope, Arrays.asList(accessToScope), "int", "\\.")
+    private static TypeScopeTestStruct[] struct(String prefix, String scope, Integer... accessToScope) {
+        return new TypeScopeTestStruct[]{
+                new TypeScopeTestStruct(prefix + "a#", scope, Arrays.asList(accessToScope), "int", "\\.")
         };
     }
 }

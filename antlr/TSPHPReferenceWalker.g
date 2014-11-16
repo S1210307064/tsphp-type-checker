@@ -302,6 +302,7 @@ methodModifier returns[boolean isAbstract]
 functionDefinition
 //Warning! start duplicated code as in functionDeclaration
     @init{
+        //defined above as field
         hasAtLeastOneReturnOrThrow = false;
         boolean shallCheckIfReturns = false;
     }
@@ -533,12 +534,12 @@ tryCatch[boolean shallCheckIfReturns] returns[boolean isReturning]
     ;
     
 catchBlocks[boolean shallCheckIfReturns] returns[boolean isReturning,List<ITSPHPAst> asts]
-//Warning! start duplicated code as in catchBlocks
+//Warning! start duplicated code as in switchContents
 @init{
     boolean isFirst = true;
     $asts = new ArrayList<>();
 }
-//Warning! start duplicated code as in catchBlocks
+//Warning! start duplicated code as in switchContents
     :   (   ^('catch' variableDeclarationList[true] blockConditional[$shallCheckIfReturns])
             {
                 if(shallCheckIfReturns){
@@ -652,20 +653,19 @@ binaryOperatorExcludingAssign
     ;
     
 assignOperator
-    :   (   '='
-        |   '+='
-        |   '-='
-        |   '*='
-        |   '/='
-        |   '&='
-        |   '|='
-        |   '^='
-        |   '%='
-        |   '.='
-        |   '<<='
-        |   '>>='
-        |   CAST_ASSIGN
-        )
+    :   '='
+    |   '+='
+    |   '-='
+    |   '*='
+    |   '/='
+    |   '&='
+    |   '|='
+    |   '^='
+    |   '%='
+    |   '.='
+    |   '<<='
+    |   '>>='
+    |   CAST_ASSIGN
     ;
 
 actualParameters
@@ -676,7 +676,7 @@ actualParameters
 functionCall
         // function call has no callee and is therefor not resolved in this phase.
         // resolving occurs in the type checking phase where overloads are taken into account
-    :   ^(FUNCTION_CALL    identifier=TYPE_NAME actualParameters)
+    :   ^(FUNCTION_CALL identifier=TYPE_NAME actualParameters)
     ;
     
 methodCall

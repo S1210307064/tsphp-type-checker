@@ -22,7 +22,7 @@ import java.util.Set;
 public class ErroneousTypeSymbol extends AErroneousScopedSymbol implements IErroneousTypeSymbol
 {
 
-    public static final String ERROR_MESSAGE = "ErroneousClassSymbol is not a real class.";
+    public static final String ERROR_MESSAGE = "ErroneousTypeSymbol is not a real class.";
     private final IMethodSymbol construct;
     private IVariableSymbol $this;
 

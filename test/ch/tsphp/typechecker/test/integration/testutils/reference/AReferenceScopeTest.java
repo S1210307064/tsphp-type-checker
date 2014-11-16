@@ -8,8 +8,8 @@ package ch.tsphp.typechecker.test.integration.testutils.reference;
 
 import ch.tsphp.common.ITSPHPAst;
 import ch.tsphp.common.symbols.ISymbol;
-import ch.tsphp.common.symbols.ITypeSymbol;
 import ch.tsphp.typechecker.test.integration.testutils.ScopeTestHelper;
+import ch.tsphp.typechecker.test.integration.testutils.ScopeTestStruct;
 import org.junit.Assert;
 import org.junit.Ignore;
 
@@ -17,9 +17,9 @@ import org.junit.Ignore;
 public abstract class AReferenceScopeTest extends AReferenceTest
 {
 
-    protected ReferenceScopeTestStruct[] testStructs;
+    protected ScopeTestStruct[] testStructs;
 
-    public AReferenceScopeTest(String testString, ReferenceScopeTestStruct[] theTestStructs) {
+    public AReferenceScopeTest(String testString, ScopeTestStruct[] theTestStructs) {
         super(testString);
         testStructs = theTestStructs;
     }
@@ -29,9 +29,10 @@ public abstract class AReferenceScopeTest extends AReferenceTest
         verifyReferences(testStructs, ast, testString);
     }
 
-    public static void verifyReferences(ReferenceScopeTestStruct[] scopeTestStructs, ITSPHPAst ast, String testString) {
-        for (ReferenceScopeTestStruct testStruct : scopeTestStructs) {
+    public static void verifyReferences(ScopeTestStruct[] testStructs, ITSPHPAst ast, String testString) {
+        for (ScopeTestStruct testStruct : testStructs) {
             ITSPHPAst testCandidate = ScopeTestHelper.getAst(ast, testString, testStruct);
+
             Assert.assertNotNull(testString + " failed. testCandidate is null. should be " + testStruct.astText,
                     testCandidate);
             Assert.assertEquals(testString + " failed. wrong ast text,", testStruct.astText,
@@ -41,13 +42,6 @@ public abstract class AReferenceScopeTest extends AReferenceTest
             Assert.assertNotNull(testString + " -- " + testStruct.astText + " failed. symbol was null", symbol);
             Assert.assertEquals(testString + " -- " + testStruct.astText + " failed. wrong scope,",
                     testStruct.astScope, ScopeTestHelper.getEnclosingScopeNames(symbol.getDefinitionScope()));
-
-            ITypeSymbol typeSymbol = symbol.getType();
-            Assert.assertNotNull(testString + " -- " + testStruct.astText + " failed. type was null", typeSymbol);
-            Assert.assertEquals(testString + " -- " + testStruct.astText + " failed. wrong type scope,",
-                    testStruct.typeScope, ScopeTestHelper.getEnclosingScopeNames(typeSymbol.getDefinitionScope()));
-            Assert.assertEquals(testString + " -- " + testStruct.astText + " failed. wrong type text,",
-                    testStruct.typeText, typeSymbol.getName());
         }
     }
 }

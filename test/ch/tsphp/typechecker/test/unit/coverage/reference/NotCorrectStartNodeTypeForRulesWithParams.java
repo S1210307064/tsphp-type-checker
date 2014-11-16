@@ -16,7 +16,6 @@ import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 import static ch.tsphp.typechecker.antlr.TSPHPDefinitionWalker.Try;
 import static org.mockito.Matchers.any;
@@ -32,20 +31,18 @@ public class NotCorrectStartNodeTypeForRulesWithParams extends AReferenceWalkerT
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));
-        Method method = TestTSPHPReferenceWalker.class.getMethod("allTypes", ITSPHPAst.class);
-        method.invoke(walker, new TSPHPAst());
+        walker.allTypes(new TSPHPAst());
 
         verify(walker).reportError(any(NoViableAltException.class));
     }
 
     @Test
-    public void arrayOrResourceOrMixed_WrongStartNode_reportNoViableAltException()
+    public void array_WrongStartNode_reportNoViableAltException()
             throws RecognitionException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));
-        Method method = TestTSPHPReferenceWalker.class.getMethod("arrayOrResourceOrMixed", ITSPHPAst.class);
-        method.invoke(walker, new TSPHPAst());
+        walker.arrayOrResourceOrMixed(new TSPHPAst());
 
         verify(walker).reportError(any(NoViableAltException.class));
     }
@@ -56,8 +53,7 @@ public class NotCorrectStartNodeTypeForRulesWithParams extends AReferenceWalkerT
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));
-        Method method = TestTSPHPReferenceWalker.class.getMethod("block", boolean.class);
-        method.invoke(walker, false);
+        walker.block(false);
 
         verify(walker).reportError(any(NoViableAltException.class));
     }
@@ -68,8 +64,7 @@ public class NotCorrectStartNodeTypeForRulesWithParams extends AReferenceWalkerT
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));
-        Method method = TestTSPHPReferenceWalker.class.getMethod("classInterfaceType", ITSPHPAst.class);
-        method.invoke(walker, new TSPHPAst());
+        walker.classInterfaceType(new TSPHPAst());
 
         verify(walker).reportError(any(NoViableAltException.class));
     }
@@ -80,8 +75,7 @@ public class NotCorrectStartNodeTypeForRulesWithParams extends AReferenceWalkerT
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));
-        Method method = TestTSPHPReferenceWalker.class.getMethod("classExtendsDeclaration", ITSPHPAst.class);
-        method.invoke(walker, new TSPHPAst());
+        walker.classExtendsDeclaration(new TSPHPAst());
 
         verify(walker).reportError(any(NoViableAltException.class));
     }
@@ -93,8 +87,7 @@ public class NotCorrectStartNodeTypeForRulesWithParams extends AReferenceWalkerT
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));
-        Method method = TestTSPHPReferenceWalker.class.getMethod("constDeclaration", ITypeSymbol.class);
-        method.invoke(walker, mock(ITypeSymbol.class));
+        walker.constDeclaration(mock(ITypeSymbol.class));
 
         verify(walker).reportError(any(NoViableAltException.class));
     }
@@ -105,8 +98,7 @@ public class NotCorrectStartNodeTypeForRulesWithParams extends AReferenceWalkerT
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));
-        Method method = TestTSPHPReferenceWalker.class.getMethod("implementsDeclaration", ITSPHPAst.class);
-        method.invoke(walker, new TSPHPAst());
+        walker.implementsDeclaration(new TSPHPAst());
 
         verify(walker).reportError(any(NoViableAltException.class));
     }
@@ -117,8 +109,7 @@ public class NotCorrectStartNodeTypeForRulesWithParams extends AReferenceWalkerT
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));
-        Method method = TestTSPHPReferenceWalker.class.getMethod("instructions", boolean.class);
-        method.invoke(walker, false);
+        walker.instructions(false);
 
         verify(walker).reportError(any(NoViableAltException.class));
     }
@@ -129,8 +120,7 @@ public class NotCorrectStartNodeTypeForRulesWithParams extends AReferenceWalkerT
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));
-        Method method = TestTSPHPReferenceWalker.class.getMethod("instruction", boolean.class);
-        method.invoke(walker, false);
+        walker.instruction(false);
 
         verify(walker).reportError(any(NoViableAltException.class));
     }
@@ -141,8 +131,7 @@ public class NotCorrectStartNodeTypeForRulesWithParams extends AReferenceWalkerT
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));
-        Method method = TestTSPHPReferenceWalker.class.getMethod("ifCondition", boolean.class);
-        method.invoke(walker, false);
+        walker.ifCondition(false);
 
         verify(walker).reportError(any(NoViableAltException.class));
     }
@@ -153,8 +142,7 @@ public class NotCorrectStartNodeTypeForRulesWithParams extends AReferenceWalkerT
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));
-        Method method = TestTSPHPReferenceWalker.class.getMethod("blockConditional", boolean.class);
-        method.invoke(walker, false);
+        walker.blockConditional(false);
 
         verify(walker).reportError(any(NoViableAltException.class));
     }
@@ -165,8 +153,7 @@ public class NotCorrectStartNodeTypeForRulesWithParams extends AReferenceWalkerT
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));
-        Method method = TestTSPHPReferenceWalker.class.getMethod("switchCondition", boolean.class);
-        method.invoke(walker, false);
+        walker.switchCondition(false);
 
         verify(walker).reportError(any(NoViableAltException.class));
     }
@@ -177,8 +164,7 @@ public class NotCorrectStartNodeTypeForRulesWithParams extends AReferenceWalkerT
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));
-        Method method = TestTSPHPReferenceWalker.class.getMethod("switchContents", boolean.class);
-        method.invoke(walker, false);
+        walker.switchContents(false);
 
         verify(walker).reportError(any(NoViableAltException.class));
     }
@@ -189,8 +175,7 @@ public class NotCorrectStartNodeTypeForRulesWithParams extends AReferenceWalkerT
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));
-        Method method = TestTSPHPReferenceWalker.class.getMethod("doWhileLoop", boolean.class);
-        method.invoke(walker, false);
+        walker.doWhileLoop(false);
 
         verify(walker).reportError(any(NoViableAltException.class));
     }
@@ -201,8 +186,7 @@ public class NotCorrectStartNodeTypeForRulesWithParams extends AReferenceWalkerT
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));
-        Method method = TestTSPHPReferenceWalker.class.getMethod("tryCatch", boolean.class);
-        method.invoke(walker, false);
+        walker.tryCatch(false);
 
         verify(walker).reportError(any(NoViableAltException.class));
     }
@@ -213,8 +197,7 @@ public class NotCorrectStartNodeTypeForRulesWithParams extends AReferenceWalkerT
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));
-        Method method = TestTSPHPReferenceWalker.class.getMethod("catchBlocks", boolean.class);
-        method.invoke(walker, false);
+        walker.catchBlocks(false);
 
         verify(walker).reportError(any(NoViableAltException.class));
     }
@@ -225,8 +208,7 @@ public class NotCorrectStartNodeTypeForRulesWithParams extends AReferenceWalkerT
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));
-        Method method = TestTSPHPReferenceWalker.class.getMethod("interfaceExtendsDeclaration", ITSPHPAst.class);
-        method.invoke(walker, new TSPHPAst());
+        walker.interfaceExtendsDeclaration(new TSPHPAst());
 
         verify(walker).reportError(any(NoViableAltException.class));
     }
@@ -238,8 +220,7 @@ public class NotCorrectStartNodeTypeForRulesWithParams extends AReferenceWalkerT
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));
-        Method method = TestTSPHPReferenceWalker.class.getMethod("returnTypes", ITSPHPAst.class);
-        method.invoke(walker, new TSPHPAst());
+        walker.returnTypes(new TSPHPAst());
 
         verify(walker).reportError(any(NoViableAltException.class));
     }
@@ -250,8 +231,7 @@ public class NotCorrectStartNodeTypeForRulesWithParams extends AReferenceWalkerT
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));
-        Method method = TestTSPHPReferenceWalker.class.getMethod("parameterNormalOrOptional", ITypeSymbol.class);
-        method.invoke(walker, mock(ITypeSymbol.class));
+        walker.parameterNormalOrOptional(mock(ITypeSymbol.class));
 
         verify(walker).reportError(any(NoViableAltException.class));
     }
@@ -263,8 +243,7 @@ public class NotCorrectStartNodeTypeForRulesWithParams extends AReferenceWalkerT
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));
-        Method method = TestTSPHPReferenceWalker.class.getMethod("scalarTypes", ITSPHPAst.class);
-        method.invoke(walker, new TSPHPAst());
+        walker.scalarTypes(new TSPHPAst());
 
         verify(walker).reportError(any(NoViableAltException.class));
     }
@@ -276,9 +255,7 @@ public class NotCorrectStartNodeTypeForRulesWithParams extends AReferenceWalkerT
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));
-        Method method = TestTSPHPReferenceWalker.class.getMethod(
-                "variableDeclaration", ITypeSymbol.class, boolean.class);
-        method.invoke(walker, mock(ITypeSymbol.class), false);
+        walker.variableDeclaration(mock(ITypeSymbol.class), false);
 
         verify(walker).reportError(any(NoViableAltException.class));
     }

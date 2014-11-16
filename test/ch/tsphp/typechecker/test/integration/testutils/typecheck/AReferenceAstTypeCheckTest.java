@@ -7,7 +7,7 @@
 package ch.tsphp.typechecker.test.integration.testutils.typecheck;
 
 import ch.tsphp.typechecker.test.integration.testutils.ScopeTestStruct;
-import ch.tsphp.typechecker.test.integration.testutils.reference.AReferenceAstTest;
+import ch.tsphp.typechecker.test.integration.testutils.reference.AReferenceScopeTest;
 import org.junit.Ignore;
 
 @Ignore
@@ -25,6 +25,6 @@ public abstract class AReferenceAstTypeCheckTest extends AOperatorTypeCheckTest
     @Override
     protected void verifyTypeCheck() {
         super.verifyTypeCheck();
-        AReferenceAstTest.verifyReferences(scopeTestStructs, ast, testString);
+        AReferenceScopeTest.verifyReferences(scopeTestStructs, ast, testString);
     }
 }

@@ -7,7 +7,7 @@
 package ch.tsphp.typechecker.test.integration.typecheck;
 
 import ch.tsphp.typechecker.test.integration.testutils.TypeHelper;
-import ch.tsphp.typechecker.test.integration.testutils.reference.ReferenceScopeTestStruct;
+import ch.tsphp.typechecker.test.integration.testutils.reference.TypeScopeTestStruct;
 import ch.tsphp.typechecker.test.integration.testutils.typecheck.AReferenceScopeTypeCheckTest;
 import ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType;
 import ch.tsphp.typechecker.test.integration.testutils.typecheck.TypeCheckStruct;
@@ -25,7 +25,7 @@ import java.util.List;
 public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
 {
 
-    public MethodCallWithoutParamsTest(String testString, ReferenceScopeTestStruct[] scopeTestStructs,
+    public MethodCallWithoutParamsTest(String testString, TypeScopeTestStruct[] scopeTestStructs,
             TypeCheckStruct[] typeCheckStructs) {
         super(testString, scopeTestStructs, typeCheckStructs);
     }
@@ -59,7 +59,7 @@ public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
                 collection.addAll(Arrays.asList(new Object[][]{
                         {
                                 kind + " a{function " + type[0] + " foo()" + body + "} a $a=null; $a->foo();",
-                                new ReferenceScopeTestStruct[]{
+                                new TypeScopeTestStruct[]{
                                         callee("a", dfault, "$a", dfault, 1, 2, 0, 0),
                                         functionDefault(returnTypeString, 1, 2, 0, 1)
                                 },
@@ -68,7 +68,7 @@ public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
                         {
                                 "namespace{" + kind + " a{function " + type[0] + " foo()" + body + "} "
                                         + "a $a=null; $a->foo();}",
-                                new ReferenceScopeTestStruct[]{
+                                new TypeScopeTestStruct[]{
                                         callee("a", dfault, "$a", dfault, 1, 2, 0, 0),
                                         functionDefault(returnTypeString, 1, 2, 0, 1)
                                 },
@@ -77,7 +77,7 @@ public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
                         {
                                 "namespace a{" + kind + " a{function " + type[0] + " foo()" + body + "} "
                                         + "a $a=null; $a->foo();}",
-                                new ReferenceScopeTestStruct[]{
+                                new TypeScopeTestStruct[]{
                                         callee("a", "\\a\\.\\a\\.", "$a", "\\a\\.\\a\\.", 1, 2, 0, 0),
                                         function(returnTypeString, "\\a\\.\\a\\.", 1, 2, 0, 1)
                                 },
@@ -86,7 +86,7 @@ public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
                         {
                                 "namespace {" + kind + " a{function " + type[0] + " foo()" + body + "}} " +
                                         "namespace { a $a=null; $a->foo();}",
-                                new ReferenceScopeTestStruct[]{
+                                new TypeScopeTestStruct[]{
                                         callee("a", dfault, "$a", dfault, 1, 1, 1, 0, 0),
                                         functionDefault(returnTypeString, 1, 1, 1, 0, 1)
                                 },
@@ -95,7 +95,7 @@ public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
                         {
                                 "namespace{ a $a=null; $a->foo();} "
                                         + "namespace{" + kind + " a{function " + type[0] + " foo()" + body + "}}",
-                                new ReferenceScopeTestStruct[]{
+                                new TypeScopeTestStruct[]{
                                         callee("a", dfault, "$a", dfault, 0, 1, 1, 0, 0),
                                         functionDefault(returnTypeString, 0, 1, 1, 0, 1)
                                 },
@@ -104,7 +104,7 @@ public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
                         {
                                 "namespace a{" + kind + " a{function " + type[0] + " foo()" + body + "}} "
                                         + "namespace a{ a $a=null; $a->foo();}",
-                                new ReferenceScopeTestStruct[]{
+                                new TypeScopeTestStruct[]{
                                         callee("a", "\\a\\.\\a\\.", "$a", "\\a\\.\\a\\.", 1, 1, 1, 0, 0),
                                         function(returnTypeString, "\\a\\.\\a\\.", 1, 1, 1, 0, 1)
                                 },
@@ -113,7 +113,7 @@ public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
                         {
                                 "namespace a{ a $a=null; $a->foo();} "
                                         + "namespace a{" + kind + " a{function " + type[0] + " foo()" + body + "}}",
-                                new ReferenceScopeTestStruct[]{
+                                new TypeScopeTestStruct[]{
                                         callee("a", "\\a\\.\\a\\.", "$a", "\\a\\.\\a\\.", 0, 1, 1, 0, 0),
                                         function(returnTypeString, "\\a\\.\\a\\.", 0, 1, 1, 0, 1)
                                 },
@@ -123,7 +123,7 @@ public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
                         {
                                 "namespace{" + kind + " a{function " + type[0] + " foo()" + body + "}} "
                                         + "namespace a{ \\a $a=null; $a->foo();}",
-                                new ReferenceScopeTestStruct[]{
+                                new TypeScopeTestStruct[]{
                                         callee("a", dfault, "$a", "\\a\\.\\a\\.", 1, 1, 1, 0, 0),
                                         functionDefault(returnTypeString, 1, 1, 1, 0, 1)
                                 },
@@ -132,7 +132,7 @@ public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
                         {
                                 "namespace a\\b{" + kind + " a{function " + type[0] + " foo()" + body + "}} "
                                         + "namespace x{ \\a\\b\\a $a=null; $a->foo();}",
-                                new ReferenceScopeTestStruct[]{
+                                new TypeScopeTestStruct[]{
                                         callee("a", "\\a\\b\\.\\a\\b\\.", "$a", "\\x\\.\\x\\.", 1, 1, 1, 0, 0),
                                         function(returnTypeString, "\\a\\b\\.\\a\\b\\.", 1, 1, 1, 0, 1)
                                 },
@@ -142,7 +142,7 @@ public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
                         {
                                 "namespace a\\b{" + kind + " a{function " + type[0] + " foo()" + body + "}} "
                                         + " namespace a{ b\\a $a=null; $a->foo();}",
-                                new ReferenceScopeTestStruct[]{
+                                new TypeScopeTestStruct[]{
                                         callee("a", "\\a\\b\\.\\a\\b\\.", "$a", "\\a\\.\\a\\.", 1, 1, 1, 0, 0),
                                         function(returnTypeString, "\\a\\b\\.\\a\\b\\.", 1, 1, 1, 0, 1)
                                 },
@@ -151,7 +151,7 @@ public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
                         {
                                 "namespace a\\b{" + kind + " a{function " + type[0] + " foo()" + body + "}} "
                                         + "namespace { a\\b\\a $a=null; $a->foo();}",
-                                new ReferenceScopeTestStruct[]{
+                                new TypeScopeTestStruct[]{
                                         callee("a", "\\a\\b\\.\\a\\b\\.", "$a", dfault, 1, 1, 1, 0, 0),
                                         function(returnTypeString, "\\a\\b\\.\\a\\b\\.", 1, 1, 1, 0, 1)
                                 },
@@ -161,7 +161,7 @@ public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
                         {
                                 "namespace a{" + kind + " a{function " + type[0] + " foo()" + body + "}} "
                                         + "namespace a\\a\\c{ use a as b; b\\a $a=null; $a->foo();}",
-                                new ReferenceScopeTestStruct[]{
+                                new TypeScopeTestStruct[]{
                                         callee("a", "\\a\\.\\a\\.", "$a", "\\a\\a\\c\\.\\a\\a\\c\\.", 1, 1, 2, 0, 0),
                                         function(returnTypeString, "\\a\\.\\a\\.", 1, 1, 2, 0, 1)
                                 },
@@ -170,7 +170,7 @@ public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
                         {
                                 "namespace a{" + kind + " a{function " + type[0] + " foo()" + body + "}} "
                                         + "namespace a\\a\\c{ use a\\a as b; b $a=null; $a->foo();}",
-                                new ReferenceScopeTestStruct[]{
+                                new TypeScopeTestStruct[]{
                                         callee("a", "\\a\\.\\a\\.", "$a", "\\a\\a\\c\\.\\a\\a\\c\\.", 1, 1, 2, 0, 0),
                                         function(returnTypeString, "\\a\\.\\a\\.", 1, 1, 2, 0, 1)
                                 },
@@ -191,7 +191,7 @@ public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
                     {
                             "class a{function " + type[0] + " foo()" + body + "} "
                                     + "class b extends a{function void bar(){$this->foo();}} ",
-                            new ReferenceScopeTestStruct[]{
+                            new TypeScopeTestStruct[]{
                                     callee("b", dfault, "$this", dfault, 1, 1, 4, 0, 4, 0, 0, 0),
                                     functionDefault(returnTypeString, 1, 1, 4, 0, 4, 0, 0, 1)
                             },
@@ -200,7 +200,7 @@ public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
                     {
                             "namespace a{class a{function " + type[0] + " foo()" + body + "} "
                                     + "class b extends a{function void bar(){$this->foo();}}} ",
-                            new ReferenceScopeTestStruct[]{
+                            new TypeScopeTestStruct[]{
                                     callee("b", "\\a\\.\\a\\.", "$this", "\\a\\.\\a\\.", 1, 1, 4, 0, 4, 0, 0, 0),
                                     function(returnTypeString, "\\a\\.\\a\\.", 1, 1, 4, 0, 4, 0, 0, 1)
                             },
@@ -208,7 +208,7 @@ public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
                     },
                     {
                             "class a{function " + type[0] + " foo()" + body + " function void bar(){$this->foo();}} ",
-                            new ReferenceScopeTestStruct[]{
+                            new TypeScopeTestStruct[]{
                                     callee("a", dfault, "$this", dfault, 1, 0, 4, 1, 4, 0, 0, 0),
                                     functionDefault(returnTypeString, 1, 0, 4, 1, 4, 0, 0, 1)
                             },
@@ -217,7 +217,7 @@ public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
                     {
                             "namespace a{class a{function " + type[0] + " foo()" + body + " function void bar()" +
                                     "{$this->foo();}}} ",
-                            new ReferenceScopeTestStruct[]{
+                            new TypeScopeTestStruct[]{
                                     callee("a", "\\a\\.\\a\\.", "$this", "\\a\\.\\a\\.", 1, 0, 4, 1, 4, 0, 0, 0),
                                     function(returnTypeString, "\\a\\.\\a\\.", 1, 0, 4, 1, 4, 0, 0, 1)
                             },
@@ -226,7 +226,7 @@ public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
                     //self
                     {
                             "class a{function " + type[0] + " foo()" + body + " function void bar(){self::foo();}} ",
-                            new ReferenceScopeTestStruct[]{
+                            new TypeScopeTestStruct[]{
                                     callee("a", dfault, "self", dfault, 1, 0, 4, 1, 4, 0, 0, 0),
                                     functionDefault(returnTypeString, 1, 0, 4, 1, 4, 0, 0, 1)
                             },
@@ -235,7 +235,7 @@ public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
                     {
                             "namespace a{class a{function " + type[0] + " foo()" + body
                                     + " function void bar(){self::foo();}}} ",
-                            new ReferenceScopeTestStruct[]{
+                            new TypeScopeTestStruct[]{
                                     callee("a", "\\a\\.\\a\\.", "self", "\\a\\.\\a\\.", 1, 0, 4, 1, 4, 0, 0, 0),
                                     function(returnTypeString, "\\a\\.\\a\\.", 1, 0, 4, 1, 4, 0, 0, 1)
                             },
@@ -244,7 +244,7 @@ public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
                     {
                             "class a{function " + type[0] + " foo()" + body + "} "
                                     + "class b extends a{function void bar(){self::foo();}} ",
-                            new ReferenceScopeTestStruct[]{
+                            new TypeScopeTestStruct[]{
                                     callee("b", dfault, "self", dfault, 1, 1, 4, 0, 4, 0, 0, 0),
                                     functionDefault(returnTypeString, 1, 1, 4, 0, 4, 0, 0, 1)
                             },
@@ -253,7 +253,7 @@ public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
                     {
                             "namespace a{class a{function " + type[0] + " foo()" + body + " } "
                                     + "class b extends a{function void bar(){self::foo();}}} ",
-                            new ReferenceScopeTestStruct[]{
+                            new TypeScopeTestStruct[]{
                                     callee("b", "\\a\\.\\a\\.", "self", "\\a\\.\\a\\.", 1, 1, 4, 0, 4, 0, 0, 0),
                                     function(returnTypeString, "\\a\\.\\a\\.", 1, 1, 4, 0, 4, 0, 0, 1)
                             },
@@ -263,7 +263,7 @@ public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
                     {
                             "class a{function " + type[0] + " foo()" + body + "} "
                                     + "class b extends a{function void bar(){parent::foo();}} ",
-                            new ReferenceScopeTestStruct[]{
+                            new TypeScopeTestStruct[]{
                                     callee("a", dfault, "parent", dfault, 1, 1, 4, 0, 4, 0, 0, 0),
                                     functionDefault(returnTypeString, 1, 1, 4, 0, 4, 0, 0, 1)
                             },
@@ -272,7 +272,7 @@ public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
                     {
                             "namespace a{class a{function " + type[0] + " foo()" + body + " } "
                                     + "class b extends a{function void bar(){parent::foo();}}} ",
-                            new ReferenceScopeTestStruct[]{
+                            new TypeScopeTestStruct[]{
                                     callee("a", "\\a\\.\\a\\.", "parent", "\\a\\.\\a\\.", 1, 1, 4, 0, 4, 0, 0, 0),
                                     function(returnTypeString, "\\a\\.\\a\\.", 1, 1, 4, 0, 4, 0, 0, 1)
                             },
@@ -284,16 +284,16 @@ public class MethodCallWithoutParamsTest extends AReferenceScopeTypeCheckTest
         return collection;
     }
 
-    private static ReferenceScopeTestStruct callee(String type, String typeScope,
+    private static TypeScopeTestStruct callee(String type, String typeScope,
             String callee, String scope, Integer... accessToScope) {
-        return new ReferenceScopeTestStruct(callee, scope, Arrays.asList(accessToScope), type, typeScope);
+        return new TypeScopeTestStruct(callee, scope, Arrays.asList(accessToScope), type, typeScope);
     }
 
-    private static ReferenceScopeTestStruct functionDefault(String type, Integer... accessToScope) {
+    private static TypeScopeTestStruct functionDefault(String type, Integer... accessToScope) {
         return function(type, "\\.\\.", accessToScope);
     }
 
-    private static ReferenceScopeTestStruct function(String type, String scope, Integer... accessToScope) {
-        return new ReferenceScopeTestStruct("foo()", scope + "a.", Arrays.asList(accessToScope), type, "\\.");
+    private static TypeScopeTestStruct function(String type, String scope, Integer... accessToScope) {
+        return new TypeScopeTestStruct("foo()", scope + "a.", Arrays.asList(accessToScope), type, "\\.");
     }
 }

@@ -23,12 +23,12 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @RunWith(Parameterized.class)
-public class ResolveVariableTest extends AVerifyTimesReferenceTest
+public class ResolveVariableVerifyTimesTest extends AVerifyTimesReferenceTest
 {
 
     private static List<Object[]> collection;
 
-    public ResolveVariableTest(String testString, int howManyTimes) {
+    public ResolveVariableVerifyTimesTest(String testString, int howManyTimes) {
         super(testString, howManyTimes);
     }
 

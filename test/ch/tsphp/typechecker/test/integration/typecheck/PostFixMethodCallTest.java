@@ -6,7 +6,7 @@
 
 package ch.tsphp.typechecker.test.integration.typecheck;
 
-import ch.tsphp.typechecker.test.integration.testutils.reference.ReferenceScopeTestStruct;
+import ch.tsphp.typechecker.test.integration.testutils.reference.TypeScopeTestStruct;
 import ch.tsphp.typechecker.test.integration.testutils.typecheck.AReferenceScopeTypeCheckTest;
 import ch.tsphp.typechecker.test.integration.testutils.typecheck.EBuiltInType;
 import ch.tsphp.typechecker.test.integration.testutils.typecheck.TypeCheckStruct;
@@ -22,7 +22,7 @@ import java.util.Collection;
 public class PostFixMethodCallTest extends AReferenceScopeTypeCheckTest
 {
 
-    public PostFixMethodCallTest(String testString, ReferenceScopeTestStruct[] scopeTestStructs,
+    public PostFixMethodCallTest(String testString, TypeScopeTestStruct[] scopeTestStructs,
             TypeCheckStruct[] typeCheckStructs) {
         super(testString, scopeTestStructs, typeCheckStructs);
     }
@@ -38,7 +38,7 @@ public class PostFixMethodCallTest extends AReferenceScopeTypeCheckTest
         return Arrays.asList(new Object[][]{
                 {"function Exception foo(){return new Exception;}"
                         + "foo()->getMessage();",
-                        new ReferenceScopeTestStruct[]{
+                        new TypeScopeTestStruct[]{
                                 callee("Exception", "\\.", "foo()", dfault, 1, 1, 0, 0, 0),
                                 method("\\.Exception.", "getMessage()", "\\.", "string?", 1, 1, 0, 1)
                         },
@@ -49,7 +49,7 @@ public class PostFixMethodCallTest extends AReferenceScopeTypeCheckTest
                 },
                 {"class A{function Exception foo(){return new Exception;}}"
                         + "A $a = new A; $a->foo()->getMessage();",
-                        new ReferenceScopeTestStruct[]{
+                        new TypeScopeTestStruct[]{
                                 callee("A", "\\.\\.", "$a", dfault, 1, 2, 0, 0, 0),
                                 method("\\.\\.A.", "foo()", "\\.", "Exception", 1, 2, 0, 0, 1),
                                 method("\\.Exception.", "getMessage()", "\\.", "string?", 1, 2, 0, 1),
@@ -61,7 +61,7 @@ public class PostFixMethodCallTest extends AReferenceScopeTypeCheckTest
                 },
                 {"class A{static function Exception foo(){return new Exception;}}"
                         + "A::foo()->getMessage();",
-                        new ReferenceScopeTestStruct[]{
+                        new TypeScopeTestStruct[]{
                                 method("\\.\\.A.", "foo()", "\\.", "Exception", 1, 1, 0, 0, 1),
                                 method("\\.Exception.", "getMessage()", "\\.", "string?", 1, 1, 0, 1),
                         },
@@ -73,14 +73,14 @@ public class PostFixMethodCallTest extends AReferenceScopeTypeCheckTest
         });
     }
 
-    private static ReferenceScopeTestStruct callee(String type, String typeScope,
+    private static TypeScopeTestStruct callee(String type, String typeScope,
             String callee, String scope, Integer... accessToScope) {
-        return new ReferenceScopeTestStruct(callee, scope, Arrays.asList(accessToScope), type, typeScope);
+        return new TypeScopeTestStruct(callee, scope, Arrays.asList(accessToScope), type, typeScope);
     }
 
-    private static ReferenceScopeTestStruct method(String classScope, String methodName,
+    private static TypeScopeTestStruct method(String classScope, String methodName,
             String returnTypeScope, String type, Integer... accessToScope) {
-        return new ReferenceScopeTestStruct(methodName, classScope, Arrays.asList(accessToScope), type,
+        return new TypeScopeTestStruct(methodName, classScope, Arrays.asList(accessToScope), type,
                 returnTypeScope);
     }
 }
