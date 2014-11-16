@@ -11,7 +11,6 @@ import ch.tsphp.common.IScope;
 import ch.tsphp.common.ITSPHPAst;
 import ch.tsphp.common.LowerCaseStringMap;
 import ch.tsphp.common.exceptions.DefinitionException;
-import ch.tsphp.common.exceptions.ReferenceException;
 import ch.tsphp.common.symbols.ISymbol;
 import ch.tsphp.common.symbols.ITypeSymbol;
 import ch.tsphp.typechecker.error.ITypeCheckerErrorReporter;
@@ -164,8 +163,7 @@ public class SymbolResolver implements ISymbolResolver
                 if (globalNamespaceScope != null) {
                     symbol = globalNamespaceScope.resolve(typeAst);
                 } else {
-                    ReferenceException ex = typeCheckErrorReporter.notDefined(typeAst);
-                    symbol = symbolFactory.createErroneousTypeSymbol(typeAst, ex);
+                    symbol = null;
                 }
             }
         } else {
