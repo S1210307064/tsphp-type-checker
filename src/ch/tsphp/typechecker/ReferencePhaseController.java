@@ -357,7 +357,7 @@ public class ReferencePhaseController implements IReferencePhaseController
             ITSPHPAst definitionAst = symbol.getDefinitionAst();
             isNotUsedBefore = definitionAst.isDefinedEarlierThan(ast);
             if (!isNotUsedBefore) {
-                typeCheckErrorReporter.forwardReference(ast, definitionAst);
+                typeCheckErrorReporter.forwardReference(definitionAst, ast);
             }
         }
         return isNotUsedBefore;

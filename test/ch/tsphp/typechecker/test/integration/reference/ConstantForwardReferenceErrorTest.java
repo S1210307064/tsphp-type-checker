@@ -49,10 +49,10 @@ public class ConstantForwardReferenceErrorTest extends AReferenceDefinitionError
     }
 
     private static void addVariations(String prefix, String appendix) {
-        DefinitionErrorDto[] errorDto = new DefinitionErrorDto[]{new DefinitionErrorDto("a#", 2, 1, "a#", 3, 1)};
+        DefinitionErrorDto[] errorDto = new DefinitionErrorDto[]{new DefinitionErrorDto("a#", 3, 1, "a#", 2, 1)};
         DefinitionErrorDto[] twoErrorDto = new DefinitionErrorDto[]{
-                new DefinitionErrorDto("a#", 2, 1, "a#", 4, 1),
-                new DefinitionErrorDto("a#", 3, 1, "a#", 4, 1)
+                new DefinitionErrorDto("a#", 4, 1, "a#", 2, 1),
+                new DefinitionErrorDto("a#", 4, 1, "a#", 3, 1)
         };
         collection.addAll(Arrays.asList(new Object[][]{
 
