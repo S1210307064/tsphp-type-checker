@@ -42,53 +42,6 @@ public class UseDoubleDefinitionErrorTest extends AReferenceDefinitionErrorTest
         collection.addAll(getVariations("namespace a\\b;", ""));
         collection.addAll(getVariations("namespace a\\b\\z{", "}"));
 
-        DefinitionErrorDto[] errorDtos = new DefinitionErrorDto[]{new DefinitionErrorDto("z", 2, 1, "z", 3, 1)};
-        collection.addAll(Arrays.asList(new Object[][]{
-                {
-                        "namespace b; use \n b\\z; class \n z{} z $b;",
-                        errorDtos
-                },
-                {
-                        "namespace b {use\n b\\z; class \n z{} z $b;}",
-                        errorDtos
-                },
-                {
-                        "namespace b\\c {use\n b\\c\\z; class \n z{} z $b;}",
-                        errorDtos
-                },
-                {
-                        "namespace b; use \n b\\z; interface \n z{} z $b;",
-                        errorDtos
-                },
-                {
-                        "namespace b {use\n b\\z; interface \n z{} z $b;}",
-                        errorDtos
-                },
-                {
-                        "namespace b\\c {use\n b\\c\\z; interface \n z{} z $b;}",
-                        errorDtos
-                }
-        }));
-        errorDtos = new DefinitionErrorDto[]{new DefinitionErrorDto("Z", 2, 1, "z", 3, 1)};
-        collection.addAll(Arrays.asList(new Object[][]{
-                //case insensitive - see TSPHP-622
-                {
-                        "namespace b; use b\\z as\n Z; class \n z{} z $b;",
-                        errorDtos
-                },
-                {
-                        "namespace b {use b\\z as\n Z; class \n z{} z $b;}",
-                        errorDtos
-                },
-                {
-                        "namespace b; use b\\z as\n Z; interface \n z{} z $b;",
-                        errorDtos
-                },
-                {
-                        "namespace b {use b\\z as\n Z; interface \n z{} z $b;}",
-                        errorDtos
-                },
-        }));
         return collection;
     }
 

@@ -20,10 +20,10 @@ import java.util.Collection;
 import java.util.List;
 
 @RunWith(Parameterized.class)
-public class ConstantDoubleDefinitionErrorTest extends AReferenceDefinitionErrorTest
+public class ClassConstantDoubleDefinitionErrorTest extends AReferenceDefinitionErrorTest
 {
 
-    public ConstantDoubleDefinitionErrorTest(String testString, DefinitionErrorDto[] expectedLinesAndPositions) {
+    public ClassConstantDoubleDefinitionErrorTest(String testString, DefinitionErrorDto[] expectedLinesAndPositions) {
         super(testString, expectedLinesAndPositions);
     }
 
@@ -42,36 +42,18 @@ public class ConstantDoubleDefinitionErrorTest extends AReferenceDefinitionError
         };
 
         collection.addAll(Arrays.asList(new Object[][]{
-                {"const int \n a=1; const int \n a=1;", errorDto},
-                {"const int \n a=1; const int \n a=1; const int \n a=1;", errorDtoTwo},
-                //not in same namespace scope but in same global namespace scope
-                {"namespace{const int \n a=1;} namespace{ const int \n a=1;}", errorDto},
-                {"namespace a{const int \n a=1;} namespace a{ const int \n a=1;}", errorDto},
-                {"namespace a\\b{const int \n a=1;} namespace a\\b{ const int \n a=1;}", errorDto},
-                {
-                        "namespace{const int \n a=1;} namespace{const int \n a=1;} namespace{const int \n a=1;}",
-                        errorDtoTwo
-                },
-                {
-                        "namespace a{const int \n a=1;} namespace a{const int \n a=1;}  namespace a{const int \n a=1;}",
-                        errorDtoTwo
-                },
-                {
-                        "namespace a\\b{const int \n a=1;} namespace a\\b{const int \n a=1;}"
-                                + "namespace a\\b{const int \n a=1;}",
-                        errorDtoTwo
-                },
-                //does not matter if it is a comma initialisation
-                {"const int \n a=1,\n a=1;", errorDto},
-                {"const int \n a=1,\n a=1,\n a=2;", errorDtoTwo},
+                {"class A{const int \n a=1; const int \n a=1;}", errorDto},
+                {"class A{const int \n a=1; const int \n a=1; const int \n a=1;}", errorDtoTwo},
+                {"class A{ const int \n a=1,\n a=1;}", errorDto},
+                {"class A{ const int \n a=1,\n a=1,\n a=2;}", errorDtoTwo}
         }));
 
         String[] types = TypeHelper.getScalarTypes();
         for (String type : types) {
             //it does not matter if type differs
             collection.addAll(Arrays.asList(new Object[][]{
-                    {"const " + type + "\n a=1; const int\n a=1;", errorDto},
-                    {"const " + type + "\n a=1; const int\n a=1; const float\n a=3;", errorDtoTwo},
+                    {"class A{const " + type + "\n a=1; const int\n a=1;}", errorDto},
+                    {"class A{const " + type + "\n a=1; const int\n a=1; const float\n a=3;}", errorDtoTwo},
             }));
         }
 

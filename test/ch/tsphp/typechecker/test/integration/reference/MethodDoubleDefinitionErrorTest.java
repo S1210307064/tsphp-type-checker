@@ -47,7 +47,8 @@ public class MethodDoubleDefinitionErrorTest extends AReferenceDefinitionErrorTe
     public static Collection<Object[]> getVariations(String prefix, String appendix) {
         Collection<Object[]> collection = new ArrayList<>();
         collection.addAll(getModifiers(prefix, appendix));
-        collection.addAll(FunctionDoubleDefinitionErrorTest.getVariations(prefix + "class a{ ", appendix + "}"));
+        collection.addAll(FunctionDoubleDefinitionErrorTest.getNamespaceWithoutBracketVariations(prefix + "class a{ " +
+                "", appendix + "}"));
         return collection;
     }
 

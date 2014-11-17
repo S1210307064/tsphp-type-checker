@@ -15,8 +15,6 @@ import org.antlr.runtime.NoViableAltException;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
-import java.lang.reflect.InvocationTargetException;
-
 import static ch.tsphp.typechecker.antlr.TSPHPDefinitionWalker.Try;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -26,8 +24,7 @@ import static org.mockito.Mockito.verify;
 public class NotCorrectStartNodeTypeForRulesWithParams extends AReferenceWalkerTest
 {
     @Test
-    public void allTypes_WrongStartNode_reportNoViableAltException()
-            throws RecognitionException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void allTypes_WrongStartNode_reportNoViableAltException() throws RecognitionException {
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));
@@ -37,8 +34,7 @@ public class NotCorrectStartNodeTypeForRulesWithParams extends AReferenceWalkerT
     }
 
     @Test
-    public void array_WrongStartNode_reportNoViableAltException()
-            throws RecognitionException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void array_WrongStartNode_reportNoViableAltException() throws RecognitionException {
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));
@@ -48,8 +44,7 @@ public class NotCorrectStartNodeTypeForRulesWithParams extends AReferenceWalkerT
     }
 
     @Test
-    public void block_WrongStartNode_reportNoViableAltException()
-            throws RecognitionException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void block_WrongStartNode_reportNoViableAltException() throws RecognitionException {
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));
@@ -59,8 +54,7 @@ public class NotCorrectStartNodeTypeForRulesWithParams extends AReferenceWalkerT
     }
 
     @Test
-    public void classInterfaceType_WrongStartNode_reportNoViableAltException()
-            throws RecognitionException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void classInterfaceType_WrongStartNode_reportNoViableAltException() throws RecognitionException {
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));
@@ -70,8 +64,7 @@ public class NotCorrectStartNodeTypeForRulesWithParams extends AReferenceWalkerT
     }
 
     @Test
-    public void classExtendsDeclaration_WrongStartNode_reportNoViableAltException()
-            throws RecognitionException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void classExtendsDeclaration_WrongStartNode_reportNoViableAltException() throws RecognitionException {
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));
@@ -82,8 +75,7 @@ public class NotCorrectStartNodeTypeForRulesWithParams extends AReferenceWalkerT
 
 
     @Test
-    public void constDeclaration_WrongStartNode_reportNoViableAltException()
-            throws RecognitionException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void constDeclaration_WrongStartNode_reportNoViableAltException() throws RecognitionException {
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));
@@ -93,8 +85,7 @@ public class NotCorrectStartNodeTypeForRulesWithParams extends AReferenceWalkerT
     }
 
     @Test
-    public void implementsDeclaration_WrongStartNode_reportNoViableAltException()
-            throws RecognitionException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void implementsDeclaration_WrongStartNode_reportNoViableAltException() throws RecognitionException {
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));
@@ -104,8 +95,7 @@ public class NotCorrectStartNodeTypeForRulesWithParams extends AReferenceWalkerT
     }
 
     @Test
-    public void instructions_WrongStartNode_reportNoViableAltException()
-            throws RecognitionException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void instructions_WrongStartNode_reportNoViableAltException() throws RecognitionException {
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));
@@ -115,8 +105,7 @@ public class NotCorrectStartNodeTypeForRulesWithParams extends AReferenceWalkerT
     }
 
     @Test
-    public void instruction_WrongStartNode_reportNoViableAltException()
-            throws RecognitionException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void instruction_WrongStartNode_reportNoViableAltException() throws RecognitionException {
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));
@@ -126,8 +115,7 @@ public class NotCorrectStartNodeTypeForRulesWithParams extends AReferenceWalkerT
     }
 
     @Test
-    public void ifCondition_WrongStartNode_reportNoViableAltException()
-            throws RecognitionException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void ifCondition_WrongStartNode_reportNoViableAltException() throws RecognitionException {
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));
@@ -137,8 +125,7 @@ public class NotCorrectStartNodeTypeForRulesWithParams extends AReferenceWalkerT
     }
 
     @Test
-    public void blockConditional_WrongStartNode_reportNoViableAltException()
-            throws RecognitionException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void blockConditional_WrongStartNode_reportNoViableAltException() throws RecognitionException {
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));
@@ -148,8 +135,7 @@ public class NotCorrectStartNodeTypeForRulesWithParams extends AReferenceWalkerT
     }
 
     @Test
-    public void switchCondition_WrongStartNode_reportNoViableAltException()
-            throws RecognitionException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void switchCondition_WrongStartNode_reportNoViableAltException() throws RecognitionException {
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));
@@ -159,8 +145,7 @@ public class NotCorrectStartNodeTypeForRulesWithParams extends AReferenceWalkerT
     }
 
     @Test
-    public void switchContents_WrongStartNode_reportNoViableAltException()
-            throws RecognitionException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void switchContents_WrongStartNode_reportNoViableAltException() throws RecognitionException {
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));
@@ -170,8 +155,7 @@ public class NotCorrectStartNodeTypeForRulesWithParams extends AReferenceWalkerT
     }
 
     @Test
-    public void doWhileLoop_WrongStartNode_reportNoViableAltException()
-            throws RecognitionException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void doWhileLoop_WrongStartNode_reportNoViableAltException() throws RecognitionException {
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));
@@ -181,8 +165,7 @@ public class NotCorrectStartNodeTypeForRulesWithParams extends AReferenceWalkerT
     }
 
     @Test
-    public void tryCatch_WrongStartNode_reportNoViableAltException()
-            throws RecognitionException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void tryCatch_WrongStartNode_reportNoViableAltException() throws RecognitionException {
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));
@@ -192,8 +175,7 @@ public class NotCorrectStartNodeTypeForRulesWithParams extends AReferenceWalkerT
     }
 
     @Test
-    public void catchBlocks_WrongStartNode_reportNoViableAltException()
-            throws RecognitionException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void catchBlocks_WrongStartNode_reportNoViableAltException() throws RecognitionException {
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));
@@ -203,8 +185,7 @@ public class NotCorrectStartNodeTypeForRulesWithParams extends AReferenceWalkerT
     }
 
     @Test
-    public void interfaceExtendsDeclaration_WrongStartNode_reportNoViableAltException()
-            throws RecognitionException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void interfaceExtendsDeclaration_WrongStartNode_reportNoViableAltException() throws RecognitionException {
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));
@@ -215,8 +196,7 @@ public class NotCorrectStartNodeTypeForRulesWithParams extends AReferenceWalkerT
 
 
     @Test
-    public void returnTypes_WrongStartNode_reportNoViableAltException()
-            throws RecognitionException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void returnTypes_WrongStartNode_reportNoViableAltException() throws RecognitionException {
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));
@@ -226,8 +206,7 @@ public class NotCorrectStartNodeTypeForRulesWithParams extends AReferenceWalkerT
     }
 
     @Test
-    public void parameterNormalOrOptional_WrongStartNode_reportNoViableAltException()
-            throws RecognitionException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void parameterNormalOrOptional_WrongStartNode_reportNoViableAltException() throws RecognitionException {
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));
@@ -236,10 +215,8 @@ public class NotCorrectStartNodeTypeForRulesWithParams extends AReferenceWalkerT
         verify(walker).reportError(any(NoViableAltException.class));
     }
 
-
     @Test
-    public void scalarTypes_WrongStartNode_reportNoViableAltException()
-            throws RecognitionException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void scalarTypes_WrongStartNode_reportNoViableAltException() throws RecognitionException {
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));
@@ -250,8 +227,7 @@ public class NotCorrectStartNodeTypeForRulesWithParams extends AReferenceWalkerT
 
 
     @Test
-    public void variableDeclaration_WrongStartNode_reportNoViableAltException()
-            throws RecognitionException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void variableDeclaration_WrongStartNode_reportNoViableAltException() throws RecognitionException {
         ITSPHPAst ast = createAst(Try);
 
         TestTSPHPReferenceWalker walker = spy(createWalker(ast));

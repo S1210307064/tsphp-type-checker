@@ -35,92 +35,202 @@ public class FunctionDoubleDefinitionErrorTest extends AReferenceDefinitionError
     public static Collection<Object[]> testStrings() {
         Collection<Object[]> collection = new ArrayList<>();
 
-        collection.addAll(getVariations("", ""));
-        collection.addAll(getVariations("namespace{", "}"));
-        collection.addAll(getVariations("namespace a;", ""));
-        collection.addAll(getVariations("namespace a{", "}"));
-        collection.addAll(getVariations("namespace a\\b;", ""));
-        collection.addAll(getVariations("namespace a\\b\\z{", "}"));
 
+        collection.addAll(getNamespaceWithoutBracketVariations("", ""));
+        collection.addAll(getNamespaceWithoutBracketVariations("namespace a;", ""));
+        collection.addAll(getNamespaceWithoutBracketVariations("namespace a\\b;", ""));
+
+        collection.addAll(getNamespaceBracketVariations("namespace{", "}"));
+        collection.addAll(getNamespaceBracketVariations("namespace a{", "}"));
+        collection.addAll(getNamespaceBracketVariations("namespace a\\b\\z{", "}"));
+
+        return collection;
+    }
+
+    public static Collection<Object[]> getNamespaceWithoutBracketVariations(
+            final String prefix, final String appendix) {
+
+        Collection<Object[]> collection = new ArrayList<>();
         DefinitionErrorDto[] errorDto = new DefinitionErrorDto[]{new DefinitionErrorDto("foo()", 2, 1, "foo()", 3, 1)};
+        DefinitionErrorDto[] errorDtoTwo = new DefinitionErrorDto[]{
+                new DefinitionErrorDto("foo()", 2, 1, "foo()", 3, 1),
+                new DefinitionErrorDto("foo()", 2, 1, "foo()", 4, 1)
+        };
 
         collection.addAll(Arrays.asList(new Object[][]{
+                {prefix + "function void \n foo(){} function void \n foo(){}" + appendix, errorDto},
                 {
-                        "namespace{function void\n foo(){}} namespace{function void\n foo(){}}",
-                        errorDto
+                        prefix + "function void \n foo(){}"
+                                + "function void \n foo(){}"
+                                + "function void \n foo(){}" + appendix,
+                        errorDtoTwo
                 },
                 {
-                        "namespace a{function void\n foo(){}} namespace a{function void\n foo(){}}",
-                        errorDto
-                },
-                {
-                        "namespace {function void\n foO(){}} namespace{function void\n foo(){}}",
+                        prefix + "function void \n foO(){} function void \n foo(){}" + appendix,
                         new DefinitionErrorDto[]{
                                 new DefinitionErrorDto("foO()", 2, 1, "foo()", 3, 1)
                         }
                 },
                 {
-                        "namespace a{function void\n foo(){}} namespace a{function void\n FOO(){}} "
-                                + "namespace a{function void\n foO(){}} namespace a{function void\n foo(){}}",
+                        prefix + "function void \n foO(){} "
+                                + "function void \n foo(){}"
+                                + "function void \n fOO(){}" + appendix,
+                        new DefinitionErrorDto[]{
+                                new DefinitionErrorDto("foO()", 2, 1, "foo()", 3, 1),
+                                new DefinitionErrorDto("foO()", 2, 1, "fOO()", 4, 1)
+                        }
+                },
+                //parameter name does not matter
+                {
+                        prefix + "function void \n foo(int $a){} function void \n foo(int $b){}" + appendix,
+                        errorDto
+                },
+                {
+                        prefix + "function void \n foo(int $a){}"
+                                + "function void \n foo(int $b){}"
+                                + "function void \n foo(int $c){}" + appendix,
+                        errorDtoTwo
+                },
+                //number of parameters does not matter
+                {
+                        prefix + "function void \n foo(int $a){} function void \n foo(int $a, int $b){}" + appendix,
+                        errorDto
+                },
+                {
+                        prefix + "function void \n foo(int $a){}"
+                                + "function void \n foo(int $a, int $b){}"
+                                + "function void \n foo(int $a, int $b, int $c){}" + appendix,
+                        errorDtoTwo
+                },
+        }));
+
+        List<String> types = TypeHelper.getPrimitiveTypes();
+        for (String type : types) {
+            collection.addAll(Arrays.asList(new Object[][]{
+                    //it does not matter if return values are different
+                    {
+                            prefix + "function " + type + " \n foo(){return 1;} function void \n foo(){}" + appendix,
+                            errorDto
+                    },
+                    {
+                            prefix + "function " + type + " \n foo(){return 1;}"
+                                    + "function int \n foo(){return 1;}"
+                                    + "function void \n foo(){}" + appendix,
+                            errorDtoTwo
+                    },
+                    //parameter type does not matter
+                    {
+                            prefix + "function void \n foo(" + type + " $a){} "
+                                    + "function void \n foo(\\Exception $a){}" + appendix,
+                            errorDto
+                    },
+                    {
+                            prefix + "function void \n foo(" + type + " $a){} "
+                                    + "function void \n foo(\\ErrorException $a){} "
+                                    + "function void \n foo(\\Exception $a){}" + appendix,
+                            errorDtoTwo
+                    },
+            }));
+        }
+        return collection;
+    }
+
+    public static Collection<Object[]> getNamespaceBracketVariations(final String prefix, final String appendix) {
+        Collection<Object[]> collection = new ArrayList<>();
+
+        DefinitionErrorDto[] errorDto = new DefinitionErrorDto[]{new DefinitionErrorDto("foo()", 2, 1, "foo()", 3, 1)};
+        DefinitionErrorDto[] errorDtoTwo = new DefinitionErrorDto[]{
+                new DefinitionErrorDto("foo()", 2, 1, "foo()", 3, 1),
+                new DefinitionErrorDto("foo()", 2, 1, "foo()", 4, 1)
+        };
+
+        collection.addAll(Arrays.asList(new Object[][]{
+                {
+                        prefix + "function void \n foo(){}" + appendix + " "
+                                + prefix + "function void \n foo(){}" + appendix,
+                        errorDto
+                },
+                {
+                        prefix + "function void \n foo(){}" + appendix + " "
+                                + prefix + "function void \n foo(){}" + appendix
+                                + prefix + "function void \n foo(){}" + appendix,
+                        errorDtoTwo
+                },
+                //case insensitive check
+                {
+                        prefix + "function void \n foO(){}" + appendix + " "
+                                + prefix + "function void \n foo(){}" + appendix,
+                        new DefinitionErrorDto[]{
+                                new DefinitionErrorDto("foO()", 2, 1, "foo()", 3, 1)
+                        }
+                },
+                {
+                        prefix + "function void \n foo(){}" + appendix + " "
+                                + prefix + "function void \n FOO(){}" + appendix + " "
+                                + prefix + "function void \n foO(){}" + appendix + " "
+                                + prefix + "function void \n foo(){}" + appendix,
                         new DefinitionErrorDto[]{
                                 new DefinitionErrorDto("foo()", 2, 1, "FOO()", 3, 1),
                                 new DefinitionErrorDto("foo()", 2, 1, "foO()", 4, 1),
                                 new DefinitionErrorDto("foo()", 2, 1, "foo()", 5, 1)
                         }
-                }
+                },
+                //parameter name does not matter
+                {
+                        prefix + "function void \n foo(int $a){}" + appendix + " "
+                                + prefix + "function void \n foo(int $b){}" + appendix,
+                        errorDto
+                },
+                {
+                        prefix + "function void \n foo(int $a){}" + appendix + " "
+                                + prefix + "function void \n foo(int $b){}" + appendix + " "
+                                + prefix + "function void \n foo(int $c){}" + appendix,
+                        errorDtoTwo
+                },
+                //number of parameters does not matter
+                {
+                        prefix + "function void \n foo(int $a){}" + appendix + " "
+                                + prefix + "function void \n foo(int $a, int $b){}" + appendix,
+                        errorDto
+                },
+                {
+                        prefix + "function void \n foo(int $a){}" + appendix + " "
+                                + prefix + "function void \n foo(int $a, int $b){}" + appendix + " "
+                                + prefix + "function void \n foo(int $a, int $b, int $c){}" + appendix,
+                        errorDtoTwo
+                },
+
         }));
-
-        return collection;
-    }
-
-    public static Collection<Object[]> getVariations(final String prefix, final String appendix) {
-        Collection<Object[]> collection = new ArrayList<>();
-        final DefinitionErrorDto[] errorDto = new DefinitionErrorDto[]{new DefinitionErrorDto("foo()", 2, 1, "foo()",
-                3, 1)};
-        final DefinitionErrorDto[] errorDtoTwo = new DefinitionErrorDto[]{
-                new DefinitionErrorDto("foo()", 2, 1, "foo()", 3, 1),
-                new DefinitionErrorDto("foo()", 2, 1, "foo()", 4, 1)
-        };
 
         List<String> types = TypeHelper.getPrimitiveTypes();
         for (String type : types) {
-            //it does not matter if return values are different
-            collection.add(new Object[]{
-                    prefix + "function " + type + "\n foo(){return 1;} function void \n foo(){}" + appendix,
-                    errorDto
-            });
-            collection.add(new Object[]{
-                    prefix + "function " + type + "\n foo(){return 1;} function void \n foo(){} "
-                            + "function int \n foo(){return 1;}" + appendix,
-                    errorDtoTwo
-            });
-
-            //And since PHP does not support method overloading, also the parameter does not matter
-            collection.add(new Object[]{
-                    prefix + " function void \n foo(" + type + " $b){return 1;} function void \n foo(){}" + appendix,
-                    errorDto
-            });
-            collection.add(new Object[]{
-                    prefix + " function void \n foo(" + type + " $b){return 1;} function void \n foo(){}"
-                            + "function void \n foo(int $a){}" + appendix,
-                    errorDtoTwo
-            });
+            collection.addAll(Arrays.asList(new Object[][]{
+                    //it does not matter if return values are different
+                    {
+                            prefix + "function " + type + " \n foo(){return 1;}" + appendix + " "
+                                    + prefix + "function void \n foo(){}" + appendix,
+                            errorDto
+                    },
+                    {
+                            prefix + "function " + type + " \n foo(){return 1;}" + appendix + " "
+                                    + prefix + "function int \n foo(){return 1;}" + appendix + " "
+                                    + prefix + "function void \n foo(){}" + appendix,
+                            errorDtoTwo
+                    },
+                    //parameter type does not matter
+                    {
+                            prefix + "function void \n foo(" + type + " $a){}" + appendix + " "
+                                    + prefix + "function void \n foo(\\Exception $a){}" + appendix,
+                            errorDto
+                    },
+                    {
+                            prefix + "function void \n foo(" + type + " $a){}" + appendix + " "
+                                    + prefix + "function void \n foo(\\ErrorException $a){}" + appendix + " "
+                                    + prefix + "function void \n foo(\\Exception $a){}" + appendix,
+                            errorDtoTwo
+                    },
+            }));
         }
-
-        //case insensitive
-        collection.addAll(Arrays.asList(new Object[][]{
-                {
-                        "function void\n foo(){} function void\n Foo(){}",
-                        new DefinitionErrorDto[]{new DefinitionErrorDto("foo()", 2, 1, "Foo()", 3, 1)}
-                },
-                {
-                        "function void\n foo(){} function void\n Foo(){} function void\n fOo(){}",
-                        new DefinitionErrorDto[]{
-                                new DefinitionErrorDto("foo()", 2, 1, "Foo()", 3, 1),
-                                new DefinitionErrorDto("foo()", 2, 1, "fOo()", 4, 1)
-                        }
-                }
-        }));
         return collection;
     }
 }

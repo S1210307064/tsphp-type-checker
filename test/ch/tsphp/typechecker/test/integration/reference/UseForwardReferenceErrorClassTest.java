@@ -19,10 +19,10 @@ import java.util.Collection;
 import java.util.List;
 
 @RunWith(Parameterized.class)
-public class UseForwardReferenceErrorTest extends AReferenceDefinitionErrorTest
+public class UseForwardReferenceErrorClassTest extends AReferenceDefinitionErrorTest
 {
 
-    public UseForwardReferenceErrorTest(String testString, DefinitionErrorDto[] expectedLinesAndPositions) {
+    public UseForwardReferenceErrorClassTest(String testString, DefinitionErrorDto[] expectedLinesAndPositions) {
         super(testString, expectedLinesAndPositions);
     }
 
