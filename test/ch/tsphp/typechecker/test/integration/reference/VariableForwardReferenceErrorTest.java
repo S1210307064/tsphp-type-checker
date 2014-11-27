@@ -62,16 +62,16 @@ public class VariableForwardReferenceErrorTest extends AReferenceDefinitionError
         addVariations("namespace a\\b\\z{ class a{ function void foo(){", "}}}");
         collection.add(new Object[]{
                 "class a{function void foo(){}} \n $a->foo(); a\n $a;",
-                new DefinitionErrorDto[]{new DefinitionErrorDto("$a", 2, 1, "$a", 3, 1)}
+                new DefinitionErrorDto[]{new DefinitionErrorDto("$a", 3, 1, "$a", 2, 1)}
         });
         return collection;
     }
 
     private static void addVariations(String prefix, String appendix) {
-        DefinitionErrorDto[] errorDto = new DefinitionErrorDto[]{new DefinitionErrorDto("$a", 2, 1, "$a", 3, 1)};
+        DefinitionErrorDto[] errorDto = new DefinitionErrorDto[]{new DefinitionErrorDto("$a", 3, 1, "$a", 2, 1)};
         DefinitionErrorDto[] twoErrorDto = new DefinitionErrorDto[]{
-                new DefinitionErrorDto("$a", 2, 1, "$a", 4, 1),
-                new DefinitionErrorDto("$a", 3, 1, "$a", 4, 1)
+                new DefinitionErrorDto("$a", 4, 1, "$a", 2, 1),
+                new DefinitionErrorDto("$a", 4, 1, "$a", 3, 1)
         };
         collection.addAll(Arrays.asList(new Object[][]{
                 {prefix + "\n $a; int\n $a;" + appendix, errorDto},

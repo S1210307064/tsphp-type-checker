@@ -221,7 +221,7 @@ variableDeclaration[ITypeSymbol type, boolean isImplicitlyInitialised] returns [
             //Warning! start duplicated code as in parameterNormalOrOptional
             $variableSymbol = (IVariableSymbol) $variableId.getSymbol();
             $variableSymbol.setType(type); 
-            $variableId.getScope().doubleDefinitionCheck($variableId.getSymbol());
+            $variableId.getScope().doubleDefinitionCheck($variableSymbol);
             //Warning! end duplicated code as in parameterNormalOrOptional
             if(isInitialised || isImplicitlyInitialised){
                 $variableId.getScope().addToInitialisedSymbols($variableSymbol, true);
@@ -334,27 +334,22 @@ parameterDeclarationList
 parameterDeclaration
     :   ^(PARAMETER_DECLARATION
             ^(TYPE tMod=. allTypes[$tMod]) 
-            parameterNormalOrOptional[$allTypes.type]
+            (    variableId=VariableId
+            |    ^(variableId=VariableId unaryPrimitiveAtom)
+            )
         )
         {
-            IVariableSymbol parameter = $parameterNormalOrOptional.variableSymbol;
-            IMethodSymbol methodSymbol = (IMethodSymbol) parameter.getDefinitionScope();
-            methodSymbol.addParameter(parameter);
-        }
-    ;
-
-parameterNormalOrOptional[ITypeSymbol type] returns [IVariableSymbol variableSymbol]
-    :   (    variableId=VariableId
-        |    ^(variableId=VariableId unaryPrimitiveAtom)
-        )
-        { 
+            IMethodSymbol methodSymbol = (IMethodSymbol) $variableId.getScope();
+            
             //Warning! start duplicated code as in variableDeclaration
-            $variableSymbol = (IVariableSymbol) $variableId.getSymbol();
-            $variableSymbol.setType(type); 
-            $variableId.getScope().doubleDefinitionCheck($variableId.getSymbol());
+            IVariableSymbol variableSymbol = (IVariableSymbol) $variableId.getSymbol();
+            variableSymbol.setType($allTypes.type); 
+            methodSymbol.doubleDefinitionCheck(variableSymbol);
             //Warning! end duplicated code as in variableDeclaration
-            $variableId.getScope().addToInitialisedSymbols($variableSymbol, true);
-        } 
+            
+            methodSymbol.addToInitialisedSymbols(variableSymbol, true);
+            methodSymbol.addParameter(variableSymbol);
+        }
     ;
     
 block[boolean shallCheckIfReturns] returns[boolean isReturning]
