@@ -99,6 +99,8 @@ public class ReturnCheckHelper
                 //break before return/throw statement
                 {prefix + "switch(1){case 1: break; " + statement + "}" + appendix, errorDto},
                 {prefix + "switch(1){default: break; " + statement + "}" + appendix, errorDto},
+                //See TSPHP-903 return check wrong in conjunction with multiple statements in switch
+                {prefix + "switch(1){default: break; int $a=1;" + statement + "}" + appendix, errorDto},
                 //not all cases return/throw
                 {
                         prefix + "switch(1){case 1: break; default: " + statement + "}" +
