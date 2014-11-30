@@ -393,7 +393,7 @@ instructions[boolean shallCheckIfReturns] returns[boolean isReturning]
             {
                 if(shallCheckIfReturns){
                     $isReturning = $isReturning || (!isBreaking && $instruction.isReturning);
-                    isBreaking = $instruction.isBreaking;
+                    isBreaking = isBreaking || $instruction.isBreaking;
                 }
             }
         )+
