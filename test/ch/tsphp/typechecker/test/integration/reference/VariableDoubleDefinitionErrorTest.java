@@ -37,26 +37,17 @@ public class VariableDoubleDefinitionErrorTest extends AReferenceDefinitionError
 
         //global variables
         collection.addAll(getVariationsInclConditionalScopes("", ""));
-        collection.addAll(getVariationsInclConditionalScopes("namespace{", "}"));
         collection.addAll(getVariationsInclConditionalScopes("namespace a;", ""));
-        collection.addAll(getVariationsInclConditionalScopes("namespace a{", "}"));
-        collection.addAll(getVariationsInclConditionalScopes("namespace a\\b;", ""));
         collection.addAll(getVariationsInclConditionalScopes("namespace a\\b\\z{", "}"));
 
         //functions
         collection.addAll(getVariationsInclConditionalScopes("function void foo(){", "}"));
-        collection.addAll(getVariationsInclConditionalScopes("namespace{function void foo(){", "}}"));
         collection.addAll(getVariationsInclConditionalScopes("namespace a;function void foo(){", "}"));
-        collection.addAll(getVariationsInclConditionalScopes("namespace a{function void foo(){", "}}"));
-        collection.addAll(getVariationsInclConditionalScopes("namespace a\\b;function void foo(){", "}"));
         collection.addAll(getVariationsInclConditionalScopes("namespace a\\b\\z{function void foo(){", "}}"));
 
         //methods
         collection.addAll(getVariationsInclConditionalScopes("class a{ function void foo(){", "}}"));
-        collection.addAll(getVariationsInclConditionalScopes("namespace{class a{ function void foo(){", "}}}"));
         collection.addAll(getVariationsInclConditionalScopes("namespace a;class a{ function void foo(){", "}}"));
-        collection.addAll(getVariationsInclConditionalScopes("namespace a{class a{ function void foo(){", "}}}"));
-        collection.addAll(getVariationsInclConditionalScopes("namespace a\\b;class a{ function void foo(){", "}}"));
         collection.addAll(getVariationsInclConditionalScopes("namespace a\\b\\z{class a{ function void foo(){", "}}}"));
 
         collection.addAll(Arrays.asList(new Object[][]{

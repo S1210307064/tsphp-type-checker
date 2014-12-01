@@ -37,10 +37,7 @@ public class NoParentTest extends AReferenceErrorTest
 
         //methods
         collection.addAll(getVariations("class a{ function void foo(){", "}}"));
-        collection.addAll(getVariations("namespace{class a{ function void foo(){", "}}}"));
         collection.addAll(getVariations("namespace a;class a{ function void foo(){", "}}"));
-        collection.addAll(getVariations("namespace a{class a{ function void foo(){", "}}}"));
-        collection.addAll(getVariations("namespace a\\b;class a{ function void foo(){", "}}"));
         collection.addAll(getVariations("namespace a\\b\\z{class a{ function void foo(){", "}}}"));
         return collection;
     }

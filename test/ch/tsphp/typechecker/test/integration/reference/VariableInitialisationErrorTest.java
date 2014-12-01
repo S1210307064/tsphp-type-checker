@@ -58,12 +58,12 @@ public class VariableInitialisationErrorTest extends AReferenceDefinitionErrorTe
         collection = new ArrayList<>();
 
         //global
-        addVariations("", "");
-        addVariations("namespace{", "}");
-        addVariations("namespace a;", "");
-        addVariations("namespace a{", "}");
-        addVariations("namespace a\\b;", "");
-        addVariations("namespace a\\b\\z{", "}");
+//        addVariations("", "");
+//        addVariations("namespace{", "}");
+//        addVariations("namespace a;", "");
+//        addVariations("namespace a{", "}");
+//        addVariations("namespace a\\b;", "");
+//        addVariations("namespace a\\b\\z{", "}");
 
         //functions
         addVariations("function void foo(){", "}");
@@ -91,7 +91,11 @@ public class VariableInitialisationErrorTest extends AReferenceDefinitionErrorTe
                 new DefinitionErrorDto("$a", 2, 1, "$a", 4, 1)
         };
         collection.addAll(Arrays.asList(new Object[][]{
-                {prefix + "int\n $a;\n" + " $a;" + appendix, errorDto, new NotVerifier()},
+                {
+                        prefix + "int\n $a; switch(1){default: break;$a=1;} \n $a + 96;" + appendix,
+                        errorDto, new PartiallyVerifier()
+                },
+                {prefix + "int\n $a;\n $a;" + appendix, errorDto, new NotVerifier()},
                 {prefix + "int $b,\n $a;\n $a; " + appendix, errorDto, new NotVerifier()},
                 {prefix + "int $b = 1,\n $a;\n $a;" + appendix, errorDto, new NotVerifier()},
                 {prefix + "int \n $a; if(true){\n $a;}" + appendix, errorDto, new NotVerifier()},

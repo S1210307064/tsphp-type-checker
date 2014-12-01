@@ -35,10 +35,7 @@ public class FieldDoubleDefinitionErrorTest extends AReferenceDefinitionErrorTes
         List<Object[]> collection = new ArrayList<>();
 
         collection.addAll(VariableDoubleDefinitionErrorTest.getVariations("class a{", "}"));
-        collection.addAll(VariableDoubleDefinitionErrorTest.getVariations("namespace{ class a{", "}}"));
         collection.addAll(VariableDoubleDefinitionErrorTest.getVariations("namespace a; class b{", "}"));
-        collection.addAll(VariableDoubleDefinitionErrorTest.getVariations("namespace a{ class c{", "}}"));
-        collection.addAll(VariableDoubleDefinitionErrorTest.getVariations("namespace a\\b; class e{", "}"));
         collection.addAll(VariableDoubleDefinitionErrorTest.getVariations("namespace a\\b\\z{ class m{", "}}"));
 
         return collection;

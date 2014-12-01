@@ -39,10 +39,7 @@ public class ConstructDoubleDefinitionErrorTest extends AReferenceDefinitionErro
         collection = new ArrayList<>();
 
         addVariations("", "");
-        addVariations("namespace{", "}");
         addVariations("namespace a;", "");
-        addVariations("namespace a{", "}");
-        addVariations("namespace a\\b;", "");
         addVariations("namespace a\\b\\z{", "}");
 
         return collection;

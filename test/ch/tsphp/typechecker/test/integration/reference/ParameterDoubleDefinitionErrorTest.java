@@ -38,16 +38,10 @@ public class ParameterDoubleDefinitionErrorTest extends AReferenceDefinitionErro
         collection = new ArrayList<>();
 
         addVariations("function void foo(", "){}");
-        addVariations("namespace{ function void foo(", "){}}");
         addVariations("namespace a; function void foo(", "){}");
-        addVariations("namespace a{ function void foo(", "){}}");
-        addVariations("namespace a\\b; function void foo(", "){}");
         addVariations("namespace a\\b\\z{ function void foo(", "){}}");
         addVariations("class a{ function void foo(", "){}}");
-        addVariations("namespace{ class a{function void foo(", "){}}}");
         addVariations("namespace a; class b{function void foo(", "){}}");
-        addVariations("namespace a{ class c{function void foo(", "){}}}");
-        addVariations("namespace a\\b; class e{function void foo(", "){}}");
         addVariations("namespace a\\b\\z{ class m{function void foo(", "){}}}");
         return collection;
     }

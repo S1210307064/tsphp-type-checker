@@ -35,10 +35,7 @@ public class MethodDoubleDefinitionErrorTest extends AReferenceDefinitionErrorTe
         Collection<Object[]> collection = new ArrayList<>();
 
         collection.addAll(getVariations("", ""));
-        collection.addAll(getVariations("namespace{", "}"));
         collection.addAll(getVariations("namespace a;", ""));
-        collection.addAll(getVariations("namespace a{", "}"));
-        collection.addAll(getVariations("namespace a\\b;", ""));
         collection.addAll(getVariations("namespace a\\b\\z{", "}"));
 
         return collection;

@@ -39,23 +39,14 @@ public class VariableOutsideConditionalScopeErrorTest extends AReferenceDefiniti
         collection.addAll(getVariations("", "", "int\n $a=1;", "\n $a;"));
         collection.addAll(getVariations("namespace a;", "", "int\n $a=0;", "\n $a;"));
         collection.addAll(getVariations("namespace a\\b;", "", "int\n $a=2;", "\n $a;"));
-        collection.addAll(getVariations("namespace{", "}"));
-        collection.addAll(getVariations("namespace a{", "}"));
-        collection.addAll(getVariations("namespace a\\b\\z{", "}"));
 
         //functions
-        collection.addAll(getVariations("function void foo(){", "}", "int\n $a=0;", "\n $a;"));
-        collection.addAll(getVariations("namespace a;function void foo(){", "}", "int\n $a=0;", "\n $a;"));
-        collection.addAll(getVariations("namespace a\\b;function void foo(){", "}", "int\n $a=0;", "\n $a;"));
         collection.addAll(getVariations("namespace{function void foo(){", "}}"));
         collection.addAll(getVariations("namespace a{function void foo(){", "}}"));
         collection.addAll(getVariations("namespace a\\b\\z{function void foo(){", "}}"));
 
         //methods
         collection.addAll(getVariations("class a{ function void foo(){", "}}", "int\n $a=0;", "\n $a;"));
-        collection.addAll(getVariations("namespace a;class a{ function void foo(){", "}}", "int\n $a=0;", "\n $a;"));
-        collection.addAll(getVariations("namespace a\\b;class a{ function void foo(){", "}}", "int\n $a=0;", "\n $a;"));
-        collection.addAll(getVariations("namespace{class a{ function void foo(){", "}}}"));
         collection.addAll(getVariations("namespace a{class a{ function void foo(){", "}}}"));
         collection.addAll(getVariations("namespace a\\b\\z{class a{ function void foo(){", "}}}"));
 

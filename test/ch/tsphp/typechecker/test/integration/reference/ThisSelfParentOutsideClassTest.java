@@ -37,18 +37,12 @@ public class ThisSelfParentOutsideClassTest extends AReferenceErrorTest
 
         //in global scope
         collection.addAll(getVariations("", ""));
-        collection.addAll(getVariations("namespace{", "}"));
         collection.addAll(getVariations("namespace a;", ""));
-        collection.addAll(getVariations("namespace a{", "}"));
-        collection.addAll(getVariations("namespace a\\b;", ""));
         collection.addAll(getVariations("namespace a\\b\\z{", "}"));
 
         //in functions
         collection.addAll(getVariations("function void foo(){", "}"));
-        collection.addAll(getVariations("namespace{function void foo(){", "}}"));
         collection.addAll(getVariations("namespace a;function void foo(){", "}"));
-        collection.addAll(getVariations("namespace a{function void foo(){", "}}"));
-        collection.addAll(getVariations("namespace a\\b;function void foo(){", "}"));
         collection.addAll(getVariations("namespace a\\b\\z{function void foo(){", "}}"));
 
         return collection;

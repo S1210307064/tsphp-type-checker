@@ -39,16 +39,8 @@ public class ConstantForwardReferenceErrorTest extends AReferenceDefinitionError
 
         //global constants
         addVariations("", "");
-        addVariations("namespace{", "}");
         addVariations("namespace a;", "");
-        addVariations("namespace a{", "}");
-        addVariations("namespace a\\b;", "");
         addVariations("namespace a\\b\\z{", "}");
-        DefinitionErrorDto[] errorDto = new DefinitionErrorDto[]{new DefinitionErrorDto("a#", 3, 1, "a#", 2, 1)};
-        DefinitionErrorDto[] twoErrorDto = new DefinitionErrorDto[]{
-                new DefinitionErrorDto("a#", 4, 1, "a#", 2, 1),
-                new DefinitionErrorDto("a#", 4, 1, "a#", 3, 1)
-        };
 
         //class constants cannot have forward references see ClassConstantForwardReferenceTest
 

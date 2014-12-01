@@ -36,10 +36,7 @@ public class ResolveClassTypeNotFoundTest extends AReferenceErrorTest
     public static Collection<Object[]> testStrings() {
         List<Object[]> collection = new ArrayList<>();
         collection.addAll(getVariations("", "", "\\"));
-        collection.addAll(getVariations("namespace{", "}", "\\"));
         collection.addAll(getVariations("namespace a;", "", "\\a\\"));
-        collection.addAll(getVariations("namespace a{", "}", "\\a\\"));
-        collection.addAll(getVariations("namespace a\\b;", "", "\\a\\b\\"));
         collection.addAll(getVariations("namespace a\\b\\z{", "}", "\\a\\b\\z\\"));
         collection.addAll(Arrays.asList(new Object[][]{
                 //aliases are always absolute

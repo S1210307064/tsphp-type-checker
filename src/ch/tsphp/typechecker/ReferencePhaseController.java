@@ -372,12 +372,10 @@ public class ReferencePhaseController implements IReferencePhaseController
             IScope currentScope = ast.getScope();
             if (!(currentScope instanceof IConditionalScope)) {
                 ok = false;
-                typeCheckErrorReporter.variableDefinedInConditionalScope(
-                        ast.getSymbol().getDefinitionAst(), ast);
+                typeCheckErrorReporter.variableDefinedInConditionalScope(symbol.getDefinitionAst(), ast);
             } else if (isNotDefinedInThisNorOuterScope(symbol, currentScope)) {
                 ok = false;
-                typeCheckErrorReporter.variableDefinedInOtherConditionalScope(
-                        symbol.getDefinitionAst(), ast);
+                typeCheckErrorReporter.variableDefinedInOtherConditionalScope(symbol.getDefinitionAst(), ast);
             }
         }
         return ok;

@@ -37,10 +37,7 @@ public class ClassInterfaceDoubleDefinitionErrorTest extends AReferenceDefinitio
 
         DefinitionErrorDto[] errorDto = new DefinitionErrorDto[]{new DefinitionErrorDto("a", 2, 1, "a", 3, 1)};
         collection.addAll(getVariations("", ""));
-        collection.addAll(getVariations("namespace{", "}"));
         collection.addAll(getVariations("namespace a;", ""));
-        collection.addAll(getVariations("namespace a{", "}"));
-        collection.addAll(getVariations("namespace a\\b;", ""));
         collection.addAll(getVariations("namespace a\\b\\z{", "}"));
         collection.addAll(Arrays.asList(new Object[][]{
                 {"namespace{class \n a{}} namespace{class \n a{}}", errorDto},

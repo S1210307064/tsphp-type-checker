@@ -48,26 +48,17 @@ public class ResolveVariableVerifyTimesTest extends AVerifyTimesReferenceTest
 
         //global constants
         addVariations("", "");
-        addVariations("namespace{", "}");
         addVariations("namespace a;", "");
-        addVariations("namespace a{", "}");
-        addVariations("namespace a\\b;", "");
         addVariations("namespace a\\b\\z{", "}");
 
         //functions
         addVariations("function void foo(){", "}");
-        addVariations("namespace{function void foo(){", "}}");
         addVariations("namespace a;function void foo(){", "}");
-        addVariations("namespace a{function void foo(){", "}}");
-        addVariations("namespace a\\b;function void foo(){", "}");
         addVariations("namespace a\\b\\z{function void foo(){", "}}");
 
         //methods
         addVariations("class a{ function void foo(){", "}}");
-        addVariations("namespace{ class a{ function void foo(){", "}}}");
         addVariations("namespace a; class a{ function void foo(){", "}}");
-        addVariations("namespace a{ class a { function void foo(){", "}}}");
-        addVariations("namespace a\\b; class a{ function void foo(){", "}}");
         addVariations("namespace a\\b\\z{ class a{ function void foo(){", "}}}");
 
         collection.addAll(Arrays.asList(new Object[][]{
