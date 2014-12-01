@@ -79,9 +79,9 @@ public class VariableInitialisationTest extends AVerifyTimesReferenceTest
                 {prefix + "int $a; $a=1; $a=1; $a=1;" + appendix, 3},
                 {prefix + "int $a; $a=1; { $a; $a;}" + appendix, 3},
                 {prefix + "int $a; $a=1; if($a==1){}" + appendix, 2},
-                {prefix + "int $a; $a=1; if(true){ $a=2;}" + appendix, 2},
-                {prefix + "int $a; $a=1; if(true){}else{ $a=2;}" + appendix, 2},
-                {prefix + "int $a; $a=1; if(true){ if(true){ $a=2;}}" + appendix, 2},
+                {prefix + "int $a; $a=1; if(true){ $a;}" + appendix, 2},
+                {prefix + "int $a; $a=1; if(true){}else{ $a;}" + appendix, 2},
+                {prefix + "int $a; $a=1; if(true){ if(true){ $a;}}" + appendix, 2},
                 {prefix + "int $a; $a=1; int $b=1; switch($a == $b){case 1: $a;break;}" + appendix, 4 /*$b as well*/},
                 {prefix + "int $a; $a=1; int $b=2; switch($b){case 1: $a;break;}" + appendix, 3 /*$b as well*/},
                 {prefix + "int $a; $a=1; int $b=3; switch($b){case 1:{$a;}break;}" + appendix, 3 /*$b as well*/},
@@ -116,7 +116,11 @@ public class VariableInitialisationTest extends AVerifyTimesReferenceTest
                 //implicit initialisations
                 {prefix + "try{}catch(\\Exception $e){ $e;}" + appendix, 1},
                 {prefix + "foreach([1] as int $v){$v;}" + appendix, 1},
-                {prefix + "foreach([1] as string $k => int $v){$k; $v;}" + appendix, 2}
+                {prefix + "foreach([1] as string $k => int $v){$k; $v;}" + appendix, 2},
+                //initialised in both branches
+                {prefix + "int $a; if(true){$a=1;}else{$a=1;} $a;" + appendix, 3},
+                //initialised in all cases
+                {prefix + "int $a; switch(1){case 1: $a=1; break; default: $a=1;} $a;" + appendix, 3},
         }));
     }
 }

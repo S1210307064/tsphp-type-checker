@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
 
+import static ch.tsphp.typechecker.antlr.TSPHPDefinitionWalker.Else;
 import static ch.tsphp.typechecker.antlr.TSPHPDefinitionWalker.Try;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
@@ -63,16 +64,20 @@ public class NotCorrectStartNodeTypeTest extends AReferenceWalkerTest
                 {"assignOperator", Try},
                 {"atom", Try},
                 {"binaryOperatorExcludingAssign", Try},
+                {"block", Try},
+                {"blockConditional", Try},
                 {"breakContinue", Try},
                 {"caseLabels", Try},
                 {"classBody", Try},
                 {"classBodyDefinition", Try},
                 {"fieldDefinition", Try},
+                {"catchBlocks", Try},
                 {"classStaticAccess", Try},
                 {"compilationUnit", Try},
                 {"constDefinitionList", Try},
                 {"constructDefinition", Try},
                 {"definition", Try},
+                {"doWhileLoop", Try},
                 {"exit", Try},
                 {"expression", Try},
                 {"expressionList", Try},
@@ -80,6 +85,9 @@ public class NotCorrectStartNodeTypeTest extends AReferenceWalkerTest
                 {"forLoop", Try},
                 {"functionCall", Try},
                 {"functionDefinition", Try},
+                {"ifCondition", Try},
+                {"instruction", Try},
+                {"instructions", Try},
                 {"interfaceBody", Try},
                 {"interfaceBodyDefinition", Try},
                 {"interfaceDefinition", Try},
@@ -97,7 +105,10 @@ public class NotCorrectStartNodeTypeTest extends AReferenceWalkerTest
                 {"primitiveAtomWithConstant", Try},
                 {"statement", Try},
                 {"staticAccessor", Try},
+                {"switchCondition", Try},
+                {"switchContents", Try},
                 {"thisVariable", Try},
+                {"tryCatch", Else},
                 {"unaryOperator", Try},
                 {"unaryPrimitiveAtom", Try},
                 {"useDeclaration", Try},

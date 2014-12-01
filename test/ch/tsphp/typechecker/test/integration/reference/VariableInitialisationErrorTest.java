@@ -58,28 +58,19 @@ public class VariableInitialisationErrorTest extends AReferenceDefinitionErrorTe
         collection = new ArrayList<>();
 
         //global
-//        addVariations("", "");
-//        addVariations("namespace{", "}");
+        addVariations("", "");
 //        addVariations("namespace a;", "");
-//        addVariations("namespace a{", "}");
-//        addVariations("namespace a\\b;", "");
 //        addVariations("namespace a\\b\\z{", "}");
-
-        //functions
-        addVariations("function void foo(){", "}");
-        addVariations("namespace{function void foo(){", "}}");
-        addVariations("namespace a;function void foo(){", "}");
-        addVariations("namespace a{function void foo(){", "}}");
-        addVariations("namespace a\\b;function void foo(){", "}");
-        addVariations("namespace a\\b\\z{function void foo(){", "}}");
-
-        //methods
-        addVariations("class a{ function void foo(){", "}}");
-        addVariations("namespace{ class a{ function void foo(){", "}}}");
-        addVariations("namespace a; class a{ function void foo(){", "}}");
-        addVariations("namespace a{ class a { function void foo(){", "}}}");
-        addVariations("namespace a\\b; class a{ function void foo(){", "}}");
-        addVariations("namespace a\\b\\z{ class a{ function void foo(){", "}}}");
+//
+//        //functions
+//        addVariations("function void foo(){", "}");
+//        addVariations("namespace a;function void foo(){", "}");
+//        addVariations("namespace a\\b\\z{function void foo(){", "}}");
+//
+//        //methods
+//        addVariations("class a{ function void foo(){", "}}");
+//        addVariations("namespace a; class a{ function void foo(){", "}}");
+//        addVariations("namespace a\\b\\z{ class a{ function void foo(){", "}}}");
 
         return collection;
     }
@@ -91,10 +82,6 @@ public class VariableInitialisationErrorTest extends AReferenceDefinitionErrorTe
                 new DefinitionErrorDto("$a", 2, 1, "$a", 4, 1)
         };
         collection.addAll(Arrays.asList(new Object[][]{
-                {
-                        prefix + "int\n $a; switch(1){default: break;$a=1;} \n $a + 96;" + appendix,
-                        errorDto, new PartiallyVerifier()
-                },
                 {prefix + "int\n $a;\n $a;" + appendix, errorDto, new NotVerifier()},
                 {prefix + "int $b,\n $a;\n $a; " + appendix, errorDto, new NotVerifier()},
                 {prefix + "int $b = 1,\n $a;\n $a;" + appendix, errorDto, new NotVerifier()},
@@ -129,21 +116,12 @@ public class VariableInitialisationErrorTest extends AReferenceDefinitionErrorTe
                                 "catch(\\Exception $e){}\n $a;" + appendix,
                         errorDto, new PartiallyVerifier()
                 },
-                //needs default case to be sure that it returns
+                //needs default case to be sure that it is initialised
                 {
                         prefix + "int\n $a; switch(1){case 1: $a=1;}\n $a * 96;" + appendix,
                         errorDto, new PartiallyVerifier()
                 },
-                //break before return/throw statement
-                {
-                        prefix + "int\n $a; switch(1){case 1: break; $a=1;}\n $a - 25;" + appendix,
-                        errorDto, new PartiallyVerifier()
-                },
-                {
-                        prefix + "int\n $a; switch(1){default: break;$a=1;} \n $a + 96;" + appendix,
-                        errorDto, new PartiallyVerifier()
-                },
-                //not all cases return/throw
+                //not all cases initialise
                 {
                         prefix + "int\n $a; switch(1){case 1: break; default: $a = 1;}\n $a * 78;" + appendix,
                         errorDto, new PartiallyVerifier()
@@ -159,6 +137,118 @@ public class VariableInitialisationErrorTest extends AReferenceDefinitionErrorTe
                         twoErrorDto, new PartiallyVerifier(2)
                 },
                 {prefix + "for(int\n $a;\n $a < 10;\n $a++){}" + appendix, twoErrorDto, new NotVerifier(2)},
+                //break before initialisation -> initialisation is dead code
+                {
+                        prefix + "int\n $a; switch(1){case 1: break; $a=1;}\n $a - 25;" + appendix,
+                        errorDto, new NotVerifier()
+                },
+                {
+                        prefix + "int\n $a; switch(1){default: break;$a=1;} \n $a + 96;" + appendix,
+                        errorDto, new NotVerifier()
+                },
+                {
+                        prefix + "int\n $a; switch(1){case 1: $a=1; default: break; $a=1;} \n $a + 96;" + appendix,
+                        errorDto, new PartiallyVerifier()
+                },
+                {
+                        prefix + "int\n $a; switch(1){case 1: break; $a=1; default: $a=1;} \n $a + 96;" + appendix,
+                        errorDto, new PartiallyVerifier()
+                },
+        }));
+
+        addDeadCodeVariations(prefix + "int\n $a;", "return;", appendix);
+        addDeadCodeVariations(prefix + "int\n $a;", "throw new Exception();", appendix);
+        //dead code after both branches of an if return/throw
+        addDeadCodeVariations(prefix + "int\n $a; ", "if(true){return;} else{return;} ", appendix);
+        addDeadCodeVariations(prefix + "int\n $a, $b=1;", "if(true){throw $b;} else{return;} ", appendix);
+        addDeadCodeVariations(prefix + "int\n $a, $b=1;", "if(true){return;} else{throw $b;} ", appendix);
+        addDeadCodeVariations(prefix + "int\n $a, $b=1;", "if(true){throw $b;} else{throw $b;} ", appendix);
+        //dead code after all cases of switch return throw
+        addDeadCodeVariations(prefix + "int\n $a; ", "switch(1){default: return;}", appendix);
+        addDeadCodeVariations(prefix + "int\n $a, $b=1;", "switch(1){default: throw $b;}", appendix);
+        addDeadCodeVariations(prefix + "int\n $a; ", "switch(1){case 1: return; default: return;}", appendix);
+        addDeadCodeVariations(prefix + "int\n $a, $b=1;", "switch(1){case 1: return; default: throw $b;}", appendix);
+        addDeadCodeVariations(prefix + "int\n $a, $b=1;", "switch(1){case 1: throw $b; default: return;}", appendix);
+        //dead code after all catches return/throw
+        addDeadCodeVariations(prefix + "int\n $a, $b=1;", "try{return;}catch(Exception $ex){return;}", appendix);
+        addDeadCodeVariations(prefix + "int\n $a, $b=1;", "try{throw $b;}catch(Exception $ex){return;}", appendix);
+        addDeadCodeVariations(prefix + "int\n $a, $b=1;", "try{return;}catch(Exception $ex){throw $b;}", appendix);
+        addDeadCodeVariations(prefix + "int\n $a, $b=1;", "try{throw $b;}catch(Exception $ex){throw $b;}", appendix);
+        addDeadCodeVariations(
+                prefix + "int\n $a, $b=1;",
+                "try{throw $b;}catch(ErrorException $ex2){throw $b;}catch(Exception $ex){throw $b;}",
+                appendix);
+        //dead code after return/try in do-while loop
+        addDeadCodeVariations(prefix + "int\n $a; ", "do{return;}while(true);", appendix);
+        addDeadCodeVariations(prefix + "int\n $a, $b=1;", "do{throw $b;}while(true);", appendix);
+    }
+
+    private static void addDeadCodeVariations(String prefix, String statement, String appendix) {
+        DefinitionErrorDto[] errorDto = new DefinitionErrorDto[]{new DefinitionErrorDto("$a", 2, 1, "$a", 3, 1)};
+        collection.addAll(Arrays.asList(new Object[][]{
+                {
+                        prefix + "switch(1){default: " + statement + " $a=1;} \n $a + 96;" + appendix,
+                        errorDto, new NotVerifier()
+                },
+                {
+                        prefix + "switch(1){case 1: $a=1; default: " + statement + " $a=1;} \n $a + 96;" + appendix,
+                        errorDto, new PartiallyVerifier()
+                },
+                {
+                        prefix + "switch(1){case 1: " + statement + " $a=1; default: $a=1;} \n $a + 96;" + appendix,
+                        errorDto, new PartiallyVerifier()
+                },
+                {
+                        prefix + "if(true){ " + statement + " $a=1; } \n $a + 96;" + appendix,
+                        errorDto, new NotVerifier()
+                },
+                {
+                        prefix + "if(true){ } else{ " + statement + "$a=1;} \n $a + 96;" + appendix,
+                        errorDto, new NotVerifier()
+                },
+                {
+                        prefix + "if(true){ " + statement + " $a=1; } else{ $a=1;} \n $a + 96;" + appendix,
+                        errorDto, new PartiallyVerifier()
+                },
+                {
+                        prefix + "if(true){ $a=1; } else{ " + statement + " $a=1;} \n $a + 96;" + appendix,
+                        errorDto, new PartiallyVerifier()
+                },
+                {
+                        prefix + "while(true){" + statement + "$a = 1;}\n $a;" + appendix, errorDto,
+                        new NotVerifier()
+                },
+                {
+                        prefix + "for(;;){" + statement + "$a = 1;}\n $a;" + appendix, errorDto,
+                        new NotVerifier()
+                },
+                {
+                        prefix + "try{" + statement + "$a = 1;}catch(\\Exception $e){}\n $a;" + appendix,
+                        errorDto, new NotVerifier()
+                },
+                {
+                        prefix + "try{}catch(\\Exception $e){" + statement + "$a = 1;}\n $a;" + appendix,
+                        errorDto, new NotVerifier()
+                },
+                {
+                        prefix + "try{" + statement + "$a = 1;}catch(\\Exception $e){$a=1;}\n $a;" + appendix,
+                        errorDto, new PartiallyVerifier()
+                },
+                {
+                        prefix + "try{$a=1;}catch(\\Exception $e){" + statement + "$a = 1;}\n $a;" + appendix,
+                        errorDto, new PartiallyVerifier()
+                },
+                //not all catch blocks initialise
+                {
+                        prefix + "try{$a = 1;}catch(\\ErrorException $e2){" + statement + "$a = 1;}" +
+                                "catch(\\Exception $e){$a = 1;}\n $a;" + appendix,
+                        errorDto, new PartiallyVerifier()
+                },
+                {
+                        prefix + "try{$a = 1;}catch(\\ErrorException $e2){$a = 1;}" +
+                                "catch(\\Exception $e){" + statement + "$a = 1;}\n $a;" + appendix,
+                        errorDto, new PartiallyVerifier()
+                },
         }));
     }
 
