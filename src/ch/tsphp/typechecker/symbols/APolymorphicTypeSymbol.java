@@ -91,7 +91,7 @@ public abstract class APolymorphicTypeSymbol extends AScopedSymbol implements IP
 
     @Override
     public boolean isAbstract() {
-        return modifiers.contains(TSPHPDefinitionWalker.Abstract);
+        return modifiers.isAbstract();
     }
 
     @Override

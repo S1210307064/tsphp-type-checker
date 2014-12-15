@@ -10,7 +10,6 @@ import ch.tsphp.common.IScope;
 import ch.tsphp.common.ITSPHPAst;
 import ch.tsphp.common.symbols.ITypeSymbol;
 import ch.tsphp.common.symbols.modifiers.IModifierSet;
-import ch.tsphp.typechecker.antlr.TSPHPDefinitionWalker;
 import ch.tsphp.typechecker.scopes.IScopeHelper;
 
 public class ClassTypeSymbol extends APolymorphicTypeSymbol implements IClassTypeSymbol
@@ -63,11 +62,11 @@ public class ClassTypeSymbol extends APolymorphicTypeSymbol implements IClassTyp
 
     @Override
     public boolean isFinal() {
-        return modifiers.contains(TSPHPDefinitionWalker.Final);
+        return modifiers.isFinal();
     }
 
     @Override
     public boolean isAbstract() {
-        return modifiers.contains(TSPHPDefinitionWalker.Abstract);
+        return modifiers.isAbstract();
     }
 }

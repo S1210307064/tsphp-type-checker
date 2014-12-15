@@ -80,8 +80,7 @@ public abstract class ATypeCheckTest extends AReferenceTest
 
 
         Assert.assertFalse(testString + " failed. type checker walker exceptions occurred.",
-                reference.hasFoundError());
-
+                typeCheckWalker.hasFoundError());
 
         verifyTypeCheck();
     }
